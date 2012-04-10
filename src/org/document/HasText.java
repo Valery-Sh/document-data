@@ -8,8 +8,8 @@ package org.document;
  *
  * @author Valery
  */
-public interface Binder {
-    String getPath();
-    void dataChanged(Object oldValue, Object newValue);
-    //void bind();
+public interface HasText {
+    String getText();
+    void setText(String text);
+    
 }
