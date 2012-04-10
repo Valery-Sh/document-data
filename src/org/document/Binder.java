@@ -11,5 +11,5 @@ package org.document;
 public interface Binder {
     String getPath();
     void dataChanged(Object oldValue, Object newValue);
-    //void bind();
+    void setRegistry(BinderRegistry registry);
 }

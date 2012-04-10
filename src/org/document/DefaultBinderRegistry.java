@@ -12,10 +12,11 @@ import java.util.Map;
  *
  * @author Valery
  */
-public class AbstractBinderRegistry implements BinderRegistry{
+public class DefaultBinderRegistry implements BinderRegistry{
 
     protected Map<String,List<Binder>> binders;
-    
+    protected Document document;
+            
     @Override
     public void add(Binder binder) {
         String propPath = binder.getPath();
@@ -46,6 +47,17 @@ public class AbstractBinderRegistry implements BinderRegistry{
         for ( Binder b : blist) {
             b.dataChanged(oldValue, newValue);
         }
+    }
+
+    @Override
+    public Document getDocument() {
+        return this.document;
+    }
+
+    @Override
+    public void setDocument(Document document) {
+        this.document = document;
+        this.document.setPropertyChangeHandler(this);
     }
     
 }

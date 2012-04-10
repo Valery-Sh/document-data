@@ -33,9 +33,13 @@ public class HasTextBinder extends AbstractBinder {
     }
 
     @Override
-    public void dataChanged(Object oldValue, Object newValue) {
-        String text = (String)this.componentValueOf(newValue);
-        component.setText(text);
+    protected void setCompValue(Object compValue) {
+        component.setText((String)compValue);
+    }
+
+    @Override
+    protected void setDataValue(Object dataValue) {
+        registry.getDocument().put(propertyPath, dataValue);
     }
     
 }
