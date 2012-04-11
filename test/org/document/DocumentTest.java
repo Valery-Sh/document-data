@@ -129,7 +129,7 @@ public class DocumentTest {
         instance.setPropertyChangeHandler(handler);
     }
 
-    public class DocumentImpl implements Document {
+    public static class DocumentImpl implements Document {
         Map values = new HashMap();
         PropertyChangeHandler handler;
         @Override
@@ -147,7 +147,7 @@ public class DocumentTest {
             }
             values.put(key, value);
             if ( handler != null ) {
-                handler.firePropertyChange(this, key.toString(), value, value);
+                handler.firePropertyChange(key.toString(), value, value);
             }
         }
 

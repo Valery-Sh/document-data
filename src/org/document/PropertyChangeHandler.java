@@ -9,5 +9,6 @@ package org.document;
  * @author Valery
  */
 public interface PropertyChangeHandler {
-    void firePropertyChange(Document doc, String propPath, Object oldValue,Object newValue);
+    //void firePropertyChange(Document doc, String propPath, Object oldValue,Object newValue);
+    void firePropertyChange(String propPath, Object oldValue,Object newValue);    
 }

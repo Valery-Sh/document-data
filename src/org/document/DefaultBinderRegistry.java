@@ -5,6 +5,7 @@
 package org.document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,10 @@ public class DefaultBinderRegistry implements BinderRegistry{
 
     protected Map<String,List<Binder>> binders;
     protected Document document;
-            
+   
+    public DefaultBinderRegistry() {
+        binders = new HashMap<String,List<Binder>>();
+    }
     @Override
     public void add(Binder binder) {
         String propPath = binder.getPath();
@@ -32,14 +36,18 @@ public class DefaultBinderRegistry implements BinderRegistry{
     public void remove(Binder binder) {
         String propPath = binder.getPath();
         List<Binder> blist = binders.get(propPath);
-        if ( blist == null ) {
+        if ( blist == null || blist.isEmpty()) {
             return;
         }
         blist.remove(binder);
+        if ( blist.isEmpty() ) {
+            binders.remove(binder.getPath());
+        }
+        
     }
 
     @Override
-    public void firePropertyChange(Document doc, String propPath, Object oldValue, Object newValue) {
+    public void firePropertyChange(String propPath, Object oldValue, Object newValue) {
         List<Binder> blist = binders.get(propPath);
         if ( blist == null ) {
             return;
@@ -56,8 +64,20 @@ public class DefaultBinderRegistry implements BinderRegistry{
 
     @Override
     public void setDocument(Document document) {
+        Document old = this.document;
         this.document = document;
-        this.document.setPropertyChangeHandler(this);
+        if ( this.document != null ) {
+            this.document.setPropertyChangeHandler(this);
+        } else if ( old != null ) {
+            old.setPropertyChangeHandler(null);
+        }
     }
-    
+    /**
+     * For test purpose
+     * @param path
+     * @return 
+     */
+    protected List<Binder> getBinders(String path) {
+        return this.binders.get(path);
+    }
 }

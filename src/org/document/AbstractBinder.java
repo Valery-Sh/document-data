@@ -14,7 +14,11 @@ public abstract class AbstractBinder implements Binder {
     protected BinderRegistry registry;
 //    protected String propertyPath;
 
-
+    @Override
+    public String getPath() {
+        return this.propertyPath;
+    }
+    
     @Override
     public void dataChanged(Object oldValue, Object newValue) {
         if (oldValue == null && newValue == null) {
