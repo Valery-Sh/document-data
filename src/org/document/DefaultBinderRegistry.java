@@ -80,4 +80,9 @@ public class DefaultBinderRegistry implements BinderRegistry{
     protected List<Binder> getBinders(String path) {
         return this.binders.get(path);
     }
+
+    @Override
+    public void notifyError(Binder source, Exception e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

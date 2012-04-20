@@ -12,7 +12,6 @@ public abstract class AbstractBinder implements Binder {
 
     protected String propertyPath;
     protected BinderRegistry registry;
-//    protected String propertyPath;
 
     @Override
     public String getPath() {
@@ -52,9 +51,12 @@ public abstract class AbstractBinder implements Binder {
         } else if (newValue.equals(oldValue)) {
             return;
         }
-
-        Object newConvValue = this.dataValueOf(newValue);
-        setDataValue(newConvValue);
+        try {
+            Object newConvValue = this.dataValueOf(newValue);
+            setDataValue(newConvValue);
+        } catch(Exception e) {
+            registry.notifyError(this, e);
+        }
     }
 
     protected abstract void setCompValue(Object compValue);

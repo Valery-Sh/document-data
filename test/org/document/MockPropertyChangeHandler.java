@@ -11,7 +11,7 @@ package org.document;
 public class MockPropertyChangeHandler implements PropertyChangeHandler{
     protected boolean isFired;
     @Override
-    public void firePropertyChange(Document doc, String propPath, Object oldValue, Object newValue) {
+    public void firePropertyChange(String propPath, Object oldValue, Object newValue) {
         isFired = true;
     }
     

@@ -1,16 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public interface BinderRegistry extends PropertyChangeHandler{
     void add(Binder binder);
     void remove(Binder binder);
     Document getDocument();
     void setDocument(Document document);
+    void notifyError(Binder source,Exception e);
 }
