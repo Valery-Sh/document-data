@@ -33,6 +33,7 @@ public class DefaultBinderRegistry implements BinderRegistry{
         }
         blist.add(binder);
         this.binders.put(propPath,blist);
+        binder.setRegistry(this);
     }
 
     @Override

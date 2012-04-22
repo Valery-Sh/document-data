@@ -41,5 +41,10 @@ public class HasTextBinder extends AbstractBinder {
     protected void setDataValue(Object dataValue) {
         registry.getDocument().put(propertyPath, dataValue);
     }
+
+    @Override
+    protected Object getComponentValue() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

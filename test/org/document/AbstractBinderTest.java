@@ -149,5 +149,10 @@ public class AbstractBinderTest {
         public Object dataValueOf(Object compValue) {
             return compValue;
         }
+
+        @Override
+        protected Object getComponentValue() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 }

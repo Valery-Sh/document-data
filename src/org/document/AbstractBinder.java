@@ -30,9 +30,23 @@ public abstract class AbstractBinder implements Binder {
         } else if (newValue.equals(oldValue)) {
             return;
         }
-
-        Object newConvValue = this.componentValueOf(newValue);
-        setCompValue(newConvValue);
+        
+        Object convValue = this.componentValueOf(newValue);
+        
+        Object currentValue = getComponentValue();
+        if ( currentValue == null && convValue == null ) {
+            return;
+        } else if ( currentValue != null  ) {
+            if ( currentValue.equals(convValue)) {
+                return;
+            }
+        } else {
+            if ( convValue.equals(currentValue)) {
+                return;
+            }
+        }
+        
+        setCompValue(convValue);
     }
 
     @Override
@@ -65,6 +79,10 @@ public abstract class AbstractBinder implements Binder {
     protected abstract void setDataValue(Object dataValue);
     
     protected abstract Object componentValueOf(Object dataValue);
+    /**
+     * return current component value 
+     */
+    protected abstract Object getComponentValue();
 
     protected abstract Object dataValueOf(Object compValue);
     
