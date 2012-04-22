@@ -52,8 +52,9 @@ public abstract class AbstractBinder implements Binder {
             return;
         }
         try {
-            Object newConvValue = this.dataValueOf(newValue);
-            setDataValue(newConvValue);
+            Object convValue = this.dataValueOf(newValue);
+            registry.validate(propertyPath, convValue);
+            setDataValue(convValue);
         } catch(Exception e) {
             registry.notifyError(this, e);
         }

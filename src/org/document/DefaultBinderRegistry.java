@@ -17,10 +17,13 @@ public class DefaultBinderRegistry implements BinderRegistry{
 
     protected Map<String,List<Binder>> binders;
     protected Document document;
-   
+    protected ValidatorCollection validators;
+    
     public DefaultBinderRegistry() {
         binders = new HashMap<String,List<Binder>>();
+        validators = new ValidatorCollection();
     }
+    
     @Override
     public void add(Binder binder) {
         String propPath = binder.getPath();
@@ -84,5 +87,20 @@ public class DefaultBinderRegistry implements BinderRegistry{
     @Override
     public void notifyError(Binder source, Exception e) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public ValidatorCollection getValidators() {
+        return validators;
+    }
+
+    @Override
+    public void validate(String propPath, Object value) throws ValidationException {
+        getValidators().validate(propPath, document, value);
+    }
+
+    @Override
+    public void validate() throws ValidationException {
+        getValidators().validate(document);
     }
 }
