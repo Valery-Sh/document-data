@@ -13,7 +13,8 @@ public class MockBinder implements Binder{
     String propName;
     Object component;
     BinderRegistry registry;
-    
+    Object componentValue;
+    Object dataValue;
     boolean dataChanged;
     
     
@@ -32,7 +33,8 @@ public class MockBinder implements Binder{
 
     @Override
     public void dataChanged(Object oldValue, Object newValue) {
-        this.dataChanged = true;
+        dataChanged = true;
+        componentValue = newValue;
     }
 
     @Override
@@ -42,17 +44,17 @@ public class MockBinder implements Binder{
 
     @Override
     public Object getDataValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return dataValue;
     }
 
     @Override
     public Object getComponentValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return componentValue;
     }
 
     @Override
     public void componentChanged(Object oldValue, Object newValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        dataValue = newValue;
     }
     
 }

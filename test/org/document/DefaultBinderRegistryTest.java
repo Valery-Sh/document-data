@@ -179,7 +179,7 @@ public class DefaultBinderRegistryTest {
     public void testSetDocument() {
         System.out.println("DefaultBinderRegistry.setDocument(Document)");
         DefaultBinderRegistry instance = new DefaultBinderRegistry();
-        DocumentTest.DocumentImpl doc = new DocumentTest.DocumentImpl();
+        DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc);        
         Document result = instance.getDocument();
         assertTrue( doc == result);
@@ -191,6 +191,9 @@ public class DefaultBinderRegistryTest {
         result = instance.getDocument();
         assertNull( result);
         assertNull(doc.handler);
+        //
+        // change document
+        //
         
     }
 }
