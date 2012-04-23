@@ -58,5 +58,15 @@ public class MockBinderRegistry implements BinderRegistry{
     public void firePropertyChange(String propPath, Object oldValue, Object newValue) {
         
     }
+
+    @Override
+    public BinderRegistry createChild(String propertyName) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getChildName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

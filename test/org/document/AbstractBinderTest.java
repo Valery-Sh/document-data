@@ -69,8 +69,6 @@ public class AbstractBinderTest {
         oldValue = "Bill";
         instance.dataChanged(oldValue, newValue);
         assertEquals("Tom",instance.getComponentValue());
-
-        
     }
 
     /**
@@ -93,19 +91,50 @@ public class AbstractBinderTest {
         System.out.println("componentChanged");
         Object oldValue = null;
         Object newValue = null;
+        //
+        // oldValue == null && newValue == null
+        //
         AbstractBinder instance = new AbstractBinderImpl();
-//        instance.componentChanged(oldValue, newValue);
+        BinderRegistry registry = new MockBinderRegistry();
+        instance.setRegistry(registry);
+        
+        instance.componentChanged(oldValue, newValue);
+        assertNull(instance.getDataValue());
+        
+        //
+        // oldValue == null && newValue != null
+        //
+        newValue = "Bill";
+        instance.componentChanged(oldValue, newValue);
+        assertEquals("Bill",instance.getDataValue());
+        //
+        // oldValue != null && newValue == null
+        //
+        newValue = null;
+        oldValue = "Bill";
+        instance.componentChanged(oldValue, newValue);
+        assertNull(instance.getDataValue());
+        
+        //
+        // oldValue != null && newValue != null
+        //
+        newValue = "Tom";
+        oldValue = "Bill";
+        instance.componentChanged(oldValue, newValue);
+        assertEquals("Tom",instance.getDataValue());
+
     }
 
     /**
      * Test of setComponentValue method, of class AbstractBinder.
      */
     @Test
-    public void testSetCompValue() {
-        System.out.println("setCompValue");
-        Object compValue = null;
+    public void testSetComponentValue() {
+        System.out.println("setComponentValue");
+        Object compValue = "Bill";
         AbstractBinder instance = new AbstractBinderImpl();
         instance.setComponentValue(compValue);
+        assertEquals("Bill",instance.getComponentValue());
     }
 
     /**
@@ -114,11 +143,13 @@ public class AbstractBinderTest {
     @Test
     public void testSetDataValue() {
         System.out.println("setDataValue");
-        Object dataValue = null;
+        Object dataValue = "Bill";
         AbstractBinder instance = new AbstractBinderImpl();
         BinderRegistry registry = new MockBinderRegistry();
         instance.setRegistry(registry);
         instance.setDataValue(dataValue);
+        assertEquals("Bill",instance.getDataValue());
+        
     }
 
     /**
@@ -132,6 +163,11 @@ public class AbstractBinderTest {
         Object expResult = null;
         Object result = instance.componentValueOf(dataValue);
         assertEquals(expResult, result);
+        dataValue = "Bill";
+        expResult = "Bill";
+        result = instance.componentValueOf(dataValue);
+        assertEquals(expResult, result);
+                
     }
 
     /**
@@ -145,6 +181,11 @@ public class AbstractBinderTest {
         Object expResult = null;
         Object result = instance.dataValueOf(compValue);
         assertEquals(expResult, result);
+        compValue = "Bill";
+        expResult = "Bill";
+        result = instance.dataValueOf(compValue);
+        assertEquals(expResult, result);
+        
     }
 
     public class AbstractBinderImpl extends AbstractBinder {

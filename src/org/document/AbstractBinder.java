@@ -20,23 +20,10 @@ public abstract class AbstractBinder implements Binder {
     
     @Override
     public void dataChanged(Object oldValue, Object newValue) {
-/*        if (oldValue == null && newValue == null) {
-            return;
-        }
-        if (oldValue != null) {
-            if (oldValue.equals(newValue)) {
-                return;
-            }
-        } else if (newValue.equals(oldValue)) {
-            return;
-        }
-*/        
         Object convValue = this.componentValueOf(newValue);
-        
         if ( ! canChangeComponent(convValue) ) {
             return;
         }
-        
         setComponentValue(convValue);
     }
     /**
@@ -87,17 +74,6 @@ public abstract class AbstractBinder implements Binder {
 
     @Override
     public void componentChanged(Object oldValue, Object newValue) {
-/*        if (oldValue == null && newValue == null) {
-            return;
-        }
-        if (oldValue != null) {
-            if (oldValue.equals(newValue)) {
-                return;
-            }
-        } else if (newValue.equals(oldValue)) {
-            return;
-        }
-*/        
         try {
             Object convValue = this.dataValueOf(newValue);
             if ( ! canChangeData(convValue) ) {
@@ -110,9 +86,15 @@ public abstract class AbstractBinder implements Binder {
         }
     }
 
+    @Override
     public Object getDataValue() {
-        return this.registry.getDocument().get(this.propertyPath);
+        return registry.getDocument().get(this.propertyPath);
     }
+    /**
+     * return current component value 
+     */
+    @Override
+    public abstract Object getComponentValue();
 
     protected void setDataValue(Object dataValue) {
         this.registry.getDocument().put(propertyPath, dataValue);
@@ -123,10 +105,6 @@ public abstract class AbstractBinder implements Binder {
     
     
     protected abstract Object componentValueOf(Object dataValue);
-    /**
-     * return current component value 
-     */
-    public abstract Object getComponentValue();
 
     
     protected abstract Object dataValueOf(Object compValue);
