@@ -15,6 +15,8 @@ import java.util.Map;
  */
 public class DefaultBinderRegistry implements BinderRegistry{
 
+    protected String childName;
+    protected List<BinderRegistry> childs;
     protected Map<String,List<Binder>> binders;
     protected Document document;
     protected ValidatorCollection validators;
@@ -22,6 +24,11 @@ public class DefaultBinderRegistry implements BinderRegistry{
     public DefaultBinderRegistry() {
         binders = new HashMap<String,List<Binder>>();
         validators = new ValidatorCollection();
+        childs = new ArrayList<BinderRegistry>();
+    }
+    protected DefaultBinderRegistry(String childName) {
+        this();
+        this.childName = childName;
     }
     
     @Override
@@ -80,7 +87,17 @@ public class DefaultBinderRegistry implements BinderRegistry{
         } else if ( old != null ) {
             old.setPropertyChangeHandler(null);
         }
+        
         refresh();
+        
+        for ( BinderRegistry br : childs ) {
+            Object d = this.document.get(br.getChildName());
+            if ( d == null ) {
+                br.setDocument(null);
+            } else if ( d instanceof Document ) {
+                br.setDocument((Document)d);
+            }
+        }
     }
     protected void refresh() {
         for ( Map.Entry<String,List<Binder>> ent : this.binders.entrySet() ) {
@@ -124,5 +141,23 @@ public class DefaultBinderRegistry implements BinderRegistry{
     @Override
     public void validate() throws ValidationException {
         getValidators().validate(document);
+    }
+
+    @Override
+    public BinderRegistry createChild(String childName) {
+        BinderRegistry br = new DefaultBinderRegistry(childName);
+        childs.add(br);
+        return br;
+    }
+
+/*    @Override
+    public BinderRegistry getChild(String propName) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+*/
+
+    @Override
+    public String getChildName() {
+        return this.childName;
     }
 }

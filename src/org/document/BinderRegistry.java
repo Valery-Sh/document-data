@@ -7,6 +7,16 @@ package org.document;
 public interface BinderRegistry extends PropertyChangeHandler{
     void add(Binder binder);
     void remove(Binder binder);
+    /**
+     * 
+     * @param propertyName the name of a property whose type is 
+     * <code>org.document.Document</code>.
+     * @return a new instance of the class 
+     * <code>org.document.BinderRegistry</code>
+     */
+    BinderRegistry createChild(String propertyName);
+    //BinderRegistry getChild(String propName);
+    String getChildName();
     Document getDocument();
     void setDocument(Document document);
     ValidatorCollection getValidators();
