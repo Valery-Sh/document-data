@@ -20,7 +20,7 @@ public abstract class AbstractBinder implements Binder {
     
     @Override
     public void dataChanged(Object oldValue, Object newValue) {
-        if (oldValue == null && newValue == null) {
+/*        if (oldValue == null && newValue == null) {
             return;
         }
         if (oldValue != null) {
@@ -30,32 +30,63 @@ public abstract class AbstractBinder implements Binder {
         } else if (newValue.equals(oldValue)) {
             return;
         }
-        
+*/        
         Object convValue = this.componentValueOf(newValue);
         
-        Object currentValue = getComponentValue();
-        if ( currentValue == null && convValue == null ) {
+        if ( ! canChangeComponent(convValue) ) {
             return;
-        } else if ( currentValue != null  ) {
-            if ( currentValue.equals(convValue)) {
-                return;
-            }
-        } else {
-            if ( convValue.equals(currentValue)) {
-                return;
-            }
         }
         
-        setCompValue(convValue);
+        setComponentValue(convValue);
+    }
+    /**
+     * Prepends cyclic component modifications.
+     * 
+     * @param value a new value to be assigned
+     * @return 
+     */
+    protected boolean canChangeComponent(Object value) {
+        boolean result = true;
+        
+        Object currentValue = getComponentValue();
+        if ( value == null && currentValue == null ) {
+           result = false; 
+        } if ( value != null && value.equals(currentValue) ) {
+            result = false;
+        } else if ( currentValue != null  && currentValue.equals(value) ) {
+            result = false;
+        }       
+        return result;
     }
 
+    /**
+     * Prepends cyclic data modifications.
+     * 
+     * @param value a new value to be assigned
+     * @return 
+     */
+    protected boolean canChangeData(Object value) {
+        boolean result = true;
+        
+        Object currentValue = getDataValue();
+        
+        if ( value == null && currentValue == null ) {
+           result = false; 
+        } if ( value != null && value.equals(currentValue) ) {
+            result = false;
+        } else if ( currentValue != null  && currentValue.equals(value) ) {
+            result = false;
+        }       
+        return result;
+    }
+    
     @Override
     public void setRegistry(BinderRegistry registry) {
         this.registry = registry;
     }
 
     protected void componentChanged(Object oldValue, Object newValue) {
-        if (oldValue == null && newValue == null) {
+/*        if (oldValue == null && newValue == null) {
             return;
         }
         if (oldValue != null) {
@@ -65,8 +96,12 @@ public abstract class AbstractBinder implements Binder {
         } else if (newValue.equals(oldValue)) {
             return;
         }
+*/        
         try {
             Object convValue = this.dataValueOf(newValue);
+            if ( ! canChangeData(convValue) ) {
+                return;
+            }
             registry.validate(propertyPath, convValue);
             setDataValue(convValue);
         } catch(Exception e) {
@@ -74,9 +109,17 @@ public abstract class AbstractBinder implements Binder {
         }
     }
 
-    protected abstract void setCompValue(Object compValue);
+    protected Object getDataValue() {
+        return this.registry.getDocument().get(this.propertyPath);
+    }
 
-    protected abstract void setDataValue(Object dataValue);
+    protected void setDataValue(Object dataValue) {
+        this.registry.getDocument().put(propertyPath, dataValue);
+    }
+    
+    protected abstract void setComponentValue(Object compValue);
+
+    
     
     protected abstract Object componentValueOf(Object dataValue);
     /**
@@ -84,6 +127,7 @@ public abstract class AbstractBinder implements Binder {
      */
     protected abstract Object getComponentValue();
 
+    
     protected abstract Object dataValueOf(Object compValue);
     
 }

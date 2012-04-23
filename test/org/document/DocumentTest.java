@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * @author Valery
  */
 public class DocumentTest {
-    
+
     public DocumentTest() {
     }
 
@@ -25,11 +25,11 @@ public class DocumentTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -46,9 +46,9 @@ public class DocumentTest {
         // The 'key' parameter cannot be null
         //
         try {
-           instance.get(key); 
-           fail("The 'key' parameter cannot be null");
-        } catch(NullPointerException e) {
+            instance.get(key);
+            fail("The 'key' parameter cannot be null");
+        } catch (NullPointerException e) {
             System.out.println("Test if 'key' parameter is null");
         }
         //
@@ -81,9 +81,9 @@ public class DocumentTest {
         // The 'key' parameter cannot be null
         //
         try {
-           instance.put(key, value); 
-           fail("The 'key' parameter cannot be null");
-        } catch(NullPointerException e) {
+            instance.put(key, value);
+            fail("The 'key' parameter cannot be null");
+        } catch (NullPointerException e) {
             System.out.println("Test if 'key' parameter is null");
         }
         //
@@ -93,18 +93,18 @@ public class DocumentTest {
         instance.put(key, value);
         Object expResult = "PUT 1";
         Object result = instance.get(key);
-        assertEquals(expResult,result);
-        
+        assertEquals(expResult, result);
+
         //
         // When an objects's key already exists then replace it's value
         //
         key = 1;
         value = "PUT 2";
         instance.put(key, value);
-        
+
         expResult = "PUT 2";
         result = instance.get(key);
-        assertEquals(expResult,result);
+        assertEquals(expResult, result);
         //
         // When a PropertyChangeHandler is set then it's  firePropertyChange
         // method must be called
@@ -115,7 +115,7 @@ public class DocumentTest {
         instance.setPropertyChangeHandler(h);
         instance.put(key, value);
         assertTrue(h.isFired);
-        
+
     }
 
     /**
@@ -130,11 +130,13 @@ public class DocumentTest {
     }
 
     public static class DocumentImpl implements Document {
+
         Map values = new HashMap();
         PropertyChangeHandler handler;
+
         @Override
         public Object get(Object key) {
-            if ( key == null ) {
+            if (key == null) {
                 throw new NullPointerException("The 'key' parameter cannot be null");
             }
             return values.get(key);
@@ -142,12 +144,13 @@ public class DocumentTest {
 
         @Override
         public void put(Object key, Object value) {
-            if ( key == null ) {
+            if (key == null) {
                 throw new NullPointerException("The 'key' parameter cannot be null");
             }
+            Object oldValue = this.get(key);
             values.put(key, value);
-            if ( handler != null ) {
-                handler.firePropertyChange(key.toString(), value, value);
+            if (handler != null) {
+                handler.firePropertyChange(key.toString(), oldValue, value);
             }
         }
 
@@ -156,6 +159,4 @@ public class DocumentTest {
             this.handler = handler;
         }
     }//class DocumentImpl
-    
-    
 }

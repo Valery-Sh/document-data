@@ -33,7 +33,7 @@ public class HasTextBinder extends AbstractBinder {
     }
 
     @Override
-    protected void setCompValue(Object compValue) {
+    protected void setComponentValue(Object compValue) {
         component.setText((String)compValue);
     }
 
@@ -46,5 +46,5 @@ public class HasTextBinder extends AbstractBinder {
     protected Object getComponentValue() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

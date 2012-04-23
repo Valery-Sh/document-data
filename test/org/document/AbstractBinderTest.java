@@ -40,10 +40,37 @@ public class AbstractBinderTest {
         System.out.println("dataChanged");
         Object oldValue = null;
         Object newValue = null;
+        //
+        // oldValue == null && newValue == null
+        //
         AbstractBinder instance = new AbstractBinderImpl();
+//        BinderRegistry registry = new MockBinderRegistry();
+//        instance.setRegistry(registry);
+        
         instance.dataChanged(oldValue, newValue);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertNull(instance.getComponentValue());
+        //
+        // oldValue == null && newValue != null
+        //
+        newValue = "Bill";
+        instance.dataChanged(oldValue, newValue);
+        assertEquals("Bill",instance.getComponentValue());
+        //
+        // oldValue != null && newValue == null
+        //
+        newValue = null;
+        oldValue = "Bill";
+        instance.dataChanged(oldValue, newValue);
+        assertNull(instance.getComponentValue());
+        //
+        // oldValue != null && newValue != null
+        //
+        newValue = "Tom";
+        oldValue = "Bill";
+        instance.dataChanged(oldValue, newValue);
+        assertEquals("Tom",instance.getComponentValue());
+
+        
     }
 
     /**
@@ -52,11 +79,10 @@ public class AbstractBinderTest {
     @Test
     public void testSetRegistry() {
         System.out.println("setRegistry");
-        BinderRegistry registry = null;
+        BinderRegistry registry = new MockBinderRegistry();
         AbstractBinder instance = new AbstractBinderImpl();
         instance.setRegistry(registry);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(registry == instance.registry);
     }
 
     /**
@@ -68,22 +94,18 @@ public class AbstractBinderTest {
         Object oldValue = null;
         Object newValue = null;
         AbstractBinder instance = new AbstractBinderImpl();
-        instance.componentChanged(oldValue, newValue);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+//        instance.componentChanged(oldValue, newValue);
     }
 
     /**
-     * Test of setCompValue method, of class AbstractBinder.
+     * Test of setComponentValue method, of class AbstractBinder.
      */
     @Test
     public void testSetCompValue() {
         System.out.println("setCompValue");
         Object compValue = null;
         AbstractBinder instance = new AbstractBinderImpl();
-        instance.setCompValue(compValue);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.setComponentValue(compValue);
     }
 
     /**
@@ -94,9 +116,9 @@ public class AbstractBinderTest {
         System.out.println("setDataValue");
         Object dataValue = null;
         AbstractBinder instance = new AbstractBinderImpl();
+        BinderRegistry registry = new MockBinderRegistry();
+        instance.setRegistry(registry);
         instance.setDataValue(dataValue);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -110,8 +132,6 @@ public class AbstractBinderTest {
         Object expResult = null;
         Object result = instance.componentValueOf(dataValue);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -125,20 +145,18 @@ public class AbstractBinderTest {
         Object expResult = null;
         Object result = instance.dataValueOf(compValue);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     public class AbstractBinderImpl extends AbstractBinder {
-
+        
+        protected Object componentValue;
+        protected Object dataValue;
             
         @Override
-        public void setCompValue(Object compValue) {
+        public void setComponentValue(Object compValue) {
+            this.componentValue = compValue;
         }
 
-        @Override
-        public void setDataValue(Object dataValue) {
-        }
 
         @Override
         public Object componentValueOf(Object dataValue) {
@@ -152,7 +170,8 @@ public class AbstractBinderTest {
 
         @Override
         protected Object getComponentValue() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return this.componentValue;
         }
+
     }
 }
