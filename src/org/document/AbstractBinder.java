@@ -85,7 +85,8 @@ public abstract class AbstractBinder implements Binder {
         this.registry = registry;
     }
 
-    protected void componentChanged(Object oldValue, Object newValue) {
+    @Override
+    public void componentChanged(Object oldValue, Object newValue) {
 /*        if (oldValue == null && newValue == null) {
             return;
         }
@@ -109,7 +110,7 @@ public abstract class AbstractBinder implements Binder {
         }
     }
 
-    protected Object getDataValue() {
+    public Object getDataValue() {
         return this.registry.getDocument().get(this.propertyPath);
     }
 
@@ -125,7 +126,7 @@ public abstract class AbstractBinder implements Binder {
     /**
      * return current component value 
      */
-    protected abstract Object getComponentValue();
+    public abstract Object getComponentValue();
 
     
     protected abstract Object dataValueOf(Object compValue);

@@ -69,13 +69,34 @@ public class DefaultBinderRegistry implements BinderRegistry{
     @Override
     public void setDocument(Document document) {
         Document old = this.document;
+        if ( old != null ) {
+            this.resolvePendingChanges();
+        }
+        
         this.document = document;
+        
         if ( this.document != null ) {
             this.document.setPropertyChangeHandler(this);
         } else if ( old != null ) {
             old.setPropertyChangeHandler(null);
         }
+        refresh();
     }
+    protected void refresh() {
+        for ( Map.Entry<String,List<Binder>> ent : this.binders.entrySet() ) {
+            for ( Binder b : ent.getValue()) {
+                b.dataChanged(null, b.getDataValue());
+            }
+        }
+    }
+    protected void resolvePendingChanges() {
+        for ( Map.Entry<String,List<Binder>> ent : this.binders.entrySet() ) {
+            for ( Binder b : ent.getValue()) {
+                b.componentChanged(null, b.getComponentValue());
+            }
+        }
+    }
+    
     /**
      * For test purpose
      * @param path

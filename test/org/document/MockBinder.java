@@ -39,5 +39,20 @@ public class MockBinder implements Binder{
     public void setRegistry(BinderRegistry registry) {
         this.registry = registry;
     }
+
+    @Override
+    public Object getDataValue() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object getComponentValue() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void componentChanged(Object oldValue, Object newValue) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

@@ -169,7 +169,7 @@ public class AbstractBinderTest {
         }
 
         @Override
-        protected Object getComponentValue() {
+        public Object getComponentValue() {
             return this.componentValue;
         }
 
