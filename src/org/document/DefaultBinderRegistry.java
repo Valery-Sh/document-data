@@ -170,11 +170,18 @@ public class DefaultBinderRegistry implements BinderRegistry {
     
     @Override
     public void notifyError(Binder source, Exception e) {
-        for (Map.Entry<String, List<Binder>> ent : this.errorBinders.entrySet()) {
+        List<Binder> blist = this.errorBinders.get(source.getDataEntityName());
+        if ( blist != null ) {
+            for (Binder b : blist) {
+                ((ErrorBinder) b).notifyError(source, e);
+            }
+        }
+/*        for (Map.Entry<String, List<Binder>> ent : this.errorBinders.entrySet()) {
             for (Binder b : ent.getValue()) {
                 ((ErrorBinder) b).notifyError(source, e);
             }
         }
+*/
     }
     
     @Override
