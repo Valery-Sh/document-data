@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public interface ErrorBinder {
-    
+public interface ErrorBinder extends Binder {
+    //void clear();
+    void notifyError(Binder source, Exception e);
 }

@@ -74,6 +74,7 @@ public abstract class AbstractBinder implements Binder {
 
     @Override
     public void componentChanged(Object oldValue, Object newValue) {
+        registry.notifyError(this, null);
         try {
             Object convValue = this.dataValueOf(newValue);
             if ( ! canChangeData(convValue) ) {
@@ -81,6 +82,7 @@ public abstract class AbstractBinder implements Binder {
             }
             registry.validate(propertyPath, convValue);
             setDataValue(convValue);
+            //registry.notifyError(this, null);
         } catch(Exception e) {
             registry.notifyError(this, e);
         }
