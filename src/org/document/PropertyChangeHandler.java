@@ -1,14 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public interface PropertyChangeHandler {
-    //void firePropertyChange(Document doc, String propPath, Object oldValue,Object newValue);
     void firePropertyChange(String propPath, Object oldValue,Object newValue);    
 }

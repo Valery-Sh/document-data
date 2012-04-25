@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public abstract class AbstractErrorBinder extends AbstractBinder implements ErrorBinder {
     
@@ -32,11 +28,6 @@ public abstract class AbstractErrorBinder extends AbstractBinder implements Erro
     @Override
     public Object getDataValue() {
         return errorFound;
-/*        if ( exception == null ) {
-            return false;
-        }
-        return true;
-*/
     }
 
     /**
