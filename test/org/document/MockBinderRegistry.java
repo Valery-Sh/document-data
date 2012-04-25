@@ -30,7 +30,7 @@ public class MockBinderRegistry implements BinderRegistry{
     }
 
     @Override
-    public void setDocument(Document document) {
+    public void setDocument(Document document, boolean completeChanges) {
         this.document = document;
     }
 
@@ -67,6 +67,11 @@ public class MockBinderRegistry implements BinderRegistry{
     @Override
     public String getChildName() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void completeChanges() {
+        
     }
     
 }

@@ -4,8 +4,8 @@
  */
 package org.document;
 
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 /**
  *
@@ -126,7 +126,7 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of setComponentValue method, of class AbstractBinder.
+     * Test of protected setComponentValue method, of class AbstractBinder.
      */
     @Test
     public void testSetComponentValue() {
@@ -138,7 +138,19 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of setDataValue method, of class AbstractBinder.
+     * Test of protected getComponentValue method, of class AbstractBinder.
+     */
+    @Test
+    public void testGetComponentValue() {
+        System.out.println("getComponentValue");
+        Object compValue = "Bill";
+        AbstractBinder instance = new AbstractBinderImpl();
+        instance.setComponentValue(compValue);
+        assertEquals("Bill",instance.getComponentValue());
+    }
+    
+    /**
+     * Test of protected setDataValue method, of class AbstractBinder.
      */
     @Test
     public void testSetDataValue() {
@@ -151,7 +163,22 @@ public class AbstractBinderTest {
         assertEquals("Bill",instance.getDataValue());
         
     }
-
+    
+    /**
+     * Test of protected getDataValue method, of class AbstractBinder.
+     */
+    @Test
+    public void testGetDataValue() {
+        System.out.println("getDataValue");
+        Object dataValue = "Bill";
+        AbstractBinder instance = new AbstractBinderImpl();
+        BinderRegistry registry = new MockBinderRegistry();
+        instance.setRegistry(registry);
+        instance.setDataValue(dataValue);
+        assertEquals("Bill",instance.getDataValue());
+        
+    }
+    
     /**
      * Test of componentValueOf method, of class AbstractBinder.
      */

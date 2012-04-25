@@ -18,7 +18,8 @@ public interface BinderRegistry extends PropertyChangeHandler{
     //BinderRegistry getChild(String propName);
     String getChildName();
     Document getDocument();
-    void setDocument(Document document);
+    void setDocument(Document document,boolean completeChanges);
+    void completeChanges();
     ValidatorCollection getValidators();
     void validate(String propPath,Object value) throws ValidationException;
     void validate() throws ValidationException;    

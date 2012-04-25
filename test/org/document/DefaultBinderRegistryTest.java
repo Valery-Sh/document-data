@@ -121,7 +121,95 @@ public class DefaultBinderRegistryTest {
             System.out.println("Exception when try 'remove' with null parameter");
         }
     }
-
+    /**
+     * Test of completeChanges method, of class DefaultBinderRegistry.
+     */
+    @Test
+    public void testCompleteChanges() {
+        System.out.println("DefaultBinderRegistry.completeChanges");
+        Object component = new MockComponent();
+        MockDocument doc = new MockDocument();
+        doc.put("firstName", "Bill");
+        MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
+        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        instance.add(binder);
+        instance.setDocument(doc, true);
+        //
+        // Now firstName = "Bill". We set binder.componentValue to "Tom".
+        // completeChanges() must set binder.dataValue to "Tom".
+        //
+        binder.componentValue = "Tom";
+        instance.completeChanges();
+        assertEquals("Tom",binder.getDataValue());
+        //
+        //
+        //
+        
+    }
+    /**
+     * More complex test of completeChanges method, of class DefaultBinderRegistry.
+     */
+    @Test
+    public void testCompleteChanges_1() {
+        System.out.println("DefaultBinderRegistry.completeChanges_1");
+        DocumentImpl doc = new DocumentImpl();
+        doc.put("firstName", "Bill");
+        doc.put("height", 175);
+        
+        Binder binder = new StringBinderImpl("firstName");
+        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        instance.add(binder);
+        instance.setDocument(doc, true);
+        //
+        // Now firstName = "Bill". We set binder.componentValue to "Tom".
+        // completeChanges() must set doc.firstName to "Tom".
+        //
+        ((StringBinderImpl)binder).componentValue = "Tom";
+        instance.completeChanges();
+        assertEquals("Tom",doc.get("firstName"));
+        //
+        // Add another binder
+        //
+        Binder intBinder = new IntegerBinderImpl("height");
+        instance.add(intBinder);
+        doc.put("height",175);
+        ((IntegerBinderImpl)intBinder).componentValue = 190;
+        assertEquals(175,doc.get("height"));        
+        instance.completeChanges();
+        assertEquals(190,doc.get("height"));
+        //
+        // Try embedded document
+        //
+        DocumentImpl addrDoc = new DocumentImpl();
+        addrDoc.put("country", "UK");
+        addrDoc.put("zipCode", 99955);
+        doc.put("address", addrDoc);
+        
+        BinderRegistry addrInstance = instance.createChild("address");        
+        Binder countryBinder = new StringBinderImpl("country");
+        Binder zipCodeBinder = new IntegerBinderImpl("zipCode");        
+        addrInstance.add(countryBinder);
+        addrInstance.add(zipCodeBinder);      
+        
+        ((IntegerBinderImpl)zipCodeBinder).componentValue = "99944";
+        instance.completeChanges();
+        assertEquals(99944,addrDoc.get("zipCode"));
+        //
+        // Now set zipCode.componentValue = "A99966" => an error
+        // Data value remains unchanged (99944)
+        //
+        ((IntegerBinderImpl)zipCodeBinder).componentValue = "A99966";
+        instance.completeChanges();
+        assertEquals(99944,addrDoc.get("zipCode"));
+        
+        
+        
+        
+        
+        
+        
+    }
+    
     /**
      * Test of firePropertyChange method, of class DefaultBinderRegistry.
      */
@@ -167,7 +255,7 @@ public class DefaultBinderRegistryTest {
         Document result = instance.getDocument();
         assertNull(result);
         doc = new DocumentTest.DocumentImpl();
-        instance.setDocument(doc);
+        instance.setDocument(doc,true);
         result = instance.getDocument();
         assertTrue( doc == result);
     }
@@ -177,23 +265,37 @@ public class DefaultBinderRegistryTest {
      */
     @Test
     public void testSetDocument() {
-        System.out.println("DefaultBinderRegistry.setDocument(Document)");
+        System.out.println("DefaultBinderRegistry.setDocument(Document,boolean)");
         DefaultBinderRegistry instance = new DefaultBinderRegistry();
         DocumentImpl doc = new DocumentImpl();
-        instance.setDocument(doc);        
+        instance.setDocument(doc,true);        
         Document result = instance.getDocument();
         assertTrue( doc == result);
         assertNotNull(doc.handler);        
         //
         // null parameter value
         //
-        instance.setDocument(null);        
+        instance.setDocument(null,true);        
         result = instance.getDocument();
         assertNull( result);
         assertNull(doc.handler);
         //
         // change document
         //
+        Object component = new MockComponent();
+        Document doc1 = new DocumentImpl();
+        doc1.put("firstName", "Jone");
+        MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
+        
+        instance.add(binder);
+        instance.setDocument(doc, true);
+        //
+        // Now firstName = "Bill". We set binder.componentValue to "Tom".
+        // completeChanges() must set binder.dataValue to "Tom".
+        //
+        binder.componentValue = "Tom";
+        instance.completeChanges();
+        assertEquals("Tom",binder.getDataValue());
         
     }
 }

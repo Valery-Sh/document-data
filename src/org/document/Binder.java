@@ -1,15 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public interface Binder {
-    String getPath();
+    String getDataEntityName();
     void dataChanged(Object oldValue, Object newValue);
     void componentChanged(Object oldValue, Object newValue);
     Object getDataValue();

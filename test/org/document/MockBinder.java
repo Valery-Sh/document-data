@@ -27,7 +27,7 @@ public class MockBinder implements Binder{
     }
     
     @Override
-    public String getPath() {
+    public String getDataEntityName() {
         return this.propName;
     }
 

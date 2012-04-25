@@ -14,7 +14,7 @@ public abstract class AbstractBinder implements Binder {
     protected BinderRegistry registry;
 
     @Override
-    public String getPath() {
+    public String getDataEntityName() {
         return this.propertyPath;
     }
     

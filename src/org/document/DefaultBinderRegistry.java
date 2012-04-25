@@ -18,11 +18,14 @@ public class DefaultBinderRegistry implements BinderRegistry{
     protected String childName;
     protected List<BinderRegistry> childs;
     protected Map<String,List<Binder>> binders;
+    protected Map<String,List<Binder>> errorBinders;
+    
     protected Document document;
     protected ValidatorCollection validators;
     
     public DefaultBinderRegistry() {
         binders = new HashMap<String,List<Binder>>();
+        errorBinders = new HashMap<String,List<Binder>>();
         validators = new ValidatorCollection();
         childs = new ArrayList<BinderRegistry>();
     }
@@ -30,31 +33,45 @@ public class DefaultBinderRegistry implements BinderRegistry{
         this();
         this.childName = childName;
     }
-    
-    @Override
-    public void add(Binder binder) {
-        String propPath = binder.getPath();
-        List<Binder> blist = binders.get(propPath);
+    protected void add(Binder binder, Map<String,List<Binder>> binderMap) {
+        String propPath = binder.getDataEntityName();
+        List<Binder> blist = binderMap.get(propPath);
         if ( blist == null ) {
             blist = new ArrayList<Binder>();
         }
         blist.add(binder);
-        this.binders.put(propPath,blist);
+        binderMap.put(propPath,blist);
         binder.setRegistry(this);
+        
     }
-
     @Override
-    public void remove(Binder binder) {
-        String propPath = binder.getPath();
-        List<Binder> blist = binders.get(propPath);
+    public void add(Binder binder) {
+        if ( binder instanceof ErrorBinder) {
+            add(binder,errorBinders);
+        } else {
+            add(binder,binders);
+        }
+    }
+    protected void remove(Binder binder,Map<String,List<Binder>> binderMap) {
+        String propPath = binder.getDataEntityName();
+        List<Binder> blist = binderMap.get(propPath);
         if ( blist == null || blist.isEmpty()) {
             return;
         }
         blist.remove(binder);
         if ( blist.isEmpty() ) {
-            binders.remove(binder.getPath());
+            binderMap.remove(binder.getDataEntityName());
         }
         
+    }
+
+    @Override
+    public void remove(Binder binder) {
+        if ( binder instanceof ErrorBinder) {
+            remove(binder,errorBinders);
+        } else {
+            remove(binder,binders);
+        }
     }
 
     @Override
@@ -74,10 +91,15 @@ public class DefaultBinderRegistry implements BinderRegistry{
     }
 
     @Override
-    public void setDocument(Document document) {
+    public void setDocument(Document document,boolean completeChanges) {
+        
         Document old = this.document;
         if ( old != null ) {
-            this.resolvePendingChanges();
+            if ( completeChanges ) {
+                completeChanges();
+            } else {
+                this.resolvePendingChanges();
+            }
         }
         
         this.document = document;
@@ -93,12 +115,13 @@ public class DefaultBinderRegistry implements BinderRegistry{
         for ( BinderRegistry br : childs ) {
             Object d = this.document.get(br.getChildName());
             if ( d == null ) {
-                br.setDocument(null);
+                br.setDocument(null,false);
             } else if ( d instanceof Document ) {
-                br.setDocument((Document)d);
+                br.setDocument((Document)d,false);
             }
         }
     }
+    
     protected void refresh() {
         for ( Map.Entry<String,List<Binder>> ent : this.binders.entrySet() ) {
             for ( Binder b : ent.getValue()) {
@@ -110,6 +133,21 @@ public class DefaultBinderRegistry implements BinderRegistry{
         for ( Map.Entry<String,List<Binder>> ent : this.binders.entrySet() ) {
             for ( Binder b : ent.getValue()) {
                 b.componentChanged(null, b.getComponentValue());
+            }
+        }
+    }
+    @Override
+    public void completeChanges() {
+        if ( document == null ) {
+            return;
+        }
+        
+        this.resolvePendingChanges();
+        
+        for ( BinderRegistry br : childs ) {
+            Object d = this.document.get(br.getChildName());
+            if ( d != null && ( d instanceof Document )) {
+                br.completeChanges();
             }
         }
     }
@@ -125,7 +163,6 @@ public class DefaultBinderRegistry implements BinderRegistry{
 
     @Override
     public void notifyError(Binder source, Exception e) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     @Override
@@ -147,6 +184,9 @@ public class DefaultBinderRegistry implements BinderRegistry{
     public BinderRegistry createChild(String childName) {
         BinderRegistry br = new DefaultBinderRegistry(childName);
         childs.add(br);
+        if ( this.document != null ) {
+            br.setDocument((Document)document.get(childName), true);
+        }
         return br;
     }
 
