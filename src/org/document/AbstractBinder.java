@@ -75,8 +75,9 @@ public abstract class AbstractBinder implements Binder {
     @Override
     public void componentChanged(Object oldValue, Object newValue) {
         registry.notifyError(this, null);
+        Object convValue = null;
         try {
-            Object convValue = this.dataValueOf(newValue);
+            convValue = this.dataValueOf(newValue);
             if ( ! canChangeData(convValue) ) {
                 return;
             }
@@ -85,6 +86,11 @@ public abstract class AbstractBinder implements Binder {
             //registry.notifyError(this, null);
         } catch(Exception e) {
             registry.notifyError(this, e);
+            if ( e instanceof ValidationException ) {
+                if ( registry.getDocument() instanceof Editable ) {
+                     setDataValue(convValue);
+                }
+            }
         }
     }
 
