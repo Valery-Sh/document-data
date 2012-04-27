@@ -57,7 +57,8 @@ public class DocumentEvent extends EventObject {
     
     public enum Action {
         propertyChange,
-        validate
+        validate,
+        validateProperties
         
     }
 }//class DocumentEvent

@@ -14,14 +14,14 @@ import java.util.Map;
  * @author Valery
  */
 public class DocumentBindingManager implements BindingManager {
-    
+
     protected String childName;
     protected List<BindingManager> childs;
     protected Map<String, List<Binder>> binders;
     protected Map<String, List<Binder>> errorBinders;
     protected Document document;
     protected ValidatorCollection validators;
-    
+
     public DocumentBindingManager() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
@@ -43,7 +43,7 @@ public class DocumentBindingManager implements BindingManager {
         blist.add(binder);
         binderMap.put(propPath, blist);
         binder.setBindingManager(this);
-        
+
     }
 
     @Override
@@ -65,9 +65,9 @@ public class DocumentBindingManager implements BindingManager {
         if (blist.isEmpty()) {
             binderMap.remove(binder.getDataEntityName());
         }
-        
+
     }
-    
+
     @Override
     public void remove(Binder binder) {
         if (binder instanceof ErrorBinder) {
@@ -76,7 +76,7 @@ public class DocumentBindingManager implements BindingManager {
             remove(binder, binders);
         }
     }
-    
+
     protected void firePropertyChange(String propPath, Object oldValue, Object newValue) {
         List<Binder> blist = binders.get(propPath);
         if (blist == null) {
@@ -86,15 +86,15 @@ public class DocumentBindingManager implements BindingManager {
             b.dataChanged(oldValue, newValue);
         }
     }
-    
+
     @Override
     public Document getDocument() {
         return this.document;
     }
-    
+
     @Override
     public void setDocument(Document document, boolean completeChanges) {
-        
+
         Document old = this.document;
         if (old != null) {
             if (completeChanges) {
@@ -103,20 +103,20 @@ public class DocumentBindingManager implements BindingManager {
                 this.resolvePendingChanges();
             }
         }
-        
+
         this.document = document;
-        
+
         if (this.document != null) {
             //this.document.setPropertyChangeHandler(this);
             this.document.addDocumentListener(this);
-            
+
         } else if (old != null) {
             //old.setPropertyChangeHandler(null);
             old.removeDocumentListener(this);
         }
-        
+
         refresh();
-        
+
         for (BindingManager br : childs) {
             Object d = this.document.get(br.getChildName());
             if (d == null) {
@@ -126,12 +126,12 @@ public class DocumentBindingManager implements BindingManager {
             }
         }
     }
-    
+
     protected void refresh() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
                 b.dataChanged(null, b.getDataValue());
-                notifyError(b, null);                
+                notifyError(b, null);
             }
         }
     }
@@ -149,9 +149,9 @@ public class DocumentBindingManager implements BindingManager {
         if (document == null) {
             return;
         }
-        
+
         this.resolvePendingChanges();
-        
+
         for (BindingManager br : childs) {
             Object d = this.document.get(br.getChildName());
             if (d != null && (d instanceof Document)) {
@@ -169,38 +169,40 @@ public class DocumentBindingManager implements BindingManager {
     protected List<Binder> getBinders(String path) {
         return this.binders.get(path);
     }
-    
+
     @Override
     public void notifyError(Binder source, Exception e) {
         List<Binder> blist = this.errorBinders.get(source.getDataEntityName());
-        if ( blist != null ) {
+        if (blist != null) {
             for (Binder b : blist) {
                 ((ErrorBinder) b).notifyError(source, e);
             }
         }
-/*        for (Map.Entry<String, List<Binder>> ent : this.errorBinders.entrySet()) {
-            for (Binder b : ent.getValue()) {
-                ((ErrorBinder) b).notifyError(source, e);
-            }
+        if ((e instanceof ValidationException) && this.getValidators().getProperyValidators().isEmpty() ) {
+            throw (ValidationException)e;
         }
-*/
+        /*
+         * for (Map.Entry<String, List<Binder>> ent :
+         * this.errorBinders.entrySet()) { for (Binder b : ent.getValue()) {
+         * ((ErrorBinder) b).notifyError(source, e); } }
+         */
     }
-    
+
     @Override
     public ValidatorCollection getValidators() {
         return validators;
     }
-    
+
     @Override
     public void validate(String propPath, Object value) throws ValidationException {
         getValidators().validate(propPath, document, value);
     }
-    
+
     @Override
     public void validate() throws ValidationException {
         getValidators().validate(document);
     }
-    
+
     @Override
     public BindingManager createChild(String childName) {
         BindingManager br = new DocumentBindingManager(childName);
@@ -222,19 +224,19 @@ public class DocumentBindingManager implements BindingManager {
 
     @Override
     public void react(DocumentEvent event) {
-        if ( event.getAction().equals(DocumentEvent.Action.propertyChange) ) {
+        if (event.getAction().equals(DocumentEvent.Action.propertyChange)) {
             this.firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
-        } else if ( event.getAction().equals(DocumentEvent.Action.validate) ) {
+        } else if (event.getAction().equals(DocumentEvent.Action.validate)) {
             this.validate(event.getPropertyName(), event.getNewValue());
-        }    
-    }
-/*    public static class DocumentEventHandler implements DocumentListener{
-
-        @Override
-        public void react(DocumentEvent event) {
-            //firePropertyChange(String propPath, Object oldValue,Object newValue);    ;
         }
-        
     }
-*/    
+    /*
+     * public static class DocumentEventHandler implements DocumentListener{
+     *
+     * @Override public void react(DocumentEvent event) {
+     * //firePropertyChange(String propPath, Object oldValue,Object newValue); ;
+     * }
+     *
+     * }
+     */
 }

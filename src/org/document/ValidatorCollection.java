@@ -24,6 +24,13 @@ public class ValidatorCollection {
         this.lvalidators.add(validator);
         return lvalidators.size()-1;
     } 
+    public  Map<String,PropertyValidator> getProperyValidators() {
+        return pvalidators;
+    }
+    public  List<DocumentValidator> getDocumentValidators() {
+        return lvalidators;
+    }
+    
     public void remove(DocumentValidator validator) {
         this.lvalidators.remove(validator);
     } 
@@ -44,6 +51,19 @@ public class ValidatorCollection {
         }
         v.validate(propPath,doc,value);
     }
+    public void validateProperties(Document doc) throws ValidationException {
+        String propPath;
+        for ( Map.Entry<String,PropertyValidator> es  : pvalidators.entrySet()) {
+            propPath = es.getKey();
+        
+            PropertyValidator v = pvalidators.get(propPath);
+            if ( v == null ) {
+                continue;
+            }
+            v.validate(propPath,doc,doc.get(propPath));
+        }
+    }
+    
     public void validate(Document doc) throws ValidationException {
         for ( DocumentValidator v : lvalidators) {
             v.validate(doc);            

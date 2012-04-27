@@ -86,7 +86,7 @@ public abstract class AbstractBinder implements Binder {
             //registry.notifyError(this, null);
         } catch(Exception e) {
             bindingManager.notifyError(this, e);
-            //if ( e instanceof ValidationException ) {
+            
                 //if ( bindingManager.getDocument() instanceof Editable ) {
                 //     setDataValue(convValue);
                 //}
