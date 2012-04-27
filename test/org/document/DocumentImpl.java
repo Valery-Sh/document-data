@@ -39,7 +39,7 @@ public class DocumentImpl implements Document {
         Object oldValue = this.get(key);
         values.put(key, value);
         if (docListener != null) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChange);
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
             event.setPropertyName(key.toString());
             event.setOldValue(oldValue);
             event.setNewValue(value);

@@ -141,7 +141,7 @@ public class DocumentTest {
             values.put(key, value);
             validate(key,value);
             if ( docListener != null ) {
-                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.propertyChange);
+                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.propertyChangeNotify);
                 event.setPropertyName(key.toString());
                 event.setOldValue(oldValue);
                 event.setNewValue(value);
@@ -164,7 +164,7 @@ public class DocumentTest {
 
         protected void validate(Object key, Object value) {
             if ( docListener != null ) {
-                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.validate);
+                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.validateProperty);
                 event.setPropertyName(key.toString());
                 //event.setOldValue(oldValue);
                 event.setNewValue(value);

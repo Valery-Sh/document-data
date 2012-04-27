@@ -84,6 +84,8 @@ public abstract class AbstractBinder implements Binder {
             //bindingManager.validate(propertyPath, convValue);
             setDataValue(convValue);
             //registry.notifyError(this, null);
+        } catch(ValidationException e) {
+            throw e;
         } catch(Exception e) {
             bindingManager.notifyError(this, e);
             

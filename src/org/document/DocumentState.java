@@ -13,7 +13,7 @@ public interface DocumentState {
     void setEditing(boolean editing);
     //Object getEditingObject();
     //void setEditingObject(Object obj);
-    Document getCurrent();
+    //Document getCurrent();
 //    void setCurrentObject(Object obj);
     
     

@@ -9,7 +9,24 @@ package org.document;
  * @author Valery
  */
 public class ValidationException extends RuntimeException{
-    public ValidationException(String message) {
+    
+    private String propertyName;
+    
+/*    public ValidationException(String message) {
         super(message);
     }
+*/
+    public ValidationException(String propertyName,String message) {
+        super(message);
+        this.propertyName = propertyName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+    
 }

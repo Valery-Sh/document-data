@@ -51,7 +51,7 @@ public class SimpleMapBasedDocument implements Document {
         this.validate(key, value);
         
         if (!docListeners.isEmpty()) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChange);
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
             event.setPropertyName(key.toString());
             event.setOldValue(oldValue);
             event.setNewValue(value);
@@ -72,7 +72,7 @@ public class SimpleMapBasedDocument implements Document {
     
     protected void validate(Object key, Object value) {
         if (! docListeners.isEmpty()) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validate);
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateProperty);
             event.setPropertyName(key.toString());
             event.setNewValue(value);
             fireDocumentEvent(event);

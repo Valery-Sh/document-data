@@ -1,41 +1,79 @@
 package org.document;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author V. Shyshkin
  */
 public class MapBasedDocument implements Document, HasDocumentState {
 
-    protected SimpleMapBasedDocument baseDocument;
+    //protected SimpleMapBasedDocument baseDocument;
     protected transient DocumentState state;
+    protected Map source;
+    protected List<DocumentListener> docListeners;
 
-    public MapBasedDocument() {
-        baseDocument = new SimpleMapBasedDocument();
-        this.state = new MapDocumentState(baseDocument);
+    public MapBasedDocument(Map source) {
+        //baseDocument = new SimpleMapBasedDocument();
+        this.state = new MapBasedDocument.MapDocumentState(this);
+        this.source = source;
+        this.docListeners = new ArrayList<DocumentListener>();
     }
 
     @Override
     public Object get(Object key) {
-        return getDocumentState().getCurrent().get(key);
+        return source.get(key);
     }
 
     @Override
     public void put(Object key, Object value) {
-        DocumentState st = getDocumentState();
-        if ( ! state.isEditing()) {
+        if (key == null) {
+            throw new NullPointerException("The 'key' parameter cannot be null");
+        }
+
+        if (!state.isEditing()) {
             state.setEditing(true);
         }
-        state.getCurrent().put(key, value);
+
+        Object oldValue = this.get(key);
+        ((MapDocumentState)state).dirtyEditValues.put(key, value);
+        
+        try {
+            validate(key, value);
+        } catch (ValidationException e) {
+            if (!docListeners.isEmpty()) {
+                DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateErrorNotify);
+                event.setPropertyName(key.toString());
+                event.setOldValue(oldValue);
+                event.setNewValue(value);
+                event.setException(e);
+                fireDocumentEvent(event);
+            }
+            return;
+        }
+
+        source.put(key, value);
+
+        if (!docListeners.isEmpty()) {
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
+            event.setPropertyName(key.toString());
+            event.setOldValue(oldValue);
+            event.setNewValue(value);
+            fireDocumentEvent(event);
+        }
     }
 
     @Override
     public void addDocumentListener(DocumentListener listener) {
-        this.baseDocument.addDocumentListener(listener);
+        this.docListeners.add(listener);
     }
 
     @Override
     public void removeDocumentListener(DocumentListener listener) {
-        this.baseDocument.removeDocumentListener(listener);
+        this.docListeners.remove(listener);
     }
 
     @Override
@@ -44,20 +82,43 @@ public class MapBasedDocument implements Document, HasDocumentState {
 
     }
 
-    protected static class MapDocumentState implements DocumentState{
+    protected void validate(Object key, Object value) {
+        if (!docListeners.isEmpty()) {
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateProperty);
+            event.setPropertyName(key.toString());
+            event.setNewValue(value);
+            fireDocumentEvent(event);
+        }
+
+    }
+
+    protected void validateProperties() {
+        if (!docListeners.isEmpty()) {
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateAllProperties);
+            fireDocumentEvent(event);
+        }
+
+    }
+
+    private void fireDocumentEvent(DocumentEvent event) {
+        for (DocumentListener l : docListeners) {
+            l.react(event);
+        }
+    }
+
+    protected static class MapDocumentState implements DocumentState {
 
         private boolean editing;
-        
-        private Document editingDocument;
-        private Document currentDocument;
-        private Document unchangedDocument;
+        private Document document;
+        private Map beforeEditValues;
+        protected Map dirtyEditValues;
 
         public MapDocumentState(Document document) {
-            this.unchangedDocument = document;
-            this.currentDocument   = document;
-            
+            this.document = document;
+            beforeEditValues = new HashMap();
+            dirtyEditValues = new HashMap();
         }
-        
+
         @Override
         public boolean isEditing() {
             return editing;
@@ -68,26 +129,29 @@ public class MapBasedDocument implements Document, HasDocumentState {
             if (this.editing == editing) {
                 return;
             }
+            
+            MapBasedDocument d = (MapBasedDocument) document;
+            
             if (this.editing && !editing) {
-                unchangedDocument = editingDocument;
-                currentDocument = unchangedDocument;
-                editingDocument = null;
+                try {
+                    d.validateProperties();
+                    this.editing = editing;
+                } catch (ValidationException e) {
+                    if (!d.docListeners.isEmpty()) {
+                        DocumentEvent event = new DocumentEvent(d, DocumentEvent.Action.validateErrorNotify);
+                        event.setPropertyName("");
+                        event.setException(e);
+                        d.fireDocumentEvent(event);
+                    }
+                }
             } else if (!this.editing) {
-                editingDocument = new SimpleMapBasedDocument();
-                ((SimpleMapBasedDocument)editingDocument).values.putAll(((SimpleMapBasedDocument)unchangedDocument).values);
-                //((SimpleMapBasedDocument)editingDocument).docListeners.addAll(((SimpleMapBasedDocument)unchangedDocument).docListeners); 
-                ((SimpleMapBasedDocument)editingDocument).docListeners = ((SimpleMapBasedDocument)unchangedDocument).docListeners;                 
-                currentDocument = editingDocument;
+                beforeEditValues.clear();
+                beforeEditValues.putAll(d.source);
+                dirtyEditValues.clear();
+                dirtyEditValues.putAll(d.source);
+                this.editing = editing;
             }
-
-            this.editing = editing;
-
         }
 
-
-        @Override
-        public Document getCurrent() {
-            return this.currentDocument;
-        }
     }
 }

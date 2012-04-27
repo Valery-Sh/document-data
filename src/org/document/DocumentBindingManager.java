@@ -178,14 +178,23 @@ public class DocumentBindingManager implements BindingManager {
                 ((ErrorBinder) b).notifyError(source, e);
             }
         }
-        if ((e instanceof ValidationException) && this.getValidators().getProperyValidators().isEmpty() ) {
-            throw (ValidationException)e;
-        }
+        //if ((e instanceof ValidationException) && this.getValidators().getProperyValidators().isEmpty() ) {
+        //    throw (ValidationException)e;
+        //}
         /*
          * for (Map.Entry<String, List<Binder>> ent :
          * this.errorBinders.entrySet()) { for (Binder b : ent.getValue()) {
          * ((ErrorBinder) b).notifyError(source, e); } }
          */
+    }
+    @Override
+    public void notifyError(String propertyName, Exception e) {
+        List<Binder> blist = this.errorBinders.get(propertyName);
+        if (blist != null) {
+            for (Binder b : blist) {
+                ((ErrorBinder) b).notifyError(null, e);
+            }
+        }
     }
 
     @Override
@@ -224,10 +233,14 @@ public class DocumentBindingManager implements BindingManager {
 
     @Override
     public void react(DocumentEvent event) {
-        if (event.getAction().equals(DocumentEvent.Action.propertyChange)) {
+        if (event.getAction().equals(DocumentEvent.Action.propertyChangeNotify)) {
             this.firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
-        } else if (event.getAction().equals(DocumentEvent.Action.validate)) {
+        } else if (event.getAction().equals(DocumentEvent.Action.validateProperty)) {
             this.validate(event.getPropertyName(), event.getNewValue());
+        } else if (event.getAction().equals(DocumentEvent.Action.validateErrorNotify)) {
+            notifyError(event.getPropertyName(), event.getException());
+        } else if (event.getAction().equals(DocumentEvent.Action.validateAllProperties)) {
+            validators.validateProperties((Document)event.getSource());
         }
     }
     /*

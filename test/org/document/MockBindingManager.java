@@ -53,6 +53,10 @@ public class MockBindingManager implements BindingManager{
     public void notifyError(Binder source, Exception e) {
         
     }
+    @Override
+    public void notifyError(String propertyName, Exception e) {
+        
+    }
 
 
     @Override

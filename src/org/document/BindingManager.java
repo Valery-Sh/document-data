@@ -24,4 +24,5 @@ public interface BindingManager extends DocumentListener{
     void validate(String propPath,Object value) throws ValidationException;
     void validate() throws ValidationException;    
     void notifyError(Binder source,Exception e);
+    void notifyError(String propertyName,Exception e);
 }

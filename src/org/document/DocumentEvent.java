@@ -13,6 +13,7 @@ public class DocumentEvent extends EventObject {
     private String propertyName;
     private Object oldValue;
     private Object newValue;    
+    private Exception exception;
     
     public DocumentEvent(Document source) {
         super(source);
@@ -54,11 +55,19 @@ public class DocumentEvent extends EventObject {
         this.propertyName = propertyName;
     }
 
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
+    }
+
     
     public enum Action {
-        propertyChange,
-        validate,
-        validateProperties
-        
+        propertyChangeNotify,
+        validateProperty,
+        validateAllProperties,
+        validateErrorNotify
     }
 }//class DocumentEvent
