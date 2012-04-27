@@ -13,6 +13,7 @@ public class SimpleMapBasedDocument implements Document {
 
     protected Map values = new HashMap();
     protected List<DocumentListener> docListeners;
+    protected Document baseDocument;
 
     protected SimpleMapBasedDocument() {
         this(new HashMap());
@@ -58,6 +59,17 @@ public class SimpleMapBasedDocument implements Document {
         }
 
     }
+    @Override
+    public void addDocumentListener(DocumentListener listener) {
+        this.docListeners.add(listener);
+    }
+
+    @Override
+    public void removeDocumentListener(DocumentListener listener) {
+        this.docListeners.remove(listener);
+    }
+    
+    
     protected void validate(Object key, Object value) {
         if (! docListeners.isEmpty()) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validate);
@@ -74,13 +86,4 @@ public class SimpleMapBasedDocument implements Document {
         }
     }
 
-    @Override
-    public void addDocumentListener(DocumentListener listener) {
-        this.docListeners.add(listener);
-    }
-
-    @Override
-    public void removeDocumentListener(DocumentListener listener) {
-        this.docListeners.remove(listener);
-    }
 }

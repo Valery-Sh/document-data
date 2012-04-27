@@ -11,5 +11,10 @@ package org.document;
 public interface DocumentState {
     boolean isEditing();
     void setEditing(boolean editing);
+    //Object getEditingObject();
+    //void setEditingObject(Object obj);
+    Document getCurrent();
+//    void setCurrentObject(Object obj);
+    
     
 }
