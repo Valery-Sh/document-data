@@ -26,8 +26,14 @@ public class MockDocument implements Document{
         data.put(key, value);
     }
 
+
     @Override
-    public void setPropertyChangeHandler(PropertyChangeHandler handler) {
+    public void addDocumentListener(DocumentListener listener) {
+        
+    }
+
+    @Override
+    public void removeDocumentListener(DocumentListener listener) {
         
     }
     

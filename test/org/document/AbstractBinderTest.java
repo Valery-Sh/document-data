@@ -44,8 +44,8 @@ public class AbstractBinderTest {
         // oldValue == null && newValue == null
         //
         AbstractBinder instance = new AbstractBinderImpl();
-//        BinderRegistry registry = new MockBinderRegistry();
-//        instance.setRegistry(registry);
+//        BindingManager bindingManager = new MockBindingManager();
+//        instance.setBindingManager(bindingManager);
         
         instance.dataChanged(oldValue, newValue);
         assertNull(instance.getComponentValue());
@@ -72,15 +72,15 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of setRegistry method, of class AbstractBinder.
+     * Test of setBindingManager method, of class AbstractBinder.
      */
     @Test
-    public void testSetRegistry() {
-        System.out.println("setRegistry");
-        BinderRegistry registry = new MockBinderRegistry();
+    public void testBindingManager() {
+        System.out.println("setBindingManager");
+        BindingManager bindingManager = new MockBindingManager();
         AbstractBinder instance = new AbstractBinderImpl();
-        instance.setRegistry(registry);
-        assertTrue(registry == instance.registry);
+        instance.setBindingManager(bindingManager);
+        assertTrue(bindingManager == instance.bindingManager);
     }
 
     /**
@@ -95,8 +95,8 @@ public class AbstractBinderTest {
         // oldValue == null && newValue == null
         //
         AbstractBinder instance = new AbstractBinderImpl();
-        BinderRegistry registry = new MockBinderRegistry();
-        instance.setRegistry(registry);
+        BindingManager bindingManager = new MockBindingManager();
+        instance.setBindingManager(bindingManager);
         
         instance.componentChanged(oldValue, newValue);
         assertNull(instance.getDataValue());
@@ -157,8 +157,8 @@ public class AbstractBinderTest {
         System.out.println("setDataValue");
         Object dataValue = "Bill";
         AbstractBinder instance = new AbstractBinderImpl();
-        BinderRegistry registry = new MockBinderRegistry();
-        instance.setRegistry(registry);
+        BindingManager bindingManager = new MockBindingManager();
+        instance.setBindingManager(bindingManager);
         instance.setDataValue(dataValue);
         assertEquals("Bill",instance.getDataValue());
         
@@ -172,8 +172,8 @@ public class AbstractBinderTest {
         System.out.println("getDataValue");
         Object dataValue = "Bill";
         AbstractBinder instance = new AbstractBinderImpl();
-        BinderRegistry registry = new MockBinderRegistry();
-        instance.setRegistry(registry);
+        BindingManager bindingManager = new MockBindingManager();
+        instance.setBindingManager(bindingManager);
         instance.setDataValue(dataValue);
         assertEquals("Bill",instance.getDataValue());
         

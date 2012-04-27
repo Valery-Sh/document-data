@@ -13,23 +13,23 @@ import java.util.Map;
  *
  * @author Valery
  */
-public class DefaultBinderRegistry implements BinderRegistry {
+public class DocumentBindingManager implements BindingManager {
     
     protected String childName;
-    protected List<BinderRegistry> childs;
+    protected List<BindingManager> childs;
     protected Map<String, List<Binder>> binders;
     protected Map<String, List<Binder>> errorBinders;
     protected Document document;
     protected ValidatorCollection validators;
     
-    public DefaultBinderRegistry() {
+    public DocumentBindingManager() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
         validators = new ValidatorCollection();
-        childs = new ArrayList<BinderRegistry>();
+        childs = new ArrayList<BindingManager>();
     }
 
-    protected DefaultBinderRegistry(String childName) {
+    protected DocumentBindingManager(String childName) {
         this();
         this.childName = childName;
     }
@@ -42,7 +42,7 @@ public class DefaultBinderRegistry implements BinderRegistry {
         }
         blist.add(binder);
         binderMap.put(propPath, blist);
-        binder.setRegistry(this);
+        binder.setBindingManager(this);
         
     }
 
@@ -77,8 +77,7 @@ public class DefaultBinderRegistry implements BinderRegistry {
         }
     }
     
-    @Override
-    public void firePropertyChange(String propPath, Object oldValue, Object newValue) {
+    protected void firePropertyChange(String propPath, Object oldValue, Object newValue) {
         List<Binder> blist = binders.get(propPath);
         if (blist == null) {
             return;
@@ -108,14 +107,17 @@ public class DefaultBinderRegistry implements BinderRegistry {
         this.document = document;
         
         if (this.document != null) {
-            this.document.setPropertyChangeHandler(this);
+            //this.document.setPropertyChangeHandler(this);
+            this.document.addDocumentListener(this);
+            
         } else if (old != null) {
-            old.setPropertyChangeHandler(null);
+            //old.setPropertyChangeHandler(null);
+            old.removeDocumentListener(this);
         }
         
         refresh();
         
-        for (BinderRegistry br : childs) {
+        for (BindingManager br : childs) {
             Object d = this.document.get(br.getChildName());
             if (d == null) {
                 br.setDocument(null, false);
@@ -150,7 +152,7 @@ public class DefaultBinderRegistry implements BinderRegistry {
         
         this.resolvePendingChanges();
         
-        for (BinderRegistry br : childs) {
+        for (BindingManager br : childs) {
             Object d = this.document.get(br.getChildName());
             if (d != null && (d instanceof Document)) {
                 br.completeChanges();
@@ -200,8 +202,8 @@ public class DefaultBinderRegistry implements BinderRegistry {
     }
     
     @Override
-    public BinderRegistry createChild(String childName) {
-        BinderRegistry br = new DefaultBinderRegistry(childName);
+    public BindingManager createChild(String childName) {
+        BindingManager br = new DocumentBindingManager(childName);
         childs.add(br);
         if (this.document != null) {
             br.setDocument((Document) document.get(childName), true);
@@ -210,11 +212,29 @@ public class DefaultBinderRegistry implements BinderRegistry {
     }
 
     /*
-     * @Override public BinderRegistry getChild(String propName) { throw new
+     * @Override public BindingManager getChild(String propName) { throw new
      * UnsupportedOperationException("Not supported yet."); }
      */
     @Override
     public String getChildName() {
         return this.childName;
     }
+
+    @Override
+    public void react(DocumentEvent event) {
+        if ( event.getAction().equals(DocumentEvent.Action.propertyChange) ) {
+            this.firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
+        } else if ( event.getAction().equals(DocumentEvent.Action.validate) ) {
+            this.validate(event.getPropertyName(), event.getNewValue());
+        }    
+    }
+/*    public static class DocumentEventHandler implements DocumentListener{
+
+        @Override
+        public void react(DocumentEvent event) {
+            //firePropertyChange(String propPath, Object oldValue,Object newValue);    ;
+        }
+        
+    }
+*/    
 }

@@ -4,7 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface BinderRegistry extends PropertyChangeHandler{
+public interface BindingManager extends DocumentListener{
     void add(Binder binder);
     void remove(Binder binder);
     /**
@@ -12,9 +12,9 @@ public interface BinderRegistry extends PropertyChangeHandler{
      * @param propertyName the name of a property whose type is 
      * <code>org.document.Document</code>.
      * @return a new instance of the class 
-     * <code>org.document.BinderRegistry</code>
+     * <code>org.document.BindingManager</code>
      */
-    BinderRegistry createChild(String propertyName);
+    BindingManager createChild(String propertyName);
     //BinderRegistry getChild(String propName);
     String getChildName();
     Document getDocument();

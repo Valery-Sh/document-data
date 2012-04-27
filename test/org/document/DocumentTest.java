@@ -105,35 +105,25 @@ public class DocumentTest {
         expResult = "PUT 2";
         result = instance.get(key);
         assertEquals(expResult, result);
-        //
-        // When a PropertyChangeHandler is set then it's  firePropertyChange
-        // method must be called
-        //
-        key = 1;
-        value = "PUT 3";
-        MockPropertyChangeHandler h = new MockPropertyChangeHandler();
-        instance.setPropertyChangeHandler(h);
-        instance.put(key, value);
-        assertTrue(h.isFired);
 
     }
 
     /**
-     * Test of setPropertyChangeHandler method, of class Document.
+     * Test of addDocumentListener method, of class Document.
      */
     @Test
-    public void testSetPropertyChangeHandler() {
-        System.out.println("setPropertyChangeHandler");
-        PropertyChangeHandler handler = null;
+    public void testAddDocumentListener() {
+        System.out.println("setAddDocumentListener");
+        DocumentListener l = null;
         Document instance = new DocumentImpl();
-        instance.setPropertyChangeHandler(handler);
+        instance.addDocumentListener(l);
     }
 
     public static class DocumentImpl implements Document {
 
         Map values = new HashMap();
-        PropertyChangeHandler handler;
-
+        DocumentListener docListener;
+        
         @Override
         public Object get(Object key) {
             if (key == null) {
@@ -149,14 +139,38 @@ public class DocumentTest {
             }
             Object oldValue = this.get(key);
             values.put(key, value);
-            if (handler != null) {
-                handler.firePropertyChange(key.toString(), oldValue, value);
+            validate(key,value);
+            if ( docListener != null ) {
+                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.propertyChange);
+                event.setPropertyName(key.toString());
+                event.setOldValue(oldValue);
+                event.setNewValue(value);
+                docListener.react(event);
+
             }
+        }
+        
+
+        @Override
+        public void addDocumentListener(DocumentListener listener) {
+            this.docListener = listener;
         }
 
         @Override
-        public void setPropertyChangeHandler(PropertyChangeHandler handler) {
-            this.handler = handler;
+        public void removeDocumentListener(DocumentListener listener) {
+            this.docListener = null;
+        }
+
+
+        protected void validate(Object key, Object value) {
+            if ( docListener != null ) {
+                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.validate);
+                event.setPropertyName(key.toString());
+                //event.setOldValue(oldValue);
+                event.setNewValue(value);
+                docListener.react(event);
+            }
+
         }
     }//class DocumentImpl
 }

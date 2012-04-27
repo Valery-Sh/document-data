@@ -12,7 +12,7 @@ public class MockBinder implements Binder{
     
     String propName;
     Object component;
-    BinderRegistry registry;
+    BindingManager registry;
     Object componentValue;
     Object dataValue;
     boolean dataChanged;
@@ -38,7 +38,7 @@ public class MockBinder implements Binder{
     }
 
     @Override
-    public void setRegistry(BinderRegistry registry) {
+    public void setBindingManager(BindingManager registry) {
         this.registry = registry;
     }
 

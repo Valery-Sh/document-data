@@ -11,7 +11,7 @@ package org.document;
 public abstract class AbstractBinder implements Binder {
 
     protected String propertyPath;
-    protected BinderRegistry registry;
+    protected BindingManager bindingManager;
 
     @Override
     public String getDataEntityName() {
@@ -21,7 +21,7 @@ public abstract class AbstractBinder implements Binder {
     @Override
     public void dataChanged(Object oldValue, Object newValue) {
         Object convValue = this.componentValueOf(newValue);
-        if ( ! canChangeComponent(convValue) ) {
+        if ( ! needChangeComponent(convValue) ) {
             return;
         }
         setComponentValue(convValue);
@@ -32,7 +32,7 @@ public abstract class AbstractBinder implements Binder {
      * @param value a new value to be assigned
      * @return 
      */
-    protected boolean canChangeComponent(Object value) {
+    protected boolean needChangeComponent(Object value) {
         boolean result = true;
         
         Object currentValue = getComponentValue();
@@ -52,7 +52,7 @@ public abstract class AbstractBinder implements Binder {
      * @param value a new value to be assigned
      * @return 
      */
-    protected boolean canChangeData(Object value) {
+    protected boolean needChangeData(Object value) {
         boolean result = true;
         
         Object currentValue = getDataValue();
@@ -68,35 +68,35 @@ public abstract class AbstractBinder implements Binder {
     }
     
     @Override
-    public void setRegistry(BinderRegistry registry) {
-        this.registry = registry;
+    public void setBindingManager(BindingManager bindingManager) {
+        this.bindingManager = bindingManager;
     }
 
     @Override
     public void componentChanged(Object oldValue, Object newValue) {
-        registry.notifyError(this, null);
+        bindingManager.notifyError(this, null);
         Object convValue = null;
         try {
             convValue = this.dataValueOf(newValue);
-            if ( ! canChangeData(convValue) ) {
+            if ( ! needChangeData(convValue) ) {
                 return;
             }
-            registry.validate(propertyPath, convValue);
+            //bindingManager.validate(propertyPath, convValue);
             setDataValue(convValue);
             //registry.notifyError(this, null);
         } catch(Exception e) {
-            registry.notifyError(this, e);
-            if ( e instanceof ValidationException ) {
-                if ( registry.getDocument() instanceof Editable ) {
-                     setDataValue(convValue);
-                }
-            }
+            bindingManager.notifyError(this, e);
+            //if ( e instanceof ValidationException ) {
+                //if ( bindingManager.getDocument() instanceof Editable ) {
+                //     setDataValue(convValue);
+                //}
+            //}
         }
     }
 
     @Override
     public Object getDataValue() {
-        return registry.getDocument().get(this.propertyPath);
+        return bindingManager.getDocument().get(this.propertyPath);
     }
     /**
      * return current component value 
@@ -105,7 +105,7 @@ public abstract class AbstractBinder implements Binder {
     public abstract Object getComponentValue();
 
     protected void setDataValue(Object dataValue) {
-        this.registry.getDocument().put(propertyPath, dataValue);
+        this.bindingManager.getDocument().put(propertyPath, dataValue);
     }
     
     protected abstract void setComponentValue(Object compValue);

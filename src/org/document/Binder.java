@@ -10,5 +10,5 @@ public interface Binder {
     void componentChanged(Object oldValue, Object newValue);
     Object getDataValue();
     Object getComponentValue();
-    void setRegistry(BinderRegistry registry);
+    void setBindingManager(BindingManager registry);
 }

@@ -10,7 +10,18 @@ import java.util.Map;
 public class DocumentImpl implements Document {
 
     Map values = new HashMap();
-    PropertyChangeHandler handler;
+
+    DocumentListener docListener;
+
+    @Override
+    public void addDocumentListener(DocumentListener listener) {
+        this.docListener = listener;
+    }
+
+    @Override
+    public void removeDocumentListener(DocumentListener listener) {
+        this.docListener = null;
+    }
 
     @Override
     public Object get(Object key) {
@@ -27,24 +38,14 @@ public class DocumentImpl implements Document {
         }
         Object oldValue = this.get(key);
         values.put(key, value);
-        if (handler != null) {
-            handler.firePropertyChange(key.toString(), oldValue, value);
+        if (docListener != null) {
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChange);
+            event.setPropertyName(key.toString());
+            event.setOldValue(oldValue);
+            event.setNewValue(value);
+            docListener.react(event);
+
         }
+
     }
-
-    @Override
-    public void setPropertyChangeHandler(PropertyChangeHandler handler) {
-        this.handler = handler;
-    }
-
-/*    public class PropertyChangeHandlerImpl implements PropertyChangeHandler {
-
-        protected boolean isFired;
-
-        @Override
-        public void firePropertyChange(String propPath, Object oldValue, Object newValue) {
-            isFired = true;
-        }
-    }
-*/
 }

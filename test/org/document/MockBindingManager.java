@@ -8,9 +8,9 @@ package org.document;
  *
  * @author Valery
  */
-public class MockBinderRegistry implements BinderRegistry{
+public class MockBindingManager implements BindingManager{
     protected Document document;
-    public MockBinderRegistry() {
+    public MockBindingManager() {
         document = new MockDocument();
     }
     
@@ -54,13 +54,9 @@ public class MockBinderRegistry implements BinderRegistry{
         
     }
 
-    @Override
-    public void firePropertyChange(String propPath, Object oldValue, Object newValue) {
-        
-    }
 
     @Override
-    public BinderRegistry createChild(String propertyName) {
+    public BindingManager createChild(String propertyName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -72,6 +68,11 @@ public class MockBinderRegistry implements BinderRegistry{
     @Override
     public void completeChanges() {
         
+    }
+
+    @Override
+    public void react(DocumentEvent event) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

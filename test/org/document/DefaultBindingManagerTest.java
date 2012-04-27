@@ -11,9 +11,9 @@ import static org.junit.Assert.*;
  *
  * @author Valery
  */
-public class DefaultBinderRegistryTest {
+public class DefaultBindingManagerTest {
     
-    public DefaultBinderRegistryTest() {
+    public DefaultBindingManagerTest() {
     }
 
     @BeforeClass
@@ -33,16 +33,16 @@ public class DefaultBinderRegistryTest {
     }
 
     /**
-     * Test of add method, of class DefaultBinderRegistry.
+     * Test of add method, of class DocumentBindingManager.
      */
     @Test
     public void testAdd() {
-        System.out.println("DefaultBinderRegistry.add(Binder)");
+        System.out.println("DefaultBindingManager.add(Binder)");
         
         Object component = new MockComponent();
         
         Binder binder = MockBinder.create("firstName", component);
-        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        DocumentBindingManager instance = new DocumentBindingManager();
         instance.add(binder);
         assertEquals(1,instance.binders.size());
         assertTrue(instance.binders.containsKey("firstName"));
@@ -83,18 +83,18 @@ public class DefaultBinderRegistryTest {
     }
 
     /**
-     * Test of remove method, of class DefaultBinderRegistry.
+     * Test of remove method, of class DocumentBindingManager.
      */
     @Test
     public void testRemove() {
-        System.out.println("DefaultBinderRegistry.remove(Binder)");
+        System.out.println("DefaultBindingManager.remove(Binder)");
         //
         // Add two binders 
         //
         Object component = new MockComponent();
         
         Binder binder = MockBinder.create("firstName", component);
-        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        DocumentBindingManager instance = new DocumentBindingManager();
         instance.add(binder);
         Object component1 = new MockComponent();
         Binder binder1 = MockBinder.create("firstName", component1);
@@ -122,16 +122,16 @@ public class DefaultBinderRegistryTest {
         }
     }
     /**
-     * Test of completeChanges method, of class DefaultBinderRegistry.
+     * Test of completeChanges method, of class DocumentBindingManager.
      */
     @Test
     public void testCompleteChanges() {
-        System.out.println("DefaultBinderRegistry.completeChanges");
+        System.out.println("DefaultBindingManager.completeChanges");
         Object component = new MockComponent();
         MockDocument doc = new MockDocument();
         doc.put("firstName", "Bill");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        DocumentBindingManager instance = new DocumentBindingManager();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -147,17 +147,17 @@ public class DefaultBinderRegistryTest {
         
     }
     /**
-     * More complex test of completeChanges method, of class DefaultBinderRegistry.
+     * More complex test of completeChanges method, of class DocumentBindingManager.
      */
     @Test
     public void testCompleteChanges_1() {
-        System.out.println("DefaultBinderRegistry.completeChanges_1");
+        System.out.println("DefaultBindingManager.completeChanges_1");
         DocumentImpl doc = new DocumentImpl();
         doc.put("firstName", "Bill");
         doc.put("height", 175);
         
         Binder binder = new StringBinderImpl("firstName");
-        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        DocumentBindingManager instance = new DocumentBindingManager();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -185,7 +185,7 @@ public class DefaultBinderRegistryTest {
         addrDoc.put("zipCode", 99955);
         doc.put("address", addrDoc);
         
-        BinderRegistry addrInstance = instance.createChild("address");        
+        BindingManager addrInstance = instance.createChild("address");        
         Binder countryBinder = new StringBinderImpl("country");
         Binder zipCodeBinder = new IntegerBinderImpl("zipCode");        
         addrInstance.add(countryBinder);
@@ -211,18 +211,18 @@ public class DefaultBinderRegistryTest {
     }
     
     /**
-     * Test of firePropertyChange method, of class DefaultBinderRegistry.
+     * Test of firePropertyChange method, of class DocumentBindingManager.
      */
     @Test
     public void testFirePropertyChange() {
-        System.out.println("DefaultBinderRegistry.firePropertyChange");
+        System.out.println("DefaultBindingManager.firePropertyChange");
         //
         // Add two binders with the same property name 
         //
         Object component = new MockComponent();
         
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        DocumentBindingManager instance = new DocumentBindingManager();
         instance.add(binder);
         Object component1 = new MockComponent();
         MockBinder binder1 = (MockBinder)MockBinder.create("firstName", component1);
@@ -245,12 +245,12 @@ public class DefaultBinderRegistryTest {
     }
 
     /**
-     * Test of getDocument method, of class DefaultBinderRegistry.
+     * Test of getDocument method, of class DocumentBindingManager.
      */
     @Test
     public void testGetDocument() {
-        System.out.println("DefaultBinderRegistry.getDocument()");
-        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        System.out.println("DefaultBindingManager.getDocument()");
+        DocumentBindingManager instance = new DocumentBindingManager();
         Document doc;
         Document result = instance.getDocument();
         assertNull(result);
@@ -261,12 +261,12 @@ public class DefaultBinderRegistryTest {
     }
 
     /**
-     * Test of setDocument method, of class DefaultBinderRegistry.
+     * Test of setDocument method, of class DocumentBindingManager.
      */
-    @Test
+/*    @Test
     public void testSetDocument() {
-        System.out.println("DefaultBinderRegistry.setDocument(Document,boolean)");
-        DefaultBinderRegistry instance = new DefaultBinderRegistry();
+        System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
+        DocumentBindingManager instance = new DocumentBindingManager();
         DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc,true);        
         Document result = instance.getDocument();
@@ -298,4 +298,46 @@ public class DefaultBinderRegistryTest {
         assertEquals("Tom",binder.getDataValue());
         
     }
+ */
+    
+    /**
+     * Test of setDocument method, of class DocumentBindingManager.
+     */
+    @Test
+    public void testSetDocument() {
+        System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
+        DocumentBindingManager instance = new DocumentBindingManager();
+        DocumentImpl doc = new DocumentImpl();
+        instance.setDocument(doc,true);        
+        Document result = instance.getDocument();
+        assertTrue( doc == result);
+//        assertNotNull(doc.handler);        
+        assertNotNull(doc.docListener);        
+        //
+        // null parameter value
+        //
+        instance.setDocument(null,true);        
+        result = instance.getDocument();
+        assertNull( result);
+        assertNull(doc.docListener);
+        //
+        // change document
+        //
+        Object component = new MockComponent();
+        Document doc1 = new DocumentImpl();
+        doc1.put("firstName", "Jone");
+        MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
+        
+        instance.add(binder);
+        instance.setDocument(doc, true);
+        //
+        // Now firstName = "Bill". We set binder.componentValue to "Tom".
+        // completeChanges() must set binder.dataValue to "Tom".
+        //
+        binder.componentValue = "Tom";
+        instance.completeChanges();
+        assertEquals("Tom",binder.getDataValue());
+        
+    }
+    
 }
