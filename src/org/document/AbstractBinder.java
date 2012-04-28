@@ -81,18 +81,11 @@ public abstract class AbstractBinder implements Binder {
             if ( ! needChangeData(convValue) ) {
                 return;
             }
-            //bindingManager.validate(propertyPath, convValue);
             setDataValue(convValue);
-            //registry.notifyError(this, null);
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
             bindingManager.notifyError(this, e);
-            
-                //if ( bindingManager.getDocument() instanceof Editable ) {
-                //     setDataValue(convValue);
-                //}
-            //}
         }
     }
 
@@ -107,7 +100,8 @@ public abstract class AbstractBinder implements Binder {
     public abstract Object getComponentValue();
 
     protected void setDataValue(Object dataValue) {
-        this.bindingManager.getDocument().put(propertyPath, dataValue);
+        //this.bindingManager.getDocument().put(propertyPath, dataValue);
+        this.bindingManager.getDocument().put(this, dataValue);
     }
     
     protected abstract void setComponentValue(Object compValue);

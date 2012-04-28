@@ -9,7 +9,7 @@ import java.io.Serializable;
 public interface Document extends Serializable {
     
     Object get(Object key);
-    void put(Object key,Object value);
+    boolean put(Object key,Object value);
     void addDocumentListener(DocumentListener listener);
     void removeDocumentListener(DocumentListener listener);    
 }

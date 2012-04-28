@@ -7,6 +7,7 @@ package org.document;
 public interface BindingManager extends DocumentListener{
     void add(Binder binder);
     void remove(Binder binder);
+    
     /**
      * 
      * @param propertyName the name of a property whose type is 

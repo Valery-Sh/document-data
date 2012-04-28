@@ -41,7 +41,7 @@ public class SimpleMapBasedDocument implements Document {
     }
 
     @Override
-    public void put(Object key, Object value) {
+    public boolean put(Object key, Object value) {
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
@@ -57,6 +57,7 @@ public class SimpleMapBasedDocument implements Document {
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
+        return true;
 
     }
     @Override

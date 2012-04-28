@@ -14,6 +14,7 @@ public class DocumentEvent extends EventObject {
     private Object oldValue;
     private Object newValue;    
     private Exception exception;
+    private Binder binder;
     
     public DocumentEvent(Document source) {
         super(source);
@@ -61,6 +62,14 @@ public class DocumentEvent extends EventObject {
 
     public void setException(Exception exception) {
         this.exception = exception;
+    }
+
+    public Binder getBinder() {
+        return binder;
+    }
+
+    public void setBinder(Binder binder) {
+        this.binder = binder;
     }
 
     

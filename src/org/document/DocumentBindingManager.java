@@ -86,6 +86,17 @@ public class DocumentBindingManager implements BindingManager {
             b.dataChanged(oldValue, newValue);
         }
     }
+    protected void firePropertyChange(Binder binder, Object oldValue, Object newValue) {
+        List<Binder> blist = binders.get(binder.getDataEntityName());
+        if (blist == null) {
+            return;
+        }
+        for (Binder b : blist) {
+            if ( b == binder )
+                continue;
+            b.dataChanged(oldValue, newValue);
+        }
+    }
 
     @Override
     public Document getDocument() {
@@ -239,7 +250,8 @@ public class DocumentBindingManager implements BindingManager {
     @Override
     public void react(DocumentEvent event) {
         if (event.getAction().equals(DocumentEvent.Action.propertyChangeNotify)) {
-            this.firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
+            //this.firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
+            this.firePropertyChange(event.getBinder(), event.getOldValue(), event.getNewValue());            
         } else if (event.getAction().equals(DocumentEvent.Action.validateProperty)) {
             this.validate(event.getPropertyName(), event.getNewValue());
         } else if (event.getAction().equals(DocumentEvent.Action.validateErrorNotify)) {
