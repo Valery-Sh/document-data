@@ -19,6 +19,7 @@ public interface BindingManager extends DocumentListener{
     String getChildName();
     Document getDocument();
     void setDocument(Document document,boolean completeChanges);
+    void setDocument(HasDocument hasDocument,boolean completeChanges);
     void completeChanges();
     ValidatorCollection getValidators();
     void validate(String propPath,Object value) throws ValidationException;

@@ -4,6 +4,6 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface Editable {
-    boolean isEditing();
+public interface HasDocument {
+    Document getDocument();
 }

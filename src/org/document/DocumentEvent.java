@@ -66,8 +66,9 @@ public class DocumentEvent extends EventObject {
     
     public enum Action {
         propertyChangeNotify,
+        validateErrorNotify,
         validateProperty,
-        validateAllProperties,
-        validateErrorNotify
+        validateAllProperties
+        
     }
 }//class DocumentEvent

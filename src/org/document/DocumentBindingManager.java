@@ -91,6 +91,11 @@ public class DocumentBindingManager implements BindingManager {
     public Document getDocument() {
         return this.document;
     }
+    
+    @Override
+    public void setDocument(HasDocument hasDocument, boolean completeChanges) {
+        this.setDocument(hasDocument.getDocument(), completeChanges);
+    }
 
     @Override
     public void setDocument(Document document, boolean completeChanges) {
@@ -120,7 +125,7 @@ public class DocumentBindingManager implements BindingManager {
         for (BindingManager br : childs) {
             Object d = this.document.get(br.getChildName());
             if (d == null) {
-                br.setDocument(null, false);
+                br.setDocument((Document)null, false);
             } else if (d instanceof Document) {
                 br.setDocument((Document) d, false);
             }
@@ -243,13 +248,4 @@ public class DocumentBindingManager implements BindingManager {
             validators.validateProperties((Document)event.getSource());
         }
     }
-    /*
-     * public static class DocumentEventHandler implements DocumentListener{
-     *
-     * @Override public void react(DocumentEvent event) {
-     * //firePropertyChange(String propPath, Object oldValue,Object newValue); ;
-     * }
-     *
-     * }
-     */
 }
