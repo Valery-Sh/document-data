@@ -36,8 +36,8 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
      * is used by binders. The latter pass themselves as a first parameter
      * of the method.
      * 
-     * @param key
-     * @param value 
+     * @param key a property name or an instance of the property binder.
+     * @param value the value to be saved by a document.
      */
     @Override
     public void put(Object key, Object value) {
