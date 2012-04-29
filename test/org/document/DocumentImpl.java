@@ -36,11 +36,22 @@ public class DocumentImpl implements Document {
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
-        Object oldValue = this.get(key);
-        values.put(key, value);
+        String pname;
+        Binder binder = null;
+        
+        if ( key instanceof Binder) {
+            pname = ((Binder)key).getDataEntityName();
+            binder = (Binder)key;
+        } else {
+            pname = key.toString();
+        }
+        
+        Object oldValue = this.get(pname);
+        values.put(pname, value);
         if (docListener != null) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
-            event.setPropertyName(key.toString());
+            event.setPropertyName(pname);
+            event.setBinder(binder);
             event.setOldValue(oldValue);
             event.setNewValue(value);
             docListener.react(event);

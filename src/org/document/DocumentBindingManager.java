@@ -77,8 +77,9 @@ public class DocumentBindingManager implements BindingManager {
         }
     }
 
-    protected void firePropertyChange(String propPath, Object oldValue, Object newValue) {
-        List<Binder> blist = binders.get(propPath);
+    protected void firePropertyChange(String propName,Object oldValue, Object newValue) {
+
+        List<Binder> blist = binders.get(propName);
         if (blist == null) {
             return;
         }
@@ -86,6 +87,7 @@ public class DocumentBindingManager implements BindingManager {
             b.dataChanged(oldValue, newValue);
         }
     }
+
     protected void firePropertyChange(Binder binder, Object oldValue, Object newValue) {
         List<Binder> blist = binders.get(binder.getDataEntityName());
         if (blist == null) {
@@ -250,8 +252,11 @@ public class DocumentBindingManager implements BindingManager {
     @Override
     public void react(DocumentEvent event) {
         if (event.getAction().equals(DocumentEvent.Action.propertyChangeNotify)) {
-            //this.firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
-            this.firePropertyChange(event.getBinder(), event.getOldValue(), event.getNewValue());            
+            if ( event.getBinder() == null ) {
+                firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
+            } else {
+                firePropertyChange(event.getBinder(), event.getOldValue(), event.getNewValue());            
+            }
         } else if (event.getAction().equals(DocumentEvent.Action.validateProperty)) {
             this.validate(event.getPropertyName(), event.getNewValue());
         } else if (event.getAction().equals(DocumentEvent.Action.validateErrorNotify)) {

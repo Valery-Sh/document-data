@@ -26,23 +26,44 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
     public Object get(Object key) {
         return DataUtils.getValue(key.toString(), source);
     }
-
+    /**
+     * The <code>key</code> parameter may of type {@link Binder} or any type
+     * whose <code>key.toString</code> value represents a property name.
+     * When the given property changes then the method notifies all 
+     * registered binders. But when the <code>key</code> parameter is instance
+     * of <code>Binder</code> then the method doesn't notify that binder.
+     * Calling a method with a parameter of type <code>Binder</code> 
+     * is used by binders. The latter pass themselves as a first parameter
+     * of the method.
+     * 
+     * @param key
+     * @param value 
+     */
     @Override
-    public boolean put(Object key, Object value) {
+    public void put(Object key, Object value) {
 
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
+        String propertyName;
+        Binder binder = null;
         
-        String propertyName = (key instanceof Binder) ? ((Binder) key).getDataEntityName() : key.toString();
+        if ( key instanceof Binder ) {
+            propertyName = ((Binder) key).getDataEntityName();            
+            binder = (Binder)key;
+        } else {
+            propertyName = key.toString();
+            
+        }
         
-        Object oldValue = this.get(propertyName);        
+        
+        Object oldValue = get(propertyName);        
         /**
          * To avoid cyclic 'put' method invocation we do nothing
          * when an old value equals to a new one
          */
         if ( DataUtils.equals(oldValue,value)) {
-            return false;
+            return;
         }
         
         if (!state.isEditing()) {
@@ -70,16 +91,20 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             if (!docListeners.isEmpty()) {
                 DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateErrorNotify);
                 event.setPropertyName(propertyName);
+                event.setBinder(binder);
                 event.setOldValue(oldValue);
                 event.setNewValue(value);
                 event.setException(e);
                 fireDocumentEvent(event);
             }
-            return false;
+            return;
             
         }
-        DataUtils.setValue(propertyName.toString(), source, value);
-        
+        /**
+         * Here just calls
+         * DataUtils.setValue(propertyName.toString(), source, value);
+         */
+        setPropertyValue(propertyName.toString(), value);
         //Object v = DataUtils.getValue(propertyName.toString(), source);
 /*        boolean b = true;
         if (oldValue == null && value == null) {
@@ -97,13 +122,13 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
 
         if (!docListeners.isEmpty()) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
-            event.setBinder((Binder) key);
-            event.setPropertyName(propertyName.toString());
+            event.setPropertyName(propertyName);
+            event.setBinder(binder);
             event.setOldValue(oldValue);
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
-        return true;
+        return;
     }
 
     @Override
@@ -119,10 +144,14 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
     @Override
     public DocumentState getDocumentState() {
         return state;
-
     }
-
-    public void validate(Object key, Object value) {
+    /**
+     * 
+     * @param key
+     * @param value
+     * @throws ValidationException 
+     */
+    public void validate(Object key, Object value) throws ValidationException {
         if (!docListeners.isEmpty()) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateProperty);
             event.setPropertyName(key.toString());
@@ -130,7 +159,9 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             fireDocumentEvent(event);
         }
     }
-
+    /**
+     * 
+     */
     protected void validateProperties() {
         if (!docListeners.isEmpty()) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateAllProperties);
@@ -138,13 +169,30 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         }
 
     }
-
+    /**
+     * The method is defined in order to easy override in a subclass
+     * without a need to override the <code>put</code> method.
+     * @param name string property name
+     * @param value a value to be set
+     */
+    protected void setPropertyValue(String name, Object value) {
+        DataUtils.setValue(name, source, value);        
+    }
+    /**
+     * Notifies all registered listeners of type 
+     * {@link org.document.DocumentListener } when an event of type
+     * {@link org.document.DocumentEvent } arises.
+     * @param event an event of type <code>DocumentEvent</code>
+     */
     private void fireDocumentEvent(DocumentEvent event) {
         for (DocumentListener l : docListeners) {
             l.react(event);
         }
     }
-
+    
+    /**
+     * 
+     */
     protected static class BeanDocumentState implements DocumentState {
 
         private boolean editing;

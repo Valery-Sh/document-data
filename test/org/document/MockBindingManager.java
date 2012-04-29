@@ -76,7 +76,11 @@ public class MockBindingManager implements BindingManager{
 
     @Override
     public void react(DocumentEvent event) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setDocument(HasDocument hasDocument, boolean completeChanges) {
+        this.document = hasDocument.getDocument();
     }
     
 }

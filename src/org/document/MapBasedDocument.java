@@ -29,7 +29,7 @@ public class MapBasedDocument implements Document, HasDocumentState {
     }
 
     @Override
-    public boolean put(Object key, Object value) {
+    public void put(Object key, Object value) {
         
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
@@ -53,7 +53,7 @@ public class MapBasedDocument implements Document, HasDocumentState {
                 event.setException(e);
                 fireDocumentEvent(event);
             }
-            return false;
+            return;
         }
 
         source.put(key, value);
@@ -65,7 +65,7 @@ public class MapBasedDocument implements Document, HasDocumentState {
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
-        return true;
+        return;
     }
 
     @Override

@@ -23,7 +23,11 @@ public class MockDocument implements Document{
 
     @Override
     public void put(Object key, Object value) {
-        data.put(key, value);
+        if ( key instanceof Binder ) {
+            data.put( ((Binder)key).getDataEntityName(),value);
+        } else {
+            data.put(key, value);
+        }
     }
 
 
