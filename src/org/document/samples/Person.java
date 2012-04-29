@@ -15,7 +15,7 @@ import org.document.HasDocument;
  */
 public class Person implements HasDocument {
 
-    protected Document document;
+    protected BeanBasedDocument document;
 
     public Person() {
         this.document = new BeanBasedDocument(this);
@@ -54,10 +54,10 @@ public class Person implements HasDocument {
     }
 
     public void setFirstName(String firstName) {
+        document.validate("firstName", firstName);
         this.firstName = firstName;
         document.put("firstName", firstName);
     }
-
     public int getId() {
         return id;
     }

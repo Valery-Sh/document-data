@@ -33,13 +33,22 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
-
+        
         String propertyName = (key instanceof Binder) ? ((Binder) key).getDataEntityName() : key.toString();
+        
+        Object oldValue = this.get(propertyName);        
+        /**
+         * To avoid cyclic 'put' method invocation we do nothing
+         * when an old value equals to a new one
+         */
+        if ( DataUtils.equals(oldValue,value)) {
+            return false;
+        }
+        
         if (!state.isEditing()) {
             state.setEditing(true);
         }
 
-        Object oldValue = this.get(propertyName);
         state.dirtyEditValues.put(propertyName, value);
 
         try {
@@ -47,7 +56,7 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             state.validEditValues.put(propertyName, value);
         } catch (ValidationException e) {
 
-            if (value != null && value.equals(oldValue)
+/*            if (value != null && value.equals(oldValue)
                     || oldValue != null && oldValue.equals(value)
                     || oldValue == null && value == null) {
                 Object v = state.validEditValues.get(propertyName);
@@ -57,7 +66,7 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
                 } catch (ValidationException e1) {
                 }
             } 
-
+*/
             if (!docListeners.isEmpty()) {
                 DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateErrorNotify);
                 event.setPropertyName(propertyName);
@@ -69,8 +78,10 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             return false;
             
         }
+        DataUtils.setValue(propertyName.toString(), source, value);
+        
         //Object v = DataUtils.getValue(propertyName.toString(), source);
-        boolean b = true;
+/*        boolean b = true;
         if (oldValue == null && value == null) {
             b = false;
         } else if (oldValue != null && oldValue.equals(value)) {
@@ -79,11 +90,10 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             b = false;
         }
         if (b) {
-            DataUtils.setValue(propertyName.toString(), source, value);
         } else {
             return false;
         }
-        //source.put(key, value);
+        */
 
         if (!docListeners.isEmpty()) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
@@ -112,14 +122,13 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
 
     }
 
-    protected void validate(Object key, Object value) {
+    public void validate(Object key, Object value) {
         if (!docListeners.isEmpty()) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateProperty);
             event.setPropertyName(key.toString());
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
-
     }
 
     protected void validateProperties() {
