@@ -19,7 +19,7 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         this.state = new BeanDocumentState(this);
         this.source = source;
         this.docListeners = new ArrayList<DocumentListener>();
-        this.state.fillValidEditValues();
+//        this.state.fillValidEditValues();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
 
         try {
             validate(propertyName, value);
-            state.validEditValues.put(propertyName, value);
+            //state.validEditValues.put(propertyName, value);
         } catch (ValidationException e) {
 
 /*            if (value != null && value.equals(oldValue)
@@ -199,18 +199,18 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         private Document document;
         private Map beforeEditValues;
         protected Map dirtyEditValues;
-        protected Map validEditValues;
+        //protected Map validEditValues;
 
         public BeanDocumentState(Document document) {
             this.document = document;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
-            validEditValues = new HashMap();
+            //validEditValues = new HashMap();
         }
         
-        protected void fillValidEditValues() {
-            DataUtils.putAll(validEditValues, ((BeanBasedDocument) document).source);
-        }
+//        protected void fillValidEditValues() {
+//            DataUtils.putAll(validEditValues, ((BeanBasedDocument) document).source);
+//        }
         
         @Override
         public boolean isEditing() {
@@ -242,9 +242,6 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
                 DataUtils.putAll(beforeEditValues, d.source);
                 dirtyEditValues.clear();
                 dirtyEditValues.putAll(beforeEditValues);
-
-//                validEditValues.clear();
-//                validEditValues.putAll(beforeEditValues);
                 this.editing = editing;
             }
         }
