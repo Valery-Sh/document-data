@@ -12,7 +12,7 @@ public class MockBinder implements Binder{
     
     String propName;
     Object component;
-    BindingManager registry;
+    DocumentBinding registry;
     Object componentValue;
     Object dataValue;
     boolean dataChanged;
@@ -27,7 +27,7 @@ public class MockBinder implements Binder{
     }
     
     @Override
-    public String getDataEntityName() {
+    public String getPropertyName() {
         return this.propName;
     }
 
@@ -38,7 +38,7 @@ public class MockBinder implements Binder{
     }
 
     @Override
-    public void setBindingManager(BindingManager registry) {
+    public void setDocumentBinding(DocumentBinding registry) {
         this.registry = registry;
     }
 

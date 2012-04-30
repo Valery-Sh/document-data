@@ -40,7 +40,7 @@ public class DocumentImpl implements Document {
         Binder binder = null;
         
         if ( key instanceof Binder) {
-            pname = ((Binder)key).getDataEntityName();
+            pname = ((Binder)key).getPropertyName();
             binder = (Binder)key;
         } else {
             pname = key.toString();

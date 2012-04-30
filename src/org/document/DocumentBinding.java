@@ -4,7 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface BindingManager extends DocumentListener{
+public interface DocumentBinding extends DocumentListener{
     void add(Binder binder);
     void remove(Binder binder);
     
@@ -13,9 +13,9 @@ public interface BindingManager extends DocumentListener{
      * @param propertyName the name of a property whose type is 
      * <code>org.document.Document</code>.
      * @return a new instance of the class 
-     * <code>org.document.BindingManager</code>
+     * <code>org.document.DocumentBinding</code>
      */
-    BindingManager createChild(String propertyName);
+    DocumentBinding createChild(String propertyName);
     //BinderRegistry getChild(String propName);
     String getChildName();
     Document getDocument();

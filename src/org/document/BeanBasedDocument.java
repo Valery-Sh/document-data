@@ -49,7 +49,7 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         Binder binder = null;
         
         if ( key instanceof Binder ) {
-            propertyName = ((Binder) key).getDataEntityName();            
+            propertyName = ((Binder) key).getPropertyName();            
             binder = (Binder)key;
         } else {
             propertyName = key.toString();

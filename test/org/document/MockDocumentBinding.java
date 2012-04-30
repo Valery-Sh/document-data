@@ -8,9 +8,9 @@ package org.document;
  *
  * @author Valery
  */
-public class MockBindingManager implements BindingManager{
+public class MockDocumentBinding implements DocumentBinding{
     protected Document document;
-    public MockBindingManager() {
+    public MockDocumentBinding() {
         document = new MockDocument();
     }
     
@@ -60,7 +60,7 @@ public class MockBindingManager implements BindingManager{
 
 
     @Override
-    public BindingManager createChild(String propertyName) {
+    public DocumentBinding createChild(String propertyName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

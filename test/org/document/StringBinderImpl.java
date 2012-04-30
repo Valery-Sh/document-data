@@ -13,7 +13,7 @@ public class StringBinderImpl  extends AbstractBinder{
     Object componentValue;
     
     public StringBinderImpl(String propName) {
-        this.propertyPath = propName;
+        this.propertyName = propName;
     }   
     
     @Override

@@ -44,8 +44,6 @@ public class AbstractBinderTest {
         // oldValue == null && newValue == null
         //
         AbstractBinder instance = new AbstractBinderImpl();
-//        BindingManager bindingManager = new MockBindingManager();
-//        instance.setBindingManager(bindingManager);
         
         instance.dataChanged(oldValue, newValue);
         assertNull(instance.getComponentValue());
@@ -72,15 +70,15 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of setBindingManager method, of class AbstractBinder.
+     * Test of setDocumentBinding method, of class AbstractBinder.
      */
     @Test
-    public void testBindingManager() {
-        System.out.println("setBindingManager");
-        BindingManager bindingManager = new MockBindingManager();
+    public void testSetDocumentBinding() {
+        System.out.println("setDocumentBinding");
+        DocumentBinding binding = new MockDocumentBinding();
         AbstractBinder instance = new AbstractBinderImpl();
-        instance.setBindingManager(bindingManager);
-        assertTrue(bindingManager == instance.bindingManager);
+        instance.setDocumentBinding(binding);
+        assertTrue(binding == instance.binding);
     }
 
     /**
@@ -95,8 +93,8 @@ public class AbstractBinderTest {
         // oldValue == null && newValue == null
         //
         AbstractBinder instance = new AbstractBinderImpl();
-        BindingManager bindingManager = new MockBindingManager();
-        instance.setBindingManager(bindingManager);
+        DocumentBinding binding = new MockDocumentBinding();
+        instance.setDocumentBinding(binding);
         
         instance.componentChanged(oldValue, newValue);
         assertNull(instance.getDataValue());
@@ -157,8 +155,8 @@ public class AbstractBinderTest {
         System.out.println("setDataValue");
         Object dataValue = "Bill";
         AbstractBinder instance = new AbstractBinderImpl();
-        BindingManager bindingManager = new MockBindingManager();
-        instance.setBindingManager(bindingManager);
+        DocumentBinding binding = new MockDocumentBinding();
+        instance.setDocumentBinding(binding);
         instance.setDataValue(dataValue);
         assertEquals("Bill",instance.getDataValue());
         
@@ -172,8 +170,8 @@ public class AbstractBinderTest {
         System.out.println("getDataValue");
         Object dataValue = "Bill";
         AbstractBinder instance = new AbstractBinderImpl();
-        BindingManager bindingManager = new MockBindingManager();
-        instance.setBindingManager(bindingManager);
+        DocumentBinding binding = new MockDocumentBinding();
+        instance.setDocumentBinding(binding);
         instance.setDataValue(dataValue);
         assertEquals("Bill",instance.getDataValue());
         

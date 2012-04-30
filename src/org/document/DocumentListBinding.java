@@ -8,6 +8,6 @@ package org.document;
  *
  * @author Valery
  */
-public class DocumentListBindingManager implements ListBindingManager {
+public class DocumentListBinding implements ListBindingManager {
     
 }

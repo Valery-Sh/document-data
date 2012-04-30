@@ -1,21 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public abstract class AbstractBinder implements Binder {
 
-    protected String propertyPath;
-    protected BindingManager bindingManager;
+    protected String propertyName;
+    protected DocumentBinding binding;
 
     @Override
-    public String getDataEntityName() {
-        return this.propertyPath;
+    public String getPropertyName() {
+        return this.propertyName;
     }
     
     @Override
@@ -68,13 +64,13 @@ public abstract class AbstractBinder implements Binder {
     }
     
     @Override
-    public void setBindingManager(BindingManager bindingManager) {
-        this.bindingManager = bindingManager;
+    public void setDocumentBinding(DocumentBinding binding) {
+        this.binding = binding;
     }
 
     @Override
     public void componentChanged(Object oldValue, Object newValue) {
-        bindingManager.notifyError(this, null);
+        binding.notifyError(this, null);
         Object convValue = null;
         try {
             convValue = this.dataValueOf(newValue);
@@ -85,13 +81,13 @@ public abstract class AbstractBinder implements Binder {
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
-            bindingManager.notifyError(this, e);
+            binding.notifyError(this, e);
         }
     }
 
     @Override
     public Object getDataValue() {
-        return bindingManager.getDocument().get(this.propertyPath);
+        return binding.getDocument().get(this.propertyName);
     }
     /**
      * return current component value 
@@ -100,8 +96,8 @@ public abstract class AbstractBinder implements Binder {
     public abstract Object getComponentValue();
 
     protected void setDataValue(Object dataValue) {
-        //this.bindingManager.getDocument().put(propertyPath, dataValue);
-        this.bindingManager.getDocument().put(this, dataValue);
+        //this.binding.getDocument().put(propertyName, dataValue);
+        this.binding.getDocument().put(this, dataValue);
     }
     
     protected abstract void setComponentValue(Object compValue);

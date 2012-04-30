@@ -11,9 +11,9 @@ import static org.junit.Assert.*;
  *
  * @author Valery
  */
-public class DefaultBindingManagerTest {
+public class DefaultDocumentBindingTest {
     
-    public DefaultBindingManagerTest() {
+    public DefaultDocumentBindingTest() {
     }
 
     @BeforeClass
@@ -33,16 +33,16 @@ public class DefaultBindingManagerTest {
     }
 
     /**
-     * Test of add method, of class DocumentBindingManager.
+     * Test of add method, of class DocumentBinding
      */
     @Test
     public void testAdd() {
-        System.out.println("DefaultBindingManager.add(Binder)");
+        System.out.println("DefaultDocumentBinding.add(Binder)");
         
         Object component = new MockComponent();
         
         Binder binder = MockBinder.create("firstName", component);
-        DocumentBindingManager instance = new DocumentBindingManager();
+        DefaultDocumentBinding instance = new DefaultDocumentBinding();
         instance.add(binder);
         assertEquals(1,instance.binders.size());
         assertTrue(instance.binders.containsKey("firstName"));
@@ -83,18 +83,18 @@ public class DefaultBindingManagerTest {
     }
 
     /**
-     * Test of remove method, of class DocumentBindingManager.
+     * Test of remove method, of class DefaultDocumentBinding.
      */
     @Test
     public void testRemove() {
-        System.out.println("DefaultBindingManager.remove(Binder)");
+        System.out.println("DefaultDocumentBinding.remove(Binder)");
         //
         // Add two binders 
         //
         Object component = new MockComponent();
         
         Binder binder = MockBinder.create("firstName", component);
-        DocumentBindingManager instance = new DocumentBindingManager();
+        DefaultDocumentBinding instance = new DefaultDocumentBinding();
         instance.add(binder);
         Object component1 = new MockComponent();
         Binder binder1 = MockBinder.create("firstName", component1);
@@ -122,16 +122,16 @@ public class DefaultBindingManagerTest {
         }
     }
     /**
-     * Test of completeChanges method, of class DocumentBindingManager.
+     * Test of completeChanges method, of class DefaultDocumentBinding.
      */
     @Test
     public void testCompleteChanges() {
-        System.out.println("DefaultBindingManager.completeChanges");
+        System.out.println("DefaultDocumentBinding.completeChanges");
         Object component = new MockComponent();
         MockDocument doc = new MockDocument();
         doc.put("firstName", "Bill");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        DocumentBindingManager instance = new DocumentBindingManager();
+        DefaultDocumentBinding instance = new DefaultDocumentBinding();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -147,17 +147,17 @@ public class DefaultBindingManagerTest {
         
     }
     /**
-     * More complex test of completeChanges method, of class DocumentBindingManager.
+     * More complex test of completeChanges method, of class DefaultDocumentBinding.
      */
     @Test
     public void testCompleteChanges_1() {
-        System.out.println("DefaultBindingManager.completeChanges_1");
+        System.out.println("DefaultDocumentBinding.completeChanges_1");
         DocumentImpl doc = new DocumentImpl();
         doc.put("firstName", "Bill");
         doc.put("height", 175);
         
         Binder binder = new StringBinderImpl("firstName");
-        DocumentBindingManager instance = new DocumentBindingManager();
+        DefaultDocumentBinding instance = new DefaultDocumentBinding();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -185,7 +185,7 @@ public class DefaultBindingManagerTest {
         addrDoc.put("zipCode", 99955);
         doc.put("address", addrDoc);
         
-        BindingManager addrInstance = instance.createChild("address");        
+        DocumentBinding addrInstance = instance.createChild("address");        
         Binder countryBinder = new StringBinderImpl("country");
         Binder zipCodeBinder = new IntegerBinderImpl("zipCode");        
         addrInstance.add(countryBinder);
@@ -211,18 +211,18 @@ public class DefaultBindingManagerTest {
     }
     
     /**
-     * Test of firePropertyChange method, of class DocumentBindingManager.
+     * Test of firePropertyChange method, of class DefaultDocumentBinding.
      */
     @Test
     public void testFirePropertyChange() {
-        System.out.println("DefaultBindingManager.firePropertyChange");
+        System.out.println("DefaultDocumentBinding.firePropertyChange");
         //
         // Add two binders with the same property name 
         //
         Object component = new MockComponent();
         
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        DocumentBindingManager instance = new DocumentBindingManager();
+        DefaultDocumentBinding instance = new DefaultDocumentBinding();
         instance.add(binder);
         Object component1 = new MockComponent();
         MockBinder binder1 = (MockBinder)MockBinder.create("firstName", component1);
@@ -245,12 +245,12 @@ public class DefaultBindingManagerTest {
     }
 
     /**
-     * Test of getDocument method, of class DocumentBindingManager.
+     * Test of getDocument method, of class DefaultDocumentBinding.
      */
     @Test
     public void testGetDocument() {
-        System.out.println("DefaultBindingManager.getDocument()");
-        DocumentBindingManager instance = new DocumentBindingManager();
+        System.out.println("DefaultDocumentBinding.getDocument()");
+        DefaultDocumentBinding instance = new DefaultDocumentBinding();
         Document doc;
         Document result = instance.getDocument();
         assertNull(result);
@@ -306,7 +306,7 @@ public class DefaultBindingManagerTest {
     @Test
     public void testSetDocument() {
         System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
-        DocumentBindingManager instance = new DocumentBindingManager();
+        DefaultDocumentBinding instance = new DefaultDocumentBinding();
         DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc,true);        
         Document result = instance.getDocument();

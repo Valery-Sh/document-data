@@ -13,36 +13,36 @@ import java.util.Map;
  *
  * @author Valery
  */
-public class DocumentBindingManager implements BindingManager {
+public class DefaultDocumentBinding implements DocumentBinding {
 
     protected String childName;
-    protected List<BindingManager> childs;
+    protected List<DocumentBinding> childs;
     protected Map<String, List<Binder>> binders;
     protected Map<String, List<Binder>> errorBinders;
     protected Document document;
     protected ValidatorCollection validators;
 
-    public DocumentBindingManager() {
+    public DefaultDocumentBinding() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
         validators = new ValidatorCollection();
-        childs = new ArrayList<BindingManager>();
+        childs = new ArrayList<DocumentBinding>();
     }
 
-    protected DocumentBindingManager(String childName) {
+    protected DefaultDocumentBinding(String childName) {
         this();
         this.childName = childName;
     }
 
     protected void add(Binder binder, Map<String, List<Binder>> binderMap) {
-        String propPath = binder.getDataEntityName();
+        String propPath = binder.getPropertyName();
         List<Binder> blist = binderMap.get(propPath);
         if (blist == null) {
             blist = new ArrayList<Binder>();
         }
         blist.add(binder);
         binderMap.put(propPath, blist);
-        binder.setBindingManager(this);
+        binder.setDocumentBinding(this);
 
     }
 
@@ -56,14 +56,14 @@ public class DocumentBindingManager implements BindingManager {
     }
 
     protected void remove(Binder binder, Map<String, List<Binder>> binderMap) {
-        String propPath = binder.getDataEntityName();
+        String propPath = binder.getPropertyName();
         List<Binder> blist = binderMap.get(propPath);
         if (blist == null || blist.isEmpty()) {
             return;
         }
         blist.remove(binder);
         if (blist.isEmpty()) {
-            binderMap.remove(binder.getDataEntityName());
+            binderMap.remove(binder.getPropertyName());
         }
 
     }
@@ -89,7 +89,7 @@ public class DocumentBindingManager implements BindingManager {
     }
 
     protected void firePropertyChange(Binder binder, Object oldValue, Object newValue) {
-        List<Binder> blist = binders.get(binder.getDataEntityName());
+        List<Binder> blist = binders.get(binder.getPropertyName());
         if (blist == null) {
             return;
         }
@@ -135,7 +135,7 @@ public class DocumentBindingManager implements BindingManager {
 
         refresh();
 
-        for (BindingManager br : childs) {
+        for (DocumentBinding br : childs) {
             Object d = this.document.get(br.getChildName());
             if (d == null) {
                 br.setDocument((Document)null, false);
@@ -170,7 +170,7 @@ public class DocumentBindingManager implements BindingManager {
 
         this.resolvePendingChanges();
 
-        for (BindingManager br : childs) {
+        for (DocumentBinding br : childs) {
             Object d = this.document.get(br.getChildName());
             if (d != null && (d instanceof Document)) {
                 br.completeChanges();
@@ -190,7 +190,7 @@ public class DocumentBindingManager implements BindingManager {
 
     @Override
     public void notifyError(Binder source, Exception e) {
-        List<Binder> blist = this.errorBinders.get(source.getDataEntityName());
+        List<Binder> blist = this.errorBinders.get(source.getPropertyName());
         if (blist != null) {
             for (Binder b : blist) {
                 ((ErrorBinder) b).notifyError(source, e);
@@ -231,8 +231,8 @@ public class DocumentBindingManager implements BindingManager {
     }
 
     @Override
-    public BindingManager createChild(String childName) {
-        BindingManager br = new DocumentBindingManager(childName);
+    public DocumentBinding createChild(String childName) {
+        DocumentBinding br = new DefaultDocumentBinding(childName);
         childs.add(br);
         if (this.document != null) {
             br.setDocument((Document) document.get(childName), true);
@@ -240,10 +240,7 @@ public class DocumentBindingManager implements BindingManager {
         return br;
     }
 
-    /*
-     * @Override public BindingManager getChild(String propName) { throw new
-     * UnsupportedOperationException("Not supported yet."); }
-     */
+    
     @Override
     public String getChildName() {
         return this.childName;
