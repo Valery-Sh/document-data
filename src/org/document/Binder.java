@@ -10,5 +10,5 @@ public interface Binder {
     void componentChanged(Object oldValue, Object newValue);
     Object getDataValue();
     Object getComponentValue();
-    void setDocumentBinding(DocumentBinding registry);
+    void setDocumentBinding(DocumentBinding binding);
 }
