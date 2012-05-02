@@ -105,12 +105,56 @@ public class DefaultDocumentBinding implements DocumentBinding {
         return this.document;
     }
     
-    @Override
+/*    @Override
     public void setDocument(HasDocument hasDocument, boolean completeChanges) {
         this.setDocument(hasDocument.getDocument(), completeChanges);
     }
+*/
+    @Override
+    public void setDocument(HasDocument hasDocument) {
+        this.setDocument(hasDocument.getDocument());
+    }
 
     @Override
+    public void setDocument(Document document) {
+
+        Document old = this.document;
+        if (old != null) {
+            completeChanges();
+        }
+
+        this.document = document;
+
+        if (this.document != null) {
+            //this.document.setPropertyChangeHandler(this);
+            this.document.addDocumentListener(this);
+
+        } else if (old != null) {
+            //old.setPropertyChangeHandler(null);
+            old.removeDocumentListener(this);
+        }
+
+        refresh();
+        for (DocumentBinding child : childs) {
+            Object d = this.document.get(child.getChildName());
+            if (d == null) {
+                child.setDocument((Document)null);
+            } else if (d instanceof Document) {
+                child.setDocument((Document) d);
+            }
+        }
+/*        for (DocumentBinding child : childs) {
+            Object d = this.document.get(child.getChildName());
+            if (d == null) {
+                child.setDocument((Document)null, false);
+            } else if (d instanceof Document) {
+                child.setDocument((Document) d, false);
+            }
+        }
+*/
+    }
+    
+/*    @Override
     public void setDocument(Document document, boolean completeChanges) {
 
         Document old = this.document;
@@ -135,16 +179,16 @@ public class DefaultDocumentBinding implements DocumentBinding {
 
         refresh();
 
-        for (DocumentBinding br : childs) {
-            Object d = this.document.get(br.getChildName());
+        for (DocumentBinding child : childs) {
+            Object d = this.document.get(child.getChildName());
             if (d == null) {
-                br.setDocument((Document)null, false);
+                child.setDocument((Document)null, false);
             } else if (d instanceof Document) {
-                br.setDocument((Document) d, false);
+                child.setDocument((Document) d, false);
             }
         }
     }
-
+*/
     protected void refresh() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
@@ -170,12 +214,14 @@ public class DefaultDocumentBinding implements DocumentBinding {
 
         this.resolvePendingChanges();
 
-        for (DocumentBinding br : childs) {
-            Object d = this.document.get(br.getChildName());
+/*        for (DocumentBinding child : childs) {
+            Object d = this.document.get(child.getChildName());
             if (d != null && (d instanceof Document)) {
-                br.completeChanges();
+                child.completeChanges();
             }
         }
+
+*/
     }
 
     /**
@@ -232,12 +278,12 @@ public class DefaultDocumentBinding implements DocumentBinding {
 
     @Override
     public DocumentBinding createChild(String childName) {
-        DocumentBinding br = new DefaultDocumentBinding(childName);
-        childs.add(br);
+        DocumentBinding binding = new DefaultDocumentBinding(childName);
+        childs.add(binding);
         if (this.document != null) {
-            br.setDocument((Document) document.get(childName), true);
+            binding.setDocument((Document) document.get(childName));
         }
-        return br;
+        return binding;
     }
 
     

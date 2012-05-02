@@ -8,6 +8,6 @@ package org.document;
  *
  * @author Valery
  */
-public interface ListBindingManager {
-    
+public interface BindingRecognizer {
+    Object getBindingId(Document document);
 }

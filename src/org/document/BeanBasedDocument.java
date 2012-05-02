@@ -21,7 +21,9 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         this.docListeners = new ArrayList<DocumentListener>();
 //        this.state.fillValidEditValues();
     }
-
+    public T getObject() {
+        return source;
+    }
     @Override
     public Object get(Object key) {
         return DataUtils.getValue(key.toString(), source);

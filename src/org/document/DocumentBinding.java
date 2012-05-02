@@ -4,9 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface DocumentBinding extends DocumentListener{
-    void add(Binder binder);
-    void remove(Binder binder);
+public interface DocumentBinding extends Binding,DocumentListener{
     
     /**
      * 
@@ -18,13 +16,10 @@ public interface DocumentBinding extends DocumentListener{
     DocumentBinding createChild(String propertyName);
     //BinderRegistry getChild(String propName);
     String getChildName();
-    Document getDocument();
-    void setDocument(Document document,boolean completeChanges);
-    void setDocument(HasDocument hasDocument,boolean completeChanges);
-    void completeChanges();
-    ValidatorCollection getValidators();
+//    void setDocument(Document document,boolean completeChanges);
+//    void setDocument(HasDocument hasDocument,boolean completeChanges);
+    void setDocument(HasDocument hasDocument);    
     void validate(String propPath,Object value) throws ValidationException;
-    void validate() throws ValidationException;    
     void notifyError(Binder source,Exception e);
     void notifyError(String propertyName,Exception e);
 }
