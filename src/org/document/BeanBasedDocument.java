@@ -71,25 +71,13 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         if (!state.isEditing()) {
             state.setEditing(true);
         }
-
-        state.dirtyEditValues.put(propertyName, value);
+        if ( binder != null ) {
+            state.dirtyEditValues.put(propertyName, binder.getComponentValue());
+        }
 
         try {
             validate(propertyName, value);
-            //state.validEditValues.put(propertyName, value);
         } catch (ValidationException e) {
-
-/*            if (value != null && value.equals(oldValue)
-                    || oldValue != null && oldValue.equals(value)
-                    || oldValue == null && value == null) {
-                Object v = state.validEditValues.get(propertyName);
-                try {
-                    validate(propertyName, v);
-                    DataUtils.setValue(propertyName, source, v);
-                } catch (ValidationException e1) {
-                }
-            } 
-*/
             if (!docListeners.isEmpty()) {
                 DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateErrorNotify);
                 event.setPropertyName(propertyName);
@@ -107,20 +95,6 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
          * DataUtils.setValue(propertyName.toString(), source, value);
          */
         setPropertyValue(propertyName.toString(), value);
-        //Object v = DataUtils.getValue(propertyName.toString(), source);
-/*        boolean b = true;
-        if (oldValue == null && value == null) {
-            b = false;
-        } else if (oldValue != null && oldValue.equals(value)) {
-            b = false;
-        } else if (value != null && value.equals(oldValue)) {
-            b = false;
-        }
-        if (b) {
-        } else {
-            return false;
-        }
-        */
 
         if (!docListeners.isEmpty()) {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
@@ -130,7 +104,7 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
-        return;
+
     }
 
     @Override
@@ -246,6 +220,11 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
                 dirtyEditValues.putAll(beforeEditValues);
                 this.editing = editing;
             }
+        }
+
+        @Override
+        public Map<String, Object> getDirtyValues() {
+            return this.dirtyEditValues;
         }
     }//class BeanDocumentState
 }//class BeanBasedDocument

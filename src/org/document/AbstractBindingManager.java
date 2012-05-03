@@ -54,7 +54,8 @@ public class AbstractBindingManager implements DocumentListener {
         if (old != null) {
             DocumentBinding b = getBinding(old);
             if ( b != null ) {
-                b.setDocument(old);
+                //b.setDocument(old);
+                b.completeChanges();
             }
         }
         if (document != null) {

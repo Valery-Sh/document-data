@@ -4,6 +4,8 @@
  */
 package org.document;
 
+import java.util.Map;
+
 /**
  *
  * @author Valery
@@ -11,6 +13,7 @@ package org.document;
 public interface DocumentState {
     boolean isEditing();
     void setEditing(boolean editing);
+    Map<String,Object> getDirtyValues();
     //Object getEditingObject();
     //void setEditingObject(Object obj);
     //Document getCurrent();

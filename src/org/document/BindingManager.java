@@ -8,19 +8,19 @@ import java.util.Map;
  *
  * @author V. Shishkin
  */
-public class BindingManager extends AbstractBindingManager {
+public class BindingManager<T extends HasDocument> extends AbstractBindingManager {
 
-    protected List<HasDocument> sourceList;
-    protected HasDocument selected;
+    protected List<T> sourceList;
+    protected T selected;
     
-    public BindingManager(List<HasDocument> sourceList) {
+    public BindingManager(List<T> sourceList) {
         super();
         this.sourceList = sourceList;
     }
-    public HasDocument getSelected() {
+    public T getSelected() {
         return selected;
     }
-    public void setSelected(HasDocument selected) {
+    public void setSelected(T selected) {
         this.setDocument(selected.getDocument());
         this.selected = selected;
     }

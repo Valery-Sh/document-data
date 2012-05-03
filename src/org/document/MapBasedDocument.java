@@ -155,5 +155,10 @@ public class MapBasedDocument implements Document, HasDocumentState {
             }
         }
 
+        @Override
+        public Map<String, Object> getDirtyValues() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     }
 }

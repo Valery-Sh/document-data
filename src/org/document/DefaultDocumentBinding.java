@@ -14,6 +14,7 @@ import java.util.Map;
  * @author Valery
  */
 public class DefaultDocumentBinding implements DocumentBinding {
+
     protected Object id;
     protected String childName;
     protected List<DocumentBinding> childs;
@@ -26,7 +27,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
         this();
         this.id = id;
     }
-    
+
     public DefaultDocumentBinding() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
@@ -38,8 +39,11 @@ public class DefaultDocumentBinding implements DocumentBinding {
         this();
         this.childName = childName;
     }
+
     /**
-     * The <code>id</code> is a user defined identifier.
+     * The
+     * <code>id</code> is a user defined identifier.
+     *
      * @return user defined identifier
      */
     @Override
@@ -90,7 +94,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
         }
     }
 
-    protected void firePropertyChange(String propName,Object oldValue, Object newValue) {
+    protected void firePropertyChange(String propName, Object oldValue, Object newValue) {
 
         List<Binder> blist = binders.get(propName);
         if (blist == null) {
@@ -107,8 +111,9 @@ public class DefaultDocumentBinding implements DocumentBinding {
             return;
         }
         for (Binder b : blist) {
-            if ( b == binder )
+            if (b == binder) {
                 continue;
+            }
             b.dataChanged(oldValue, newValue);
         }
     }
@@ -117,12 +122,12 @@ public class DefaultDocumentBinding implements DocumentBinding {
     public Document getDocument() {
         return this.document;
     }
-    
-/*    @Override
-    public void setDocument(HasDocument hasDocument, boolean completeChanges) {
-        this.setDocument(hasDocument.getDocument(), completeChanges);
-    }
-*/
+
+    /*
+     * @Override public void setDocument(HasDocument hasDocument, boolean
+     * completeChanges) { this.setDocument(hasDocument.getDocument(),
+     * completeChanges); }
+     */
     @Override
     public void setDocument(HasDocument hasDocument) {
         this.setDocument(hasDocument.getDocument());
@@ -134,6 +139,10 @@ public class DefaultDocumentBinding implements DocumentBinding {
         Document old = this.document;
         if (old != null) {
             completeChanges();
+            if (old instanceof HasDocumentState) {
+                DocumentState state = ((HasDocumentState) old).getDocumentState();
+                state.setEditing(false);
+            }
         }
 
         this.document = document;
@@ -147,65 +156,68 @@ public class DefaultDocumentBinding implements DocumentBinding {
             old.removeDocumentListener(this);
         }
 
+
         refresh();
+
+        if (document instanceof HasDocumentState) {
+            DocumentState state = ((HasDocumentState) document).getDocumentState();
+            if (state.isEditing()) {
+                for (Map.Entry<String, List<Binder>> e : binders.entrySet()) {
+                    List<Binder> l = e.getValue();
+                    if (l == null) {
+                        continue;
+                    }
+                    for (Binder b : l) {
+                        b.setDirtyComponentValue(state.getDirtyValues().get(b.getPropertyName()));
+                    }
+                }
+                this.completeChanges();
+            }
+        }
         for (DocumentBinding child : childs) {
             Object d = this.document.get(child.getChildName());
             if (d == null) {
-                child.setDocument((Document)null);
+                child.setDocument((Document) null);
             } else if (d instanceof Document) {
                 child.setDocument((Document) d);
             }
         }
-/*        for (DocumentBinding child : childs) {
-            Object d = this.document.get(child.getChildName());
-            if (d == null) {
-                child.setDocument((Document)null, false);
-            } else if (d instanceof Document) {
-                child.setDocument((Document) d, false);
-            }
-        }
-*/
+        /*
+         * for (DocumentBinding child : childs) { Object d =
+         * this.document.get(child.getChildName()); if (d == null) {
+         * child.setDocument((Document)null, false); } else if (d instanceof
+         * Document) { child.setDocument((Document) d, false); } }
+         */
     }
-    
-/*    @Override
-    public void setDocument(Document document, boolean completeChanges) {
 
-        Document old = this.document;
-        if (old != null) {
-            if (completeChanges) {
-                completeChanges();
-            } else {
-                this.resolvePendingChanges();
-            }
-        }
-
-        this.document = document;
-
-        if (this.document != null) {
-            //this.document.setPropertyChangeHandler(this);
-            this.document.addDocumentListener(this);
-
-        } else if (old != null) {
-            //old.setPropertyChangeHandler(null);
-            old.removeDocumentListener(this);
-        }
-
-        refresh();
-
-        for (DocumentBinding child : childs) {
-            Object d = this.document.get(child.getChildName());
-            if (d == null) {
-                child.setDocument((Document)null, false);
-            } else if (d instanceof Document) {
-                child.setDocument((Document) d, false);
-            }
-        }
-    }
-*/
+    /*
+     * @Override public void setDocument(Document document, boolean
+     * completeChanges) {
+     *
+     * Document old = this.document; if (old != null) { if (completeChanges) {
+     * completeChanges(); } else { this.resolvePendingChanges(); } }
+     *
+     * this.document = document;
+     *
+     * if (this.document != null) {
+     * //this.document.setPropertyChangeHandler(this);
+     * this.document.addDocumentListener(this);
+     *
+     * } else if (old != null) { //old.setPropertyChangeHandler(null);
+     * old.removeDocumentListener(this); }
+     *
+     * refresh();
+     *
+     * for (DocumentBinding child : childs) { Object d =
+     * this.document.get(child.getChildName()); if (d == null) {
+     * child.setDocument((Document)null, false); } else if (d instanceof
+     * Document) { child.setDocument((Document) d, false); } } }
+     */
     protected void refresh() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
-                b.dataChanged(null, b.getDataValue());
+                //b.dataChanged(null, b.getDataValue());
+                b.init(document.get(b.getPropertyName()));
                 notifyError(b, null);
             }
         }
@@ -227,14 +239,12 @@ public class DefaultDocumentBinding implements DocumentBinding {
 
         this.resolvePendingChanges();
 
-/*        for (DocumentBinding child : childs) {
-            Object d = this.document.get(child.getChildName());
-            if (d != null && (d instanceof Document)) {
-                child.completeChanges();
-            }
-        }
-
-*/
+        /*
+         * for (DocumentBinding child : childs) { Object d =
+         * this.document.get(child.getChildName()); if (d != null && (d
+         * instanceof Document)) { child.completeChanges(); } }
+         *
+         */
     }
 
     /**
@@ -264,6 +274,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
          * ((ErrorBinder) b).notifyError(source, e); } }
          */
     }
+
     @Override
     public void notifyError(String propertyName, Exception e) {
         List<Binder> blist = this.errorBinders.get(propertyName);
@@ -299,7 +310,6 @@ public class DefaultDocumentBinding implements DocumentBinding {
         return binding;
     }
 
-    
     @Override
     public String getChildName() {
         return this.childName;
@@ -308,17 +318,27 @@ public class DefaultDocumentBinding implements DocumentBinding {
     @Override
     public void react(DocumentEvent event) {
         if (event.getAction().equals(DocumentEvent.Action.propertyChangeNotify)) {
-            if ( event.getBinder() == null ) {
+            if (event.getBinder() == null) {
                 firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
             } else {
-                firePropertyChange(event.getBinder(), event.getOldValue(), event.getNewValue());            
+                firePropertyChange(event.getBinder(), event.getOldValue(), event.getNewValue());
             }
         } else if (event.getAction().equals(DocumentEvent.Action.validateProperty)) {
             this.validate(event.getPropertyName(), event.getNewValue());
         } else if (event.getAction().equals(DocumentEvent.Action.validateErrorNotify)) {
             notifyError(event.getPropertyName(), event.getException());
         } else if (event.getAction().equals(DocumentEvent.Action.validateAllProperties)) {
-            validators.validateProperties((Document)event.getSource());
+            //validators.validateProperties((Document) event.getSource());
+            for (Map.Entry<String, List<Binder>> e : binders.entrySet()) {
+                List<Binder> l = e.getValue();
+                if (l == null) {
+                    continue;
+                }
+                for (Binder b : l) {
+                    this.validate(b.getPropertyName(), b.getComponentValue());
+                }
+            }
+
         }
     }
 }

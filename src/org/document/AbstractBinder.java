@@ -94,13 +94,19 @@ public abstract class AbstractBinder implements Binder {
      */
     @Override
     public abstract Object getComponentValue();
-
+    
+    @Override
+    public void init(Object dataValue){
+        
+    }
     protected void setDataValue(Object dataValue) {
         //this.binding.getDocument().put(propertyName, dataValue);
         this.binding.getDocument().put(this, dataValue);
     }
     
     protected abstract void setComponentValue(Object compValue);
+    
+    protected abstract void restoreComponentValue(Object compValue);
 
     
     
