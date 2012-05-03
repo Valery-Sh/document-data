@@ -5,7 +5,7 @@ package org.document;
  * @author V. Shyshkin
  */
 public interface DocumentBinding extends Binding,DocumentListener{
-    
+    Object getId();
     /**
      * 
      * @param propertyName the name of a property whose type is 

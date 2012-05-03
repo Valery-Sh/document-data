@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Valery
  */
 public class DefaultDocumentBinding implements DocumentBinding {
-
+    protected Object id;
     protected String childName;
     protected List<DocumentBinding> childs;
     protected Map<String, List<Binder>> binders;
@@ -22,6 +22,11 @@ public class DefaultDocumentBinding implements DocumentBinding {
     protected Document document;
     protected ValidatorCollection validators;
 
+    public DefaultDocumentBinding(Object id) {
+        this();
+        this.id = id;
+    }
+    
     public DefaultDocumentBinding() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
@@ -32,6 +37,14 @@ public class DefaultDocumentBinding implements DocumentBinding {
     protected DefaultDocumentBinding(String childName) {
         this();
         this.childName = childName;
+    }
+    /**
+     * The <code>id</code> is a user defined identifier.
+     * @return user defined identifier
+     */
+    @Override
+    public Object getId() {
+        return id;
     }
 
     protected void add(Binder binder, Map<String, List<Binder>> binderMap) {

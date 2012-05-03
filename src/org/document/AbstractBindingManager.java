@@ -8,54 +8,45 @@ import java.util.Map;
  *
  * @author V. Shishkin
  */
-public class AbstractBindingManager implements DocumentListBinding {
+public class AbstractBindingManager implements DocumentListener {
 
     protected Map<Object, DocumentBinding> documentBindings;
+    protected ListBinding listBinding;
+    
     protected Document document;
     protected ValidatorCollection validators;
-            
+    protected BindingRecognizer recognizer;
+    
     protected AbstractBindingManager() {
         documentBindings = new HashMap<Object,DocumentBinding>();
         validators = new ValidatorCollection();
     }
     
-    @Override
-    public void put(Object bindingId, DocumentBinding binding) {
-        this.documentBindings.put(bindingId, binding);
+    public void addBinding(Binding binding) {
+        if ( binding instanceof DocumentBinding) {
+            Object id = ((DocumentBinding)binding).getId();
+            if ( id == null ) {
+                id = "single";
+            }
+            documentBindings.put(id, (DocumentBinding)binding);
+        } else if ( binding instanceof ListBinding) {
+            this.listBinding = (ListBinding)binding;
+        }
     }
 
-    @Override
-    public void add(Binder binder) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void remove(Binder binder) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void completeChanges() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public ValidatorCollection getValidators() {
         return validators;
     }
 
-    @Override
     public void validate() throws ValidationException {
         getValidators().validate(document);
     }
 
-    @Override
-    public Document getDocument() {
+    protected Document getDocument() {
         return this.document;
     }
 
-    @Override
-    public void setDocument(Document document) {
+    protected void setDocument(Document document) {
         if ( this.document == document) {
             return;
         }
@@ -77,7 +68,7 @@ public class AbstractBindingManager implements DocumentListBinding {
 
 
     }
-    protected BindingRecognizer recognizer;
+    
 
     public void setRecognizer(BindingRecognizer recognizer) {
         this.recognizer = recognizer;
@@ -87,6 +78,10 @@ public class AbstractBindingManager implements DocumentListBinding {
     //
 
     protected DocumentBinding getBinding(Document doc) {
+        if ( doc == null ) {
+            return null;
+        }
+
         DocumentBinding result = null;
         if (recognizer != null) {
             result = documentBindings.get(recognizer.getBindingId(doc));
@@ -98,4 +93,16 @@ public class AbstractBindingManager implements DocumentListBinding {
         return result;
     }
 
+    protected DocumentBinding getBinding(HasDocument hasdoc) {
+        if ( hasdoc == null ) {
+            return null;
+        }
+        return getBinding(hasdoc.getDocument());
+    }
+
+    @Override
+    public void react(DocumentEvent event) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
 }//class BindingManager
