@@ -4,7 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface DocumentBinding extends Binding,DocumentListener{
+public interface DocumentBinding extends Binding,DocumentListener, BinderListener{
     Object getId();
     /**
      * 

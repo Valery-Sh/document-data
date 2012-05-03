@@ -1,5 +1,8 @@
 package org.document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author V. Shyshkin
@@ -8,7 +11,20 @@ public abstract class AbstractBinder implements Binder {
 
     protected String propertyName;
     protected DocumentBinding binding;
-
+    protected List<BinderListener> binderListeners;
+    
+    public void addBinderListener(BinderListener l) {
+        if ( this.binderListeners == null) {
+            this.binderListeners = new ArrayList<BinderListener>(1);
+        }
+        this.binderListeners.add(l);
+    }
+    public void removeBinderListener(BinderListener l) {
+        if ( this.binderListeners == null) {
+            return;
+        }
+        this.binderListeners.remove(l);
+    }    
     @Override
     public String getPropertyName() {
         return this.propertyName;
@@ -74,19 +90,28 @@ public abstract class AbstractBinder implements Binder {
         Object convValue = null;
         try {
             convValue = this.dataValueOf(newValue);
-            if ( ! needChangeData(convValue) ) {
+            fireBinderEvent(BinderEvent.Action.changePropertyValueRequest,convValue,newValue);
+/*            if ( ! needChangeData(convValue) ) {
                 return;
             }
+            
             setDataValue(convValue);
+ */
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
             binding.notifyPropertyError(this.getPropertyName(), e);
         }
     }
-
-    @Override
-    public Object getDataValue() {
+    
+    protected void fireBinderEvent(BinderEvent.Action action, Object dataValue, Object componentValue) {
+        BinderEvent event = new BinderEvent(this,action,dataValue,componentValue);
+        for ( BinderListener l : binderListeners) {
+            l.react(event);
+        }
+    }
+    //@Override
+    protected Object getDataValue() {
         return binding.getDocument().get(this.propertyName);
     }
     /**

@@ -61,11 +61,13 @@ public class DefaultDocumentBinding implements DocumentBinding {
         }
         blist.add(binder);
         binderMap.put(propPath, blist);
-        binder.setDocumentBinding(this);
+        //binder.setDocumentBinding(this);
 
     }
+
     protected void add(Binder binder, List<Binder> binderList) {
         binderList.add(binder);
+        binder.addBinderListener(this);
         binder.setDocumentBinding(this);
 
     }
@@ -90,6 +92,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
         if (blist == null || blist.isEmpty()) {
             return;
         }
+        binder.removeBinderListener(this);
         blist.remove(binder);
         if (blist.isEmpty()) {
             binderMap.remove(binder.getPropertyName());
@@ -242,7 +245,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
             }
         }
         notifyDocumentError(null);
-        
+
     }
 
     protected void resolvePendingChanges() {
@@ -280,17 +283,13 @@ public class DefaultDocumentBinding implements DocumentBinding {
         return this.binders.get(path);
     }
 
-/*    @Override
-    public void notifyDocumentError(Binder source, Exception e) {
-        List<Binder> blist = this.errorBinders.get(source.getPropertyName());
-        if (blist != null) {
-            for (Binder b : blist) {
-                //((ErrorBinder) b).notifyPropertyError(source, e);
-                ((ErrorBinder) b).notifyPropertyError(e);
-            }
-        }
-    }
-*/
+    /*
+     * @Override public void notifyDocumentError(Binder source, Exception e) {
+     * List<Binder> blist = this.errorBinders.get(source.getPropertyName()); if
+     * (blist != null) { for (Binder b : blist) { //((ErrorBinder)
+     * b).notifyPropertyError(source, e); ((ErrorBinder)
+     * b).notifyPropertyError(e); } } }
+     */
     @Override
     public void notifyPropertyError(String propertyName, Exception e) {
         List<Binder> blist = this.errorBinders.get(propertyName);
@@ -317,7 +316,6 @@ public class DefaultDocumentBinding implements DocumentBinding {
     public void validate(String propPath, Object value) throws ValidationException {
         getValidators().validate(propPath, document, value);
     }
-
 
     protected void validate() throws ValidationException {
         getValidators().validate(document);
@@ -369,5 +367,46 @@ public class DefaultDocumentBinding implements DocumentBinding {
         } else if (event.getAction().equals(DocumentEvent.Action.validateDocument)) {
             this.validate();
         }
+    }
+
+    @Override
+    public void react(BinderEvent event) {
+        //BinderEvent.Action.changePropertyValueRequest
+        switch (event.getAction()) {
+            case changePropertyValueRequest:
+                if (!needChangeData(event.getPropertyName(),event.getDataValue())) {
+                    return;
+                }
+                document.put((Binder) event.getSource(), event.getDataValue());
+                break;
+            case notifyPropertyErrorRequest:
+
+                break;
+            case clearPropertyErrorRequest:
+
+                break;
+
+        }
+    }
+
+    /**
+     * Prepends cyclic data modifications.
+     *
+     * @param value a new value to be assigned
+     * @return
+     */
+    protected boolean needChangeData(String propertyName, Object value) {
+        boolean result = true;
+        Object currentValue = document.get(propertyName);
+
+        if (value == null && currentValue == null) {
+            result = false;
+        }
+        if (value != null && value.equals(currentValue)) {
+            result = false;
+        } else if (currentValue != null && currentValue.equals(value)) {
+            result = false;
+        }
+        return result;
     }
 }
