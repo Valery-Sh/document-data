@@ -20,6 +20,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
     protected List<DocumentBinding> childs;
     protected Map<String, List<Binder>> binders;
     protected Map<String, List<Binder>> errorBinders;
+    protected List<Binder> documentErrorBinders;
     protected Document document;
     protected ValidatorCollection validators;
 
@@ -31,6 +32,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
     public DefaultDocumentBinding() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
+        documentErrorBinders = new ArrayList<Binder>();
         validators = new ValidatorCollection();
         childs = new ArrayList<DocumentBinding>();
     }
@@ -62,11 +64,21 @@ public class DefaultDocumentBinding implements DocumentBinding {
         binder.setDocumentBinding(this);
 
     }
+    protected void add(Binder binder, List<Binder> binderList) {
+        binderList.add(binder);
+        binder.setDocumentBinding(this);
+
+    }
 
     @Override
     public void add(Binder binder) {
         if (binder instanceof ErrorBinder) {
-            add(binder, errorBinders);
+            if (binder.getPropertyName() == null) {
+                // document error binder
+                add(binder, documentErrorBinders);
+            } else {
+                add(binder, errorBinders);
+            }
         } else {
             add(binder, binders);
         }
@@ -101,7 +113,8 @@ public class DefaultDocumentBinding implements DocumentBinding {
             return;
         }
         for (Binder b : blist) {
-            b.dataChanged(oldValue, newValue);
+            //b.dataChanged(oldValue, newValue);
+            b.dataChanged(newValue);
         }
     }
 
@@ -114,7 +127,8 @@ public class DefaultDocumentBinding implements DocumentBinding {
             if (b == binder) {
                 continue;
             }
-            b.dataChanged(oldValue, newValue);
+//            b.dataChanged(oldValue, newValue);
+            b.dataChanged(newValue);
         }
     }
 
@@ -168,10 +182,16 @@ public class DefaultDocumentBinding implements DocumentBinding {
                         continue;
                     }
                     for (Binder b : l) {
-                        b.setDirtyComponentValue(state.getDirtyValues().get(b.getPropertyName()));
+                        b.init(state.getDirtyValues().get(b.getPropertyName()));
                     }
                 }
                 this.completeChanges();
+                this.notifyDocumentError(null);
+                try {
+                    getValidators().validate(document);
+                } catch (ValidationException e) {
+                    this.notifyDocumentError(e);
+                }
             }
         }
         for (DocumentBinding child : childs) {
@@ -218,15 +238,18 @@ public class DefaultDocumentBinding implements DocumentBinding {
             for (Binder b : ent.getValue()) {
                 //b.dataChanged(null, b.getDataValue());
                 b.init(document.get(b.getPropertyName()));
-                notifyError(b, null);
+                notifyPropertyError(b.getPropertyName(), null);
             }
         }
+        notifyDocumentError(null);
+        
     }
 
     protected void resolvePendingChanges() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
-                b.componentChanged(null, b.getComponentValue());
+                //b.componentChanged(null, b.getComponentValue());
+                b.componentChanged(b.getComponentValue());
             }
         }
     }
@@ -257,31 +280,31 @@ public class DefaultDocumentBinding implements DocumentBinding {
         return this.binders.get(path);
     }
 
-    @Override
-    public void notifyError(Binder source, Exception e) {
+/*    @Override
+    public void notifyDocumentError(Binder source, Exception e) {
         List<Binder> blist = this.errorBinders.get(source.getPropertyName());
         if (blist != null) {
             for (Binder b : blist) {
-                ((ErrorBinder) b).notifyError(source, e);
+                //((ErrorBinder) b).notifyPropertyError(source, e);
+                ((ErrorBinder) b).notifyPropertyError(e);
             }
         }
-        //if ((e instanceof ValidationException) && this.getValidators().getProperyValidators().isEmpty() ) {
-        //    throw (ValidationException)e;
-        //}
-        /*
-         * for (Map.Entry<String, List<Binder>> ent :
-         * this.errorBinders.entrySet()) { for (Binder b : ent.getValue()) {
-         * ((ErrorBinder) b).notifyError(source, e); } }
-         */
     }
-
+*/
     @Override
-    public void notifyError(String propertyName, Exception e) {
+    public void notifyPropertyError(String propertyName, Exception e) {
         List<Binder> blist = this.errorBinders.get(propertyName);
         if (blist != null) {
             for (Binder b : blist) {
-                ((ErrorBinder) b).notifyError(null, e);
+                //((ErrorBinder) b).notifyPropertyError(null, e);
+                ((ErrorBinder) b).notifyPropertyError(e);
             }
+        }
+    }
+
+    protected void notifyDocumentError(Exception e) {
+        for (Binder b : documentErrorBinders) {
+            ((ErrorBinder) b).notifyDocumentError(e);
         }
     }
 
@@ -295,8 +318,8 @@ public class DefaultDocumentBinding implements DocumentBinding {
         getValidators().validate(propPath, document, value);
     }
 
-    @Override
-    public void validate() throws ValidationException {
+
+    protected void validate() throws ValidationException {
         getValidators().validate(document);
     }
 
@@ -326,7 +349,12 @@ public class DefaultDocumentBinding implements DocumentBinding {
         } else if (event.getAction().equals(DocumentEvent.Action.validateProperty)) {
             this.validate(event.getPropertyName(), event.getNewValue());
         } else if (event.getAction().equals(DocumentEvent.Action.validateErrorNotify)) {
-            notifyError(event.getPropertyName(), event.getException());
+            if (((ValidationException) event.getException()).getPropertyName() == null) {
+                // document error
+                notifyDocumentError(event.getException());
+            } else {
+                notifyPropertyError(event.getPropertyName(), event.getException());
+            }
         } else if (event.getAction().equals(DocumentEvent.Action.validateAllProperties)) {
             //validators.validateProperties((Document) event.getSource());
             for (Map.Entry<String, List<Binder>> e : binders.entrySet()) {
@@ -338,7 +366,8 @@ public class DefaultDocumentBinding implements DocumentBinding {
                     this.validate(b.getPropertyName(), b.getComponentValue());
                 }
             }
-
+        } else if (event.getAction().equals(DocumentEvent.Action.validateDocument)) {
+            this.validate();
         }
     }
 }

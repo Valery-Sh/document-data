@@ -77,7 +77,8 @@ public class DocumentEvent extends EventObject {
         propertyChangeNotify,
         validateErrorNotify,
         validateProperty,
-        validateAllProperties
+        validateAllProperties,
+        validateDocument
         
     }
 }//class DocumentEvent

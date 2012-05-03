@@ -20,6 +20,9 @@ public class ValidationException extends RuntimeException{
         super(message);
         this.propertyName = propertyName;
     }
+    public ValidationException(String message) {
+        this(null,message);
+    }
 
     public String getPropertyName() {
         return propertyName;

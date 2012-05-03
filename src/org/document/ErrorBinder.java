@@ -6,5 +6,7 @@ package org.document;
  */
 public interface ErrorBinder extends Binder {
     //void clear();
-    void notifyError(Binder source, Exception e);
+    //void notifyPropertyError(Binder source, Exception e);
+    void notifyPropertyError(Exception e);
+    void notifyDocumentError(Exception e);
 }

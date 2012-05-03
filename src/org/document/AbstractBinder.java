@@ -15,7 +15,7 @@ public abstract class AbstractBinder implements Binder {
     }
     
     @Override
-    public void dataChanged(Object oldValue, Object newValue) {
+    public void dataChanged(Object newValue) {
         Object convValue = this.componentValueOf(newValue);
         if ( ! needChangeComponent(convValue) ) {
             return;
@@ -69,8 +69,8 @@ public abstract class AbstractBinder implements Binder {
     }
 
     @Override
-    public void componentChanged(Object oldValue, Object newValue) {
-        binding.notifyError(this, null);
+    public void componentChanged(Object newValue) {
+        binding.notifyPropertyError(this.getPropertyName(), null);
         Object convValue = null;
         try {
             convValue = this.dataValueOf(newValue);
@@ -81,7 +81,7 @@ public abstract class AbstractBinder implements Binder {
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
-            binding.notifyError(this, e);
+            binding.notifyPropertyError(this.getPropertyName(), e);
         }
     }
 

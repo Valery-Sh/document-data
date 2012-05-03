@@ -160,5 +160,11 @@ public class MapBasedDocument implements Document, HasDocumentState {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+
+        @Override
+        public Map<String, DocumentEvent> getPropertyErrors() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     }
 }

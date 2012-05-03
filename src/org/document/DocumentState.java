@@ -14,6 +14,7 @@ public interface DocumentState {
     boolean isEditing();
     void setEditing(boolean editing);
     Map<String,Object> getDirtyValues();
+    Map<String,DocumentEvent> getPropertyErrors();
     //Object getEditingObject();
     //void setEditingObject(Object obj);
     //Document getCurrent();

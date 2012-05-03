@@ -20,6 +20,6 @@ public interface DocumentBinding extends Binding,DocumentListener{
 //    void setDocument(HasDocument hasDocument,boolean completeChanges);
     void setDocument(HasDocument hasDocument);    
     void validate(String propPath,Object value) throws ValidationException;
-    void notifyError(Binder source,Exception e);
-    void notifyError(String propertyName,Exception e);
+    //void notifyPropertyError(Binder source,Exception e);
+    void notifyPropertyError(String propertyName,Exception e);
 }

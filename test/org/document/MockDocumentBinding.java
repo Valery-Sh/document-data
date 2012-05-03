@@ -54,7 +54,7 @@ public class MockDocumentBinding implements DocumentBinding{
         
     }
     @Override
-    public void notifyError(String propertyName, Exception e) {
+    public void notifyPropertyError(String propertyName, Exception e) {
         
     }
 

@@ -9,7 +9,7 @@ public interface Binding {
     void remove(Binder binder);
     void completeChanges();    
     ValidatorCollection getValidators();
-    void validate() throws ValidationException;    
+    //void validate() throws ValidationException;    
     Document getDocument();
     void setDocument(Document document);
 //    void setDocument(HasDocument hasDocument,boolean completeChanges);

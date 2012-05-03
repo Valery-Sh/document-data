@@ -143,8 +143,15 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateAllProperties);
             fireDocumentEvent(event);
         }
+    }
+    protected void validateDocument() {
+        if (!docListeners.isEmpty()) {
+            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateDocument);
+            fireDocumentEvent(event);
+        }
 
     }
+    
     /**
      * The method is defined in order to easy override in a subclass
      * without a need to override the <code>put</code> method.
@@ -175,12 +182,14 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         private Document document;
         private Map beforeEditValues;
         protected Map dirtyEditValues;
+        protected Map<String,DocumentEvent> propertyErrors;
         //protected Map validEditValues;
 
         public BeanDocumentState(Document document) {
             this.document = document;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
+            propertyErrors = new HashMap<String,DocumentEvent>();
             //validEditValues = new HashMap();
         }
         
@@ -204,6 +213,7 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
             if (this.editing && !editing) {
                 try {
                     d.validateProperties();
+                    d.validateDocument();
                     this.editing = editing;
                 } catch (ValidationException e) {
                     if (!d.docListeners.isEmpty()) {
@@ -225,6 +235,11 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
         @Override
         public Map<String, Object> getDirtyValues() {
             return this.dirtyEditValues;
+        }
+
+        @Override
+        public Map<String, DocumentEvent> getPropertyErrors() {
+            return this.getPropertyErrors();
         }
     }//class BeanDocumentState
 }//class BeanBasedDocument

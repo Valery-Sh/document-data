@@ -6,13 +6,22 @@ package org.document;
  */
 public abstract class AbstractErrorBinder extends AbstractBinder implements ErrorBinder {
     
-    protected Binder source;
+    //protected Binder source;
     protected Exception exception;
     protected boolean errorFound;
     
     @Override
-    public void notifyError(Binder source, Exception e) {
-        this.source = source;
+    public void notifyPropertyError(Exception e) {
+        //this.source = source;
+        this.exception = e;
+        if ( e == null ) {
+            errorFound = false;
+        } else {
+            errorFound = true;
+        }
+    }
+    @Override
+    public void notifyDocumentError(Exception e) {
         this.exception = e;
         if ( e == null ) {
             errorFound = false;
@@ -22,7 +31,7 @@ public abstract class AbstractErrorBinder extends AbstractBinder implements Erro
     }
     
     @Override
-    public void componentChanged(Object oldValue, Object newValue) {
+    public void componentChanged(Object newValue) {
     }
 
     @Override
