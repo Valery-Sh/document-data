@@ -16,11 +16,15 @@ public class DocumentEvent extends EventObject {
     private Exception exception;
     private Binder binder;
     
-    public DocumentEvent(Document source) {
+    public DocumentEvent(DocumentStore source) {
         super(source);
     }
-    public DocumentEvent(Document source,Action action) {
+    public DocumentEvent(DocumentStore source,Action action) {
         this(source);
+        this.action = action;
+    }
+    public DocumentEvent(Document source,Action action) {
+        super(source);
         this.action = action;
     }
 
@@ -74,6 +78,7 @@ public class DocumentEvent extends EventObject {
 
     
     public enum Action {
+        documentChange,
         propertyChangeNotify,
         validateErrorNotify,
         validateProperty,

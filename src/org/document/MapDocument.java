@@ -6,7 +6,7 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class MapDocument implements ObjectDocument {
+public class MapDocument implements Document {
     
     protected BeanBasedDocument document;
     
@@ -22,7 +22,7 @@ public class MapDocument implements ObjectDocument {
     }
 
     @Override
-    public Document getDocument() {
+    public DocumentStore getDocumentStore() {
         return this.document;
     }
     

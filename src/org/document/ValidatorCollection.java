@@ -44,14 +44,14 @@ public class ValidatorCollection {
         this.pvalidators.remove(propPath);
     } 
     
-    public void validate(String propPath, Document doc, Object value) throws ValidationException {
+    public void validate(String propPath, DocumentStore doc, Object value) throws ValidationException {
         PropertyValidator v = pvalidators.get(propPath);
         if ( v == null ) {
             return;
         }
         v.validate(propPath,doc,value);
     }
-    public void validateProperties(Document doc) throws ValidationException {
+    public void validateProperties(DocumentStore doc) throws ValidationException {
         String propPath;
         for ( Map.Entry<String,PropertyValidator> es  : pvalidators.entrySet()) {
             propPath = es.getKey();
@@ -64,9 +64,14 @@ public class ValidatorCollection {
         }
     }
     
-    public void validate(Document doc) throws ValidationException {
+    public void validate(DocumentStore store) throws ValidationException {
         for ( DocumentValidator v : lvalidators) {
-            v.validate(doc);            
+            v.validate(store);            
+        }
+    }
+    public void validate(Document document) throws ValidationException {
+        for ( DocumentValidator v : lvalidators) {
+            v.validate(document);            
         }
     }
     

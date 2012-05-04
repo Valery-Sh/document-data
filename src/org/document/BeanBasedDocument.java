@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class BeanBasedDocument<T> implements Document, HasDocumentState {
+public class BeanBasedDocument<T> implements DocumentStore, HasDocumentState {
 
     protected transient BeanDocumentState state;
     protected T source;
@@ -179,13 +179,13 @@ public class BeanBasedDocument<T> implements Document, HasDocumentState {
     protected static class BeanDocumentState implements DocumentState {
 
         private boolean editing;
-        private Document document;
+        private DocumentStore document;
         private Map beforeEditValues;
         protected Map dirtyEditValues;
         protected Map<String,DocumentEvent> propertyErrors;
         //protected Map validEditValues;
 
-        public BeanDocumentState(Document document) {
+        public BeanDocumentState(DocumentStore document) {
             this.document = document;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();

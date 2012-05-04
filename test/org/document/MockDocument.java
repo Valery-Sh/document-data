@@ -10,7 +10,7 @@ import java.util.HashMap;
  *
  * @author Valery
  */
-public class MockDocument implements Document{
+public class MockDocument implements DocumentStore{
     protected HashMap data;
     public MockDocument() {
         data = new HashMap();

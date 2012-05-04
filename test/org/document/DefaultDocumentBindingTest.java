@@ -251,8 +251,8 @@ public class DefaultDocumentBindingTest {
     public void testGetDocument() {
         System.out.println("DefaultDocumentBinding.getDocument()");
         ObjectDocumentBinding instance = new ObjectDocumentBinding();
-        Document doc;
-        Document result = instance.getDocument();
+        DocumentStore doc;
+        DocumentStore result = instance.getDocument();
         assertNull(result);
         doc = new DocumentTest.DocumentImpl();
         instance.setDocument(doc,true);
@@ -261,21 +261,21 @@ public class DefaultDocumentBindingTest {
     }
 
     /**
-     * Test of bindTo method, of class DocumentBindingManager.
+     * Test of setObjectDocument method, of class DocumentBindingManager.
      */
 /*    @Test
     public void testSetDocument() {
-        System.out.println("DefaultBindingManager.bindTo(Document,boolean)");
+        System.out.println("DefaultBindingManager.setObjectDocument(DocumentStore,boolean)");
         DocumentBindingManager instance = new DocumentBindingManager();
         DocumentImpl doc = new DocumentImpl();
-        instance.bindTo(doc,true);        
-        Document result = instance.getDocument();
+        instance.setObjectDocument(doc,true);        
+        DocumentStore result = instance.getDocument();
         assertTrue( doc == result);
         assertNotNull(doc.handler);        
         //
         // null parameter value
         //
-        instance.bindTo(null,true);        
+        instance.setObjectDocument(null,true);        
         result = instance.getDocument();
         assertNull( result);
         assertNull(doc.handler);
@@ -283,12 +283,12 @@ public class DefaultDocumentBindingTest {
         // change document
         //
         Object component = new MockComponent();
-        Document doc1 = new DocumentImpl();
+        DocumentStore doc1 = new DocumentImpl();
         doc1.put("firstName", "Jone");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
         
         instance.add(binder);
-        instance.bindTo(doc, true);
+        instance.setObjectDocument(doc, true);
         //
         // Now firstName = "Bill". We set binder.componentValue to "Tom".
         // completeChanges() must set binder.dataValue to "Tom".
@@ -301,7 +301,7 @@ public class DefaultDocumentBindingTest {
  */
     
     /**
-     * Test of bindTo method, of class DocumentBindingManager.
+     * Test of setObjectDocument method, of class DocumentBindingManager.
      */
     @Test
     public void testSetDocument() {
@@ -309,14 +309,14 @@ public class DefaultDocumentBindingTest {
         ObjectDocumentBinding instance = new ObjectDocumentBinding();
         DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc,true);        
-        Document result = instance.getDocument();
+        DocumentStore result = instance.getDocument();
         assertTrue( doc == result);
 //        assertNotNull(doc.handler);        
         assertNotNull(doc.docListener);        
         //
         // null parameter value
         //
-        instance.setDocument((Document)null,true);        
+        instance.setDocument((DocumentStore)null,true);        
         result = instance.getDocument();
         assertNull( result);
         assertNull(doc.docListener);
@@ -324,7 +324,7 @@ public class DefaultDocumentBindingTest {
         // change document
         //
         Object component = new MockComponent();
-        Document doc1 = new DocumentImpl();
+        DocumentStore doc1 = new DocumentImpl();
         doc1.put("firstName", "Jone");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
         

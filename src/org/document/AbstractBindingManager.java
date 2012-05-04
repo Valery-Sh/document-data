@@ -7,7 +7,7 @@ import java.util.Map;
  *
  * @author V. Shishkin
  */
-public class AbstractBindingManager<T extends ObjectDocument> implements DocumentListener {
+public class AbstractBindingManager<T extends Document> implements DocumentListener {
 
     protected Map<Object, DocumentBinding> documentBindings;
     protected ListBinding listBinding;
@@ -46,30 +46,31 @@ public class AbstractBindingManager<T extends ObjectDocument> implements Documen
     }
 
     public void validate() throws ValidationException {
-        getValidators().validate(selected.getDocument());
+        //getValidators().validate(selected.getDocumentStore());
+        getValidators().validate(selected);
     }
 
-    protected Document getDocument() {
-        return this.selected.getDocument();
+    protected DocumentStore getDocumentStore() {
+        return this.selected.getDocumentStore();
     }
 
     protected void update(T selected) {
-        //Document document = newSelected.getDocument();
+        //Document document = newSelected.getDocumentStore();
         if ( this.selected == selected) {
             return;
         }
-        ObjectDocument old = this.selected;
+        Document old = this.selected;
         if (old != null) {
             DocumentBinding b = getBinding(old);
             if ( b != null ) {
-                //b.bindTo(old);
+                //b.setObjectDocument(old);
                 b.completeChanges();
             }
         }
         if (selected != null) {
             DocumentBinding b = getBinding(selected);
             if ( b != null ) {
-                b.bindTo(selected);
+                b.setObjectDocument(selected);
             }
         }
 
@@ -86,7 +87,7 @@ public class AbstractBindingManager<T extends ObjectDocument> implements Documen
     // ===========================================================
     //
 
-    protected DocumentBinding getBinding(ObjectDocument doc) {
+    protected DocumentBinding getBinding(Document doc) {
         if ( doc == null ) {
             return null;
         }

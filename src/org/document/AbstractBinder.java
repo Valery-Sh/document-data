@@ -10,6 +10,7 @@ import java.util.List;
 public abstract class AbstractBinder implements Binder {
 
     protected String propertyName;
+    protected Document document;
 //    protected DocumentBinding binding;
     protected List<BinderListener> binderListeners;
     
@@ -26,7 +27,16 @@ public abstract class AbstractBinder implements Binder {
             return;
         }
         this.binderListeners.remove(l);
-    }    
+    }   
+    
+    @Override
+    public void react(DocumentEvent event) {
+        switch(event.getAction()) {
+            case documentChange :
+                this.document = (Document)event.getNewValue();
+                break;
+        }//switch
+    }
     @Override
     public String getPropertyName() {
         return this.propertyName;

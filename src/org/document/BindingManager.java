@@ -8,7 +8,7 @@ import java.util.Map;
  *
  * @author V. Shishkin
  */
-public class BindingManager<T extends ObjectDocument> extends AbstractBindingManager {
+public class BindingManager<T extends Document> extends AbstractBindingManager {
 
     protected List<T> sourceList;
     

@@ -9,7 +9,7 @@ package org.document;
  * @author Valery
  */
 public class MockDocumentBinding implements DocumentBinding{
-    protected Document document;
+    protected DocumentStore document;
     public MockDocumentBinding() {
         document = new MockDocument();
     }
@@ -25,12 +25,12 @@ public class MockDocumentBinding implements DocumentBinding{
     }
 
     @Override
-    public Document getDocument() {
+    public DocumentStore getDocument() {
         return document;
     }
 
     @Override
-    public void setDocument(Document document, boolean completeChanges) {
+    public void setDocument(DocumentStore document, boolean completeChanges) {
         this.document = document;
     }
 
@@ -79,8 +79,8 @@ public class MockDocumentBinding implements DocumentBinding{
     }
 
     @Override
-    public void setDocument(ObjectDocument hasDocument, boolean completeChanges) {
-        this.document = hasDocument.getDocument();
+    public void setDocument(Document hasDocument, boolean completeChanges) {
+        this.document = hasDocument.getDocumentStore();
     }
     
 }

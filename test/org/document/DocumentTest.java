@@ -35,13 +35,13 @@ public class DocumentTest {
     }
 
     /**
-     * Test of get method, of class Document.
+     * Test of get method, of class DocumentStore.
      */
     @Test
     public void testGet() {
         System.out.println("Document.get(Object)");
         Object key = null;
-        Document instance = new DocumentImpl();
+        DocumentStore instance = new DocumentImpl();
         //
         // The 'key' parameter cannot be null
         //
@@ -69,14 +69,14 @@ public class DocumentTest {
     }
 
     /**
-     * Test of put method, of class Document.
+     * Test of put method, of class DocumentStore.
      */
     @Test
     public void testPut() {
         System.out.println("Document.put(Object,Object");
         Object key = null;
         Object value = "PUT 1";
-        Document instance = new DocumentImpl();
+        DocumentStore instance = new DocumentImpl();
         //
         // The 'key' parameter cannot be null
         //
@@ -109,17 +109,17 @@ public class DocumentTest {
     }
 
     /**
-     * Test of addDocumentListener method, of class Document.
+     * Test of addDocumentListener method, of class DocumentStore.
      */
     @Test
     public void testAddDocumentListener() {
         System.out.println("setAddDocumentListener");
         DocumentListener l = null;
-        Document instance = new DocumentImpl();
+        DocumentStore instance = new DocumentImpl();
         instance.addDocumentListener(l);
     }
 
-    public static class DocumentImpl implements Document {
+    public static class DocumentImpl implements DocumentStore {
 
         Map values = new HashMap();
         DocumentListener docListener;

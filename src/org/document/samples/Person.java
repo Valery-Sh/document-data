@@ -6,14 +6,14 @@ package org.document.samples;
 
 import java.util.Date;
 import org.document.BeanBasedDocument;
+import org.document.DocumentStore;
 import org.document.Document;
-import org.document.ObjectDocument;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class Person implements ObjectDocument {
+public class Person implements Document {
 
     protected BeanBasedDocument document;
 
@@ -29,7 +29,7 @@ public class Person implements ObjectDocument {
     }
 
     @Override
-    public Document getDocument() {
+    public DocumentStore getDocumentStore() {
         return this.document;
     }
     //

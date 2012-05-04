@@ -4,7 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface DocumentBinding extends Binding,DocumentListener, BinderListener{
+public interface DocumentBinding extends Binding, BinderListener{
     Object getId();
     
     /**
@@ -17,7 +17,7 @@ public interface DocumentBinding extends Binding,DocumentListener, BinderListene
     DocumentBinding createChild(String propertyName);
     String getChildName();
     
-    Document getBoundDocument();    
+    //Document getDocument();    
     void validate(String propPath,Object value) throws ValidationException;
     void completeChanges();    
 }
