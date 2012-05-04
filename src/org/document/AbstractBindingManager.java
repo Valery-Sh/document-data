@@ -1,25 +1,32 @@
 package org.document;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  *
  * @author V. Shishkin
  */
-public class AbstractBindingManager implements DocumentListener {
+public class AbstractBindingManager<T extends ObjectDocument> implements DocumentListener {
 
     protected Map<Object, DocumentBinding> documentBindings;
     protected ListBinding listBinding;
     
-    protected Document document;
+    protected T selected;
+    
     protected ValidatorCollection validators;
     protected BindingRecognizer recognizer;
     
     protected AbstractBindingManager() {
         documentBindings = new HashMap<Object,DocumentBinding>();
         validators = new ValidatorCollection();
+    }
+    public T getSelected() {
+        return selected;
+    }
+    public void setSelected(T selected) {
+        this.update(selected);
+        this.selected = selected;
     }
     
     public void addBinding(Binding binding) {
@@ -39,33 +46,34 @@ public class AbstractBindingManager implements DocumentListener {
     }
 
     public void validate() throws ValidationException {
-        getValidators().validate(document);
+        getValidators().validate(selected.getDocument());
     }
 
     protected Document getDocument() {
-        return this.document;
+        return this.selected.getDocument();
     }
 
-    protected void setDocument(Document document) {
-        if ( this.document == document) {
+    protected void update(T selected) {
+        //Document document = newSelected.getDocument();
+        if ( this.selected == selected) {
             return;
         }
-        Document old = this.document;
+        ObjectDocument old = this.selected;
         if (old != null) {
             DocumentBinding b = getBinding(old);
             if ( b != null ) {
-                //b.setDocument(old);
+                //b.bindTo(old);
                 b.completeChanges();
             }
         }
-        if (document != null) {
-            DocumentBinding b = getBinding(document);
+        if (selected != null) {
+            DocumentBinding b = getBinding(selected);
             if ( b != null ) {
-                b.setDocument(document);
+                b.bindTo(selected);
             }
         }
 
-        this.document = document;
+        this.selected = selected;
 
 
     }
@@ -78,7 +86,7 @@ public class AbstractBindingManager implements DocumentListener {
     // ===========================================================
     //
 
-    protected DocumentBinding getBinding(Document doc) {
+    protected DocumentBinding getBinding(ObjectDocument doc) {
         if ( doc == null ) {
             return null;
         }
@@ -94,12 +102,6 @@ public class AbstractBindingManager implements DocumentListener {
         return result;
     }
 
-    protected DocumentBinding getBinding(HasDocument hasdoc) {
-        if ( hasdoc == null ) {
-            return null;
-        }
-        return getBinding(hasdoc.getDocument());
-    }
 
     @Override
     public void react(DocumentEvent event) {

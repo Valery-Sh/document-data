@@ -7,13 +7,13 @@ package org.document.samples;
 import java.util.Date;
 import org.document.BeanBasedDocument;
 import org.document.Document;
-import org.document.HasDocument;
+import org.document.ObjectDocument;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class Person implements HasDocument {
+public class Person implements ObjectDocument {
 
     protected BeanBasedDocument document;
 

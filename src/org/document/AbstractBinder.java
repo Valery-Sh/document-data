@@ -46,7 +46,7 @@ public abstract class AbstractBinder implements Binder {
      * @param value a new value to be assigned
      * @return 
      */
-    protected boolean needChangeComponent(Object value) {
+    private boolean needChangeComponent(Object value) {
         boolean result = true;
         
         Object currentValue = getComponentValue();

@@ -42,7 +42,7 @@ public class DefaultDocumentBindingTest {
         Object component = new MockComponent();
         
         Binder binder = MockBinder.create("firstName", component);
-        DefaultDocumentBinding instance = new DefaultDocumentBinding();
+        ObjectDocumentBinding instance = new ObjectDocumentBinding();
         instance.add(binder);
         assertEquals(1,instance.binders.size());
         assertTrue(instance.binders.containsKey("firstName"));
@@ -83,7 +83,7 @@ public class DefaultDocumentBindingTest {
     }
 
     /**
-     * Test of remove method, of class DefaultDocumentBinding.
+     * Test of remove method, of class ObjectDocumentBinding.
      */
     @Test
     public void testRemove() {
@@ -94,7 +94,7 @@ public class DefaultDocumentBindingTest {
         Object component = new MockComponent();
         
         Binder binder = MockBinder.create("firstName", component);
-        DefaultDocumentBinding instance = new DefaultDocumentBinding();
+        ObjectDocumentBinding instance = new ObjectDocumentBinding();
         instance.add(binder);
         Object component1 = new MockComponent();
         Binder binder1 = MockBinder.create("firstName", component1);
@@ -122,7 +122,7 @@ public class DefaultDocumentBindingTest {
         }
     }
     /**
-     * Test of completeChanges method, of class DefaultDocumentBinding.
+     * Test of completeChanges method, of class ObjectDocumentBinding.
      */
     @Test
     public void testCompleteChanges() {
@@ -131,7 +131,7 @@ public class DefaultDocumentBindingTest {
         MockDocument doc = new MockDocument();
         doc.put("firstName", "Bill");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        DefaultDocumentBinding instance = new DefaultDocumentBinding();
+        ObjectDocumentBinding instance = new ObjectDocumentBinding();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -147,7 +147,7 @@ public class DefaultDocumentBindingTest {
         
     }
     /**
-     * More complex test of completeChanges method, of class DefaultDocumentBinding.
+     * More complex test of completeChanges method, of class ObjectDocumentBinding.
      */
     @Test
     public void testCompleteChanges_1() {
@@ -157,7 +157,7 @@ public class DefaultDocumentBindingTest {
         doc.put("height", 175);
         
         Binder binder = new StringBinderImpl("firstName");
-        DefaultDocumentBinding instance = new DefaultDocumentBinding();
+        ObjectDocumentBinding instance = new ObjectDocumentBinding();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -211,7 +211,7 @@ public class DefaultDocumentBindingTest {
     }
     
     /**
-     * Test of firePropertyChange method, of class DefaultDocumentBinding.
+     * Test of firePropertyChange method, of class ObjectDocumentBinding.
      */
     @Test
     public void testFirePropertyChange() {
@@ -222,7 +222,7 @@ public class DefaultDocumentBindingTest {
         Object component = new MockComponent();
         
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        DefaultDocumentBinding instance = new DefaultDocumentBinding();
+        ObjectDocumentBinding instance = new ObjectDocumentBinding();
         instance.add(binder);
         Object component1 = new MockComponent();
         MockBinder binder1 = (MockBinder)MockBinder.create("firstName", component1);
@@ -245,12 +245,12 @@ public class DefaultDocumentBindingTest {
     }
 
     /**
-     * Test of getDocument method, of class DefaultDocumentBinding.
+     * Test of getDocument method, of class ObjectDocumentBinding.
      */
     @Test
     public void testGetDocument() {
         System.out.println("DefaultDocumentBinding.getDocument()");
-        DefaultDocumentBinding instance = new DefaultDocumentBinding();
+        ObjectDocumentBinding instance = new ObjectDocumentBinding();
         Document doc;
         Document result = instance.getDocument();
         assertNull(result);
@@ -261,21 +261,21 @@ public class DefaultDocumentBindingTest {
     }
 
     /**
-     * Test of setDocument method, of class DocumentBindingManager.
+     * Test of bindTo method, of class DocumentBindingManager.
      */
 /*    @Test
     public void testSetDocument() {
-        System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
+        System.out.println("DefaultBindingManager.bindTo(Document,boolean)");
         DocumentBindingManager instance = new DocumentBindingManager();
         DocumentImpl doc = new DocumentImpl();
-        instance.setDocument(doc,true);        
+        instance.bindTo(doc,true);        
         Document result = instance.getDocument();
         assertTrue( doc == result);
         assertNotNull(doc.handler);        
         //
         // null parameter value
         //
-        instance.setDocument(null,true);        
+        instance.bindTo(null,true);        
         result = instance.getDocument();
         assertNull( result);
         assertNull(doc.handler);
@@ -288,7 +288,7 @@ public class DefaultDocumentBindingTest {
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
         
         instance.add(binder);
-        instance.setDocument(doc, true);
+        instance.bindTo(doc, true);
         //
         // Now firstName = "Bill". We set binder.componentValue to "Tom".
         // completeChanges() must set binder.dataValue to "Tom".
@@ -301,12 +301,12 @@ public class DefaultDocumentBindingTest {
  */
     
     /**
-     * Test of setDocument method, of class DocumentBindingManager.
+     * Test of bindTo method, of class DocumentBindingManager.
      */
     @Test
     public void testSetDocument() {
         System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
-        DefaultDocumentBinding instance = new DefaultDocumentBinding();
+        ObjectDocumentBinding instance = new ObjectDocumentBinding();
         DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc,true);        
         Document result = instance.getDocument();

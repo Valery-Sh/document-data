@@ -8,6 +8,7 @@ package org.document;
  *
  * @author Valery
  */
-public interface BindingRecognizer<T> {
-    Object getBindingId(T object);
+public interface HasBinding {
+    Binding getBinding();
+    void setBinding(Binding binding);
 }

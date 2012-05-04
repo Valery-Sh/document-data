@@ -7,12 +7,13 @@ package org.document;
 public interface Binding {
     void add(Binder binder);
     void remove(Binder binder);
-    void completeChanges();    
+//    void completeChanges();    
     ValidatorCollection getValidators();
     //void validate() throws ValidationException;    
-    Document getDocument();
-    void setDocument(Document document);
-//    void setDocument(HasDocument hasDocument,boolean completeChanges);
+    //Document getDocument();
+    Object getBoundObject();
+    void bindTo(Object object);
+//    void bindTo(HasDocument hasDocument,boolean completeChanges);
     
     
 }

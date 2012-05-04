@@ -16,5 +16,4 @@ public interface Binder {
     void init(Object dataValue);
     void addBinderListener(BinderListener l);
     void removeBinderListener(BinderListener l);
-    
 }
