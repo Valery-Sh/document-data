@@ -9,13 +9,13 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class BeanBasedDocument<T> implements DocumentStore, HasDocumentState {
+public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState {
 
     protected transient BeanDocumentState state;
     protected T source;
     protected List<DocumentListener> docListeners;
 
-    public BeanBasedDocument(T source) {
+    public DefaultDocumentStore(T source) {
         this.state = new BeanDocumentState(this);
         this.source = source;
         this.docListeners = new ArrayList<DocumentListener>();
@@ -39,7 +39,7 @@ public class BeanBasedDocument<T> implements DocumentStore, HasDocumentState {
      * of the method.
      * 
      * @param key a property name or an instance of the property binder.
-     * @param value the value to be saved by a document.
+     * @param value the value to be saved by a documentStore.
      */
     @Override
     public void put(Object key, Object value) {
@@ -163,8 +163,8 @@ public class BeanBasedDocument<T> implements DocumentStore, HasDocumentState {
     }
     /**
      * Notifies all registered listeners of type 
-     * {@link org.document.DocumentListener } when an event of type
-     * {@link org.document.DocumentEvent } arises.
+     * {@link org.documentStore.DocumentListener } when an event of type
+     * {@link org.documentStore.DocumentEvent } arises.
      * @param event an event of type <code>DocumentEvent</code>
      */
     private void fireDocumentEvent(DocumentEvent event) {
@@ -179,23 +179,20 @@ public class BeanBasedDocument<T> implements DocumentStore, HasDocumentState {
     protected static class BeanDocumentState implements DocumentState {
 
         private boolean editing;
-        private DocumentStore document;
+        private DocumentStore documentStore;
         private Map beforeEditValues;
         protected Map dirtyEditValues;
         protected Map<String,DocumentEvent> propertyErrors;
         //protected Map validEditValues;
 
-        public BeanDocumentState(DocumentStore document) {
-            this.document = document;
+        public BeanDocumentState(DocumentStore documentStore) {
+            this.documentStore = documentStore;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
             propertyErrors = new HashMap<String,DocumentEvent>();
             //validEditValues = new HashMap();
         }
         
-//        protected void fillValidEditValues() {
-//            DataUtils.putAll(validEditValues, ((BeanBasedDocument) document).source);
-//        }
         
         @Override
         public boolean isEditing() {
@@ -208,7 +205,7 @@ public class BeanBasedDocument<T> implements DocumentStore, HasDocumentState {
                 return;
             }
 
-            BeanBasedDocument d = (BeanBasedDocument) document;
+            DefaultDocumentStore d = (DefaultDocumentStore) documentStore;
 
             if (this.editing && !editing) {
                 try {
@@ -242,4 +239,4 @@ public class BeanBasedDocument<T> implements DocumentStore, HasDocumentState {
             return this.getPropertyErrors();
         }
     }//class BeanDocumentState
-}//class BeanBasedDocument
+}

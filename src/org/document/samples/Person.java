@@ -5,7 +5,7 @@
 package org.document.samples;
 
 import java.util.Date;
-import org.document.BeanBasedDocument;
+import org.document.DefaultDocumentStore;
 import org.document.DocumentStore;
 import org.document.Document;
 
@@ -15,10 +15,10 @@ import org.document.Document;
  */
 public class Person implements Document {
 
-    protected BeanBasedDocument document;
+    protected DefaultDocumentStore document;
 
     public Person() {
-        this.document = new BeanBasedDocument(this);
+        this.document = new DefaultDocumentStore(this);
     }
 
     public Person(int id, String firstName, String lastName) {

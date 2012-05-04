@@ -9,6 +9,6 @@ package org.document;
  * @author Valery
  */
 public interface DocumentValidator {
-    void validate(DocumentStore store) throws ValidationException;
+    //void validate(DocumentStore store) throws ValidationException;
     void validate(Document document) throws ValidationException;
 }

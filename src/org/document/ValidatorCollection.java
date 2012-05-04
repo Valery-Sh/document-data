@@ -64,11 +64,12 @@ public class ValidatorCollection {
         }
     }
     
-    public void validate(DocumentStore store) throws ValidationException {
+/*    public void validate(DocumentStore store) throws ValidationException {
         for ( DocumentValidator v : lvalidators) {
             v.validate(store);            
         }
     }
+*/
     public void validate(Document document) throws ValidationException {
         for ( DocumentValidator v : lvalidators) {
             v.validate(document);            

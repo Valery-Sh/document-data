@@ -63,14 +63,14 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
         if (old != null) {
             DocumentBinding b = getBinding(old);
             if ( b != null ) {
-                //b.setObjectDocument(old);
+                //b.setDocument(old);
                 b.completeChanges();
             }
         }
         if (selected != null) {
             DocumentBinding b = getBinding(selected);
             if ( b != null ) {
-                b.setObjectDocument(selected);
+                b.setDocument(selected);
             }
         }
 

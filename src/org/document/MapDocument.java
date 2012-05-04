@@ -8,12 +8,12 @@ import java.util.Map;
  */
 public class MapDocument implements Document {
     
-    protected BeanBasedDocument document;
+    protected DefaultDocumentStore documentStore;
     
     private Map map;
     
     public MapDocument(Map map) {
-        this.document = new BeanBasedDocument(this);
+        this.documentStore = new DefaultDocumentStore(this);
         this.map = map;
     }
     
@@ -23,7 +23,7 @@ public class MapDocument implements Document {
 
     @Override
     public DocumentStore getDocumentStore() {
-        return this.document;
+        return this.documentStore;
     }
     
     

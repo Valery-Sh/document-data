@@ -245,38 +245,38 @@ public class DefaultDocumentBindingTest {
     }
 
     /**
-     * Test of getDocument method, of class ObjectDocumentBinding.
+     * Test of getDocumentStore method, of class ObjectDocumentBinding.
      */
     @Test
     public void testGetDocument() {
         System.out.println("DefaultDocumentBinding.getDocument()");
         ObjectDocumentBinding instance = new ObjectDocumentBinding();
         DocumentStore doc;
-        DocumentStore result = instance.getDocument();
+        DocumentStore result = instance.getDocumentStore();
         assertNull(result);
         doc = new DocumentTest.DocumentImpl();
         instance.setDocument(doc,true);
-        result = instance.getDocument();
+        result = instance.getDocumentStore();
         assertTrue( doc == result);
     }
 
     /**
-     * Test of setObjectDocument method, of class DocumentBindingManager.
+     * Test of setDocument method, of class DocumentBindingManager.
      */
 /*    @Test
     public void testSetDocument() {
-        System.out.println("DefaultBindingManager.setObjectDocument(DocumentStore,boolean)");
+        System.out.println("DefaultBindingManager.setDocument(DocumentStore,boolean)");
         DocumentBindingManager instance = new DocumentBindingManager();
         DocumentImpl doc = new DocumentImpl();
-        instance.setObjectDocument(doc,true);        
-        DocumentStore result = instance.getDocument();
+        instance.setDocument(doc,true);        
+        DocumentStore result = instance.getDocumentStore();
         assertTrue( doc == result);
         assertNotNull(doc.handler);        
         //
         // null parameter value
         //
-        instance.setObjectDocument(null,true);        
-        result = instance.getDocument();
+        instance.setDocument(null,true);        
+        result = instance.getDocumentStore();
         assertNull( result);
         assertNull(doc.handler);
         //
@@ -288,7 +288,7 @@ public class DefaultDocumentBindingTest {
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
         
         instance.add(binder);
-        instance.setObjectDocument(doc, true);
+        instance.setDocument(doc, true);
         //
         // Now firstName = "Bill". We set binder.componentValue to "Tom".
         // completeChanges() must set binder.dataValue to "Tom".
@@ -301,7 +301,7 @@ public class DefaultDocumentBindingTest {
  */
     
     /**
-     * Test of setObjectDocument method, of class DocumentBindingManager.
+     * Test of setDocument method, of class DocumentBindingManager.
      */
     @Test
     public void testSetDocument() {
@@ -309,7 +309,7 @@ public class DefaultDocumentBindingTest {
         ObjectDocumentBinding instance = new ObjectDocumentBinding();
         DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc,true);        
-        DocumentStore result = instance.getDocument();
+        DocumentStore result = instance.getDocumentStore();
         assertTrue( doc == result);
 //        assertNotNull(doc.handler);        
         assertNotNull(doc.docListener);        
@@ -317,7 +317,7 @@ public class DefaultDocumentBindingTest {
         // null parameter value
         //
         instance.setDocument((DocumentStore)null,true);        
-        result = instance.getDocument();
+        result = instance.getDocumentStore();
         assertNull( result);
         assertNull(doc.docListener);
         //
