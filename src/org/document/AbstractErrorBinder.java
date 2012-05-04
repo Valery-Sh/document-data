@@ -34,8 +34,7 @@ public abstract class AbstractErrorBinder extends AbstractBinder implements Erro
     public void componentChanged(Object newValue) {
     }
 
-    @Override
-    public Object getDataValue() {
+    public boolean isErrorFound() {
         return errorFound;
     }
 
@@ -45,9 +44,8 @@ public abstract class AbstractErrorBinder extends AbstractBinder implements Erro
     @Override
     public abstract Object getComponentValue();
 
-    @Override
-    protected void setDataValue(Object dataValue) {
-        this.errorFound = (Boolean)dataValue;
+    protected void setErrorFound(boolean value) {
+        this.errorFound = value;
     }
 
 }

@@ -21,5 +21,5 @@ public interface DocumentBinding extends Binding,DocumentListener, BinderListene
     void setDocument(HasDocument hasDocument);    
     void validate(String propPath,Object value) throws ValidationException;
     //void notifyPropertyError(Binder source,Exception e);
-    void notifyPropertyError(String propertyName,Exception e);
+    //void notifyPropertyError(String propertyName,Exception e);
 }

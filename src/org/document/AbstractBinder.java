@@ -10,15 +10,17 @@ import java.util.List;
 public abstract class AbstractBinder implements Binder {
 
     protected String propertyName;
-    protected DocumentBinding binding;
+//    protected DocumentBinding binding;
     protected List<BinderListener> binderListeners;
     
+    @Override
     public void addBinderListener(BinderListener l) {
         if ( this.binderListeners == null) {
             this.binderListeners = new ArrayList<BinderListener>(1);
         }
         this.binderListeners.add(l);
     }
+    @Override
     public void removeBinderListener(BinderListener l) {
         if ( this.binderListeners == null) {
             return;
@@ -64,7 +66,7 @@ public abstract class AbstractBinder implements Binder {
      * @param value a new value to be assigned
      * @return 
      */
-    protected boolean needChangeData(Object value) {
+/*    protected boolean needChangeData(Object value) {
         boolean result = true;
         
         Object currentValue = getDataValue();
@@ -83,14 +85,16 @@ public abstract class AbstractBinder implements Binder {
     public void setDocumentBinding(DocumentBinding binding) {
         this.binding = binding;
     }
-
+*/
     @Override
     public void componentChanged(Object newValue) {
-        binding.notifyPropertyError(this.getPropertyName(), null);
-        Object convValue = null;
+        //binding.notifyPropertyError(this.getPropertyName(), null);
+        fireClearPropertyError();
+        Object convValue;
         try {
             convValue = this.dataValueOf(newValue);
-            fireBinderEvent(BinderEvent.Action.changePropertyValueRequest,convValue,newValue);
+            //  changePropertyValueRequest,
+            fireChangeDataValue(convValue,newValue);
 /*            if ( ! needChangeData(convValue) ) {
                 return;
             }
@@ -100,20 +104,37 @@ public abstract class AbstractBinder implements Binder {
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
-            binding.notifyPropertyError(this.getPropertyName(), e);
+            firePropertyError(e);
+            //binding.notifyPropertyError(this.getPropertyName(), e);
         }
     }
     
-    protected void fireBinderEvent(BinderEvent.Action action, Object dataValue, Object componentValue) {
+    private void fireChangeDataValue(Object dataValue, Object componentValue) {
+        BinderEvent.Action action = BinderEvent.Action.changePropertyValueRequest;
         BinderEvent event = new BinderEvent(this,action,dataValue,componentValue);
+        notifyListeners(event);
+    }
+    private void fireClearPropertyError() {
+        BinderEvent.Action action = BinderEvent.Action.clearPropertyErrorRequest;
+        BinderEvent event = new BinderEvent(this,action,null);
+        notifyListeners(event);
+    }
+    private void firePropertyError(Exception e) {
+        BinderEvent.Action action = BinderEvent.Action.notifyPropertyErrorRequest;
+        BinderEvent event = new BinderEvent(this,action,e);
+        notifyListeners(event);
+    }
+    
+    private void notifyListeners(BinderEvent event) {
         for ( BinderListener l : binderListeners) {
             l.react(event);
         }
     }
     //@Override
-    protected Object getDataValue() {
+/*    protected Object getDataValue() {
         return binding.getDocument().get(this.propertyName);
     }
+*/
     /**
      * return current component value 
      */
@@ -124,14 +145,14 @@ public abstract class AbstractBinder implements Binder {
     public void init(Object dataValue){
         
     }
-    protected void setDataValue(Object dataValue) {
+/*    protected void setDataValue(Object dataValue) {
         //this.binding.getDocument().put(propertyName, dataValue);
         this.binding.getDocument().put(this, dataValue);
     }
-    
+*/    
     protected abstract void setComponentValue(Object compValue);
     
-    protected abstract void restoreComponentValue(Object compValue);
+    //protected abstract void restoreComponentValue(Object compValue);
 
     
     

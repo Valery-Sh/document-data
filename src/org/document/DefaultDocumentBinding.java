@@ -59,6 +59,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
         if (blist == null) {
             blist = new ArrayList<Binder>();
         }
+        binder.addBinderListener(this);
         blist.add(binder);
         binderMap.put(propPath, blist);
         //binder.setDocumentBinding(this);
@@ -68,7 +69,7 @@ public class DefaultDocumentBinding implements DocumentBinding {
     protected void add(Binder binder, List<Binder> binderList) {
         binderList.add(binder);
         binder.addBinderListener(this);
-        binder.setDocumentBinding(this);
+//        binder.setDocumentBinding(this);
 
     }
 
@@ -290,8 +291,8 @@ public class DefaultDocumentBinding implements DocumentBinding {
      * b).notifyPropertyError(source, e); ((ErrorBinder)
      * b).notifyPropertyError(e); } } }
      */
-    @Override
-    public void notifyPropertyError(String propertyName, Exception e) {
+    //@Override
+    protected void notifyPropertyError(String propertyName, Exception e) {
         List<Binder> blist = this.errorBinders.get(propertyName);
         if (blist != null) {
             for (Binder b : blist) {

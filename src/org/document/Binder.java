@@ -12,7 +12,7 @@ public interface Binder {
     //void setDataValue(Object value);
     Object getComponentValue();
     //void setDirtyComponentValue(Object value);
-    void setDocumentBinding(DocumentBinding binding);
+    //void setDocumentBinding(DocumentBinding binding);
     void init(Object dataValue);
     void addBinderListener(BinderListener l);
     void removeBinderListener(BinderListener l);
