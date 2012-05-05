@@ -9,5 +9,5 @@ package org.document;
  * @author Valery
  */
 public interface BindingRecognizer<T> {
-    Object getBindingId(T object);
+    Object getBindingId(T document);
 }

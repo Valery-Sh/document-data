@@ -26,7 +26,13 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
     }
     @Override
     public Object get(Object key) {
-        return DataUtils.getValue(key.toString(), source);
+        Object result;
+        if ( source instanceof MapDocument ) {
+            result = DataUtils.getValue(key.toString(), ((MapDocument)source).getMap());
+        }  else {
+            result = DataUtils.getValue(key.toString(), source);
+        }
+        return result;
     }
     /**
      * The <code>key</code> parameter may of type {@link PropertyBinder} or any type

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 import java.util.ArrayList;
@@ -11,7 +7,7 @@ import java.util.Map;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class ObjectDocumentBinding implements DocumentBinding {
     

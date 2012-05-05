@@ -49,6 +49,9 @@ public class DataUtils {
         if (source instanceof Map) {
             dest.putAll((Map) source);
             return;
+        } if ( source instanceof MapDocument ) {
+            dest.putAll(((MapDocument)source).getMap()); 
+            return; 
         }
 
         try {
@@ -76,6 +79,8 @@ public class DataUtils {
         String error = "";
         if (obj instanceof Map) {
             return ((Map) obj).get(key);
+        } else if ( obj instanceof MapDocument ) {
+            return ((MapDocument)obj).getMap().get(key); 
         }
         try {
             BeanInfo binfo = Introspector.getBeanInfo(obj.getClass(), Object.class);
@@ -106,6 +111,9 @@ public class DataUtils {
         if (obj instanceof Map) {
             ((Map) obj).put(key, newValue);
             return;
+        } if ( obj instanceof MapDocument ) {
+            ((MapDocument)obj).getMap().get(key); 
+            return; 
         }
         try {
             BeanInfo binfo = Introspector.getBeanInfo(obj.getClass(), Object.class);

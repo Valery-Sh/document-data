@@ -13,6 +13,7 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
 
     protected Map<Object, DocumentBinding> documentBindings;
     protected ListBinding listBinding;
+    
     protected T selected;
     protected ValidatorCollection validators;
     protected BindingRecognizer recognizer;
@@ -22,6 +23,14 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
         documentBindings = new HashMap<Object, DocumentBinding>();
         validators = new ValidatorCollection();
         selectDocumentListeners = new ArrayList<DocumentSelectListener>();
+    }
+    protected AbstractBindingManager(BindingRecognizer recognizer) {
+        this();
+        this.recognizer = recognizer;
+        if ( recognizer == null ) {
+            this.recognizer = new DefaultBindingRecognizer();
+        }
+        
     }
 
     public T getSelected() {
@@ -149,5 +158,14 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
         for (DocumentSelectListener l : selectDocumentListeners) {
             l.documentSelect(event);
         }
+    }
+    
+    public static class DefaultBindingRecognizer<T> implements BindingRecognizer<T> {
+
+        @Override
+        public Object getBindingId(T document) {
+            return document.getClass();
+        }
+        
     }
 }//class BindingManager
