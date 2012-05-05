@@ -4,7 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface Binder  extends DocumentListener{
+public interface Binder  extends DocumentChangeListener{
     void dataChanged(Object newValue);
     void componentChanged(Object newValue);
     Object getComponentValue();

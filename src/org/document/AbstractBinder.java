@@ -33,7 +33,7 @@ public abstract class AbstractBinder implements PropertyBinder {
     }   
     
     @Override
-    public void react(DocumentEvent event) {
+    public void react(DocumentChangeEvent event) {
         switch(event.getAction()) {
             case documentChange :
                 this.document = (Document)event.getNewValue();

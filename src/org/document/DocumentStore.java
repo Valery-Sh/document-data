@@ -10,6 +10,6 @@ public interface DocumentStore extends Serializable {
     
     Object get(Object key);
     void put(Object key,Object value);
-    void addDocumentListener(DocumentListener listener);
-    void removeDocumentListener(DocumentListener listener);    
+    void addDocumentListener(DocumentChangeListener listener);
+    void removeDocumentListener(DocumentChangeListener listener);    
 }

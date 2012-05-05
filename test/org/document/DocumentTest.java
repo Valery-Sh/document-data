@@ -114,7 +114,7 @@ public class DocumentTest {
     @Test
     public void testAddDocumentListener() {
         System.out.println("setAddDocumentListener");
-        DocumentListener l = null;
+        DocumentChangeListener l = null;
         DocumentStore instance = new DocumentImpl();
         instance.addDocumentListener(l);
     }
@@ -122,7 +122,7 @@ public class DocumentTest {
     public static class DocumentImpl implements DocumentStore {
 
         Map values = new HashMap();
-        DocumentListener docListener;
+        DocumentChangeListener docListener;
         
         @Override
         public Object get(Object key) {
@@ -141,7 +141,7 @@ public class DocumentTest {
             values.put(key, value);
             validate(key,value);
             if ( docListener != null ) {
-                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.propertyChangeNotify);
+                DocumentChangeEvent event = new DocumentChangeEvent(this,DocumentChangeEvent.Action.propertyChangeNotify);
                 event.setPropertyName(key.toString());
                 event.setOldValue(oldValue);
                 event.setNewValue(value);
@@ -152,19 +152,19 @@ public class DocumentTest {
         
 
         @Override
-        public void addDocumentListener(DocumentListener listener) {
+        public void addDocumentListener(DocumentChangeListener listener) {
             this.docListener = listener;
         }
 
         @Override
-        public void removeDocumentListener(DocumentListener listener) {
+        public void removeDocumentListener(DocumentChangeListener listener) {
             this.docListener = null;
         }
 
 
         protected void validate(Object key, Object value) {
             if ( docListener != null ) {
-                DocumentEvent event = new DocumentEvent(this,DocumentEvent.Action.validateProperty);
+                DocumentChangeEvent event = new DocumentChangeEvent(this,DocumentChangeEvent.Action.validateProperty);
                 event.setPropertyName(key.toString());
                 //event.setOldValue(oldValue);
                 event.setNewValue(value);

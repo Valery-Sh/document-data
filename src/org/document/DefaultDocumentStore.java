@@ -13,12 +13,12 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
 
     protected transient BeanDocumentState state;
     protected T source;
-    protected List<DocumentListener> docListeners;
+    protected List<DocumentChangeListener> docListeners;
 
     public DefaultDocumentStore(T source) {
         this.state = new BeanDocumentState(this);
         this.source = source;
-        this.docListeners = new ArrayList<DocumentListener>();
+        this.docListeners = new ArrayList<DocumentChangeListener>();
 //        this.state.fillValidEditValues();
     }
     public T getObject() {
@@ -85,7 +85,7 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
             validate(propertyName, value);
         } catch (ValidationException e) {
             if (!docListeners.isEmpty()) {
-                DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateErrorNotify);
+                DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateErrorNotify);
                 event.setPropertyName(propertyName);
                 event.setBinder(binder);
                 event.setOldValue(oldValue);
@@ -103,7 +103,7 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
         setPropertyValue(propertyName.toString(), value);
 
         if (!docListeners.isEmpty()) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChangeNotify);
             event.setPropertyName(propertyName);
             event.setBinder(binder);
             event.setOldValue(oldValue);
@@ -114,12 +114,12 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
     }
 
     @Override
-    public void addDocumentListener(DocumentListener listener) {
+    public void addDocumentListener(DocumentChangeListener listener) {
         this.docListeners.add(listener);
     }
 
     @Override
-    public void removeDocumentListener(DocumentListener listener) {
+    public void removeDocumentListener(DocumentChangeListener listener) {
         this.docListeners.remove(listener);
     }
 
@@ -135,7 +135,7 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
      */
     public void validate(Object key, Object value) throws ValidationException {
         if (!docListeners.isEmpty()) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateProperty);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateProperty);
             event.setPropertyName(key.toString());
             event.setNewValue(value);
             fireDocumentEvent(event);
@@ -146,13 +146,13 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
      */
     protected void validateProperties() {
         if (!docListeners.isEmpty()) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateAllProperties);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateAllProperties);
             fireDocumentEvent(event);
         }
     }
     protected void validateDocument() {
         if (!docListeners.isEmpty()) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.validateDocument);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateDocument);
             fireDocumentEvent(event);
         }
 
@@ -173,8 +173,8 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
      * {@link org.documentStore.DocumentEvent } arises.
      * @param event an event of type <code>DocumentEvent</code>
      */
-    private void fireDocumentEvent(DocumentEvent event) {
-        for (DocumentListener l : docListeners) {
+    private void fireDocumentEvent(DocumentChangeEvent event) {
+        for (DocumentChangeListener l : docListeners) {
             l.react(event);
         }
     }
@@ -188,14 +188,14 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
         private DocumentStore documentStore;
         private Map beforeEditValues;
         protected Map dirtyEditValues;
-        protected Map<String,DocumentEvent> propertyErrors;
+        protected Map<String,DocumentChangeEvent> propertyErrors;
         //protected Map validEditValues;
 
         public BeanDocumentState(DocumentStore documentStore) {
             this.documentStore = documentStore;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
-            propertyErrors = new HashMap<String,DocumentEvent>();
+            propertyErrors = new HashMap<String,DocumentChangeEvent>();
             //validEditValues = new HashMap();
         }
         
@@ -220,7 +220,7 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
                     this.editing = editing;
                 } catch (ValidationException e) {
                     if (!d.docListeners.isEmpty()) {
-                        DocumentEvent event = new DocumentEvent(d, DocumentEvent.Action.validateErrorNotify);
+                        DocumentChangeEvent event = new DocumentChangeEvent(d, DocumentChangeEvent.Action.validateErrorNotify);
                         event.setPropertyName("");
                         event.setException(e);
                         d.fireDocumentEvent(event);
@@ -241,7 +241,7 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
         }
 
         @Override
-        public Map<String, DocumentEvent> getPropertyErrors() {
+        public Map<String, DocumentChangeEvent> getPropertyErrors() {
             return this.getPropertyErrors();
         }
     }//class BeanDocumentState

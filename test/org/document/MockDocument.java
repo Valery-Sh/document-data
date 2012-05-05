@@ -32,12 +32,12 @@ public class MockDocument implements DocumentStore{
 
 
     @Override
-    public void addDocumentListener(DocumentListener listener) {
+    public void addDocumentListener(DocumentChangeListener listener) {
         
     }
 
     @Override
-    public void removeDocumentListener(DocumentListener listener) {
+    public void removeDocumentListener(DocumentChangeListener listener) {
         
     }
     

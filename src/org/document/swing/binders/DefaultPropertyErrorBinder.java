@@ -7,10 +7,10 @@ import org.document.AbstractPropertyErrorBinder;
  *
  * @author V. Shyshkin
  */
-public class PropertyErrorBinder extends AbstractPropertyErrorBinder{
+public class DefaultPropertyErrorBinder extends AbstractPropertyErrorBinder{
     protected JLabel textField;
     
-    public PropertyErrorBinder(String propName, JLabel textField) {
+    public DefaultPropertyErrorBinder(String propName, JLabel textField) {
         this.textField = textField;
         this.propertyName = propName;
     }   

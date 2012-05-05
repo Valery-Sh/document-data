@@ -11,15 +11,15 @@ public class DocumentImpl implements DocumentStore {
 
     Map values = new HashMap();
 
-    DocumentListener docListener;
+    DocumentChangeListener docListener;
 
     @Override
-    public void addDocumentListener(DocumentListener listener) {
+    public void addDocumentListener(DocumentChangeListener listener) {
         this.docListener = listener;
     }
 
     @Override
-    public void removeDocumentListener(DocumentListener listener) {
+    public void removeDocumentListener(DocumentChangeListener listener) {
         this.docListener = null;
     }
 
@@ -49,7 +49,7 @@ public class DocumentImpl implements DocumentStore {
         Object oldValue = this.get(pname);
         values.put(pname, value);
         if (docListener != null) {
-            DocumentEvent event = new DocumentEvent(this, DocumentEvent.Action.propertyChangeNotify);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChangeNotify);
             event.setPropertyName(pname);
             event.setBinder(binder);
             event.setOldValue(oldValue);

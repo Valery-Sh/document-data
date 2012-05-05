@@ -52,7 +52,7 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
     protected abstract void setComponentSelectedIndex(Integer selectedIndex);    
     
     @Override
-    public void react(DocumentEvent event) {
+    public void react(DocumentChangeEvent event) {
         Document document = (Document) event.getNewValue();
         switch (event.getAction()) {
             case documentChange:

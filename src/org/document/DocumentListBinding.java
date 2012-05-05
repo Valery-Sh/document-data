@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class DocumentListBinding implements ListBinding, BinderListener {
 
-    protected List<DocumentListener> documentListeners;
+    protected List<DocumentChangeListener> documentListeners;
     protected Object id;
     protected Map<String, List<Binder>> binders;
     protected Map<String, List<Binder>> errorBinders;
@@ -144,27 +144,27 @@ public class DocumentListBinding implements ListBinding, BinderListener {
             return;
         }
 
-        DocumentEvent event = new DocumentEvent(document, DocumentEvent.Action.documentChange);
+        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.documentChange);
         event.setOldValue(oldDoc);
         event.setNewValue(newDoc);
 
-        for (DocumentListener l : documentListeners) {
+        for (DocumentChangeListener l : documentListeners) {
             l.react(event);
         }
     }
 
     @Override
-    public void react(DocumentEvent event) {
+    public void react(DocumentChangeEvent event) {
     }
 
     @Override
     public void react(BinderEvent event) {
         switch (event.getAction()) {
             case selectChange:
-                DocumentEvent e = new DocumentEvent(document,DocumentEvent.Action.selectChange);
+                DocumentChangeEvent e = new DocumentChangeEvent(document,DocumentChangeEvent.Action.selectChange);
                 e.setNewValue(event.getDataValue());
                 e.setOldValue(event.getComponentValue());
-                for (DocumentListener l : documentListeners) {
+                for (DocumentChangeListener l : documentListeners) {
                     l.react(e);
                 }
                 
@@ -173,15 +173,15 @@ public class DocumentListBinding implements ListBinding, BinderListener {
     }
 
     @Override
-    public void addDocumentListener(DocumentListener l) {
+    public void addDocumentListener(DocumentChangeListener l) {
         if (documentListeners == null) {
-            documentListeners = new ArrayList<DocumentListener>();
+            documentListeners = new ArrayList<DocumentChangeListener>();
         }
         documentListeners.add(l);
     }
 
     @Override
-    public void removeDocumentListener(DocumentListener l) {
+    public void removeDocumentListener(DocumentChangeListener l) {
         if (documentListeners == null) {
             return;
         }

@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author V. Shishkin
  */
-public class AbstractBindingManager<T extends Document> implements DocumentListener {
+public class AbstractBindingManager<T extends Document> implements DocumentChangeListener {
 
     protected Map<Object, DocumentBinding> documentBindings;
     protected ListBinding listBinding;
@@ -119,7 +119,7 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
     }
 
     @Override
-    public void react(DocumentEvent event) {
+    public void react(DocumentChangeEvent event) {
         switch (event.getAction()) {
             case selectChange:
                 T newDoc = (T)event.getNewValue();

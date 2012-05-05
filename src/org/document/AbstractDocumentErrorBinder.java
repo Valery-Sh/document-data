@@ -38,7 +38,7 @@ public abstract class AbstractDocumentErrorBinder extends AbstractBinder impleme
         this.errorFound = value;
     }
     @Override
-    public void react(DocumentEvent event) {
+    public void react(DocumentChangeEvent event) {
         switch(event.getAction()) {
             case documentChange :
                 this.notifyError(null);

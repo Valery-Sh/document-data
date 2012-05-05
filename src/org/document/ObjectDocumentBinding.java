@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class ObjectDocumentBinding implements DocumentBinding {
     
-    protected List<DocumentListener> documentListeners;
+    protected List<DocumentChangeListener> documentListeners;
     
     protected Object id;
     protected String childName;
@@ -255,11 +255,11 @@ public class ObjectDocumentBinding implements DocumentBinding {
             return;
         }
 
-        DocumentEvent event = new DocumentEvent(document, DocumentEvent.Action.documentChange);
+        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.documentChange);
         event.setOldValue(oldDoc);
         event.setNewValue(newDoc);
         
-        for ( DocumentListener l : documentListeners) {
+        for ( DocumentChangeListener l : documentListeners) {
             l.react(event);
         }
     }
@@ -304,11 +304,11 @@ public class ObjectDocumentBinding implements DocumentBinding {
             return;
         }
 
-        DocumentEvent event = new DocumentEvent(document, DocumentEvent.Action.propertyErrorNotify);
+        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.propertyErrorNotify);
         event.setPropertyName(propertyName);
         event.setException(e);
         
-        for ( DocumentListener l : documentListeners) {
+        for ( DocumentChangeListener l : documentListeners) {
             if ( (l instanceof PropertyErrorBinder) && propertyName.equals(((PropertyBinder)l).getPropertyName()) ) {
                 l.react(event);
             }
@@ -321,10 +321,10 @@ public class ObjectDocumentBinding implements DocumentBinding {
             return;
         }
 
-        DocumentEvent event = new DocumentEvent(document, DocumentEvent.Action.documentErrorNotify);
+        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.documentErrorNotify);
         event.setException(e);
         
-        for ( DocumentListener l : documentListeners) {
+        for ( DocumentChangeListener l : documentListeners) {
             if ( ! (l instanceof DocumentErrorBinder) ) {
                 continue;
             }
@@ -364,16 +364,16 @@ public class ObjectDocumentBinding implements DocumentBinding {
     }
 
     @Override
-    public void react(DocumentEvent event) {
-        if (event.getAction().equals(DocumentEvent.Action.propertyChangeNotify)) {
+    public void react(DocumentChangeEvent event) {
+        if (event.getAction().equals(DocumentChangeEvent.Action.propertyChangeNotify)) {
             if (event.getBinder() == null) {
                 firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
             } else {
                 firePropertyChange(event.getBinder(), event.getOldValue(), event.getNewValue());
             }
-        } else if (event.getAction().equals(DocumentEvent.Action.validateProperty)) {
+        } else if (event.getAction().equals(DocumentChangeEvent.Action.validateProperty)) {
             this.validate(event.getPropertyName(), event.getNewValue());
-        } else if (event.getAction().equals(DocumentEvent.Action.validateErrorNotify)) {
+        } else if (event.getAction().equals(DocumentChangeEvent.Action.validateErrorNotify)) {
             if (((ValidationException) event.getException()).getPropertyName() == null) {
                 // documentStore error
                 //(event.getException());
@@ -382,7 +382,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
                 //notifyPropertyError(event.getPropertyName(), event.getException());
                 firePropertyError(event.getPropertyName(), event.getException());
             }
-        } else if (event.getAction().equals(DocumentEvent.Action.validateAllProperties)) {
+        } else if (event.getAction().equals(DocumentChangeEvent.Action.validateAllProperties)) {
             //validators.validateProperties((DocumentStore) event.getSource());
             for (Map.Entry<String, List<Binder>> e : binders.entrySet()) {
                 List<Binder> l = e.getValue();
@@ -393,7 +393,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
                     this.validate( ((PropertyBinder)b).getPropertyName(), b.getComponentValue());
                 }
             }
-        } else if (event.getAction().equals(DocumentEvent.Action.validateDocument)) {
+        } else if (event.getAction().equals(DocumentChangeEvent.Action.validateDocument)) {
             this.validate();
         }
     }
@@ -439,14 +439,14 @@ public class ObjectDocumentBinding implements DocumentBinding {
         return result;
     }
     @Override
-    public void addDocumentListener(DocumentListener l) {
+    public void addDocumentListener(DocumentChangeListener l) {
         if ( documentListeners == null ) {
-            documentListeners = new ArrayList<DocumentListener>();
+            documentListeners = new ArrayList<DocumentChangeListener>();
         }
         documentListeners.add(l);
     }
     @Override
-    public void removeDocumentListener(DocumentListener l) {
+    public void removeDocumentListener(DocumentChangeListener l) {
         if ( documentListeners == null ) {
             return;
         }

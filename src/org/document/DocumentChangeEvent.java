@@ -7,7 +7,7 @@ import java.util.EventObject;
  *
  * @author V. Shyshkin
  */
-public class DocumentEvent extends EventObject {
+public class DocumentChangeEvent extends EventObject {
     
     private Action action;
     private String propertyName;
@@ -16,14 +16,14 @@ public class DocumentEvent extends EventObject {
     private Exception exception;
     private PropertyBinder binder;
     
-    public DocumentEvent(DocumentStore source) {
+    public DocumentChangeEvent(DocumentStore source) {
         super(source);
     }
-    public DocumentEvent(DocumentStore source,Action action) {
+    public DocumentChangeEvent(DocumentStore source,Action action) {
         this(source);
         this.action = action;
     }
-    public DocumentEvent(Document source,Action action) {
+    public DocumentChangeEvent(Document source,Action action) {
         super(source);
         this.action = action;
     }
@@ -89,4 +89,4 @@ public class DocumentEvent extends EventObject {
         documentErrorNotify, // notifies ErrorBinders
         
     }
-}//class DocumentEvent
+}

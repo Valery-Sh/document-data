@@ -7,10 +7,10 @@ import org.document.AbstractDocumentErrorBinder;
  *
  * @author V. Shyshkin
  */
-public class DocumentErrorBinder extends AbstractDocumentErrorBinder{
+public class DefaultDocumentErrorBinder extends AbstractDocumentErrorBinder{
     protected JLabel textField;
     
-    public DocumentErrorBinder(JLabel textField) {
+    public DefaultDocumentErrorBinder(JLabel textField) {
         this.textField = textField;
     }   
     

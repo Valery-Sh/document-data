@@ -75,7 +75,7 @@ public class MockDocumentBinding implements DocumentBinding{
     }
 
     @Override
-    public void react(DocumentEvent event) {
+    public void react(DocumentChangeEvent event) {
     }
 
     @Override
