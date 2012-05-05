@@ -29,12 +29,12 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
         return DataUtils.getValue(key.toString(), source);
     }
     /**
-     * The <code>key</code> parameter may of type {@link Binder} or any type
+     * The <code>key</code> parameter may of type {@link PropertyBinder} or any type
      * whose <code>key.toString</code> value represents a property name.
      * When the given property changes then the method notifies all 
      * registered binders. But when the <code>key</code> parameter is instance
-     * of <code>Binder</code> then the method doesn't notify that binder.
-     * Calling a method with a parameter of type <code>Binder</code> 
+     * of <code>PropertyBinder</code> then the method doesn't notify that binder.
+     * Calling a method with a parameter of type <code>PropertyBinder</code> 
      * is used by binders. The latter pass themselves as a first parameter
      * of the method.
      * 
@@ -48,11 +48,11 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
         String propertyName;
-        Binder binder = null;
+        PropertyBinder binder = null;
         
-        if ( key instanceof Binder ) {
-            propertyName = ((Binder) key).getPropertyName();            
-            binder = (Binder)key;
+        if ( key instanceof PropertyBinder ) {
+            propertyName = ((PropertyBinder) key).getPropertyName();            
+            binder = (PropertyBinder)key;
         } else {
             propertyName = key.toString();
             

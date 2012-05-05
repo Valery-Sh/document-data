@@ -30,6 +30,12 @@ public class BinderEvent extends EventObject {
         this.componentValue = componentValue;
         this.dataValue = dataValue;
     }
+    public BinderEvent(ListBinder source,Action action,Object dataValue,Object componentValue ) {
+        this(source);
+        this.action = action;
+        this.componentValue = componentValue;
+        this.dataValue = dataValue;
+    }
 
     public Action getAction() {
         return action;
@@ -56,7 +62,7 @@ public class BinderEvent extends EventObject {
     }
 
     public String getPropertyName() {
-        return ((Binder)getSource()).getPropertyName();
+        return ((PropertyBinder)getSource()).getPropertyName();
     }
 
     public Exception getException() {
@@ -80,6 +86,7 @@ public class BinderEvent extends EventObject {
         notifyPropertyErrorRequest,
         clearPropertyErrorRequest,
         changePropertyValueRequest,
+        selectChange
         
     }
 }//class DocumentEvent

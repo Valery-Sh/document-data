@@ -13,36 +13,38 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
 
     protected Map<Object, DocumentBinding> documentBindings;
     protected ListBinding listBinding;
-    
     protected T selected;
-    
     protected ValidatorCollection validators;
     protected BindingRecognizer recognizer;
-    private List<DocumentSelectListener> selectDocumentListeners; 
+    private List<DocumentSelectListener> selectDocumentListeners;
+
     protected AbstractBindingManager() {
-        documentBindings = new HashMap<Object,DocumentBinding>();
+        documentBindings = new HashMap<Object, DocumentBinding>();
         validators = new ValidatorCollection();
         selectDocumentListeners = new ArrayList<DocumentSelectListener>();
     }
+
     public T getSelected() {
         return selected;
     }
+
     public void setSelected(T selected) {
         this.update(selected);
         T old = this.selected;
         this.selected = selected;
-        fireSelectDocument(old,selected);
+        fireSelectDocument(old, selected);
     }
-    
+
     public void addBinding(Binding binding) {
-        if ( binding instanceof DocumentBinding) {
-            Object id = ((DocumentBinding)binding).getId();
-            if ( id == null ) {
+        if (binding instanceof DocumentBinding) {
+            Object id = ((DocumentBinding) binding).getId();
+            if (id == null) {
                 id = "single";
             }
-            documentBindings.put(id, (DocumentBinding)binding);
-        } else if ( binding instanceof ListBinding) {
-            this.listBinding = (ListBinding)binding;
+            documentBindings.put(id, (DocumentBinding) binding);
+        } else if (binding instanceof ListBinding) {
+            this.listBinding = (ListBinding) binding;
+            this.listBinding.addDocumentListener(this);
         }
     }
 
@@ -61,29 +63,28 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
 
     protected void update(T selected) {
         //Document document = newSelected.getDocumentStore();
-        if ( this.selected == selected) {
+        if (this.selected == selected) {
             return;
         }
         Document old = this.selected;
         if (old != null) {
             DocumentBinding b = getBinding(old);
-            if ( b != null ) {
+            if (b != null) {
                 //b.setDocument(old);
                 b.completeChanges();
             }
         }
+        this.selected = selected;
         if (selected != null) {
             DocumentBinding b = getBinding(selected);
-            if ( b != null ) {
+            if (b != null) {
                 b.setDocument(selected);
             }
+            listBinding.setDocument(selected);
         }
-
-        this.selected = selected;
 
 
     }
-    
 
     public void setRecognizer(BindingRecognizer recognizer) {
         this.recognizer = recognizer;
@@ -93,7 +94,7 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
     //
 
     protected DocumentBinding getBinding(Document doc) {
-        if ( doc == null ) {
+        if (doc == null) {
             return null;
         }
 
@@ -108,21 +109,44 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
         return result;
     }
 
-
     @Override
     public void react(DocumentEvent event) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        switch (event.getAction()) {
+            case selectChange:
+                T newDoc = (T)event.getNewValue();
+                if (newDoc == this.selected) {
+                    return;
+                }
+                setSelected(newDoc);
+                break;
+
+        }
     }
+
+    /**
+     * Prepends cyclic data modifications.
+     *
+     * @param value a new value to be assigned
+     * @return
+     */
+    protected boolean needChangeSelected(Document document) {
+        if (document == this.selected) {
+            return false;
+        }
+        return true;
+    }
+
     public void addSelectDocumentListener(DocumentSelectListener l) {
         this.selectDocumentListeners.add(l);
     }
+
     public void removeSelectDocumentListener(DocumentSelectListener l) {
         this.selectDocumentListeners.remove(l);
-    }    
-    
-    private void fireSelectDocument(T oldSelected, T newSelected ) {
+    }
+
+    private void fireSelectDocument(T oldSelected, T newSelected) {
         DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
-        for ( DocumentSelectListener l :selectDocumentListeners) {
+        for (DocumentSelectListener l : selectDocumentListeners) {
             l.documentSelect(event);
         }
     }

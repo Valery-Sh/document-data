@@ -8,7 +8,7 @@ package org.document;
  *
  * @author Valery
  */
-public class MockBinder implements Binder{
+public class MockBinder implements PropertyBinder{
     
     String propName;
     Object component;
@@ -18,7 +18,7 @@ public class MockBinder implements Binder{
     boolean dataChanged;
     
     
-    public static Binder create(String propName, Object component) {
+    public static PropertyBinder create(String propName, Object component) {
         return new MockBinder(propName,component);
     }
     protected MockBinder(String propName, Object component) {

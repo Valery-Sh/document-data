@@ -4,6 +4,6 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface ListBinder {
+public interface ListBinder extends Binder,DocumentListener{
     
 }

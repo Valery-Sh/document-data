@@ -6,7 +6,7 @@ package org.document;
  */
 public interface DocumentBinding extends Binding, BinderListener{
     Object getId();
-    
+    ValidatorCollection getValidators();    
     /**
      * 
      * @param propertyName the name of a property whose type is 
@@ -16,7 +16,8 @@ public interface DocumentBinding extends Binding, BinderListener{
      */
     DocumentBinding createChild(String propertyName);
     String getChildName();
-    
+        
+
     //Document getDocument();    
     void validate(String propPath,Object value) throws ValidationException;
     void completeChanges();    

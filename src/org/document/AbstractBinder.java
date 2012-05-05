@@ -7,14 +7,21 @@ import java.util.List;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractBinder implements Binder {
+public abstract class AbstractBinder implements PropertyBinder {
 
     protected String propertyName;
     protected Document document;
 //    protected DocumentBinding binding;
     protected List<BinderListener> binderListeners;
     
-private Document oldDocument;    @Override
+    @Override
+    public void addBinderListener(BinderListener l) {
+        if ( this.binderListeners == null) {
+            this.binderListeners = new ArrayList<BinderListener>(1);
+        }
+        this.binderListeners.add(l);
+    }
+    @Override
     public void removeBinderListener(BinderListener l) {
         if ( this.binderListeners == null) {
             return;
@@ -130,7 +137,7 @@ private Document oldDocument;    @Override
         BinderEvent event = new BinderEvent(this,action,e);
         notifyListeners(event);
     }
-    
+
     private void notifyListeners(BinderEvent event) {
         for ( BinderListener l : binderListeners) {
             l.react(event);

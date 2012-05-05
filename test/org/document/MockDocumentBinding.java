@@ -15,12 +15,12 @@ public class MockDocumentBinding implements DocumentBinding{
     }
     
     @Override
-    public void add(Binder binder) {
+    public void add(PropertyBinder binder) {
         
     }
 
     @Override
-    public void remove(Binder binder) {
+    public void remove(PropertyBinder binder) {
         
     }
 
@@ -50,7 +50,7 @@ public class MockDocumentBinding implements DocumentBinding{
     }
 
     @Override
-    public void notifyError(Binder source, Exception e) {
+    public void notifyError(PropertyBinder source, Exception e) {
         
     }
     @Override

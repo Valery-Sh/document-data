@@ -37,11 +37,11 @@ public class DocumentImpl implements DocumentStore {
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
         String pname;
-        Binder binder = null;
+        PropertyBinder binder = null;
         
-        if ( key instanceof Binder) {
-            pname = ((Binder)key).getPropertyName();
-            binder = (Binder)key;
+        if ( key instanceof PropertyBinder) {
+            pname = ((PropertyBinder)key).getPropertyName();
+            binder = (PropertyBinder)key;
         } else {
             pname = key.toString();
         }

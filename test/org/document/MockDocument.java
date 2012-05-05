@@ -23,8 +23,8 @@ public class MockDocument implements DocumentStore{
 
     @Override
     public void put(Object key, Object value) {
-        if ( key instanceof Binder ) {
-            data.put( ((Binder)key).getPropertyName(),value);
+        if ( key instanceof PropertyBinder ) {
+            data.put( ((PropertyBinder)key).getPropertyName(),value);
         } else {
             data.put(key, value);
         }

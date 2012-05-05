@@ -14,7 +14,7 @@ public class DocumentEvent extends EventObject {
     private Object oldValue;
     private Object newValue;    
     private Exception exception;
-    private Binder binder;
+    private PropertyBinder binder;
     
     public DocumentEvent(DocumentStore source) {
         super(source);
@@ -68,17 +68,18 @@ public class DocumentEvent extends EventObject {
         this.exception = exception;
     }
 
-    public Binder getBinder() {
+    public PropertyBinder getBinder() {
         return binder;
     }
 
-    public void setBinder(Binder binder) {
+    public void setBinder(PropertyBinder binder) {
         this.binder = binder;
     }
 
     
     public enum Action {
         documentChange,
+        selectChange,
         propertyChangeNotify,
         validateErrorNotify,
         validateProperty,

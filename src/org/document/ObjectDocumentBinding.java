@@ -58,7 +58,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
     }
 
     protected void add(Binder binder, Map<String, List<Binder>> binderMap) {
-        String propPath = binder.getPropertyName();
+        String propPath = ((PropertyBinder)binder).getPropertyName();
         List<Binder> blist = binderMap.get(propPath);
         if (blist == null) {
             blist = new ArrayList<Binder>();
@@ -82,19 +82,19 @@ public class ObjectDocumentBinding implements DocumentBinding {
     @Override
     public void add(Binder binder) {
         if (binder instanceof ErrorBinder) {
-            if (binder.getPropertyName() == null) {
+            if ( ((ErrorBinder)binder).getPropertyName() == null) {
                 // documentStore error binder
                 add(binder, documentErrorBinders);
             } else {
                 add(binder, errorBinders);
             }
-        } else {
+        } else if (binder instanceof PropertyBinder ) {
             add(binder, binders);
         }
     }
 
     protected void remove(Binder binder, Map<String, List<Binder>> binderMap) {
-        String propPath = binder.getPropertyName();
+        String propPath = ((PropertyBinder)binder).getPropertyName();
         List<Binder> blist = binderMap.get(propPath);
         if (blist == null || blist.isEmpty()) {
             return;
@@ -103,7 +103,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
         removeDocumentListener(binder);
         blist.remove(binder);
         if (blist.isEmpty()) {
-            binderMap.remove(binder.getPropertyName());
+            binderMap.remove(((PropertyBinder)binder).getPropertyName());
         }
 
     }
@@ -118,13 +118,13 @@ public class ObjectDocumentBinding implements DocumentBinding {
     @Override
     public void remove(Binder binder) {
         if (binder instanceof ErrorBinder) {
-            if (binder.getPropertyName() == null) {
+            if ( ((ErrorBinder)binder).getPropertyName() == null) {
                 // documentStore error binder
                 remove(binder, documentErrorBinders);
             } else {
                 remove(binder, errorBinders);
             }
-        } else {
+        } else if (binder instanceof PropertyBinder) {
             remove(binder, binders);
         }
     }
@@ -158,8 +158,8 @@ public class ObjectDocumentBinding implements DocumentBinding {
         }
     }
 
-    protected void firePropertyChange(Binder binder, Object oldValue, Object newValue) {
-        List<Binder> blist = binders.get(binder.getPropertyName());
+    protected void firePropertyChange(PropertyBinder binder, Object oldValue, Object newValue) {
+        List<Binder> blist = binders.get(((PropertyBinder)binder).getPropertyName());
         if (blist == null) {
             return;
         }
@@ -228,7 +228,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
                         continue;
                     }
                     for (Binder b : l) {
-                        b.init(state.getDirtyValues().get(b.getPropertyName()));
+                        ((PropertyBinder)b).init(state.getDirtyValues().get(((PropertyBinder)b).getPropertyName()));
                     }
                 }
                 this.completeChanges();
@@ -269,7 +269,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
     }
 /*    protected void refresh() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
-            for (Binder b : ent.getValue()) {
+            for (PropertyBinder b : ent.getValue()) {
                 //b.init(getDocumentStore().get(b.getPropertyName()));
                 notifyPropertyError(b.getPropertyName(), null);
             }
@@ -313,7 +313,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
         event.setException(e);
         
         for ( DocumentListener l : documentListeners) {
-            if ( (l instanceof PropertyErrorBinder) && propertyName.equals(((Binder)l).getPropertyName()) ) {
+            if ( (l instanceof PropertyErrorBinder) && propertyName.equals(((PropertyBinder)l).getPropertyName()) ) {
                 l.react(event);
             }
         }
@@ -337,24 +337,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
         
     }
     
-/*    
-    protected void notifyPropertyError(String propertyName, Exception e) {
-        
-        List<Binder> blist = this.errorBinders.get(propertyName);
-        if (blist != null) {
-            for (Binder b : blist) {
-                //((ErrorBinder) b).notifyPropertyError(null, e);
-                ((ErrorBinder) b).notifyPropertyError(e);
-            }
-        }
-    }
 
-    protected void notifyDocumentError(Exception e) {
-        for (Binder b : documentErrorBinders) {
-            ((ErrorBinder) b).notifyDocumentError(e);
-        }
-    }
-*/
     @Override
     public ValidatorCollection getValidators() {
         return validators;
@@ -411,7 +394,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
                     continue;
                 }
                 for (Binder b : l) {
-                    this.validate(b.getPropertyName(), b.getComponentValue());
+                    this.validate( ((PropertyBinder)b).getPropertyName(), b.getComponentValue());
                 }
             }
         } else if (event.getAction().equals(DocumentEvent.Action.validateDocument)) {
@@ -427,7 +410,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
                 if (!needChangeData(event.getPropertyName(),event.getDataValue())) {
                     return;
                 }
-                getDocumentStore().put((Binder) event.getSource(), event.getDataValue());
+                getDocumentStore().put((PropertyBinder) event.getSource(), event.getDataValue());
                 break;
             case notifyPropertyErrorRequest:
 
