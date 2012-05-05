@@ -1,6 +1,8 @@
 package org.document;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,17 +18,20 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
     
     protected ValidatorCollection validators;
     protected BindingRecognizer recognizer;
-    
+    private List<DocumentSelectListener> selectDocumentListeners; 
     protected AbstractBindingManager() {
         documentBindings = new HashMap<Object,DocumentBinding>();
         validators = new ValidatorCollection();
+        selectDocumentListeners = new ArrayList<DocumentSelectListener>();
     }
     public T getSelected() {
         return selected;
     }
     public void setSelected(T selected) {
         this.update(selected);
+        T old = this.selected;
         this.selected = selected;
+        fireSelectDocument(old,selected);
     }
     
     public void addBinding(Binding binding) {
@@ -108,5 +113,17 @@ public class AbstractBindingManager<T extends Document> implements DocumentListe
     public void react(DocumentEvent event) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    public void addSelectDocumentListener(DocumentSelectListener l) {
+        this.selectDocumentListeners.add(l);
+    }
+    public void removeSelectDocumentListener(DocumentSelectListener l) {
+        this.selectDocumentListeners.remove(l);
+    }    
     
+    private void fireSelectDocument(T oldSelected, T newSelected ) {
+        DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
+        for ( DocumentSelectListener l :selectDocumentListeners) {
+            l.documentSelect(event);
+        }
+    }
 }//class BindingManager

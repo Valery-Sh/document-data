@@ -14,14 +14,7 @@ public abstract class AbstractBinder implements Binder {
 //    protected DocumentBinding binding;
     protected List<BinderListener> binderListeners;
     
-    @Override
-    public void addBinderListener(BinderListener l) {
-        if ( this.binderListeners == null) {
-            this.binderListeners = new ArrayList<BinderListener>(1);
-        }
-        this.binderListeners.add(l);
-    }
-    @Override
+private Document oldDocument;    @Override
     public void removeBinderListener(BinderListener l) {
         if ( this.binderListeners == null) {
             return;

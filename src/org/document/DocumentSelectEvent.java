@@ -10,12 +10,12 @@ import java.util.EventObject;
  *
  * @author Valery
  */
-public class SelectedDocumentChangeEvent extends EventObject{
+public class DocumentSelectEvent extends EventObject{
     
     private Document oldDocument;
     private Document newDocument;
     
-    public SelectedDocumentChangeEvent(Object source, Document oldDocument, Document newDocument) {
+    public DocumentSelectEvent(Object source, Document oldDocument, Document newDocument) {
         super(source);
         this.oldDocument = oldDocument;
         this.newDocument = newDocument;
