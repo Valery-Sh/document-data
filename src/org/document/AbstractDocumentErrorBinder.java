@@ -4,24 +4,14 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractErrorBinder extends AbstractBinder implements ErrorBinder {
+public abstract class AbstractDocumentErrorBinder extends AbstractBinder implements DocumentErrorBinder {
     
-    //protected Binder source;
     protected Exception exception;
     protected boolean errorFound;
     
     @Override
-    public void notifyPropertyError(Exception e) {
+    public void notifyError(Exception e) {
         //this.source = source;
-        this.exception = e;
-        if ( e == null ) {
-            errorFound = false;
-        } else {
-            errorFound = true;
-        }
-    }
-    @Override
-    public void notifyDocumentError(Exception e) {
         this.exception = e;
         if ( e == null ) {
             errorFound = false;
@@ -46,6 +36,20 @@ public abstract class AbstractErrorBinder extends AbstractBinder implements Erro
 
     protected void setErrorFound(boolean value) {
         this.errorFound = value;
+    }
+    @Override
+    public void react(DocumentEvent event) {
+        switch(event.getAction()) {
+            case documentChange :
+                this.notifyError(null);
+                break;
+            case documentErrorNotify :
+                if ( event.getPropertyName() != null ) {
+                    break;
+                }
+                notifyError(event.getException());
+                break;
+        }//switch
     }
 
 }

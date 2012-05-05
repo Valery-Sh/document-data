@@ -83,7 +83,9 @@ public class DocumentEvent extends EventObject {
         validateErrorNotify,
         validateProperty,
         validateAllProperties,
-        validateDocument
+        validateDocument,
+        propertyErrorNotify, // notifies ErrorBinders
+        documentErrorNotify, // notifies ErrorBinders
         
     }
 }//class DocumentEvent

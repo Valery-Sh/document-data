@@ -34,6 +34,9 @@ public abstract class AbstractBinder implements Binder {
         switch(event.getAction()) {
             case documentChange :
                 this.document = (Document)event.getNewValue();
+                if ( document != null && getPropertyName() != null) {
+                    init(document.getDocumentStore().get(getPropertyName()));
+                }
                 break;
         }//switch
     }
@@ -170,5 +173,13 @@ public abstract class AbstractBinder implements Binder {
 
     
     protected abstract Object dataValueOf(Object compValue);
-    
+    /**
+     * For test purpose
+     */
+    public Object getValueByName() {
+        if ( document == null ) {
+            return null;
+        }
+        return document.getDocumentStore().get(getPropertyName());
+    }
 }

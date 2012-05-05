@@ -128,7 +128,24 @@ public class ObjectDocumentBinding implements DocumentBinding {
             remove(binder, binders);
         }
     }
-
+    public Map<String, List<Binder>> getBinders() {
+        return this.binders;
+    }
+    public List<Binder> getBinders(String propertyName) {
+        return this.binders.get(propertyName);
+    }
+    public Map<String, List<Binder>> getErrorBinders() {
+        return this.errorBinders;
+    }
+    
+    public List<Binder> getErrorBinders(String propertyName) {
+        return this.errorBinders.get(propertyName);
+    }
+    
+    public List<Binder> getDocumentErrorBinders() {
+        return this.documentErrorBinders;
+    }
+    
     protected void firePropertyChange(String propName, Object oldValue, Object newValue) {
 
         List<Binder> blist = binders.get(propName);
@@ -196,8 +213,9 @@ public class ObjectDocumentBinding implements DocumentBinding {
         if ( document == null ) {
             return;
         }
-
-        refresh();
+        
+        fireDocumentChanged(oldDocument, document);
+        //refresh();
         
         DocumentStore documentStore = getDocumentStore();
         
@@ -214,16 +232,18 @@ public class ObjectDocumentBinding implements DocumentBinding {
                     }
                 }
                 this.completeChanges();
-                this.notifyDocumentError(null);
+                //this.notifyDocumentError(null);
+                fireDocumentError(null);
                 try {
                     getValidators().validate(document);
                 } catch (ValidationException e) {
-                    this.notifyDocumentError(e);
+                    //this.notifyDocumentError(e);
+                    fireDocumentError(e);
                 }
             }
         }
         
-        notifyDocumentListeners(oldDocument, document);
+        
         
         for (DocumentBinding child : childs) {
             Object d = documentStore.get(child.getChildName());
@@ -234,7 +254,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
             }
         }
     }
-    private void notifyDocumentListeners(Document oldDoc, Document newDoc ) {
+    private void fireDocumentChanged(Document oldDoc, Document newDoc ) {
         if ( this.documentListeners == null || documentListeners.isEmpty()) {
             return;
         }
@@ -247,18 +267,17 @@ public class ObjectDocumentBinding implements DocumentBinding {
             l.react(event);
         }
     }
-    protected void refresh() {
+/*    protected void refresh() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
-                //b.dataChanged(null, b.getDataValue());
-                b.init(getDocumentStore().get(b.getPropertyName()));
+                //b.init(getDocumentStore().get(b.getPropertyName()));
                 notifyPropertyError(b.getPropertyName(), null);
             }
         }
         notifyDocumentError(null);
 
     }
-
+*/
     protected void resolvePendingChanges() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
@@ -283,25 +302,44 @@ public class ObjectDocumentBinding implements DocumentBinding {
          */
     }
 
-    /**
-     * For test purpose
-     *
-     * @param path
-     * @return
-     */
-    protected List<Binder> getBinders(String path) {
-        return this.binders.get(path);
-    }
 
-    /*
-     * @Override public void notifyDocumentError(Binder source, Exception e) {
-     * List<Binder> blist = this.errorBinders.get(source.getPropertyName()); if
-     * (blist != null) { for (Binder b : blist) { //((ErrorBinder)
-     * b).notifyPropertyError(source, e); ((ErrorBinder)
-     * b).notifyPropertyError(e); } } }
-     */
-    //@Override
+    protected void firePropertyError(String propertyName, Exception e) {
+        if ( this.documentListeners == null || documentListeners.isEmpty()) {
+            return;
+        }
+
+        DocumentEvent event = new DocumentEvent(document, DocumentEvent.Action.propertyErrorNotify);
+        event.setPropertyName(propertyName);
+        event.setException(e);
+        
+        for ( DocumentListener l : documentListeners) {
+            if ( (l instanceof PropertyErrorBinder) && propertyName.equals(((Binder)l).getPropertyName()) ) {
+                l.react(event);
+            }
+        }
+        
+    }
+    
+    protected void fireDocumentError(Exception e) {
+        if ( this.documentListeners == null || documentListeners.isEmpty()) {
+            return;
+        }
+
+        DocumentEvent event = new DocumentEvent(document, DocumentEvent.Action.documentErrorNotify);
+        event.setException(e);
+        
+        for ( DocumentListener l : documentListeners) {
+            if ( ! (l instanceof DocumentErrorBinder) ) {
+                continue;
+            }
+            l.react(event);
+        }
+        
+    }
+    
+/*    
     protected void notifyPropertyError(String propertyName, Exception e) {
+        
         List<Binder> blist = this.errorBinders.get(propertyName);
         if (blist != null) {
             for (Binder b : blist) {
@@ -316,7 +354,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
             ((ErrorBinder) b).notifyDocumentError(e);
         }
     }
-
+*/
     @Override
     public ValidatorCollection getValidators() {
         return validators;
@@ -359,9 +397,11 @@ public class ObjectDocumentBinding implements DocumentBinding {
         } else if (event.getAction().equals(DocumentEvent.Action.validateErrorNotify)) {
             if (((ValidationException) event.getException()).getPropertyName() == null) {
                 // documentStore error
-                notifyDocumentError(event.getException());
+                //(event.getException());
+                fireDocumentError(event.getException());
             } else {
-                notifyPropertyError(event.getPropertyName(), event.getException());
+                //notifyPropertyError(event.getPropertyName(), event.getException());
+                firePropertyError(event.getPropertyName(), event.getException());
             }
         } else if (event.getAction().equals(DocumentEvent.Action.validateAllProperties)) {
             //validators.validateProperties((DocumentStore) event.getSource());
