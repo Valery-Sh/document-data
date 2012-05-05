@@ -30,10 +30,25 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
     protected abstract void addComponentListener();
     protected abstract void setComponentModel();
     /**
-     * Sample for ListBoxListBinder: return this.component.getSelectedIndex();
-     * @return 
+     * When extending the class the method is used instead of the 
+     * {@link AbstractBinder#getComponentValue() }.
+     * 
+     * @see #setComponentValue(java.lang.Object)      
+     * @see #getComponentValue() 
+     * @see #setComponentSelectedIndex(java.lang.Integer) 
+     * @return component selected index
      */
     protected abstract int getComponentSelectedIndex();    
+    /**
+     * When extending the class the method is used instead of the 
+     * {@link AbstractBinder#setComponentValue(java.lang.Object) }.
+     * 
+     * @param selectedIndex the value to be set as an index of a list 
+     * like component
+     * @see #setComponentValue(java.lang.Object)      
+     * @see #getComponentValue() 
+     * @see #getComponentSelectedIndex() 
+     */
     protected abstract void setComponentSelectedIndex(Integer selectedIndex);    
     
     @Override
