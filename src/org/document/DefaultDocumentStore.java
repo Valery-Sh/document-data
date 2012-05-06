@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState {
+public class DefaultDocumentStore<T> implements PropertyDataStore, HasDocumentState {
 
     protected transient BeanDocumentState state;
     protected T source;
@@ -185,13 +185,13 @@ public class DefaultDocumentStore<T> implements DocumentStore, HasDocumentState 
     protected static class BeanDocumentState implements DocumentState {
 
         private boolean editing;
-        private DocumentStore documentStore;
+        private PropertyDataStore documentStore;
         private Map beforeEditValues;
         protected Map dirtyEditValues;
         protected Map<String,DocumentChangeEvent> propertyErrors;
         //protected Map validEditValues;
 
-        public BeanDocumentState(DocumentStore documentStore) {
+        public BeanDocumentState(PropertyDataStore documentStore) {
             this.documentStore = documentStore;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();

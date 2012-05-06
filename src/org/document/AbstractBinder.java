@@ -60,7 +60,7 @@ public abstract class AbstractBinder implements PropertyBinder {
      * if so, then the new value assigned to the component by calling
      * a protected method {@link #setComponentValue(java.lang.Object).
      * Usually, the method is not overriden by subclasses. Instead, you 
-     * might to override the method {<code>setComponentValue</code>.
+     * might to override the method <code>setComponentValue</code>.
      * 
      * @param newValue 
      */
@@ -173,6 +173,15 @@ public abstract class AbstractBinder implements PropertyBinder {
     @Override
     public abstract Object getComponentValue();
     
+    /**
+     * It is assumed that this method should be called when you want 
+     * to set the value of the component and do not want that in response
+     * a component generated an event.
+     * In this implementation the method does nothing.
+     * @param dataValue a data value. Before assign it to a component it should
+     * be converted to a component value.
+     */
+
     @Override
     public void init(Object dataValue){
         

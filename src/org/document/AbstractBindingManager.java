@@ -66,7 +66,7 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
         getValidators().validate(selected);
     }
 
-    protected DocumentStore getDocumentStore() {
+    protected PropertyDataStore getDocumentStore() {
         return this.selected.getDocumentStore();
     }
 

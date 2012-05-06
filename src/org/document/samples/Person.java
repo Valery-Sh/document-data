@@ -6,7 +6,7 @@ package org.document.samples;
 
 import java.util.Date;
 import org.document.DefaultDocumentStore;
-import org.document.DocumentStore;
+import org.document.PropertyDataStore;
 import org.document.Document;
 
 /**
@@ -29,7 +29,7 @@ public class Person implements Document {
     }
 
     @Override
-    public DocumentStore getDocumentStore() {
+    public PropertyDataStore getDocumentStore() {
         return this.document;
     }
     //

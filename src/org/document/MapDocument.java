@@ -31,7 +31,7 @@ public class MapDocument implements Document {
     }
 
     @Override
-    public DocumentStore getDocumentStore() {
+    public PropertyDataStore getDocumentStore() {
         return this.documentStore;
     }
     

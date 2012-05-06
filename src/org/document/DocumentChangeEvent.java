@@ -16,10 +16,10 @@ public class DocumentChangeEvent extends EventObject {
     private Exception exception;
     private PropertyBinder binder;
     
-    public DocumentChangeEvent(DocumentStore source) {
+    public DocumentChangeEvent(PropertyDataStore source) {
         super(source);
     }
-    public DocumentChangeEvent(DocumentStore source,Action action) {
+    public DocumentChangeEvent(PropertyDataStore source,Action action) {
         this(source);
         this.action = action;
     }

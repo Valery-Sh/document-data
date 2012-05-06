@@ -15,10 +15,4 @@ public interface DocumentState {
     void setEditing(boolean editing);
     Map<String,Object> getDirtyValues();
     Map<String,DocumentChangeEvent> getPropertyErrors();
-    //Object getEditingObject();
-    //void setEditingObject(Object obj);
-    //Document getCurrent();
-//    void setCurrentObject(Object obj);
-    
-    
 }

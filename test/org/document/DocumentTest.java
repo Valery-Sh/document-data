@@ -41,7 +41,7 @@ public class DocumentTest {
     public void testGet() {
         System.out.println("Document.get(Object)");
         Object key = null;
-        DocumentStore instance = new DocumentImpl();
+        PropertyDataStore instance = new DocumentImpl();
         //
         // The 'key' parameter cannot be null
         //
@@ -76,7 +76,7 @@ public class DocumentTest {
         System.out.println("Document.put(Object,Object");
         Object key = null;
         Object value = "PUT 1";
-        DocumentStore instance = new DocumentImpl();
+        PropertyDataStore instance = new DocumentImpl();
         //
         // The 'key' parameter cannot be null
         //
@@ -115,11 +115,11 @@ public class DocumentTest {
     public void testAddDocumentListener() {
         System.out.println("setAddDocumentListener");
         DocumentChangeListener l = null;
-        DocumentStore instance = new DocumentImpl();
+        PropertyDataStore instance = new DocumentImpl();
         instance.addDocumentListener(l);
     }
 
-    public static class DocumentImpl implements DocumentStore {
+    public static class DocumentImpl implements PropertyDataStore {
 
         Map values = new HashMap();
         DocumentChangeListener docListener;

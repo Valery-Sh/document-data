@@ -173,14 +173,14 @@ public class ObjectDocumentBinding implements DocumentBinding {
         return this.document;
     }
 
-    public DocumentStore getDocumentStore() {
+    public PropertyDataStore getDocumentStore() {
         //return this.documentStore;
         return this.document.getDocumentStore();
     }
 
     @Override
     public void setDocument(Document object) {
-        DocumentStore oldDocumentStore = null;
+        PropertyDataStore oldDocumentStore = null;
         if ( this.document != null ) { 
            oldDocumentStore = getDocumentStore();
         }   
@@ -213,7 +213,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
         fireDocumentChanged(oldDocument, document);
         //refresh();
         
-        DocumentStore documentStore = getDocumentStore();
+        PropertyDataStore documentStore = getDocumentStore();
         
         if (documentStore instanceof HasDocumentState) {
             DocumentState state = ((HasDocumentState) documentStore).getDocumentState();
