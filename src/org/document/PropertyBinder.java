@@ -6,5 +6,6 @@ package org.document;
  */
 public interface PropertyBinder extends Binder,DocumentChangeListener{
     String getPropertyName();
+    
     void init(Object dataValue);
 }

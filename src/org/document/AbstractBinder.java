@@ -47,7 +47,23 @@ public abstract class AbstractBinder implements PropertyBinder {
     public String getPropertyName() {
         return this.propertyName;
     }
-    
+    /**
+     * The method is called when a data value (for example 
+     * a property value)  is changed, 
+     * and in response, it is necessary to change the value 
+     * in the associated component. First? the method converts data
+     * to a component value by calling an abstract method
+     * {@link #componentValueOf(java.lang.Object)  }. 
+     * The method checks whether or not to actually change the 
+     * value of the component 
+     * (possibly a component already has the same meaning) and, 
+     * if so, then the new value assigned to the component by calling
+     * a protected method {@link #setComponentValue(java.lang.Object).
+     * Usually, the method is not overriden by subclasses. Instead, you 
+     * might to override the method {<code>setComponentValue</code>.
+     * 
+     * @param newValue 
+     */
     @Override
     public void dataChanged(Object newValue) {
         Object convValue = this.componentValueOf(newValue);
@@ -62,7 +78,7 @@ public abstract class AbstractBinder implements PropertyBinder {
      * @param value a new value to be assigned
      * @return 
      */
-    private boolean needChangeComponent(Object value) {
+    protected boolean needChangeComponent(Object value) {
         boolean result = true;
         
         Object currentValue = getComponentValue();

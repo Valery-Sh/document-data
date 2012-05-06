@@ -45,27 +45,27 @@ public class AbstractBinderTest {
         //
         AbstractBinder instance = new AbstractBinderImpl();
         
-        instance.dataChanged(oldValue, newValue);
+        instance.dataChanged(newValue);
         assertNull(instance.getComponentValue());
         //
         // oldValue == null && newValue != null
         //
         newValue = "Bill";
-        instance.dataChanged(oldValue, newValue);
+        instance.dataChanged(newValue);
         assertEquals("Bill",instance.getComponentValue());
         //
         // oldValue != null && newValue == null
         //
         newValue = null;
         oldValue = "Bill";
-        instance.dataChanged(oldValue, newValue);
+        instance.dataChanged(newValue);
         assertNull(instance.getComponentValue());
         //
         // oldValue != null && newValue != null
         //
         newValue = "Tom";
         oldValue = "Bill";
-        instance.dataChanged(oldValue, newValue);
+        instance.dataChanged(newValue);
         assertEquals("Tom",instance.getComponentValue());
     }
 
@@ -77,7 +77,7 @@ public class AbstractBinderTest {
         System.out.println("setDocumentBinding");
         DocumentBinding binding = new MockDocumentBinding();
         AbstractBinder instance = new AbstractBinderImpl();
-        instance.setDocumentBinding(binding);
+        instance..setDocumentBinding(binding);
         assertTrue(binding == instance.binding);
     }
 
