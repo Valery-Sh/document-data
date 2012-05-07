@@ -13,6 +13,7 @@ public class BindingManagerOld<T extends Document> extends AbstractBindingManage
     public BindingManagerOld(List<T> sourceList) {
         super();
         this.sourceList = sourceList;
+        java.util.Set s;
     }
 
 }

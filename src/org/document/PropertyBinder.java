@@ -4,7 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface PropertyBinder extends Binder,DocumentChangeListener{
+public interface PropertyBinder extends Binder,DocumentChangeListener, HasDocumentAlias {
     /**
      * Returns a property name whose value is bound to a component.
      * @return a property name as a <code>String</code>.

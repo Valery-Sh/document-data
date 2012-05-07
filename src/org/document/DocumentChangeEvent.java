@@ -15,8 +15,10 @@ public class DocumentChangeEvent extends EventObject {
     private Object newValue;    
     private Exception exception;
     private PropertyBinder binder;
+    private Object oldAlias;
+    private Object newAlias;    
     
-    public DocumentChangeEvent(PropertyDataStore source) {
+/*    public DocumentChangeEvent(PropertyDataStore source) {
         super(source);
     }
     public DocumentChangeEvent(PropertyDataStore source,Action action) {
@@ -27,7 +29,14 @@ public class DocumentChangeEvent extends EventObject {
         super(source);
         this.action = action;
     }
-
+*/
+    public DocumentChangeEvent(Object source) {
+        super(source);
+    }
+    public DocumentChangeEvent(Object source,Action action) {
+        this(source);
+        this.action = action;
+    }
     public Action getAction() {
         return action;
     }
@@ -35,6 +44,23 @@ public class DocumentChangeEvent extends EventObject {
     public void setAction(Action action) {
         this.action = action;
     }
+
+    public Object getNewAlias() {
+        return newAlias;
+    }
+
+    public void setNewAlias(Object newAlias) {
+        this.newAlias = newAlias;
+    }
+
+    public Object getOldAlias() {
+        return oldAlias;
+    }
+
+    public void setOldAlias(Object oldAlias) {
+        this.oldAlias = oldAlias;
+    }
+
 
     public Object getNewValue() {
         return newValue;

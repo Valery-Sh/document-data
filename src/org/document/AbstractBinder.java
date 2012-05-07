@@ -11,11 +11,17 @@ import java.util.List;
  * @author V. Shyshkin
  */
 public abstract class AbstractBinder implements PropertyBinder {
-
+    
+    private Object alias;
     protected String propertyName;
     protected Document document;
 
     protected List<BinderListener> binderListeners;
+    
+    @Override
+    public Object getAlias() {
+        return alias;
+    }
     
     @Override
     public void addBinderListener(BinderListener l) {
