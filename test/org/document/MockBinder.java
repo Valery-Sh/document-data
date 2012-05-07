@@ -12,7 +12,7 @@ public class MockBinder implements PropertyBinder{
     
     String propName;
     Object component;
-    DocumentBinding registry;
+    DocumentBindings registry;
     Object componentValue;
     Object dataValue;
     boolean dataChanged;
@@ -38,7 +38,7 @@ public class MockBinder implements PropertyBinder{
     }
 
     @Override
-    public void setDocumentBinding(DocumentBinding registry) {
+    public void setDocumentBinding(DocumentBindings registry) {
         this.registry = registry;
     }
 

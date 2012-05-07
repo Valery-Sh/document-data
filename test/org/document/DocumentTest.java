@@ -109,14 +109,14 @@ public class DocumentTest {
     }
 
     /**
-     * Test of addDocumentListener method, of class DocumentStore.
+     * Test of addDocumentChangeListener method, of class DocumentStore.
      */
     @Test
     public void testAddDocumentListener() {
         System.out.println("setAddDocumentListener");
         DocumentChangeListener l = null;
         PropertyDataStore instance = new DocumentImpl();
-        instance.addDocumentListener(l);
+        instance.addDocumentChangeListener(l);
     }
 
     public static class DocumentImpl implements PropertyDataStore {
@@ -152,12 +152,12 @@ public class DocumentTest {
         
 
         @Override
-        public void addDocumentListener(DocumentChangeListener listener) {
+        public void addDocumentChangeListener(DocumentChangeListener listener) {
             this.docListener = listener;
         }
 
         @Override
-        public void removeDocumentListener(DocumentChangeListener listener) {
+        public void removeDocumentChangeListener(DocumentChangeListener listener) {
             this.docListener = null;
         }
 

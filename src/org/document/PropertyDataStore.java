@@ -10,6 +10,6 @@ public interface PropertyDataStore extends Serializable {
     
     Object get(Object key);
     void put(Object key,Object value);
-    void addDocumentListener(DocumentChangeListener listener);
-    void removeDocumentListener(DocumentChangeListener listener);    
+    void addDocumentChangeListener(DocumentChangeListener listener);
+    void removeDocumentChangeListener(DocumentChangeListener listener);    
 }

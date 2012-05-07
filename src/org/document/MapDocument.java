@@ -8,17 +8,17 @@ import java.util.Map;
  */
 public class MapDocument implements Document {
     
-    protected DefaultDocumentStore documentStore;
+    protected DocumentStore documentStore;
     protected Object typeId;
     
     private Map map;
     
     public MapDocument(Map map) {
-        this.documentStore = new DefaultDocumentStore(this);
+        this.documentStore = new DocumentStore(this);
         this.map = map;
     }
     public MapDocument(Map map, Object typeId) {
-        this.documentStore = new DefaultDocumentStore(this);
+        this.documentStore = new DocumentStore(this);
         this.map = map;
     }
 
@@ -31,7 +31,7 @@ public class MapDocument implements Document {
     }
 
     @Override
-    public PropertyDataStore getDocumentStore() {
+    public PropertyDataStore getPropertyDataStore() {
         return this.documentStore;
     }
     

@@ -14,12 +14,12 @@ public class DocumentImpl implements PropertyDataStore {
     DocumentChangeListener docListener;
 
     @Override
-    public void addDocumentListener(DocumentChangeListener listener) {
+    public void addDocumentChangeListener(DocumentChangeListener listener) {
         this.docListener = listener;
     }
 
     @Override
-    public void removeDocumentListener(DocumentChangeListener listener) {
+    public void removeDocumentChangeListener(DocumentChangeListener listener) {
         this.docListener = null;
     }
 

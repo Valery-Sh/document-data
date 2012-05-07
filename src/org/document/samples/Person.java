@@ -1,13 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.samples;
 
 import java.util.Date;
-import org.document.DefaultDocumentStore;
-import org.document.PropertyDataStore;
 import org.document.Document;
+import org.document.DocumentStore;
+import org.document.PropertyDataStore;
 
 /**
  *
@@ -15,10 +11,11 @@ import org.document.Document;
  */
 public class Person implements Document {
 
-    protected DefaultDocumentStore document;
+    protected DocumentStore document;
 
     public Person() {
-        this.document = new DefaultDocumentStore(this);
+        // DocumentStore is a default PropertyDataStore
+        this.document = new DocumentStore(this);
     }
 
     public Person(int id, String firstName, String lastName) {
@@ -27,9 +24,11 @@ public class Person implements Document {
         this.firstName = firstName;
         this.lastName = lastName;
     }
-
+    //
+    // Document interface implementation
+    //
     @Override
-    public PropertyDataStore getDocumentStore() {
+    public PropertyDataStore getPropertyDataStore() {
         return this.document;
     }
     //

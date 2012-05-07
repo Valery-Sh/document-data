@@ -14,7 +14,7 @@ public abstract class AbstractBinder implements PropertyBinder {
 
     protected String propertyName;
     protected Document document;
-//    protected DocumentBinding binding;
+
     protected List<BinderListener> binderListeners;
     
     @Override
@@ -38,7 +38,7 @@ public abstract class AbstractBinder implements PropertyBinder {
             case documentChange :
                 this.document = (Document)event.getNewValue();
                 if ( document != null && getPropertyName() != null) {
-                    init(document.getDocumentStore().get(getPropertyName()));
+                    init(document.getPropertyDataStore().get(getPropertyName()));
                 }
                 break;
         }//switch
@@ -92,52 +92,17 @@ public abstract class AbstractBinder implements PropertyBinder {
         return result;
     }
 
-    /**
-     * Prepends cyclic data modifications.
-     * 
-     * @param value a new value to be assigned
-     * @return 
-     */
-/*    protected boolean needChangeData(Object value) {
-        boolean result = true;
-        
-        Object currentValue = getDataValue();
-        
-        if ( value == null && currentValue == null ) {
-           result = false; 
-        } if ( value != null && value.equals(currentValue) ) {
-            result = false;
-        } else if ( currentValue != null  && currentValue.equals(value) ) {
-            result = false;
-        }       
-        return result;
-    }
-    
-    @Override
-    public void setDocumentBinding(DocumentBinding binding) {
-        this.binding = binding;
-    }
-*/
     @Override
     public void componentChanged(Object newValue) {
-        //binding.notifyPropertyError(this.getPropertyName(), null);
         fireClearPropertyError();
         Object convValue;
         try {
             convValue = this.dataValueOf(newValue);
-            //  changePropertyValueRequest,
             fireChangeDataValue(convValue,newValue);
-/*            if ( ! needChangeData(convValue) ) {
-                return;
-            }
-            
-            setDataValue(convValue);
- */
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
             firePropertyError(e);
-            //binding.notifyPropertyError(this.getPropertyName(), e);
         }
     }
     
@@ -162,11 +127,6 @@ public abstract class AbstractBinder implements PropertyBinder {
             l.react(event);
         }
     }
-    //@Override
-/*    protected Object getDataValue() {
-        return binding.getDocument().get(this.propertyName);
-    }
-*/
     /**
      * return current component value 
      */
@@ -186,20 +146,8 @@ public abstract class AbstractBinder implements PropertyBinder {
     public void init(Object dataValue){
         
     }
-/*    protected void setDataValue(Object dataValue) {
-        //this.binding.getDocument().put(propertyName, dataValue);
-        this.binding.getDocument().put(this, dataValue);
-    }
-*/    
     protected abstract void setComponentValue(Object compValue);
-    
-    //protected abstract void restoreComponentValue(Object compValue);
-
-    
-    
     protected abstract Object componentValueOf(Object dataValue);
-
-    
     protected abstract Object dataValueOf(Object compValue);
     /**
      * For test purpose
@@ -208,6 +156,6 @@ public abstract class AbstractBinder implements PropertyBinder {
         if ( document == null ) {
             return null;
         }
-        return document.getDocumentStore().get(getPropertyName());
+        return document.getPropertyDataStore().get(getPropertyName());
     }
 }

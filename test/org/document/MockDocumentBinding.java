@@ -8,7 +8,7 @@ package org.document;
  *
  * @author Valery
  */
-public class MockDocumentBinding implements DocumentBinding{
+public class MockDocumentBinding implements DocumentBindings{
     protected PropertyDataStore document;
     public MockDocumentBinding() {
         document = new MockDocument();
@@ -60,7 +60,7 @@ public class MockDocumentBinding implements DocumentBinding{
 
 
     @Override
-    public DocumentBinding createChild(String propertyName) {
+    public DocumentBindings createChild(String propertyName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -80,7 +80,7 @@ public class MockDocumentBinding implements DocumentBinding{
 
     @Override
     public void setDocument(Document hasDocument, boolean completeChanges) {
-        this.document = hasDocument.getDocumentStore();
+        this.document = hasDocument.getPropertyDataStore();
     }
     
 }

@@ -42,7 +42,7 @@ public class DefaultDocumentBindingTest {
         Object component = new MockComponent();
         
         PropertyBinder binder = MockBinder.create("firstName", component);
-        ObjectDocumentBinding instance = new ObjectDocumentBinding();
+        DocumentBindingHandler instance = new DocumentBindingHandler();
         instance.add(binder);
         assertEquals(1,instance.binders.size());
         assertTrue(instance.binders.containsKey("firstName"));
@@ -94,7 +94,7 @@ public class DefaultDocumentBindingTest {
         Object component = new MockComponent();
         
         PropertyBinder binder = MockBinder.create("firstName", component);
-        ObjectDocumentBinding instance = new ObjectDocumentBinding();
+        DocumentBindingHandler instance = new DocumentBindingHandler();
         instance.add(binder);
         Object component1 = new MockComponent();
         PropertyBinder binder1 = MockBinder.create("firstName", component1);
@@ -131,7 +131,7 @@ public class DefaultDocumentBindingTest {
         MockDocument doc = new MockDocument();
         doc.put("firstName", "Bill");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        ObjectDocumentBinding instance = new ObjectDocumentBinding();
+        DocumentBindingHandler instance = new DocumentBindingHandler();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -157,7 +157,7 @@ public class DefaultDocumentBindingTest {
         doc.put("height", 175);
         
         PropertyBinder binder = new StringBinderImpl("firstName");
-        ObjectDocumentBinding instance = new ObjectDocumentBinding();
+        DocumentBindingHandler instance = new DocumentBindingHandler();
         instance.add(binder);
         instance.setDocument(doc, true);
         //
@@ -185,7 +185,7 @@ public class DefaultDocumentBindingTest {
         addrDoc.put("zipCode", 99955);
         doc.put("address", addrDoc);
         
-        DocumentBinding addrInstance = instance.createChild("address");        
+        DocumentBindings addrInstance = instance.createChild("address");        
         PropertyBinder countryBinder = new StringBinderImpl("country");
         PropertyBinder zipCodeBinder = new IntegerBinderImpl("zipCode");        
         addrInstance.add(countryBinder);
@@ -222,7 +222,7 @@ public class DefaultDocumentBindingTest {
         Object component = new MockComponent();
         
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
-        ObjectDocumentBinding instance = new ObjectDocumentBinding();
+        DocumentBindingHandler instance = new DocumentBindingHandler();
         instance.add(binder);
         Object component1 = new MockComponent();
         MockBinder binder1 = (MockBinder)MockBinder.create("firstName", component1);
@@ -250,7 +250,7 @@ public class DefaultDocumentBindingTest {
     @Test
     public void testGetDocument() {
         System.out.println("DefaultDocumentBinding.getDocument()");
-        ObjectDocumentBinding instance = new ObjectDocumentBinding();
+        DocumentBindingHandler instance = new DocumentBindingHandler();
         PropertyDataStore doc;
         PropertyDataStore result = instance.getDocumentStore();
         assertNull(result);
@@ -306,7 +306,7 @@ public class DefaultDocumentBindingTest {
     @Test
     public void testSetDocument() {
         System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
-        ObjectDocumentBinding instance = new ObjectDocumentBinding();
+        DocumentBindingHandler instance = new DocumentBindingHandler();
         DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc,true);        
         PropertyDataStore result = instance.getDocumentStore();

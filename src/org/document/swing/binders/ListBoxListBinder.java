@@ -82,7 +82,7 @@ public class ListBoxListBinder<T extends Document> extends AbstractListBinder im
             String result = "";
             for (String nm : this.properties) {
 
-                result = result += " " + d.getDocumentStore().get(nm);
+                result = result += " " + d.getPropertyDataStore().get(nm);
             }
             return result;
         }

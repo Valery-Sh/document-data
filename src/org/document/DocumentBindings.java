@@ -4,7 +4,7 @@ package org.document;
  *
  * @author V. Shyshkin
  */
-public interface DocumentBinding extends Binding, BinderListener{
+public interface DocumentBindings extends Bindings, BinderListener{
     Object getId();
     ValidatorCollection getValidators();    
     /**
@@ -14,7 +14,7 @@ public interface DocumentBinding extends Binding, BinderListener{
      * @return a new instance of the class 
      * <code>org.document.DocumentBinding</code>
      */
-    DocumentBinding createChild(String propertyName);
+    DocumentBindings createChild(String propertyName);
     String getChildName();
         
 

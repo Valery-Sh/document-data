@@ -32,12 +32,12 @@ public class MockDocument implements PropertyDataStore{
 
 
     @Override
-    public void addDocumentListener(DocumentChangeListener listener) {
+    public void addDocumentChangeListener(DocumentChangeListener listener) {
         
     }
 
     @Override
-    public void removeDocumentListener(DocumentChangeListener listener) {
+    public void removeDocumentChangeListener(DocumentChangeListener listener) {
         
     }
     

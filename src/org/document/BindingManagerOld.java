@@ -6,11 +6,11 @@ import java.util.List;
  *
  * @author V. Shishkin
  */
-public class BindingManager<T extends Document> extends AbstractBindingManager {
+public class BindingManagerOld<T extends Document> extends AbstractBindingManagerOld {
 
     protected List<T> sourceList;
     
-    public BindingManager(List<T> sourceList) {
+    public BindingManagerOld(List<T> sourceList) {
         super();
         this.sourceList = sourceList;
     }

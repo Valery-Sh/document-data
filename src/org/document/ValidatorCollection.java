@@ -37,7 +37,7 @@ public class ValidatorCollection {
     public void remove(int vindex) {
         this.lvalidators.remove(vindex);
     } 
-    public void put(String propPath,PropertyValidator validator) {
+    public void add(String propPath,PropertyValidator validator) {
         this.pvalidators.put(propPath,validator);
     } 
     public void remove(String propPath) {

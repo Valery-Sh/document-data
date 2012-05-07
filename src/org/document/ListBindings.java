@@ -4,6 +4,6 @@ package org.document;
  *
  * @author Valery
  */
-public interface ListBinding extends Binding{
+public interface ListBindings extends Bindings{
     
 }

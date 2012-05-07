@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class DocumentListBinding implements ListBinding, BinderListener {
+public class DocumentListBindings implements ListBindings, BinderListener {
 
     protected List<DocumentChangeListener> documentListeners;
     protected Object id;
@@ -21,11 +21,11 @@ public class DocumentListBinding implements ListBinding, BinderListener {
     protected Document document;
     protected ValidatorCollection validators;
 
-    public DocumentListBinding(Object id) {
+    public DocumentListBindings(Object id) {
         this.id = id;
     }
 
-    public DocumentListBinding() {
+    public DocumentListBindings() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
         documentErrorBinders = new ArrayList<Binder>();
@@ -49,7 +49,7 @@ public class DocumentListBinding implements ListBinding, BinderListener {
             blist = new ArrayList<Binder>();
         }
         binder.addBinderListener(this);
-        addDocumentListener(binder);
+        addDocumentChangeListener(binder);
         blist.add(binder);
         binderMap.put(propPath, blist);
         //binder.setDocumentBinding(this);
@@ -59,7 +59,7 @@ public class DocumentListBinding implements ListBinding, BinderListener {
     protected void add(Binder binder, List<Binder> binderList) {
         binderList.add(binder);
         binder.addBinderListener(this);
-        addDocumentListener(binder);
+        addDocumentChangeListener(binder);
 //        binder.setDocumentBinding(this);
 
     }
@@ -87,7 +87,7 @@ public class DocumentListBinding implements ListBinding, BinderListener {
             return;
         }
         binder.removeBinderListener(this);
-        removeDocumentListener(binder);
+        removeDocumentChangeListener(binder);
         blist.remove(binder);
         if (blist.isEmpty()) {
             binderMap.remove(((PropertyBinder) binder).getPropertyName());
@@ -98,7 +98,7 @@ public class DocumentListBinding implements ListBinding, BinderListener {
     protected void remove(Binder binder, List<Binder> binderList) {
         binderList.remove(binder);
         binder.removeBinderListener(this);
-        removeDocumentListener(binder);
+        removeDocumentChangeListener(binder);
 //        binder.setDocumentBinding(this);
 
     }
@@ -173,7 +173,7 @@ public class DocumentListBinding implements ListBinding, BinderListener {
     }
 
     @Override
-    public void addDocumentListener(DocumentChangeListener l) {
+    public void addDocumentChangeListener(DocumentChangeListener l) {
         if (documentListeners == null) {
             documentListeners = new ArrayList<DocumentChangeListener>();
         }
@@ -181,7 +181,7 @@ public class DocumentListBinding implements ListBinding, BinderListener {
     }
 
     @Override
-    public void removeDocumentListener(DocumentChangeListener l) {
+    public void removeDocumentChangeListener(DocumentChangeListener l) {
         if (documentListeners == null) {
             return;
         }

@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author V. Shishkin
  */
-public class AbstractBindingManager<T extends Document> implements DocumentChangeListener {
+public class AbstractBindingManagerOld<T extends Document> implements DocumentChangeListener {
 
     protected Map<Object, DocumentBindings> documentBindings;
     protected ListBindings listBinding;
@@ -19,20 +19,18 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
     protected BindingRecognizer recognizer;
     private List<DocumentSelectListener> selectDocumentListeners;
 
-    protected AbstractBindingManager() {
+    protected AbstractBindingManagerOld() {
         documentBindings = new HashMap<Object, DocumentBindings>();
         validators = new ValidatorCollection();
         selectDocumentListeners = new ArrayList<DocumentSelectListener>();
-        listBinding = new DocumentListBindings();
-        listBinding.addDocumentChangeListener(this);
     }
-    protected AbstractBindingManager(BindingRecognizer recognizer) {
+    protected AbstractBindingManagerOld(BindingRecognizer recognizer) {
         this();
         this.recognizer = recognizer;
-/*        if ( recognizer == null ) {
-            this.recognizer = new AbstractBindingManager.DefaultBindingRecognizer();
+        if ( recognizer == null ) {
+            this.recognizer = new DefaultBindingRecognizer();
         }
-*/        
+        
     }
 
     public T getSelected() {
@@ -46,55 +44,20 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
         fireSelectDocument(old, selected);
     }
 
-    public void addBinder(Object docTypeId, Binder binder) {
-        assert(docTypeId != null);
-        assert(binder != null);
-        
-        if ( binder instanceof PropertyBinder) {
-            addPropertyBinder(docTypeId, binder);
-        } else if ( binder instanceof ErrorBinder) {
-            addErrorBinder(docTypeId, binder);
-        } else if ( binder instanceof ListBinder) {
-            addListBinder(docTypeId, binder);            
+    public void addBinding(Bindings binding) {
+        if (binding instanceof DocumentBindings) {
+            Object id = ((DocumentBindings) binding).getId();
+            if (id == null) {
+                id = "single";
+            }
+            documentBindings.put(id, (DocumentBindings) binding);
+        } else if (binding instanceof ListBindings) {
+            this.listBinding = (ListBindings) binding;
+            this.listBinding.addDocumentChangeListener(this);
         }
     }
-    public void addBinder(Binder binder) {
-        addBinder("default doc type",binder);
-    }
-    
-    protected void addPropertyBinder(Object docTypeId, Binder binder) {
-        if ( ! documentBindings.containsKey(docTypeId)) {
-            DocumentBindings db = new DocumentBindingHandler();
-            documentBindings.put(docTypeId, db);
-        }
-        documentBindings.get(docTypeId).add(binder);
-    }
-    protected void addErrorBinder(Object docTypeId, Binder binder) {
-        addPropertyBinder(docTypeId, binder);
-    }
-    
-    protected void addListBinder(Object docTypeId, Binder binder) {
-        listBinding.add(binder);
-    }
-    public ValidatorCollection getValidators(Object docTypeId) {
-        DocumentBindings b = documentBindings.get(docTypeId);
-        if ( b == null ) {
-            return null;
-        }
-        return b.getValidators();
-    }
-    
-    public ValidatorCollection getValidators() {
-        return getValidators("default doc type");
-    }
-    public DocumentBindings getDocumentBindings(Object docTypeId) {
-        return documentBindings.get(docTypeId);
-    }
-    public DocumentBindings getDocumentBindings() {
-        return documentBindings.get("default doc type");
-    }
-    
-/*    protected ValidatorCollection getValidators() {
+
+    protected ValidatorCollection getValidators() {
         return validators;
     }
 
@@ -102,12 +65,13 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
         //getValidators().validate(selected.getPropertyDataStore());
         getValidators().validate(selected);
     }
-*/
-    protected PropertyDataStore getPropertyDataStore() {
+
+    protected PropertyDataStore getDocumentStore() {
         return this.selected.getPropertyDataStore();
     }
 
     protected void update(T selected) {
+        //Document document = newSelected.getPropertyDataStore();
         if (this.selected == selected) {
             return;
         }
@@ -142,12 +106,14 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
         if (doc == null) {
             return null;
         }
-        
-        DocumentBindings result;
+
+        DocumentBindings result = null;
         if (recognizer != null) {
             result = documentBindings.get(recognizer.getBindingId(doc));
         } else {
-            result = documentBindings.get("default doc type");
+            for (Map.Entry<Object, DocumentBindings> b : documentBindings.entrySet()) {
+                result = documentBindings.get(b.getKey());
+            }
         }
         return result;
     }
@@ -194,7 +160,7 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
         }
     }
     
-    public static class DefaultBindingRecognizerNew<T> implements BindingRecognizer<T> {
+    public static class DefaultBindingRecognizer<T> implements BindingRecognizer<T> {
 
         @Override
         public Object getBindingId(T document) {

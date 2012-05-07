@@ -9,13 +9,13 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class DefaultDocumentStore<T> implements PropertyDataStore, HasDocumentState {
+public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
 
     protected transient BeanDocumentState state;
     protected T source;
     protected List<DocumentChangeListener> docListeners;
 
-    public DefaultDocumentStore(T source) {
+    public DocumentStore(T source) {
         this.state = new BeanDocumentState(this);
         this.source = source;
         this.docListeners = new ArrayList<DocumentChangeListener>();
@@ -114,12 +114,12 @@ public class DefaultDocumentStore<T> implements PropertyDataStore, HasDocumentSt
     }
 
     @Override
-    public void addDocumentListener(DocumentChangeListener listener) {
+    public void addDocumentChangeListener(DocumentChangeListener listener) {
         this.docListeners.add(listener);
     }
 
     @Override
-    public void removeDocumentListener(DocumentChangeListener listener) {
+    public void removeDocumentChangeListener(DocumentChangeListener listener) {
         this.docListeners.remove(listener);
     }
 
@@ -211,7 +211,7 @@ public class DefaultDocumentStore<T> implements PropertyDataStore, HasDocumentSt
                 return;
             }
 
-            DefaultDocumentStore d = (DefaultDocumentStore) documentStore;
+            DocumentStore d = (DocumentStore) documentStore;
 
             if (this.editing && !editing) {
                 try {

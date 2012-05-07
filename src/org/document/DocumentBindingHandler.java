@@ -9,13 +9,13 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class ObjectDocumentBinding implements DocumentBinding {
+public class DocumentBindingHandler implements DocumentBindings {
     
     protected List<DocumentChangeListener> documentListeners;
     
     protected Object id;
     protected String childName;
-    protected List<DocumentBinding> childs;
+    protected List<DocumentBindings> childs;
     protected Map<String, List<Binder>> binders;
     protected Map<String, List<Binder>> errorBinders;
     protected List<Binder> documentErrorBinders;
@@ -24,20 +24,23 @@ public class ObjectDocumentBinding implements DocumentBinding {
     
     protected ValidatorCollection validators;
 
-    public ObjectDocumentBinding(Object id) {
+    public DocumentBindingHandler(Object id) {
         this();
         this.id = id;
+        java.util.Set s;
+        
+        
     }
 
-    public ObjectDocumentBinding() {
+    public DocumentBindingHandler() {
         binders = new HashMap<String, List<Binder>>();
         errorBinders = new HashMap<String, List<Binder>>();
         documentErrorBinders = new ArrayList<Binder>();
         validators = new ValidatorCollection();
-        childs = new ArrayList<DocumentBinding>();
+        childs = new ArrayList<DocumentBindings>();
     }
 
-    protected ObjectDocumentBinding(String childName) {
+    protected DocumentBindingHandler(String childName) {
         this();
         this.childName = childName;
     }
@@ -60,7 +63,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
             blist = new ArrayList<Binder>();
         }
         binder.addBinderListener(this);
-        addDocumentListener(binder);
+        addDocumentChangeListener(binder);
         blist.add(binder);
         binderMap.put(propPath, blist);
         //binder.setDocumentBinding(this);
@@ -70,7 +73,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
     protected void add(Binder binder, List<Binder> binderList) {
         binderList.add(binder);
         binder.addBinderListener(this);
-        addDocumentListener(binder);        
+        addDocumentChangeListener(binder);        
 //        binder.setDocumentBinding(this);
 
     }
@@ -96,7 +99,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
             return;
         }
         binder.removeBinderListener(this);
-        removeDocumentListener(binder);
+        removeDocumentChangeListener(binder);
         blist.remove(binder);
         if (blist.isEmpty()) {
             binderMap.remove(((PropertyBinder)binder).getPropertyName());
@@ -106,7 +109,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
     protected void remove(Binder binder, List<Binder> binderList) {
         binderList.remove(binder);
         binder.removeBinderListener(this);
-        removeDocumentListener(binder);
+        removeDocumentChangeListener(binder);
 //        binder.setDocumentBinding(this);
 
     }
@@ -170,18 +173,18 @@ public class ObjectDocumentBinding implements DocumentBinding {
     
 
     public Document getDocument() {
-        return this.document;
+        return document;
     }
 
     public PropertyDataStore getDocumentStore() {
         //return this.documentStore;
-        return this.document.getDocumentStore();
+        return document.getPropertyDataStore();
     }
 
     @Override
     public void setDocument(Document object) {
         PropertyDataStore oldDocumentStore = null;
-        if ( this.document != null ) { 
+        if ( document != null ) { 
            oldDocumentStore = getDocumentStore();
         }   
         
@@ -200,10 +203,10 @@ public class ObjectDocumentBinding implements DocumentBinding {
         this.document = object;
 
         if (this.document != null) {
-            getDocumentStore().addDocumentListener(this);
+            getDocumentStore().addDocumentChangeListener(this);
         } 
         if (oldDocument != null && oldDocument !=  document ) {
-            oldDocumentStore.removeDocumentListener(this);
+            oldDocumentStore.removeDocumentChangeListener(this);
         }
 
         if ( document == null ) {
@@ -241,7 +244,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
         
         
         
-        for (DocumentBinding child : childs) {
+        for (DocumentBindings child : childs) {
             Object d = documentStore.get(child.getChildName());
             if (d == null) {
                 child.setDocument((Document) null);
@@ -266,7 +269,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
 /*    protected void refresh() {
         for (Map.Entry<String, List<Binder>> ent : this.binders.entrySet()) {
             for (PropertyBinder b : ent.getValue()) {
-                //b.init(getDocumentStore().get(b.getPropertyName()));
+                //b.init(getPropertyDataStore().get(b.getPropertyName()));
                 notifyPropertyError(b.getPropertyName(), null);
             }
         }
@@ -284,7 +287,7 @@ public class ObjectDocumentBinding implements DocumentBinding {
 
     @Override
     public void completeChanges() {
-        if (document.getDocumentStore() == null) {
+        if (document.getPropertyDataStore() == null) {
             return;
         }
 
@@ -349,10 +352,10 @@ public class ObjectDocumentBinding implements DocumentBinding {
     }
 
     @Override
-    public DocumentBinding createChild(String childName) {
-        DocumentBinding binding = new ObjectDocumentBinding(childName);
+    public DocumentBindings createChild(String childName) {
+        DocumentBindings binding = new DocumentBindingHandler(childName);
         childs.add(binding);
-        if (document.getDocumentStore() != null) {
+        if (document.getPropertyDataStore() != null) {
             binding.setDocument( (Document)getDocumentStore().get(childName));
         }
         return binding;
@@ -439,14 +442,14 @@ public class ObjectDocumentBinding implements DocumentBinding {
         return result;
     }
     @Override
-    public void addDocumentListener(DocumentChangeListener l) {
+    public void addDocumentChangeListener(DocumentChangeListener l) {
         if ( documentListeners == null ) {
             documentListeners = new ArrayList<DocumentChangeListener>();
         }
         documentListeners.add(l);
     }
     @Override
-    public void removeDocumentListener(DocumentChangeListener l) {
+    public void removeDocumentChangeListener(DocumentChangeListener l) {
         if ( documentListeners == null ) {
             return;
         }
