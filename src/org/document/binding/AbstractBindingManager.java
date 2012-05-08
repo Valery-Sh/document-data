@@ -1,8 +1,17 @@
-package org.document;
+package org.document.binding;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.document.Document;
+import org.document.DocumentChangeEvent;
+import org.document.DocumentChangeListener;
+import org.document.DocumentSelectEvent;
+import org.document.DocumentSelectListener;
+import org.document.HasDocumentAlias;
+import org.document.PropertyDataStore;
+import org.document.ValidatorCollection;
 
 /**
  *
@@ -139,7 +148,7 @@ public class AbstractBindingManager<T extends Document> implements BinderListene
             }
         }
         if (result == null) {
-            result = new DefaultDocumentBinder(a);
+            result = new DocumentBinder(a);
             binders.add(result);
         }
         return result;
@@ -195,4 +204,77 @@ public class AbstractBindingManager<T extends Document> implements BinderListene
             return document.getClass();
         }
     }
-}
+
+    public static class BinderSet<T extends Binder> implements BinderCollection<T> {
+
+        private AbstractBindingManager bindingManager;
+        private Document selected;
+        private Set<T> binders;
+
+        public BinderSet(AbstractBindingManager bindingManager) {
+            this.binders = new HashSet<T>();
+            this.bindingManager = bindingManager;
+        }
+
+        @Override
+        public void add(T binder) {
+            binders.add(binder);
+        }
+
+        @Override
+        public void remove(T binder) {
+            binders.remove(binder);
+        }
+
+        public Set<T> getSubset(Object alias) {
+            Set<T> subset = new HashSet<T>();
+            for (T b : binders) {
+                if (b instanceof HasDocumentAlias) {
+                    Object a = ((HasDocumentAlias) b).getAlias();
+                    if (a == alias) {
+                        subset.add(b);
+                    } else if (a != null && a.equals(alias)) {
+                        subset.add(b);
+                    } else if (alias != null && alias.equals(a)) {
+                        subset.add(b);
+                    }
+                }
+            }
+            return subset;
+        }
+
+        @Override
+        public void setDocument(Document newDocument) {
+
+            Document oldSelected = this.selected;
+            this.selected = newDocument;
+
+            for (T b : binders) {
+                DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
+                //Object alias = bindingManager.getAlias(oldSelected);
+                e.setOldValue(oldSelected);
+                //alias = bindingManager.getAlias(selected);
+                //e.setNewValue(bindingManager.getDocumentBinder(alias));
+                e.setNewValue(newDocument);
+                b.react(e);
+            }
+        }
+
+        @Override
+        public Document getDocument() {
+            return this.selected;
+        }
+
+        @Override
+        public void addDocumentChangeListener(DocumentChangeListener l) {
+        }
+
+        @Override
+        public void removeDocumentChangeListener(DocumentChangeListener l) {
+        }
+
+        @Override
+        public void react(DocumentChangeEvent event) {
+        }
+    }
+}//class AbstractBindingManager

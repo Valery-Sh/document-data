@@ -1,5 +1,7 @@
 package org.document.swing.binders;
 
+import org.document.binding.ListBinder;
+import org.document.binding.AbstractListBinder;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JList;

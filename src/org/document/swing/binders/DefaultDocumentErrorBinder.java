@@ -1,7 +1,7 @@
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
-import org.document.AbstractDocumentErrorBinder;
+import org.document.binding.AbstractDocumentErrorBinder;
 
 /**
  *

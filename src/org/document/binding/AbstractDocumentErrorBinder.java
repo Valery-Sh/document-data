@@ -1,4 +1,6 @@
-package org.document;
+package org.document.binding;
+
+import org.document.DocumentChangeEvent;
 
 /**
  *

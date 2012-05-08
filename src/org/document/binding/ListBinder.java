@@ -1,4 +1,7 @@
-package org.document;
+package org.document.binding;
+
+import org.document.DocumentChangeListener;
+import org.document.binding.Binder;
 
 /**
  *

@@ -1,5 +1,7 @@
 package org.document;
 
+import org.document.binding.Binder;
+
 /**
  *
  * @author V. Shyshkin

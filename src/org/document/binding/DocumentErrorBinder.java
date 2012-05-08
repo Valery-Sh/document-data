@@ -2,12 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.document;
+package org.document.binding;
+
+import org.document.binding.ErrorBinder;
 
 /**
  *
  * @author Valery
  */
-public interface BindingRecognizer<T> {
-    Object getBindingId(T document);
+public interface DocumentErrorBinder extends ErrorBinder{
+    
 }

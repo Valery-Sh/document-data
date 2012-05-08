@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListDataListener;
-import org.document.AbstractListBinder;
+import org.document.binding.AbstractListBinder;
 import org.document.Document;
 
 /**

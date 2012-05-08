@@ -1,6 +1,7 @@
-package org.document;
+package org.document.binding;
 
 import java.util.List;
+import org.document.Document;
 
 /**
  *

@@ -4,6 +4,7 @@
  */
 package org.document;
 
+import org.document.binding.BinderListener;
 import java.util.Map;
 
 /**

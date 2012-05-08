@@ -1,15 +1,25 @@
-package org.document;
+package org.document.binding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.document.Document;
+import org.document.DocumentChangeEvent;
+import org.document.DocumentChangeListener;
+import org.document.DocumentState;
+import org.document.HasDocumentAlias;
+import org.document.HasDocumentState;
+import org.document.PropertyBinder;
+import org.document.PropertyDataStore;
+import org.document.ValidationException;
+import org.document.ValidatorCollection;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements DocumentBinder<T> {
+public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder,BinderListener, BinderCollection<T>, HasDocumentAlias {
 
     private Object alias;
     protected List<DocumentChangeListener> documentListeners;
@@ -322,12 +332,12 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     }
 
-    @Override
+
     public ValidatorCollection getValidators() {
         return validators;
     }
 
-    @Override
+
     public void validate(String propPath, Object value) throws ValidationException {
         getValidators().validate(propPath, getDocumentStore(), value);
     }
@@ -338,8 +348,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     protected abstract DocumentBinder create();
 
-    @Override
-    public DocumentBinder createChild(String childName) {
+    public AbstractDocumentBinder createChild(String childName) {
         DocumentBinder binder = create();
         binder.setChildName(childName);
         childs.add(binder);
@@ -349,12 +358,10 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return binder;
     }
 
-    @Override
     public String getChildName() {
         return this.childName;
     }
 
-    @Override
     public void setChildName(String childName) {
         this.childName = childName;
     }

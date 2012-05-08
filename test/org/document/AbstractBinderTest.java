@@ -4,6 +4,7 @@
  */
 package org.document;
 
+import org.document.binding.AbstractBinder;
 import static org.junit.Assert.*;
 import org.junit.*;
 
