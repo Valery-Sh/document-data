@@ -151,7 +151,12 @@ public class DocumentListTest {
 
     /**
      * Test of fireAppend method, of class DocumentList.
-     *              for add(E e)
+     * 
+     * <code>boolean add(E e)</code>
+     * 
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
      */
     @Test
     public void testFireAppend() {
@@ -193,7 +198,13 @@ public class DocumentListTest {
 
     /**
      * Test of fireRemove method, of class DocumentList.
-     * boolean remove(Object)
+     * 
+     * <code>boolean remove(Object)</code>
+     * 
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
+
      */
     @Test
     public void testFireRemove_Object_boolean() {
@@ -253,6 +264,7 @@ public class DocumentListTest {
 
     /**
      * Test of addAll method, of class DocumentList.
+     * 
      */
     @Test
     public void testAddAll_Collection() {
@@ -319,6 +331,12 @@ public class DocumentListTest {
     
     /**
      * Test of fireAppendAll method, of class DocumentList.
+     * 
+     * <code>boolean addAll(Collection)</code>
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
+
      */
     @Test
     public void testFireAppendAll() {
@@ -351,7 +369,11 @@ public class DocumentListTest {
 
     /**
      * Test of fireAddAll method, of class DocumentList.
-     * addAll(int,Collection)
+     * 
+     * <code>boolean addAll(int,Collection)</code>
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
      */
     @Test
     public void testFireAddAll() {
@@ -422,7 +444,12 @@ public class DocumentListTest {
 
     /**
      * Test of fireRemoveAll method, of class DocumentList.
-     * removeAll(Collection)
+     * 
+     * <code>boolean removeAll(Collection)</code>
+     * 
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
      */
     @Test
     public void testFireRemoveAll() {
@@ -488,7 +515,13 @@ public class DocumentListTest {
 
     /**
      * Test of fireRetainAll method, of class DocumentList.
-     * boolean retainAll(Collection)
+     * 
+     * <code>boolean retainAll(Collection)</code>
+     * 
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
+
      */
     @Test
     public void testFireRetainAll() {
@@ -531,10 +564,39 @@ public class DocumentListTest {
 
     /**
      * Test of fireClear method, of class DocumentList.
+     * <code>void clear()</code>
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
+
+     * 
      */
     @Test
     public void testFireClear() {
-        System.out.println("fireClear");
+        System.out.println("fireClear (void clear())");
+        //
+        // We intrested in property: action.  
+        //
+        prepare();
+        
+        
+        Collection c = new HashSet();        
+        c.add(instance.get(2)); // doc2
+        
+        instance.retainAll(c);
+        
+        Object result = listEvent.getAction();
+        Object expResult = ListChangeEvent.Action.retainAll;
+        assertEquals(result,expResult);
+        
+        result = listEvent.getResult();
+        expResult = true;
+        assertEquals(result,expResult);
+        
+        result = listEvent.getCollection();
+        expResult = c;
+        assertEquals(result,expResult);
+
     }
 
     /**
@@ -579,7 +641,11 @@ public class DocumentListTest {
 
     /**
      * Test of fireSet method, of class DocumentList.
-     * E set(int index,E e)
+     * 
+     * <code>E set(int index,E e)</code>
+     * 
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
      */
     @Test
     public void testFireSet() {
@@ -647,7 +713,11 @@ public class DocumentListTest {
     }
     /**
      * Test of fireAdd method, of class DocumentList.
-     *   in response to: add(int index,E e)
+     * 
+     * <code>void add(int index,E e)</code> 
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
      */
     @Test
     public void testFireAdd() {
@@ -698,6 +768,13 @@ public class DocumentListTest {
 
     /**
      * Test of fireRemove method, of class DocumentList.
+     * 
+     * <code>E remove(int)</code>
+     * 
+     * <p>
+     * NOTE: here a value of 'listEvent' field is set when
+     * the tested method is called
+
      */
     @Test
     public void testFireRemove_int_GenericType() {
