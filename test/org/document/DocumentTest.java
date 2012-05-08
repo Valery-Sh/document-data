@@ -141,7 +141,7 @@ public class DocumentTest {
             values.put(key, value);
             validate(key,value);
             if ( docListener != null ) {
-                DocumentChangeEvent event = new DocumentChangeEvent(this,DocumentChangeEvent.Action.propertyChangeNotify);
+                DocumentChangeEvent event = new DocumentChangeEvent(this,DocumentChangeEvent.Action.propertyChange);
                 event.setPropertyName(key.toString());
                 event.setOldValue(oldValue);
                 event.setNewValue(value);

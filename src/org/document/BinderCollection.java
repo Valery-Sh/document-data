@@ -8,7 +8,7 @@ public interface BinderCollection<T extends Binder> extends DocumentChangeListen
     void add(T binder);
     void remove(T binder);
     
-    BinderCollection getSubset(Object... subsetId);
+    //BinderCollection getSubset(Object subsetId);
     Document getDocument();
     void setDocument(Document object);
     void addDocumentChangeListener(DocumentChangeListener l);

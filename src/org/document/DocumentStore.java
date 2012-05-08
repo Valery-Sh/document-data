@@ -54,17 +54,17 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
         String propertyName;
-        PropertyBinder binder = null;
+        //PropertyBinder binder = null;
         
-        if ( key instanceof PropertyBinder ) {
+/*        if ( key instanceof PropertyBinder ) {
             propertyName = ((PropertyBinder) key).getPropertyName();            
             binder = (PropertyBinder)key;
         } else {
             propertyName = key.toString();
             
         }
-        
-        
+*/        
+        propertyName = key.toString();
         Object oldValue = get(propertyName);        
         /**
          * To avoid cyclic 'put' method invocation we do nothing
@@ -77,9 +77,9 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
         if (!state.isEditing()) {
             state.setEditing(true);
         }
-        if ( binder != null ) {
-            state.dirtyEditValues.put(propertyName, binder.getComponentValue());
-        }
+        //if ( binder != null ) {
+        //    state.dirtyEditValues.put(propertyName, binder.getComponentValue());
+        //}
 
         try {
             validate(propertyName, value);
@@ -87,7 +87,7 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
             if (!docListeners.isEmpty()) {
                 DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateErrorNotify);
                 event.setPropertyName(propertyName);
-                event.setBinder(binder);
+                //event.setBinder(binder);
                 event.setOldValue(oldValue);
                 event.setNewValue(value);
                 event.setException(e);
@@ -100,12 +100,12 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
          * Here just calls
          * DataUtils.setValue(propertyName.toString(), source, value);
          */
-        setPropertyValue(propertyName.toString(), value);
+        setPropertyValue(propertyName, value);
 
         if (!docListeners.isEmpty()) {
-            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChangeNotify);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
-            event.setBinder(binder);
+//            event.setBinder(binder);
             event.setOldValue(oldValue);
             event.setNewValue(value);
             fireDocumentEvent(event);
@@ -178,6 +178,7 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
             l.react(event);
         }
     }
+
     
     /**
      * 
@@ -243,6 +244,14 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
         @Override
         public Map<String, DocumentChangeEvent> getPropertyErrors() {
             return this.getPropertyErrors();
+        }
+
+        @Override
+        public void react(BinderEvent event) {
+            if ( event.getAction() == BinderEvent.Action.componentValueChange ) {
+                dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());        
+            }
+
         }
     }//class BeanDocumentState
 }

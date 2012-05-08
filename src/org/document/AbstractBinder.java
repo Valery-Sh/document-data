@@ -47,6 +47,12 @@ public abstract class AbstractBinder implements PropertyBinder {
                     init(document.getPropertyDataStore().get(getPropertyName()));
                 }
                 break;
+            case propertyChange :
+                this.dataChanged(event.getNewValue());
+                break;
+            case completeChanges :
+                componentChanged(getComponentValue());
+                break;
         }//switch
     }
     @Override
@@ -70,8 +76,8 @@ public abstract class AbstractBinder implements PropertyBinder {
      * 
      * @param newValue 
      */
-    @Override
-    public void dataChanged(Object newValue) {
+
+    protected void dataChanged(Object newValue) {
         Object convValue = this.componentValueOf(newValue);
         if ( ! needChangeComponent(convValue) ) {
             return;
@@ -98,8 +104,8 @@ public abstract class AbstractBinder implements PropertyBinder {
         return result;
     }
 
-    @Override
-    public void componentChanged(Object newValue) {
+    
+    protected void componentChanged(Object newValue) {
         fireClearPropertyError();
         Object convValue;
         try {
@@ -113,17 +119,17 @@ public abstract class AbstractBinder implements PropertyBinder {
     }
     
     private void fireChangeDataValue(Object dataValue, Object componentValue) {
-        BinderEvent.Action action = BinderEvent.Action.changePropertyValueRequest;
+        BinderEvent.Action action = BinderEvent.Action.componentValueChange;
         BinderEvent event = new BinderEvent(this,action,dataValue,componentValue);
         notifyListeners(event);
     }
     private void fireClearPropertyError() {
-        BinderEvent.Action action = BinderEvent.Action.clearPropertyErrorRequest;
+        BinderEvent.Action action = BinderEvent.Action.clearComponentChangeError;
         BinderEvent event = new BinderEvent(this,action,null);
         notifyListeners(event);
     }
     private void firePropertyError(Exception e) {
-        BinderEvent.Action action = BinderEvent.Action.notifyPropertyErrorRequest;
+        BinderEvent.Action action = BinderEvent.Action.componentChangeValueError;
         BinderEvent event = new BinderEvent(this,action,e);
         notifyListeners(event);
     }

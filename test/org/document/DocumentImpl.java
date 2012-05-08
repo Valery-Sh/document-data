@@ -49,7 +49,7 @@ public class DocumentImpl implements PropertyDataStore {
         Object oldValue = this.get(pname);
         values.put(pname, value);
         if (docListener != null) {
-            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChangeNotify);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(pname);
             event.setBinder(binder);
             event.setOldValue(oldValue);

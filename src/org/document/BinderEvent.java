@@ -83,10 +83,10 @@ public class BinderEvent extends EventObject {
 
     
     public enum Action {
-        notifyPropertyErrorRequest,
-        clearPropertyErrorRequest,
-        changePropertyValueRequest,
-        selectChange
+        componentChangeValueError,
+        componentValueChange,
+        clearComponentChangeError,
+        componentSelectChange
         
     }
 }//class DocumentEvent

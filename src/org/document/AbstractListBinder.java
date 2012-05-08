@@ -62,8 +62,8 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
                 break;
         }//switch
     }
-    @Override
-    public void dataChanged(Object newValue) {
+    
+    protected void dataChanged(Object newValue) {
         int convertedValue = documents.indexOf((Document)newValue);
         if ( convertedValue == this.getComponentValue()) {
             return;
@@ -79,8 +79,8 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
         setComponentSelectedIndex((Integer)value);
     }
 
-    @Override
-    public void componentChanged(Object newValue) {
+
+    protected void componentChanged(Object newValue) {
         int idx = (Integer)newValue;
         fireChangeSelected(documents.get(idx), idx);         
     }
@@ -122,7 +122,7 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
      * @param componentValue 
      */
     protected void fireChangeSelected(Document newDoc, Object componentValue) {
-        BinderEvent.Action action = BinderEvent.Action.selectChange;
+        BinderEvent.Action action = BinderEvent.Action.componentSelectChange;
         BinderEvent event = new BinderEvent(this,action,newDoc,componentValue);
         notifyBinderListeners(event);
     }

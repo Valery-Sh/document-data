@@ -13,6 +13,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     private Object alias;
     protected List<DocumentChangeListener> documentListeners;
+    protected List<BinderListener> binderListeners;
+    
     protected Object id;
     protected String childName;
     protected List<DocumentBinder> childs;
@@ -25,18 +27,16 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     protected AbstractDocumentBinder() {
         binders = new HashMap<String, List<T>>();
+        binderListeners = new ArrayList<BinderListener>();
         errorBinders = new HashMap<String, List<T>>();
         documentErrorBinders = new ArrayList<T>();
         validators = new ValidatorCollection();
         childs = new ArrayList<DocumentBinder>();
-    }
-
-    protected AbstractDocumentBinder(String childName) {
-        this();
-        this.childName = childName;
+        
     }
 
     protected AbstractDocumentBinder(Object alias) {
+        this();
         this.alias = alias;
     }
 
@@ -45,34 +45,20 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return alias;
     }
 
-    @Override
-    public BinderCollection getSubset(Object... subsetId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void dataChanged(Object newValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void componentChanged(Object newValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     @Override
     public Object getComponentValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public void addBinderListener(BinderListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.binderListeners.add(l);
     }
 
     @Override
     public void removeBinderListener(BinderListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.binderListeners.remove(l);
     }
 
     /**
@@ -178,31 +164,22 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return this.documentErrorBinders;
     }
 
-    protected void firePropertyChange(String propName, Object oldValue, Object newValue) {
-
+    protected void firePropertyChange(DocumentChangeEvent event) {
+        String propName = event.getPropertyName();
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+        
         List<T> blist = binders.get(propName);
         if (blist == null) {
             return;
         }
         for (Binder b : blist) {
             //b.dataChanged(oldValue, newValue);
-            b.dataChanged(newValue);
+            //b.dataChanged(newValue);
+            b.react(event);
         }
     }
 
-    protected void firePropertyChange(PropertyBinder binder, Object oldValue, Object newValue) {
-        List<T> blist = binders.get(((PropertyBinder) binder).getPropertyName());
-        if (blist == null) {
-            return;
-        }
-        for (Binder b : blist) {
-            if (b == binder) {
-                continue;
-            }
-//            b.dataChanged(oldValue, newValue);
-            b.dataChanged(newValue);
-        }
-    }
 
     @Override
     public Document getDocument() {
@@ -259,12 +236,11 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                     if (l == null) {
                         continue;
                     }
-                    for (Binder b : l) {
-                        ((PropertyBinder) b).init(state.getDirtyValues().get(((PropertyBinder) b).getPropertyName()));
+                    for (T b : l) {
+                        b.init(state.getDirtyValues().get(b.getPropertyName()));
                     }
                 }
-                this.completeChanges();
-                //this.notifyDocumentError(null);
+                completeChanges();
                 fireDocumentError(null);
                 try {
                     getValidators().validate(document);
@@ -302,9 +278,11 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     }
 
     protected void resolvePendingChanges() {
+        DocumentChangeEvent event = new DocumentChangeEvent(this,DocumentChangeEvent.Action.completeChanges);
         for (Map.Entry<String, List<T>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
-                b.componentChanged(b.getComponentValue());
+                //b.componentChanged(b.getComponentValue());
+                b.react(event);
             }
         }
     }
@@ -384,8 +362,13 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     public String getChildName() {
         return this.childName;
     }
-    protected void update(DocumentChangeEvent event) {
-        Document selected = ((DocumentBinder)event.getNewValue()).getDocument();
+    @Override
+    public void setChildName(String childName) {
+        this.childName = childName;
+    }
+    
+/*    protected void update(DocumentChangeEvent event) {
+        Document selected = (Document)event.getNewValue();
         if (this.document == selected) {
             return;
         }
@@ -406,17 +389,13 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             //listBinding.setDocument(selected);
         }
     }
-
+*/
     @Override
     public void react(DocumentChangeEvent event) {
         if (event.getAction().equals(DocumentChangeEvent.Action.documentChange)) {
-           update(event); 
-        } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChangeNotify)) {
-            if (event.getBinder() == null) {
-                firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
-            } else {
-                firePropertyChange(event.getBinder(), event.getOldValue(), event.getNewValue());
-            }
+           setDocument((Document)event.getNewValue()); 
+        } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChange)) {
+           firePropertyChange(event);
         } else if (event.getAction().equals(DocumentChangeEvent.Action.validateProperty)) {
             this.validate(event.getPropertyName(), event.getNewValue());
         } else if (event.getAction().equals(DocumentChangeEvent.Action.validateErrorNotify)) {
@@ -435,8 +414,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                 if (l == null) {
                     continue;
                 }
-                for (Binder b : l) {
-                    this.validate(((PropertyBinder) b).getPropertyName(), b.getComponentValue());
+                for (T b : l) {
+                    this.validate(b.getPropertyName(), b.getComponentValue());
                 }
             }
         } else if (event.getAction().equals(DocumentChangeEvent.Action.validateDocument)) {
@@ -448,16 +427,19 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     public void react(BinderEvent event) {
 
         switch (event.getAction()) {
-            case changePropertyValueRequest:
+            case componentValueChange:
                 if (!needChangeData(event.getPropertyName(), event.getDataValue())) {
                     return;
                 }
-                getDocumentStore().put((PropertyBinder) event.getSource(), event.getDataValue());
+                if ( getDocumentStore() instanceof HasDocumentState ) {
+                    ((HasDocumentState)getDocumentStore()).getDocumentState().react(event);
+                }
+                //getDocumentStore().put((PropertyBinder) event.getSource(), event.getDataValue());
                 break;
-            case notifyPropertyErrorRequest:
+            case componentChangeValueError:
 
                 break;
-            case clearPropertyErrorRequest:
+            case clearComponentChangeError:
 
                 break;
 

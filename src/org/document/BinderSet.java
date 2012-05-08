@@ -34,9 +34,21 @@ public class BinderSet<T extends Binder> implements BinderCollection<T>{
         binders.remove(binder);
     }
 
-    @Override
-    public BinderCollection getSubset(Object... subsetId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Set<T> getSubset(Object alias) {
+        Set<T> subset = new HashSet<T>();
+        for ( T b : binders) {
+            if ( b instanceof HasDocumentAlias ) {
+                Object a = ((HasDocumentAlias)b).getAlias();
+                if ( a == alias ) {
+                    subset.add(b);
+                } else if ( a != null && a.equals(alias)) {
+                    subset.add(b);
+                } else if ( alias != null && alias.equals(a)) {
+                    subset.add(b);
+                }
+            }
+        }
+        return subset;
     }
 
     @Override
@@ -47,11 +59,15 @@ public class BinderSet<T extends Binder> implements BinderCollection<T>{
         
         for ( T b : binders) {
             DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
-            e.setOldValue(bindingManager.getBinding(oldSelected));
-            e.setNewValue(bindingManager.getBinding(newDocument));
+            //Object alias = bindingManager.getAlias(oldSelected);
+            e.setOldValue(oldSelected);
+            //alias = bindingManager.getAlias(selected);
+            //e.setNewValue(bindingManager.getDocumentBinder(alias));
+            e.setNewValue(newDocument);
             b.react(e);
         }
     }
+    
     
     @Override
     public Document getDocument() {

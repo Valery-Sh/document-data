@@ -14,7 +14,6 @@ public class DocumentChangeEvent extends EventObject {
     private Object oldValue;
     private Object newValue;    
     private Exception exception;
-    private PropertyBinder binder;
     private Object oldAlias;
     private Object newAlias;    
     
@@ -94,19 +93,12 @@ public class DocumentChangeEvent extends EventObject {
         this.exception = exception;
     }
 
-    public PropertyBinder getBinder() {
-        return binder;
-    }
-
-    public void setBinder(PropertyBinder binder) {
-        this.binder = binder;
-    }
-
     
     public enum Action {
         documentChange,
         selectChange,
-        propertyChangeNotify,
+        propertyChange,
+        completeChanges,
         validateErrorNotify,
         validateProperty,
         validateAllProperties,

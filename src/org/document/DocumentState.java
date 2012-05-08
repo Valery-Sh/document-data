@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author Valery
  */
-public interface DocumentState {
+public interface DocumentState extends BinderListener{
     boolean isEditing();
     void setEditing(boolean editing);
     Map<String,Object> getDirtyValues();
