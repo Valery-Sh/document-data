@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 import java.util.ArrayList;
@@ -11,15 +7,15 @@ import java.util.Map;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public class AbstractDocumentBinder<T extends PropertyBinder> implements DocumentBinder<T> {
+public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements DocumentBinder<T> {
 
     private Object alias;
     protected List<DocumentChangeListener> documentListeners;
     protected Object id;
     protected String childName;
-    protected List<DocumentBindings> childs;
+    protected List<DocumentBinder> childs;
     protected Map<String, List<T>> binders;
     protected Map<String, List<T>> errorBinders;
     protected List<T> documentErrorBinders;
@@ -32,7 +28,7 @@ public class AbstractDocumentBinder<T extends PropertyBinder> implements Documen
         errorBinders = new HashMap<String, List<T>>();
         documentErrorBinders = new ArrayList<T>();
         validators = new ValidatorCollection();
-        childs = new ArrayList<DocumentBindings>();
+        childs = new ArrayList<DocumentBinder>();
     }
 
     protected AbstractDocumentBinder(String childName) {
@@ -50,7 +46,7 @@ public class AbstractDocumentBinder<T extends PropertyBinder> implements Documen
     }
 
     @Override
-    public BinderSet getSubset(Object... subsetId) {
+    public BinderCollection getSubset(Object... subsetId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -208,6 +204,7 @@ public class AbstractDocumentBinder<T extends PropertyBinder> implements Documen
         }
     }
 
+    @Override
     public Document getDocument() {
         return document;
     }
@@ -280,7 +277,7 @@ public class AbstractDocumentBinder<T extends PropertyBinder> implements Documen
 
 
 
-        for (DocumentBindings child : childs) {
+        for (DocumentBinder child : childs) {
             Object d = documentStore.get(child.getChildName());
             if (d == null) {
                 child.setDocument((Document) null);
@@ -312,6 +309,7 @@ public class AbstractDocumentBinder<T extends PropertyBinder> implements Documen
         }
     }
 
+    @Override
     public void completeChanges() {
         if (document.getPropertyDataStore() == null) {
             return;
@@ -355,10 +353,12 @@ public class AbstractDocumentBinder<T extends PropertyBinder> implements Documen
 
     }
 
+    @Override
     public ValidatorCollection getValidators() {
         return validators;
     }
 
+    @Override
     public void validate(String propPath, Object value) throws ValidationException {
         getValidators().validate(propPath, getDocumentStore(), value);
     }
@@ -366,23 +366,52 @@ public class AbstractDocumentBinder<T extends PropertyBinder> implements Documen
     protected void validate() throws ValidationException {
         getValidators().validate(getDocument());
     }
-
-    public DocumentBindings createChild(String childName) {
-        DocumentBindings binding = new DocumentBindingHandler(childName);
-        childs.add(binding);
+    
+    protected abstract DocumentBinder create();
+    
+    @Override
+    public DocumentBinder createChild(String childName) {
+        DocumentBinder binder = create();
+        binder.setChildName(childName);
+        childs.add(binder);
         if (document.getPropertyDataStore() != null) {
-            binding.setDocument((Document) getDocumentStore().get(childName));
+            binder.setDocument((Document) getDocumentStore().get(childName));
         }
-        return binding;
+        return binder;
     }
 
+    @Override
     public String getChildName() {
         return this.childName;
+    }
+    protected void update(DocumentChangeEvent event) {
+        Document selected = ((DocumentBinder)event.getNewValue()).getDocument();
+        if (this.document == selected) {
+            return;
+        }
+        Document old = this.document;
+        if (old != null) {
+            DocumentBinder b = (DocumentBinder)event.getOldValue();
+            if (b != null) {
+                //b.setDocument(old);
+                b.completeChanges();
+            }
+        }
+        this.document = selected;
+        if (selected != null) {
+            DocumentBinder b = (DocumentBinder)event.getNewValue();
+            if (b != null) {
+                b.setDocument(selected);
+            }
+            //listBinding.setDocument(selected);
+        }
     }
 
     @Override
     public void react(DocumentChangeEvent event) {
-        if (event.getAction().equals(DocumentChangeEvent.Action.propertyChangeNotify)) {
+        if (event.getAction().equals(DocumentChangeEvent.Action.documentChange)) {
+           update(event); 
+        } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChangeNotify)) {
             if (event.getBinder() == null) {
                 firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
             } else {

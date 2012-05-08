@@ -1,18 +1,13 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.document;
-
-import java.util.List;
 
 /**
  *
- * @author V. Shishkin
+ * @author Valery
  */
-public class BindingManager<T extends Document> extends AbstractBindingManager {
-
-    protected List<T> sourceList;
+public class BindingManager {
     
-    public BindingManager(List<T> sourceList) {
-        super();
-        this.sourceList = sourceList;
-    }
-
 }

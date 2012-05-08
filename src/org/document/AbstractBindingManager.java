@@ -10,7 +10,9 @@ import java.util.Map;
  * @author V. Shishkin
  */
 public class AbstractBindingManager<T extends Document> implements DocumentChangeListener {
-
+    
+    private BinderSet binders;
+    
     protected Map<Object, DocumentBindings> documentBindings;
     protected ListBindings listBinding;
     
@@ -20,6 +22,9 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
     private List<DocumentSelectListener> selectDocumentListeners;
 
     protected AbstractBindingManager() {
+        
+        binders = new BinderSet(this);        
+        
         documentBindings = new HashMap<Object, DocumentBindings>();
         validators = new ValidatorCollection();
         selectDocumentListeners = new ArrayList<DocumentSelectListener>();
@@ -29,21 +34,25 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
     protected AbstractBindingManager(BindingRecognizer recognizer) {
         this();
         this.recognizer = recognizer;
-/*        if ( recognizer == null ) {
-            this.recognizer = new AbstractBindingManager.DefaultBindingRecognizer();
-        }
-*/        
     }
 
     public T getSelected() {
         return selected;
     }
 
+    
     public void setSelected(T selected) {
-        this.update(selected);
+        //this.update(selected);
         T old = this.selected;
         this.selected = selected;
+        this.binders.setDocument(selected);
         fireSelectDocument(old, selected);
+    }
+    private void fireSelectDocument(T oldSelected, T newSelected) {
+        DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
+        for (DocumentSelectListener l : selectDocumentListeners) {
+            l.documentSelect(event);
+        }
     }
 
     public void addBinder(Object docTypeId, Binder binder) {
@@ -87,22 +96,7 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
     public ValidatorCollection getValidators() {
         return getValidators("default doc type");
     }
-    public DocumentBindings getDocumentBindings(Object docTypeId) {
-        return documentBindings.get(docTypeId);
-    }
-    public DocumentBindings getDocumentBindings() {
-        return documentBindings.get("default doc type");
-    }
-    
-/*    protected ValidatorCollection getValidators() {
-        return validators;
-    }
 
-    protected void validate() throws ValidationException {
-        //getValidators().validate(selected.getPropertyDataStore());
-        getValidators().validate(selected);
-    }
-*/
     protected PropertyDataStore getPropertyDataStore() {
         return this.selected.getPropertyDataStore();
     }
@@ -115,7 +109,6 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
         if (old != null) {
             DocumentBindings b = getBinding(old);
             if (b != null) {
-                //b.setDocument(old);
                 b.completeChanges();
             }
         }
@@ -127,6 +120,8 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
             }
             listBinding.setDocument(selected);
         }
+
+
     }
 
     public void setRecognizer(BindingRecognizer recognizer) {
@@ -135,7 +130,20 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
     //
     // ===========================================================
     //
-
+    public Object getAlias(Document doc) {
+        Object result;
+        if (doc == null) {
+            return null;
+        }
+        
+        if (recognizer != null) {
+            result = recognizer.getBindingId(doc);
+        } else {
+            result = "default doc type";
+        }
+        return result;
+        
+    }
     protected DocumentBindings getBinding(Document doc) {
         if (doc == null) {
             return null;
@@ -185,12 +193,6 @@ public class AbstractBindingManager<T extends Document> implements DocumentChang
         this.selectDocumentListeners.remove(l);
     }
 
-    private void fireSelectDocument(T oldSelected, T newSelected) {
-        DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
-        for (DocumentSelectListener l : selectDocumentListeners) {
-            l.documentSelect(event);
-        }
-    }
     
     public static class DefaultBindingRecognizerNew<T> implements BindingRecognizer<T> {
 
