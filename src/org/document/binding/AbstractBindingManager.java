@@ -251,10 +251,7 @@ public class AbstractBindingManager<T extends Document> implements BinderListene
 
             for (T b : binders) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
-                //Object alias = bindingManager.getAlias(oldSelected);
                 e.setOldValue(oldSelected);
-                //alias = bindingManager.getAlias(selected);
-                //e.setNewValue(bindingManager.getDocumentBinder(alias));
                 e.setNewValue(newDocument);
                 b.react(e);
             }
