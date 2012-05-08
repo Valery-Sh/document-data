@@ -99,12 +99,9 @@ public class DocumentChangeEvent extends EventObject {
         selectChange,
         propertyChange,
         completeChanges,
-        validateErrorNotify,
-        validateProperty,
-        validateAllProperties,
-        validateDocument,
-        propertyErrorNotify, // notifies ErrorBinders
-        documentErrorNotify, // notifies ErrorBinders
+        editingChange,
+        propertyError, // notifies ErrorBinders
+        documentError, // notifies ErrorBinders
         
     }
 }

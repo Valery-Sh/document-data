@@ -43,7 +43,7 @@ public abstract class AbstractDocumentErrorBinder extends AbstractBinder impleme
             case documentChange :
                 this.notifyError(null);
                 break;
-            case documentErrorNotify :
+            case documentError :
                 if ( event.getPropertyName() != null ) {
                     break;
                 }

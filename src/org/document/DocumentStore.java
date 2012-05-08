@@ -80,8 +80,8 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
         //if ( binder != null ) {
         //    state.dirtyEditValues.put(propertyName, binder.getComponentValue());
         //}
-
-        try {
+        validate(propertyName, value);
+ /*try {
             validate(propertyName, value);
         } catch (ValidationException e) {
             if (!docListeners.isEmpty()) {
@@ -96,6 +96,8 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
             return;
             
         }
+ */ 
+
         /**
          * Here just calls
          * DataUtils.setValue(propertyName.toString(), source, value);
@@ -134,17 +136,18 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
      * @throws ValidationException 
      */
     public void validate(Object key, Object value) throws ValidationException {
-        if (!docListeners.isEmpty()) {
+/*        if (!docListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateProperty);
             event.setPropertyName(key.toString());
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
+*/
     }
     /**
      * 
      */
-    protected void validateProperties() {
+/*    protected void validateProperties() {
         if (!docListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateAllProperties);
             fireDocumentEvent(event);
@@ -157,7 +160,7 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
         }
 
     }
-    
+*/    
     /**
      * The method is defined in order to easy override in a subclass
      * without a need to override the <code>put</code> method.
@@ -216,6 +219,18 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
 
             if (this.editing && !editing) {
                 try {
+                    if (!d.docListeners.isEmpty()) {
+                        DocumentChangeEvent event = new DocumentChangeEvent(d, DocumentChangeEvent.Action.editingChange);
+                        event.setOldValue(this.editing);
+                        event.setNewValue(editing);
+                        
+                        event.setPropertyName("");
+                        d.fireDocumentEvent(event);
+                    }
+                    this.editing = editing;
+                } catch (ValidationException e) {
+                }                
+/*                try {
                     d.validateProperties();
                     d.validateDocument();
                     this.editing = editing;
@@ -227,6 +242,7 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
                         d.fireDocumentEvent(event);
                     }
                 }
+*/
             } else if (!this.editing) {
                 beforeEditValues.clear();
                 DataUtils.putAll(beforeEditValues, d.source);

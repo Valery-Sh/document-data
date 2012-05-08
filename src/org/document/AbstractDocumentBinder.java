@@ -14,7 +14,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     private Object alias;
     protected List<DocumentChangeListener> documentListeners;
     protected List<BinderListener> binderListeners;
-    
     protected Object id;
     protected String childName;
     protected List<DocumentBinder> childs;
@@ -32,7 +31,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         documentErrorBinders = new ArrayList<T>();
         validators = new ValidatorCollection();
         childs = new ArrayList<DocumentBinder>();
-        
+
     }
 
     protected AbstractDocumentBinder(Object alias) {
@@ -44,7 +43,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     public Object getAlias() {
         return alias;
     }
-
 
     @Override
     public Object getComponentValue() {
@@ -168,7 +166,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         String propName = event.getPropertyName();
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
-        
+
         List<T> blist = binders.get(propName);
         if (blist == null) {
             return;
@@ -179,7 +177,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             b.react(event);
         }
     }
-
 
     @Override
     public Document getDocument() {
@@ -277,8 +274,12 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
     }
 
-    protected void resolvePendingChanges() {
-        DocumentChangeEvent event = new DocumentChangeEvent(this,DocumentChangeEvent.Action.completeChanges);
+    
+    protected void completeChanges() {
+        if (document.getPropertyDataStore() == null) {
+            return;
+        }
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.completeChanges);
         for (Map.Entry<String, List<T>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
                 //b.componentChanged(b.getComponentValue());
@@ -287,22 +288,12 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
     }
 
-    @Override
-    public void completeChanges() {
-        if (document.getPropertyDataStore() == null) {
-            return;
-        }
-
-        this.resolvePendingChanges();
-
-    }
-
     protected void firePropertyError(String propertyName, Exception e) {
         if (this.documentListeners == null || documentListeners.isEmpty()) {
             return;
         }
 
-        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.propertyErrorNotify);
+        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.propertyError);
         event.setPropertyName(propertyName);
         event.setException(e);
 
@@ -319,7 +310,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             return;
         }
 
-        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.documentErrorNotify);
+        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.documentError);
         event.setException(e);
 
         for (DocumentChangeListener l : documentListeners) {
@@ -344,9 +335,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     protected void validate() throws ValidationException {
         getValidators().validate(getDocument());
     }
-    
+
     protected abstract DocumentBinder create();
-    
+
     @Override
     public DocumentBinder createChild(String childName) {
         DocumentBinder binder = create();
@@ -362,43 +353,36 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     public String getChildName() {
         return this.childName;
     }
+
     @Override
     public void setChildName(String childName) {
         this.childName = childName;
     }
-    
-/*    protected void update(DocumentChangeEvent event) {
-        Document selected = (Document)event.getNewValue();
-        if (this.document == selected) {
-            return;
-        }
-        Document old = this.document;
-        if (old != null) {
-            DocumentBinder b = (DocumentBinder)event.getOldValue();
-            if (b != null) {
-                //b.setDocument(old);
-                b.completeChanges();
-            }
-        }
-        this.document = selected;
-        if (selected != null) {
-            DocumentBinder b = (DocumentBinder)event.getNewValue();
-            if (b != null) {
-                b.setDocument(selected);
-            }
-            //listBinding.setDocument(selected);
-        }
-    }
-*/
+
+    /*
+     * protected void update(DocumentChangeEvent event) { Document selected =
+     * (Document)event.getNewValue(); if (this.document == selected) { return; }
+     * Document old = this.document; if (old != null) { DocumentBinder b =
+     * (DocumentBinder)event.getOldValue(); if (b != null) {
+     * //b.setDocument(old); b.completeChanges(); } } this.document = selected;
+     * if (selected != null) { DocumentBinder b =
+     * (DocumentBinder)event.getNewValue(); if (b != null) {
+     * b.setDocument(selected); } //listBinding.setDocument(selected); } }
+     */
     @Override
     public void react(DocumentChangeEvent event) {
+        if (event.getAction().equals(DocumentChangeEvent.Action.editingChange)) {
+            if ((Boolean) event.getOldValue() && !(Boolean) event.getNewValue()) {
+                this.validateOnEndEditing();
+            }
+        } else //  this.validate(event.getPropertyName(), event.getNewValue());        
         if (event.getAction().equals(DocumentChangeEvent.Action.documentChange)) {
-           setDocument((Document)event.getNewValue()); 
+            setDocument((Document) event.getNewValue());
         } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChange)) {
-           firePropertyChange(event);
-        } else if (event.getAction().equals(DocumentChangeEvent.Action.validateProperty)) {
-            this.validate(event.getPropertyName(), event.getNewValue());
-        } else if (event.getAction().equals(DocumentChangeEvent.Action.validateErrorNotify)) {
+            firePropertyChange(event);
+            //} else if (event.getAction().equals(DocumentChangeEvent.Action.validateProperty)) {
+            //  this.validate(event.getPropertyName(), event.getNewValue());
+        } /*else if (event.getAction().equals(DocumentChangeEvent.Action.validateErrorNotify)) {
             if (((ValidationException) event.getException()).getPropertyName() == null) {
                 // documentStore error
                 //(event.getException());
@@ -407,7 +391,10 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                 //notifyPropertyError(event.getPropertyName(), event.getException());
                 firePropertyError(event.getPropertyName(), event.getException());
             }
-        } else if (event.getAction().equals(DocumentChangeEvent.Action.validateAllProperties)) {
+        } 
+        */
+        
+        /*else if (event.getAction().equals(DocumentChangeEvent.Action.validateAllProperties)) {
             //validators.validateProperties((DocumentStore) event.getSource());
             for (Map.Entry<String, List<T>> e : binders.entrySet()) {
                 List<T> l = e.getValue();
@@ -421,6 +408,32 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         } else if (event.getAction().equals(DocumentChangeEvent.Action.validateDocument)) {
             this.validate();
         }
+        */
+    }
+
+    protected void validateOnEndEditing() {
+        for (Map.Entry<String, List<T>> e : binders.entrySet()) {
+            List<T> l = e.getValue();
+            if (l == null) {
+                continue;
+            }
+            for (T b : l) {
+                try {
+                    validate(b.getPropertyName(), b.getComponentValue());
+                } catch (ValidationException ex) {
+                    firePropertyError(b.getPropertyName(), ex);
+                    throw ex;
+                }
+            }
+        }
+        try {
+            validate();
+        } catch (ValidationException ex) {
+            fireDocumentError(ex);
+            throw ex;
+        }
+
+
     }
 
     @Override
@@ -428,19 +441,27 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
         switch (event.getAction()) {
             case componentValueChange:
+                if (getDocumentStore() instanceof HasDocumentState) {
+                    ((HasDocumentState) getDocumentStore()).getDocumentState().react(event);
+                }
+
                 if (!needChangeData(event.getPropertyName(), event.getDataValue())) {
                     return;
                 }
-                if ( getDocumentStore() instanceof HasDocumentState ) {
-                    ((HasDocumentState)getDocumentStore()).getDocumentState().react(event);
+                try {
+                    validate(event.getPropertyName(), event.getDataValue());
+                    getDocumentStore().put(event.getPropertyName(), event.getDataValue());
+                } catch (ValidationException ex) {
+                    firePropertyError(event.getPropertyName(), ex);
                 }
-                //getDocumentStore().put((PropertyBinder) event.getSource(), event.getDataValue());
+
+                //fireDocumentError(event.getException());
                 break;
             case componentChangeValueError:
 
                 break;
             case clearComponentChangeError:
-
+                firePropertyError(event.getPropertyName(), event.getException());
                 break;
 
         }

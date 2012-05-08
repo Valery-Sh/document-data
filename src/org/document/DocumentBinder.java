@@ -21,6 +21,6 @@ public interface DocumentBinder<T extends PropertyBinder> extends Binder,BinderL
 
     //Document getDocument();    
     void validate(String propPath,Object value) throws ValidationException;
-    void completeChanges();    
+    //void completeChanges();    
     
 }

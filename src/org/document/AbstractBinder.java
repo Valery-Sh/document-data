@@ -110,7 +110,7 @@ public abstract class AbstractBinder implements PropertyBinder {
         Object convValue;
         try {
             convValue = this.dataValueOf(newValue);
-            fireChangeDataValue(convValue,newValue);
+            fireComponentValueChange(convValue,newValue);
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
@@ -118,7 +118,7 @@ public abstract class AbstractBinder implements PropertyBinder {
         }
     }
     
-    private void fireChangeDataValue(Object dataValue, Object componentValue) {
+    private void fireComponentValueChange(Object dataValue, Object componentValue) {
         BinderEvent.Action action = BinderEvent.Action.componentValueChange;
         BinderEvent event = new BinderEvent(this,action,dataValue,componentValue);
         notifyListeners(event);
