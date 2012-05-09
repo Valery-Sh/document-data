@@ -10,7 +10,7 @@ import org.document.DocumentChangeListener;
 import org.document.DocumentSelectEvent;
 import org.document.DocumentSelectListener;
 import org.document.HasDocumentAlias;
-import org.document.PropertyDataStore;
+import org.document.PropertyStore;
 import org.document.ValidatorCollection;
 
 /**
@@ -107,8 +107,8 @@ public class AbstractBindingManager<T extends Document> implements BinderListene
      * public ValidatorCollection getValidators() { return
      * getValidators("default doc type"); }
      */
-    protected PropertyDataStore getPropertyDataStore() {
-        return this.selected.getPropertyDataStore();
+    protected PropertyStore getPropertyDataStore() {
+        return this.selected.getPropertyStore();
     }
 
     public void setRecognizer(BindingRecognizer recognizer) {

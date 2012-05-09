@@ -11,7 +11,7 @@ import org.document.DocumentState;
 import org.document.HasDocumentAlias;
 import org.document.HasDocumentState;
 import org.document.PropertyBinder;
-import org.document.PropertyDataStore;
+import org.document.PropertyStore;
 import org.document.ValidationException;
 import org.document.ValidatorCollection;
 
@@ -193,14 +193,14 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return document;
     }
 
-    public PropertyDataStore getDocumentStore() {
+    public PropertyStore getDocumentStore() {
         //return this.documentStore;
-        return document.getPropertyDataStore();
+        return document.getPropertyStore();
     }
 
     @Override
     public void setDocument(Document object) {
-        PropertyDataStore oldDocumentStore = null;
+        PropertyStore oldDocumentStore = null;
         if (document != null) {
             oldDocumentStore = getDocumentStore();
         }
@@ -233,7 +233,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         fireDocumentChanged(oldDocument, document);
         //refresh();
 
-        PropertyDataStore documentStore = getDocumentStore();
+        PropertyStore documentStore = getDocumentStore();
 
         if (documentStore instanceof HasDocumentState) {
             DocumentState state = ((HasDocumentState) documentStore).getDocumentState();
@@ -286,7 +286,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     
     protected void completeChanges() {
-        if (document.getPropertyDataStore() == null) {
+        if (document.getPropertyStore() == null) {
             return;
         }
         DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.completeChanges);
@@ -352,7 +352,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         DocumentBinder binder = create();
         binder.setChildName(childName);
         childs.add(binder);
-        if (document.getPropertyDataStore() != null) {
+        if (document.getPropertyStore() != null) {
             binder.setDocument((Document) getDocumentStore().get(childName));
         }
         return binder;

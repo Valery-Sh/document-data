@@ -2,8 +2,8 @@ package org.document.samples;
 
 import java.util.Date;
 import org.document.Document;
-import org.document.DocumentStore;
-import org.document.PropertyDataStore;
+import org.document.DocumentPropertyStore;
+import org.document.PropertyStore;
 
 /**
  *
@@ -11,11 +11,11 @@ import org.document.PropertyDataStore;
  */
 public class Person implements Document {
 
-    protected DocumentStore document;
+    protected DocumentPropertyStore document;
 
     public Person() {
-        // DocumentStore is a default PropertyDataStore
-        this.document = new DocumentStore(this);
+        // DocumentPropertyStore is a default PropertyStore
+        this.document = new DocumentPropertyStore(this);
     }
 
     public Person(int id, String firstName, String lastName) {
@@ -28,7 +28,7 @@ public class Person implements Document {
     // Document interface implementation
     //
     @Override
-    public PropertyDataStore getPropertyDataStore() {
+    public PropertyStore getPropertyStore() {
         return this.document;
     }
     //

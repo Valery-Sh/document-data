@@ -10,13 +10,13 @@ import java.util.Map;
  *
  * @author V. Shyshkin
  */
-public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
+public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState {
 
     protected transient BeanDocumentState state;
     protected T source;
     protected List<DocumentChangeListener> docListeners;
 
-    public DocumentStore(T source) {
+    public DocumentPropertyStore(T source) {
         this.state = new BeanDocumentState(this);
         this.source = source;
         this.docListeners = new ArrayList<DocumentChangeListener>();
@@ -188,19 +188,24 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
      * 
      */
     protected static class BeanDocumentState implements DocumentState {
-
+        
+        private ListChangeListener listListener;
+        
         private boolean editing;
-        private PropertyDataStore documentStore;
+        private boolean attached;
+        
+        private PropertyStore documentStore;
         private Map beforeEditValues;
         protected Map dirtyEditValues;
         protected Map<String,DocumentChangeEvent> propertyErrors;
         //protected Map validEditValues;
 
-        public BeanDocumentState(PropertyDataStore documentStore) {
+        public BeanDocumentState(PropertyStore documentStore) {
             this.documentStore = documentStore;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
             propertyErrors = new HashMap<String,DocumentChangeEvent>();
+            attached = true;
             //validEditValues = new HashMap();
         }
         
@@ -209,14 +214,14 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
         public boolean isEditing() {
             return editing;
         }
-
+        
         @Override
         public void setEditing(boolean editing) {
             if (this.editing == editing) {
                 return;
             }
 
-            DocumentStore d = (DocumentStore) documentStore;
+            DocumentPropertyStore d = (DocumentPropertyStore) documentStore;
 
             if (this.editing && !editing) {
                 try {
@@ -231,19 +236,6 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
                     this.editing = editing;
                 } catch (ValidationException e) {
                 }                
-/*                try {
-                    d.validateProperties();
-                    d.validateDocument();
-                    this.editing = editing;
-                } catch (ValidationException e) {
-                    if (!d.docListeners.isEmpty()) {
-                        DocumentChangeEvent event = new DocumentChangeEvent(d, DocumentChangeEvent.Action.validateErrorNotify);
-                        event.setPropertyName("");
-                        event.setException(e);
-                        d.fireDocumentEvent(event);
-                    }
-                }
-*/
             } else if (!this.editing) {
                 beforeEditValues.clear();
                 DataUtils.putAll(beforeEditValues, d.source);
@@ -251,6 +243,31 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
                 dirtyEditValues.putAll(beforeEditValues);
                 this.editing = editing;
             }
+            if ( (! this.editing) && ! attached ) {
+                setAttached(true);
+            }
+        }
+
+        @Override
+        public boolean isAttached() {
+            return attached;
+        }
+        @Override
+        public void setAttached(boolean attached) {
+            if (this.attached == attached) {
+                return;
+            }
+            if ( listListener == null && ! attached) {
+                return;
+            } else if ( this.attached && listListener != null && ! attached) {
+                // Method callad from the DocumentList
+                this.attached = attached;
+                return;
+            }
+            
+            ListChangeEvent e = new ListChangeEvent(this,ListChangeEvent.Action.newElementState);
+            e.setElement(documentStore);
+            listListener.listChanged(e);
         }
 
         @Override
@@ -269,6 +286,21 @@ public class DocumentStore<T> implements PropertyDataStore, HasDocumentState {
                 dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());        
             }
 
+        }
+
+        @Override
+        public void listChanged(ListChangeEvent event) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void addListChangeListener(ListChangeListener l) {
+            this.listListener = l;
+        }
+
+        @Override
+        public void removeListChangeListener(ListChangeListener l) {
+            this.listListener = null;
         }
     }//class BeanDocumentState
 }

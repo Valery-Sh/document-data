@@ -6,7 +6,7 @@ import java.io.Serializable;
  *
  * @author V. Shyshkin
  */
-public interface PropertyDataStore extends Serializable {
+public interface PropertyStore extends Serializable {
     
     Object get(Object key);
     void put(Object key,Object value);

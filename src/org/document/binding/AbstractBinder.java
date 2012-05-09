@@ -48,7 +48,7 @@ public abstract class AbstractBinder implements PropertyBinder {
             case documentChange :
                 this.document = (Document)event.getNewValue();
                 if ( document != null && getPropertyName() != null) {
-                    init(document.getPropertyDataStore().get(getPropertyName()));
+                    init(document.getPropertyStore().get(getPropertyName()));
                 }
                 break;
             case propertyChange :
@@ -172,6 +172,6 @@ public abstract class AbstractBinder implements PropertyBinder {
         if ( document == null ) {
             return null;
         }
-        return document.getPropertyDataStore().get(getPropertyName());
+        return document.getPropertyStore().get(getPropertyName());
     }
 }

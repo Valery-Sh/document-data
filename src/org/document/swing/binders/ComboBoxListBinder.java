@@ -86,7 +86,7 @@ public class ComboBoxListBinder<T extends Document> extends AbstractListBinder i
             String result = "";
             for (String nm : this.properties) {
 
-                result = result += " " + d.getPropertyDataStore().get(nm);
+                result = result += " " + d.getPropertyStore().get(nm);
             }
             return result;
         }

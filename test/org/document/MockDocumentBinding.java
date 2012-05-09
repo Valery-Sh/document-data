@@ -9,7 +9,7 @@ package org.document;
  * @author Valery
  */
 public class MockDocumentBinding implements DocumentBindings{
-    protected PropertyDataStore document;
+    protected PropertyStore document;
     public MockDocumentBinding() {
         document = new MockDocument();
     }
@@ -25,12 +25,12 @@ public class MockDocumentBinding implements DocumentBindings{
     }
 
     @Override
-    public PropertyDataStore getDocument() {
+    public PropertyStore getDocument() {
         return document;
     }
 
     @Override
-    public void setDocument(PropertyDataStore document, boolean completeChanges) {
+    public void setDocument(PropertyStore document, boolean completeChanges) {
         this.document = document;
     }
 
@@ -80,7 +80,7 @@ public class MockDocumentBinding implements DocumentBindings{
 
     @Override
     public void setDocument(Document hasDocument, boolean completeChanges) {
-        this.document = hasDocument.getPropertyDataStore();
+        this.document = hasDocument.getPropertyStore();
     }
     
 }

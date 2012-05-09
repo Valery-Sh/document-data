@@ -7,7 +7,7 @@ import java.util.EventObject;
  *
  * @author V. Shyshkin
  */
-public class ListChangeEvent<E extends Document> extends EventObject{
+public class ListChangeEvent<E> extends EventObject{
     
     private Action action;
     private int index;
@@ -92,7 +92,9 @@ public class ListChangeEvent<E extends Document> extends EventObject{
         remove, 
         removeAll, // notifies ErrorBinders
         retainAll,
-        clear
+        clear,
+        appendNew,
+        newElementState
         
     }
 }

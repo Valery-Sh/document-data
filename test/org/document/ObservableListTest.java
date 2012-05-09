@@ -12,13 +12,13 @@ import static org.junit.Assert.*;
  *
  * @author Valery
  */
-public class DocumentListTest {
+public class ObservableListTest {
     
-    protected DocumentList instance;
+    protected ObservableList instance;
     
     protected ListChangeEvent listEvent;
             
-    public DocumentListTest() {
+    public ObservableListTest() {
     }
 
     @BeforeClass
@@ -31,7 +31,7 @@ public class DocumentListTest {
     
     @Before
     public void setUp() {
-        instance = new DocumentList();
+        instance = new ObservableList();
     }
     
     @After
@@ -39,11 +39,11 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of size method, of class DocumentList.
+     * Test of size method, of class ObservableList.
      */
     @Test
     public void testSize() {
-        System.out.println("DocumentListTest : size()");
+        System.out.println("ObservableListTest : size()");
         
         int expResult = 0;
         int result = instance.size();
@@ -57,7 +57,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of isEmpty method, of class DocumentList.
+     * Test of isEmpty method, of class ObservableList.
      */
     @Test
     public void testIsEmpty() {
@@ -75,7 +75,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of contains method, of class DocumentList.
+     * Test of contains method, of class ObservableList.
      */
     @Test
     public void testContains() {
@@ -97,19 +97,19 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of iterator method, of class DocumentList.
+     * Test of iterator method, of class ObservableList.
      */
     @Test
     public void testIterator() {
         System.out.println("iterator");
-        DocumentList instance = new DocumentList();
+        ObservableList instance = new ObservableList();
 
         Iterator result = instance.iterator();
         assertNotNull(result);
     }
 
     /**
-     * Test of toArray method, of class DocumentList.
+     * Test of toArray method, of class ObservableList.
      */
     @Test
     public void testToArray_0args() {
@@ -120,7 +120,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of toArray method, of class DocumentList.
+     * Test of toArray method, of class ObservableList.
      */
     @Test
     public void testToArray_GenericType() {
@@ -132,7 +132,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of add method, of class DocumentList.
+     * Test of add method, of class ObservableList.
      */
     @Test
     public void testAdd_GenericType() {
@@ -150,7 +150,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireAppend method, of class DocumentList.
+     * Test of fireAppend method, of class ObservableList.
      * 
      * <code>boolean add(E e)</code>
      * 
@@ -180,7 +180,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of remove method, of class DocumentList.
+     * Test of remove method, of class ObservableList.
      */
     @Test
     public void testRemove_Object() {
@@ -197,7 +197,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireRemove method, of class DocumentList.
+     * Test of fireRemove method, of class ObservableList.
      * 
      * <code>boolean remove(Object)</code>
      * 
@@ -232,7 +232,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of containsAll method, of class DocumentList.
+     * Test of containsAll method, of class ObservableList.
      */
     @Test
     public void testContainsAll() {
@@ -263,7 +263,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of addAll method, of class DocumentList.
+     * Test of addAll method, of class ObservableList.
      * 
      */
     @Test
@@ -294,7 +294,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of addAll method, of class DocumentList.
+     * Test of addAll method, of class ObservableList.
      */
     @Test
     public void testAddAll_int_Collection() {
@@ -330,7 +330,7 @@ public class DocumentListTest {
     }
     
     /**
-     * Test of fireAppendAll method, of class DocumentList.
+     * Test of fireAppendAll method, of class ObservableList.
      * 
      * <code>boolean addAll(Collection)</code>
      * <p>
@@ -368,7 +368,7 @@ public class DocumentListTest {
 
 
     /**
-     * Test of fireAddAll method, of class DocumentList.
+     * Test of fireAddAll method, of class ObservableList.
      * 
      * <code>boolean addAll(int,Collection)</code>
      * <p>
@@ -407,7 +407,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of removeAll method, of class DocumentList.
+     * Test of removeAll method, of class ObservableList.
      */
     @Test
     public void testRemoveAll() {
@@ -443,7 +443,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireRemoveAll method, of class DocumentList.
+     * Test of fireRemoveAll method, of class ObservableList.
      * 
      * <code>boolean removeAll(Collection)</code>
      * 
@@ -480,7 +480,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of retainAll method, of class DocumentList.
+     * Test of retainAll method, of class ObservableList.
      */
     @Test
     public void testRetainAll() {
@@ -514,7 +514,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireRetainAll method, of class DocumentList.
+     * Test of fireRetainAll method, of class ObservableList.
      * 
      * <code>boolean retainAll(Collection)</code>
      * 
@@ -551,7 +551,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of clear method, of class DocumentList.
+     * Test of clear method, of class ObservableList.
      */
     @Test
     public void testClear() {
@@ -563,7 +563,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireClear method, of class DocumentList.
+     * Test of fireClear method, of class ObservableList.
      * <code>void clear()</code>
      * <p>
      * NOTE: here a value of 'listEvent' field is set when
@@ -600,7 +600,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of get method, of class DocumentList.
+     * Test of get method, of class ObservableList.
      */
     @Test
     public void testGet() {
@@ -615,7 +615,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of set method, of class DocumentList.
+     * Test of set method, of class ObservableList.
      */
     @Test
     public void testSet() {
@@ -640,7 +640,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireSet method, of class DocumentList.
+     * Test of fireSet method, of class ObservableList.
      * 
      * <code>E set(int index,E e)</code>
      * 
@@ -680,7 +680,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of add method, of class DocumentList.
+     * Test of add method, of class ObservableList.
      */
     @Test
     public void testAdd_int_GenericType() {
@@ -712,7 +712,7 @@ public class DocumentListTest {
 
     }
     /**
-     * Test of fireAdd method, of class DocumentList.
+     * Test of fireAdd method, of class ObservableList.
      * 
      * <code>void add(int index,E e)</code> 
      * <p>
@@ -745,7 +745,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of remove method, of class DocumentList.
+     * Test of remove method, of class ObservableList.
      */
     @Test
     public void testRemove_int() {
@@ -767,7 +767,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireRemove method, of class DocumentList.
+     * Test of fireRemove method, of class ObservableList.
      * 
      * <code>E remove(int)</code>
      * 
@@ -808,7 +808,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of indexOf method, of class DocumentList.
+     * Test of indexOf method, of class ObservableList.
      */
     @Test
     public void testIndexOf() {
@@ -827,7 +827,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of lastIndexOf method, of class DocumentList.
+     * Test of lastIndexOf method, of class ObservableList.
      */
     @Test
     public void testLastIndexOf() {
@@ -845,17 +845,17 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of listIterator method, of class DocumentList.
+     * Test of listIterator method, of class ObservableList.
      */
     @Test
     public void testListIterator_0args() {
         System.out.println("listIterator");
-        DocumentList instance = new DocumentList();
+        ObservableList instance = new ObservableList();
         assertNotNull(instance.listIterator());
     }
 
     /**
-     * Test of listIterator method, of class DocumentList.
+     * Test of listIterator method, of class ObservableList.
      */
     @Test
     public void testListIterator_int() {
@@ -874,7 +874,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of subList method, of class DocumentList.
+     * Test of subList method, of class ObservableList.
      */
     @Test
     public void testSubList() {
@@ -897,7 +897,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of fireEvent method, of class DocumentList.
+     * Test of fireEvent method, of class ObservableList.
      */
     @Test
     public void testFireEvent() {
@@ -906,7 +906,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of addListChangeListener method, of class DocumentList.
+     * Test of addListChangeListener method, of class ObservableList.
      */
     @Test
     public void testAddListChangeListener() {
@@ -923,7 +923,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of removeListChangeListener method, of class DocumentList.
+     * Test of removeListChangeListener method, of class ObservableList.
      */
     @Test
     public void testRemoveListChangeListener() {
@@ -941,7 +941,7 @@ public class DocumentListTest {
     }
 
     /**
-     * Test of getListChangeListener method, of class DocumentList.
+     * Test of getListChangeListener method, of class ObservableList.
      */
     @Test
     public void testGetListChangeListener() {
@@ -949,9 +949,10 @@ public class DocumentListTest {
         List result = instance.getListChangeListener();
         assertNotNull(result);
     }
+    
     public static class DocumentImpl implements Document {
         public int _id = 0;
-        protected PropertyDataStore store;
+        protected PropertyStore store;
         
         public DocumentImpl() {
             store = new PropertyDataStoreImpl();
@@ -962,11 +963,11 @@ public class DocumentListTest {
         }
         
         @Override
-        public PropertyDataStore getPropertyDataStore() {
+        public PropertyStore getPropertyStore() {
             return store;
         }
     }
-    public static class PropertyDataStoreImpl implements PropertyDataStore{
+    public static class PropertyDataStoreImpl implements PropertyStore{
 
         @Override
         public Object get(Object key) {
@@ -998,4 +999,4 @@ public class DocumentListTest {
         }
         
     }
-}// TEST
+}

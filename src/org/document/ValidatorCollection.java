@@ -44,14 +44,14 @@ public class ValidatorCollection {
         this.pvalidators.remove(propPath);
     } 
     
-    public void validate(String propPath, PropertyDataStore doc, Object value) throws ValidationException {
+    public void validate(String propPath, PropertyStore doc, Object value) throws ValidationException {
         PropertyValidator v = pvalidators.get(propPath);
         if ( v == null ) {
             return;
         }
         v.validate(propPath,doc,value);
     }
-    public void validateProperties(PropertyDataStore doc) throws ValidationException {
+    public void validateProperties(PropertyStore doc) throws ValidationException {
         String propPath;
         for ( Map.Entry<String,PropertyValidator> es  : pvalidators.entrySet()) {
             propPath = es.getKey();

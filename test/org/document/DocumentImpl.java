@@ -7,7 +7,7 @@ package org.document;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DocumentImpl implements PropertyDataStore {
+public class DocumentImpl implements PropertyStore {
 
     Map values = new HashMap();
 

@@ -251,8 +251,8 @@ public class DefaultDocumentBindingTest {
     public void testGetDocument() {
         System.out.println("DefaultDocumentBinding.getDocument()");
         DocumentBindingHandler instance = new DocumentBindingHandler();
-        PropertyDataStore doc;
-        PropertyDataStore result = instance.getDocumentStore();
+        PropertyStore doc;
+        PropertyStore result = instance.getDocumentStore();
         assertNull(result);
         doc = new DocumentTest.DocumentImpl();
         instance.setDocument(doc,true);
@@ -309,14 +309,14 @@ public class DefaultDocumentBindingTest {
         DocumentBindingHandler instance = new DocumentBindingHandler();
         DocumentImpl doc = new DocumentImpl();
         instance.setDocument(doc,true);        
-        PropertyDataStore result = instance.getDocumentStore();
+        PropertyStore result = instance.getDocumentStore();
         assertTrue( doc == result);
 //        assertNotNull(doc.handler);        
         assertNotNull(doc.docListener);        
         //
         // null parameter value
         //
-        instance.setDocument((PropertyDataStore)null,true);        
+        instance.setDocument((PropertyStore)null,true);        
         result = instance.getDocumentStore();
         assertNull( result);
         assertNull(doc.docListener);
@@ -324,7 +324,7 @@ public class DefaultDocumentBindingTest {
         // change document
         //
         Object component = new MockComponent();
-        PropertyDataStore doc1 = new DocumentImpl();
+        PropertyStore doc1 = new DocumentImpl();
         doc1.put("firstName", "Jone");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
         
