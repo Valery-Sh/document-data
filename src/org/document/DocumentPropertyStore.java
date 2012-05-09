@@ -248,6 +248,41 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
             }
         }
 
+        protected void setEditing(boolean editing, boolean force) {
+            if (this.editing == editing) {
+                return;
+            }
+
+            DocumentPropertyStore d = (DocumentPropertyStore) documentStore;
+
+            if (this.editing && !editing) {
+                try {
+                    if (!d.docListeners.isEmpty()) {
+                        DocumentChangeEvent event = new DocumentChangeEvent(d, DocumentChangeEvent.Action.editingChange);
+                        event.setOldValue(this.editing);
+                        event.setNewValue(editing);
+                        
+                        event.setPropertyName("");
+                        d.fireDocumentEvent(event);
+                    }
+                    this.editing = editing;
+                } catch (ValidationException e) {
+                    if ( force ) {
+                        this.editing = editing;
+                    }
+                }                
+            } else if (!this.editing) {
+                beforeEditValues.clear();
+                DataUtils.putAll(beforeEditValues, d.source);
+                dirtyEditValues.clear();
+                dirtyEditValues.putAll(beforeEditValues);
+                this.editing = editing;
+            }
+            if ( (! this.editing) && ! attached ) {
+                setAttached(true);
+            }
+        }
+        
         @Override
         public boolean isAttached() {
             return attached;
@@ -287,10 +322,19 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
             }
 
         }
-
+        /**
+         * Can be called only by a <code>DocumentList</code> object.
+         * When a contained <code>DocumentList</code> completes an operation that removes
+         * a document that is marked as <code>detached</code> then this
+         * method is called.
+         * @param event 
+         */
         @Override
         public void listChanged(ListChangeEvent event) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            if ( event.getAction() == ListChangeEvent.Action.removeNew) {
+                this.attached = true;
+                this.editing = false;
+            }
         }
 
         @Override

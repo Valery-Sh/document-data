@@ -81,6 +81,8 @@ public class ObservableListTest {
     public void testContains() {
         System.out.println("contains");
         Object o = null;
+        List l = new ArrayList();
+        l.contains(o);
         
         boolean expResult = instance.getBaseList().contains(o);
         boolean result = instance.contains(o);
@@ -146,11 +148,10 @@ public class ObservableListTest {
         
         Document e1 = new DocumentImpl();
         assertTrue(instance.add(e));
-        
     }
 
     /**
-     * Test of fireAppend method, of class ObservableList.
+     * Test of createAppend method, of class ObservableList.
      * 
      * <code>boolean add(E e)</code>
      * 
@@ -159,8 +160,8 @@ public class ObservableListTest {
      * the tested method is called
      */
     @Test
-    public void testFireAppend() {
-        System.out.println("fireAppend (add(E e))");
+    public void testCreateAppend() {
+        System.out.println(" !!!!!!!!! fireAppend (add(E e))");
         //
         // We intrested in properties: action,element,result.  
         //
@@ -168,6 +169,7 @@ public class ObservableListTest {
         Object doc = new DocumentImpl(3);
         instance.add((Document)doc);
         Object result = listEvent.getAction();
+        
         Object expResult = ListChangeEvent.Action.append;
         
         assertEquals(result,expResult);
@@ -197,7 +199,7 @@ public class ObservableListTest {
     }
 
     /**
-     * Test of fireRemove method, of class ObservableList.
+     * Test of createRemove method, of class ObservableList.
      * 
      * <code>boolean remove(Object)</code>
      * 
@@ -207,7 +209,7 @@ public class ObservableListTest {
 
      */
     @Test
-    public void testFireRemove_Object_boolean() {
+    public void testCreateRemove_Object_boolean() {
         System.out.println("fireRemove (boolean remove(Object)");
         //
         // We intrested in properties: action,object,result.  
@@ -291,16 +293,18 @@ public class ObservableListTest {
         
         result = instance.containsAll(c);
         assertTrue(result);
+        
     }
 
     /**
+     * !!! TO DO
      * Test of addAll method, of class ObservableList.
      */
     @Test
     public void testAddAll_int_Collection() {
         System.out.println("addAll(int,Collection");
 
-        Collection c = new HashSet();
+        Collection c = new ArrayList();
         
         Document doc0 = new DocumentImpl(0);
         Document doc1 = new DocumentImpl(1);
@@ -309,6 +313,7 @@ public class ObservableListTest {
         instance.add(doc0);
         instance.add(doc1);
         instance.add(doc2);
+        
         Document doc3 = new DocumentImpl(3);
         Document doc4 = new DocumentImpl(4);        
 
@@ -318,19 +323,20 @@ public class ObservableListTest {
         
         int index = 1;
         boolean result = instance.addAll(index, c);
-        assertTrue(result);
         
-//        assertTrue( doc0 == instance.getBaseList().get(0));
-//        assertEquals(doc3,instance.getBaseList().get(1));
-//        assertTrue( doc4 == instance.getBaseList().get(2));                        
-//        assertTrue( doc1 == instance.getBaseList().get(3));                
-//        assertTrue( doc2 == instance.getBaseList().get(4)); 
+        assertTrue(result);
+ //  !!! the test doesn't pass. I don't know why.
+        assertTrue( doc0 == instance.getBaseList().get(0));
+        assertTrue( doc3 == instance.getBaseList().get(1));
+        assertTrue( doc4 == instance.getBaseList().get(2));                        
+        assertTrue( doc1 == instance.getBaseList().get(3));                
+        assertTrue( doc2 == instance.getBaseList().get(4)); 
         
         
     }
     
     /**
-     * Test of fireAppendAll method, of class ObservableList.
+     * Test of createAppendAll method, of class ObservableList.
      * 
      * <code>boolean addAll(Collection)</code>
      * <p>
@@ -339,7 +345,7 @@ public class ObservableListTest {
 
      */
     @Test
-    public void testFireAppendAll() {
+    public void testCreateAppendAll() {
         System.out.println("fireAppendAll (addAll(Collection))");
         //
         // We intrested in properties: action,collection,result.  
@@ -368,7 +374,7 @@ public class ObservableListTest {
 
 
     /**
-     * Test of fireAddAll method, of class ObservableList.
+     * Test of createAddAll method, of class ObservableList.
      * 
      * <code>boolean addAll(int,Collection)</code>
      * <p>
@@ -376,7 +382,7 @@ public class ObservableListTest {
      * the tested method is called
      */
     @Test
-    public void testFireAddAll() {
+    public void testCreateAddAll() {
         System.out.println("fireAdd (addAll(int,Collection))");
         //
         // We intrested in properties: action,index,collection,result.  
@@ -407,7 +413,7 @@ public class ObservableListTest {
     }
 
     /**
-     * Test of removeAll method, of class ObservableList.
+     * Test of createRemoveAll method, of class ObservableList.
      */
     @Test
     public void testRemoveAll() {
@@ -439,20 +445,19 @@ public class ObservableListTest {
         assertTrue( doc1 == instance.getBaseList().get(0));
         assertTrue( doc2 == instance.getBaseList().get(1));        
         assertTrue( doc3 == instance.getBaseList().get(2));                        
-
     }
 
     /**
-     * Test of fireRemoveAll method, of class ObservableList.
+     * Test of createRemoveAll method, of class ObservableList.
      * 
-     * <code>boolean removeAll(Collection)</code>
+     * <code>boolean createRemoveAll(Collection)</code>
      * 
      * <p>
      * NOTE: here a value of 'listEvent' field is set when
      * the tested method is called
      */
     @Test
-    public void testFireRemoveAll() {
+    public void testCreateRemoveAll() {
         System.out.println("fireRemoveAll (removeAll(Collection))");
         //
         // We intrested in properties: action,collection,result.  
@@ -514,7 +519,7 @@ public class ObservableListTest {
     }
 
     /**
-     * Test of fireRetainAll method, of class ObservableList.
+     * Test of createRetainAll method, of class ObservableList.
      * 
      * <code>boolean retainAll(Collection)</code>
      * 
@@ -524,7 +529,7 @@ public class ObservableListTest {
 
      */
     @Test
-    public void testFireRetainAll() {
+    public void testCreateRetainAll() {
         System.out.println("fireRetainAll (boolean retainAll(Collection))");
         //
         // We intrested in properties: action,collection,result.  
@@ -563,7 +568,7 @@ public class ObservableListTest {
     }
 
     /**
-     * Test of fireClear method, of class ObservableList.
+     * Test of createClear method, of class ObservableList.
      * <code>void clear()</code>
      * <p>
      * NOTE: here a value of 'listEvent' field is set when
@@ -572,7 +577,7 @@ public class ObservableListTest {
      * 
      */
     @Test
-    public void testFireClear() {
+    public void testCreateClear() {
         System.out.println("fireClear (void clear())");
         //
         // We intrested in property: action.  
@@ -640,7 +645,7 @@ public class ObservableListTest {
     }
 
     /**
-     * Test of fireSet method, of class ObservableList.
+     * Test of createSet method, of class ObservableList.
      * 
      * <code>E set(int index,E e)</code>
      * 
@@ -648,7 +653,7 @@ public class ObservableListTest {
      * the tested method is called
      */
     @Test
-    public void testFireSet() {
+    public void testCreateSet() {
         System.out.println("fireAdd (set(int index,E e))");
         //
         // We intrested in properties: action,index,element,result.  
@@ -712,7 +717,7 @@ public class ObservableListTest {
 
     }
     /**
-     * Test of fireAdd method, of class ObservableList.
+     * Test of createAdd method, of class ObservableList.
      * 
      * <code>void add(int index,E e)</code> 
      * <p>
@@ -720,7 +725,7 @@ public class ObservableListTest {
      * the tested method is called
      */
     @Test
-    public void testFireAdd() {
+    public void testCreateAdd() {
         System.out.println("fireAdd (add(int index,E e))");
         //
         // We intrested in properties: action,index,element.  
@@ -767,7 +772,7 @@ public class ObservableListTest {
     }
 
     /**
-     * Test of fireRemove method, of class ObservableList.
+     * Test of createRemove method, of class ObservableList.
      * 
      * <code>E remove(int)</code>
      * 
@@ -777,7 +782,7 @@ public class ObservableListTest {
 
      */
     @Test
-    public void testFireRemove_int_GenericType() {
+    public void testCreateRemove_int_GenericType() {
             System.out.println("fireRemove (E remove(int)");
         //
         // We intrested in properties: action,index,element,result.  
@@ -900,7 +905,7 @@ public class ObservableListTest {
      * Test of fireEvent method, of class ObservableList.
      */
     @Test
-    public void testFireEvent() {
+    public void testCreateEvent() {
         System.out.println("fireEvent");
         ListChangeEvent event = null;
     }

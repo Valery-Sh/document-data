@@ -94,7 +94,8 @@ public class ListChangeEvent<E> extends EventObject{
         retainAll,
         clear,
         appendNew,
-        newElementState
+        newElementState,
+        removeNew
         
     }
 }

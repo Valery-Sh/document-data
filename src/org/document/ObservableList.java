@@ -11,20 +11,22 @@ import java.util.*;
 public class ObservableList<E> implements java.util.List<E> {
     
     private List<E> baseList;
-            
+    private List<ValidateHandler> validators;
+    
     public ObservableList(List baseList) {
         this.baseList = baseList;
         this.listeners = new ArrayList<ListChangeListener>();
+        this.validators = new ArrayList<ValidateHandler>();
         this.observable = true;
     }      
     
     public ObservableList() {
-        this(0);
-        this.observable = true;
+        this(10);
     }      
     public ObservableList(int capacity) {
         this.baseList = new ArrayList(capacity);
         this.listeners = new ArrayList<ListChangeListener>();
+        this.validators = new ArrayList<ValidateHandler>();
         this.observable = true;
     }
 
@@ -56,6 +58,7 @@ public class ObservableList<E> implements java.util.List<E> {
 
     @Override
     public boolean contains(Object o) {
+        boolean b = baseList.contains(o);
         return this.baseList.contains(o);
     }
 
@@ -82,32 +85,44 @@ public class ObservableList<E> implements java.util.List<E> {
 
     @Override
     public boolean add(E e) {
+        ListChangeEvent event = this.createAppend(e, false);
+        if ( ! validate(event) ) {
+            return false;
+        }
         boolean b = this.baseList.add(e);
         if ( b ) {
-            fireAppend(e,b);
+            fireEvent(event,b);
         }
         return b;
     }
-    protected void fireAppend(E e, boolean result) {
+    
+    protected ListChangeEvent createAppend(E e, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.append);
         event.setElement(e);
         event.setResult(result);
-        fireEvent(event);
+        return event;
     }
+    
     @Override
     public boolean remove(Object o) {
+        
+        ListChangeEvent event = this.createRemove(o, false);
+        if ( ! validate(event) ) {
+            return false;
+        }
+        
         boolean b = this.baseList.remove(o);
         if ( b ) {
-            fireRemove(o,b);
+            fireEvent(event,b);
         }
         return b;
 
     }
-    protected void fireRemove(Object o, boolean result) {
+    protected ListChangeEvent createRemove(Object o, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.removeObject);
         event.setObject(o);
         event.setResult(result);
-        fireEvent(event);
+        return event;
     }
 
     @Override
@@ -115,75 +130,111 @@ public class ObservableList<E> implements java.util.List<E> {
         return this.baseList.containsAll(c);
     }
 
-    @Override
-    public boolean addAll(Collection<? extends E> c) {
-        boolean b = this.baseList.addAll(c);
-        if ( b ) {
-            fireAppendAll(c,b);
+    public boolean containsAny(Collection<?> c) {
+        boolean b = false;
+        for ( Object e : c) {
+            if ( baseList.contains(e) ){
+                b = true;
+                break;
+            }
         }
         return b;
     }
-    protected void fireAppendAll(Collection<? extends E> c, boolean result) {
+
+    @Override
+    public boolean addAll(Collection<? extends E> c) {
+        ListChangeEvent event = this.createAppendAll(c, false);
+        if ( ! validate(event) ) {
+            return false;
+        }
+        
+        boolean b = this.baseList.addAll(c);
+        if ( b ) {
+            fireEvent(event,b);
+        }
+        return b;
+    }
+    protected ListChangeEvent createAppendAll(Collection<? extends E> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.appendAll);
         event.setCollection(c);
         event.setResult(result);
-        fireEvent(event);
+        return event;
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
+        ListChangeEvent event = this.createAddAll(index,c, false);
+        if ( ! validate(event) ) {
+            return false;
+        }
+
         boolean b = this.baseList.addAll(index,c);
         if ( b ) {
-            fireAddAll(index,c,b);
+            fireEvent(event,b);
         }
         return b;
     }
-    protected void fireAddAll(int index,Collection<? extends E> c, boolean result) {
+    protected ListChangeEvent createAddAll(int index,Collection<? extends E> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.addAll);
         event.setIndex(index);
         event.setCollection(c);
         event.setResult(result);
-        fireEvent(event);
+        return event;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
+        ListChangeEvent event = this.createRemoveAll(c, false);
+        if ( ! validate(event) ) {
+            return false;
+        }
+        
         boolean b = this.baseList.removeAll(c);
         if ( b ) {
-            fireRemoveAll(c,b);
+            fireEvent(event, b);
         }
         return b;
     }
-    protected void fireRemoveAll(Collection<?> c, boolean result) {
+    protected ListChangeEvent createRemoveAll(Collection<?> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.removeAll);
         event.setCollection(c);
         event.setResult(result);
-        fireEvent(event);
+        return event;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
+        ListChangeEvent event = this.createRetainAll(c, false);
+        if ( ! validate(event) ) {
+            return false;
+        }
+
         boolean b = this.baseList.retainAll(c);
         if ( b ) {
-            fireRetainAll(c,b);
+            fireEvent(event,b);
         }
         return b;
     }
-    protected void fireRetainAll(Collection<?> c, boolean result) {
+    protected ListChangeEvent createRetainAll(Collection<?> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.retainAll);
         event.setCollection(c);
         event.setResult(result);
-        fireEvent(event);
+        return event;
     }
 
     @Override
     public void clear() {
+        ListChangeEvent event = this.createClear();
+        if ( ! validate(event) ) {
+            return;
+        }
+        
         this.baseList.clear();
-        fireClear();
+        fireEvent(event,null);
     }
-    protected void fireClear() {
+    protected ListChangeEvent createClear() {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.clear);
-        fireEvent(event);
+        return event;
     }
 
     @Override
@@ -193,42 +244,58 @@ public class ObservableList<E> implements java.util.List<E> {
 
     @Override
     public E set(int index, E element) {
+        ListChangeEvent event = this.createSet(index, element,null);
+        if ( ! validate(event) ) {
+            return null;
+        }
+        
         E e = this.baseList.set(index,element);
-        fireSet(index,element, e);
+        fireEvent(event, e);
         return e;
     }
-    protected void fireSet(int index,E element,E result) {
+    protected ListChangeEvent createSet(int index,E element,E result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.set);
         event.setIndex(index);
         event.setElement(element);
         event.setResult(result); // old element
-        fireEvent(event);
+        return event;
     }
 
     @Override
     public void add(int index, E element) {
+        ListChangeEvent event = this.createAdd(index, element);
+        if ( ! validate(event) ) {
+            return;
+        }
+
         this.baseList.add(index,element);
-        fireAdd(index,element);
+        fireEvent(event,element);
     }
-    protected void fireAdd(int index,E element) {
+    protected ListChangeEvent createAdd(int index,E element) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.add);
         event.setIndex(index);
         event.setElement(element);
-        fireEvent(event);
+        return event;
     }
 
     @Override
     public E remove(int index) {
+        ListChangeEvent event = this.createRemove(index,null);
+        if ( ! validate(event) ) {
+            return null;
+        }
+        
         E e = this.baseList.remove(index);
-        fireRemove(index,e);
+        event.setElement(e);
+        fireEvent(event,e);
         return e;
     }
-    protected void fireRemove(int index,E result) {
+    protected ListChangeEvent createRemove(int index,E result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.remove);
         event.setIndex(index);
         event.setElement(result);
         event.setResult(result);
-        fireEvent(event);
+        return event;
     }
 
     @Override
@@ -263,6 +330,10 @@ public class ObservableList<E> implements java.util.List<E> {
     private List<ListChangeListener> listeners;
     private boolean observable;
     
+    protected void fireEvent(ListChangeEvent event, Object result) {
+        event.setResult(result);
+        fireEvent(event);
+    }    
     protected void fireEvent(ListChangeEvent event) {
         if ( ! observable ) {
             return;
@@ -289,4 +360,22 @@ public class ObservableList<E> implements java.util.List<E> {
         this.observable = observable;
     }
 
+    public void addValidateHandler(ValidateHandler v) {
+        validators.add(v);
+    }
+    public boolean validate(ListChangeEvent event) {
+        for ( ValidateHandler v : validators) {
+            if ( ! v.validate(event) ) {
+                return false;
+            }
+        }
+        return true;
+        
+    }
+
+    public static interface ValidateHandler {
+        
+        boolean validate(ListChangeEvent event);
+        
+    }
 }
