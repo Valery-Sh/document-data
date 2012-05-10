@@ -4,7 +4,18 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- *
+ * Cannot:
+ * <ul>
+ *  <li>add  document which state: <code>attached == true;</code></li>
+ *  <li>add  document which state: <code>editing == true;</code></li>
+ *  <li>add  duplicate document</li>
+ * </ul>
+ * document marked as new that is created by newDocument() always has state:
+ * editing == true and attached == false.
+ * When a document removes it 
+ * 
+ *   
+ * 
  * @author V. Shyshkin
  */
 public class DocumentList<E extends Document> extends ObservableList<E> implements ListChangeListener {
@@ -64,6 +75,9 @@ public class DocumentList<E extends Document> extends ObservableList<E> implemen
 
     public boolean isNew(E e) {
         return newDocument == e;
+    }
+    public void cancelNew() {
+        newDocument = null;
     }
 
     protected ListChangeEvent createNewElementState(E e, boolean result) {
@@ -156,7 +170,6 @@ public class DocumentList<E extends Document> extends ObservableList<E> implemen
                     if (list.containsNew() && list.isNew((Document)e)) {
                         b = false;
                     }
-
                     break;
                     
             }

@@ -4,20 +4,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.document.Document;
-import org.document.DocumentChangeEvent;
-import org.document.DocumentChangeListener;
-import org.document.DocumentSelectEvent;
-import org.document.DocumentSelectListener;
-import org.document.HasDocumentAlias;
-import org.document.PropertyStore;
-import org.document.ValidatorCollection;
+import org.document.*;
 
 /**
  *
  * @author V. Shishkin
  */
-public class AbstractBindingManager<T extends Document> implements BinderListener {
+public abstract class AbstractBindingManager<T extends Document> implements BinderListener {
 
     protected static final String DEFAULT_ALIAS = "default alias";
     private BinderSet binders;
@@ -27,6 +20,12 @@ public class AbstractBindingManager<T extends Document> implements BinderListene
     protected ValidatorCollection validators;
     protected BindingRecognizer recognizer;
     private List<DocumentSelectListener> selectDocumentListeners;
+    private List<T> sourceList;
+    
+    public AbstractBindingManager(List<T> sourceList) {
+        this();
+        this.sourceList = sourceList;
+    }
 
     protected AbstractBindingManager() {
 
@@ -51,11 +50,21 @@ public class AbstractBindingManager<T extends Document> implements BinderListene
     public void setSelected(T selected) {
         //this.update(selected);
         T old = this.selected;
+        
+        boolean markedNew = false;
         this.selected = selected;
         this.binders.setDocument(selected);
+        
+        afterSetSelected(old);
+        
+        
         fireSelectDocument(old, selected);
     }
-
+    
+//    protected abstract void beforeSetSelected(T oldSelected);
+    protected abstract void afterSetSelected(T oldSelected);
+    //protected abstract boolean isNew(T doc);
+    
     private void fireSelectDocument(T oldSelected, T newSelected) {
         DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
         for (DocumentSelectListener l : selectDocumentListeners) {

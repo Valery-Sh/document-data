@@ -12,14 +12,14 @@ import java.util.Map;
  */
 public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState {
 
-    protected transient BeanDocumentState state;
+    protected transient DocumentStateImpl state;
     protected T source;
-    protected List<DocumentChangeListener> docListeners;
+    protected List<DocumentChangeListener> documentChangeListeners;
 
     public DocumentPropertyStore(T source) {
-        this.state = new BeanDocumentState(this);
+        this.state = new DocumentStateImpl(this);
         this.source = source;
-        this.docListeners = new ArrayList<DocumentChangeListener>();
+        this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
 //        this.state.fillValidEditValues();
     }
     public T getObject() {
@@ -85,7 +85,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
  /*try {
             validate(propertyName, value);
         } catch (ValidationException e) {
-            if (!docListeners.isEmpty()) {
+            if (!documentChangeListeners.isEmpty()) {
                 DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateErrorNotify);
                 event.setPropertyName(propertyName);
                 //event.setBinder(binder);
@@ -105,7 +105,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
          */
         setPropertyValue(propertyName, value);
 
-        if (!docListeners.isEmpty()) {
+        if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
 //            event.setBinder(binder);
@@ -118,12 +118,12 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
 
     @Override
     public void addDocumentChangeListener(DocumentChangeListener listener) {
-        this.docListeners.add(listener);
+        this.documentChangeListeners.add(listener);
     }
 
     @Override
     public void removeDocumentChangeListener(DocumentChangeListener listener) {
-        this.docListeners.remove(listener);
+        this.documentChangeListeners.remove(listener);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
      * @throws ValidationException 
      */
     public void validate(Object key, Object value) throws ValidationException {
-/*        if (!docListeners.isEmpty()) {
+/*        if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateProperty);
             event.setPropertyName(key.toString());
             event.setNewValue(value);
@@ -149,13 +149,13 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
      * 
      */
 /*    protected void validateProperties() {
-        if (!docListeners.isEmpty()) {
+        if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateAllProperties);
             fireDocumentEvent(event);
         }
     }
     protected void validateDocument() {
-        if (!docListeners.isEmpty()) {
+        if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateDocument);
             fireDocumentEvent(event);
         }
@@ -178,7 +178,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
      * @param event an event of type <code>DocumentEvent</code>
      */
     private void fireDocumentEvent(DocumentChangeEvent event) {
-        for (DocumentChangeListener l : docListeners) {
+        for (DocumentChangeListener l : documentChangeListeners) {
             l.react(event);
         }
     }
@@ -187,7 +187,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
     /**
      * 
      */
-    protected static class BeanDocumentState implements DocumentState {
+    protected static class DocumentStateImpl implements DocumentState {
         
         private ListChangeListener listListener;
         
@@ -200,7 +200,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
         protected Map<String,DocumentChangeEvent> propertyErrors;
         //protected Map validEditValues;
 
-        public BeanDocumentState(PropertyStore documentStore) {
+        public DocumentStateImpl(PropertyStore documentStore) {
             this.documentStore = documentStore;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
@@ -225,7 +225,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
 
             if (this.editing && !editing) {
                 try {
-                    if (!d.docListeners.isEmpty()) {
+                    if (!d.documentChangeListeners.isEmpty()) {
                         DocumentChangeEvent event = new DocumentChangeEvent(d, DocumentChangeEvent.Action.editingChange);
                         event.setOldValue(this.editing);
                         event.setNewValue(editing);
@@ -248,40 +248,6 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
             }
         }
 
-        protected void setEditing(boolean editing, boolean force) {
-            if (this.editing == editing) {
-                return;
-            }
-
-            DocumentPropertyStore d = (DocumentPropertyStore) documentStore;
-
-            if (this.editing && !editing) {
-                try {
-                    if (!d.docListeners.isEmpty()) {
-                        DocumentChangeEvent event = new DocumentChangeEvent(d, DocumentChangeEvent.Action.editingChange);
-                        event.setOldValue(this.editing);
-                        event.setNewValue(editing);
-                        
-                        event.setPropertyName("");
-                        d.fireDocumentEvent(event);
-                    }
-                    this.editing = editing;
-                } catch (ValidationException e) {
-                    if ( force ) {
-                        this.editing = editing;
-                    }
-                }                
-            } else if (!this.editing) {
-                beforeEditValues.clear();
-                DataUtils.putAll(beforeEditValues, d.source);
-                dirtyEditValues.clear();
-                dirtyEditValues.putAll(beforeEditValues);
-                this.editing = editing;
-            }
-            if ( (! this.editing) && ! attached ) {
-                setAttached(true);
-            }
-        }
         
         @Override
         public boolean isAttached() {
@@ -346,5 +312,5 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
         public void removeListChangeListener(ListChangeListener l) {
             this.listListener = null;
         }
-    }//class BeanDocumentState
+    }//class DocumentStateImpl
 }
