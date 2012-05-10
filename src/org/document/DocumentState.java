@@ -4,20 +4,20 @@
  */
 package org.document;
 
-import org.document.binding.BinderListener;
 import java.util.Map;
+import org.document.binding.BinderListener;
 
 /**
  *
  * @author Valery
  */
-public interface DocumentState extends BinderListener, ListChangeListener{
+public interface DocumentState extends BinderListener{
     boolean isEditing();
-    boolean isAttached();
-    void setAttached(boolean attached);
+    //boolean isAttached();
+    //void setAttached(boolean attached);
     void setEditing(boolean editing);
     Map<String,Object> getDirtyValues();
     Map<String,DocumentChangeEvent> getPropertyErrors();
-    void addListChangeListener(ListChangeListener l);
-    void removeListChangeListener(ListChangeListener l);
+    //void addListChangeListener(ListChangeListener l);
+    //void removeListChangeListener(ListChangeListener l);
 }

@@ -18,7 +18,7 @@ import java.util.List;
  * 
  * @author V. Shyshkin
  */
-public class DocumentList<E extends Document> extends ObservableList<E> implements ListChangeListener {
+public class DocumentList<E extends Document> extends ObservableList<E> {
 
     public DocumentList(List baseList) {
         super(baseList);
@@ -48,23 +48,23 @@ public class DocumentList<E extends Document> extends ObservableList<E> implemen
         this.setObservable(true);
         if (b) {
             newDocument = e;
-            updateState(e);
+            //updateState(e);
             fireEvent(event, b);
         }
         return newDocument;
     }
-    protected void updateState(E e) {
+/*    protected void updateState(E e) {
         DocumentState state;
         if (!(e instanceof HasDocumentState)) {
             return;
         }
         state = ((HasDocumentState) e).getDocumentState();
         state.setEditing(true);
-        state.addListChangeListener(this); // Must be before setAttached
-        state.setAttached(false);
+//        state.addListChangeListener(this); // Must be before setAttached
+//        state.setAttached(false);
         //addListChangeListener(state);
     }
-
+*/
     public E getNewDocument() {
         return newDocument;
     }
@@ -97,9 +97,9 @@ public class DocumentList<E extends Document> extends ObservableList<E> implemen
 
     @Override
     protected void fireEvent(ListChangeEvent event) {
-        if (!(event.getAction() == ListChangeEvent.Action.appendNew )) {
-            listChanged(event); // first handle internally    
-        }
+//        if (!(event.getAction() == ListChangeEvent.Action.appendNew )) {
+//            listChanged(event); // first handle internally    
+//        }
 
         if (!isObservable()) {
             return;
@@ -113,11 +113,11 @@ public class DocumentList<E extends Document> extends ObservableList<E> implemen
         if ( contains(newDocument) ) {
             ListChangeEvent e = new ListChangeEvent(this,ListChangeEvent.Action.removeNew);
             e.setElement(newDocument);
-            ((HasDocumentState)newDocument).getDocumentState().listChanged(e);
+//            ((HasDocumentState)newDocument).getDocumentState().listChanged(e);
         }
     }
-    @Override
-    public void listChanged(ListChangeEvent event) {
+
+/*    public void listChanged(ListChangeEvent event) {
         if (newDocument == null) {
             return;
         }
@@ -132,7 +132,7 @@ public class DocumentList<E extends Document> extends ObservableList<E> implemen
         }
 
     }
-
+*/
     protected static class ModifyValidateHandler implements ValidateHandler {
 
         protected DocumentList list;

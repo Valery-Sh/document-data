@@ -2,12 +2,13 @@ package org.document.binding;
 
 import org.document.Document;
 import org.document.DocumentChangeListener;
+import org.document.ListChangeListener;
 
 /**
  *
  * @author V. Shyskin
  */
-public interface BinderCollection<T extends Binder> extends DocumentChangeListener {
+public interface BinderCollection<T extends Binder> extends DocumentChangeListener, ListChangeListener {
     void add(T binder);
     void remove(T binder);
     

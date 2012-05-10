@@ -2,6 +2,7 @@ package org.document;
 
 import java.util.Collection;
 import java.util.EventObject;
+import java.util.List;
 
 /**
  *
@@ -16,6 +17,8 @@ public class ListChangeEvent<E> extends EventObject{
     private E oldElement;
     private Object result;
     private Collection<? extends E> collection;
+    private E selectedObject;
+  //  private List<E> newList;
     
     public ListChangeEvent(Object source) {
         super(source);
@@ -80,6 +83,28 @@ public class ListChangeEvent<E> extends EventObject{
         this.oldElement = oldElement;
     }
 
+    /**
+     * For classes that introduce the concept of 
+     * <code>selected object</code>.
+     * 
+     * @return 
+     */
+    public E getSelectedObject() {
+        return selectedObject;
+    }
+
+    public void setSelectedObject(E selectedObject) {
+        this.selectedObject = selectedObject;
+    }
+
+/*    public List<E> getNewList() {
+        return newList;
+    }
+
+    public void setNewList(List<E> newList) {
+        this.newList = newList;
+    }
+*/
 
     
     public enum Action {
@@ -88,13 +113,12 @@ public class ListChangeEvent<E> extends EventObject{
         add,
         set,
         addAll,
-        removeObject, // notifies ErrorBinders
+        removeObject, 
         remove, 
-        removeAll, // notifies ErrorBinders
+        removeAll, 
         retainAll,
         clear,
         appendNew,
-        newElementState,
         removeNew
         
     }

@@ -189,10 +189,10 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
      */
     protected static class DocumentStateImpl implements DocumentState {
         
-        private ListChangeListener listListener;
+//        private ListChangeListener listListener;
         
         private boolean editing;
-        private boolean attached;
+//        private boolean attached;
         
         private PropertyStore documentStore;
         private Map beforeEditValues;
@@ -205,7 +205,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
             propertyErrors = new HashMap<String,DocumentChangeEvent>();
-            attached = true;
+//            attached = true;
             //validEditValues = new HashMap();
         }
         
@@ -243,13 +243,13 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
                 dirtyEditValues.putAll(beforeEditValues);
                 this.editing = editing;
             }
-            if ( (! this.editing) && ! attached ) {
-                setAttached(true);
-            }
+  //          if ( (! this.editing) && ! attached ) {
+//                setAttached(true);
+//            }
         }
 
         
-        @Override
+/*        @Override
         public boolean isAttached() {
             return attached;
         }
@@ -270,7 +270,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
             e.setElement(documentStore);
             listListener.listChanged(e);
         }
-
+*/
         @Override
         public Map<String, Object> getDirtyValues() {
             return this.dirtyEditValues;
@@ -295,7 +295,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
          * method is called.
          * @param event 
          */
-        @Override
+/*        @Override
         public void listChanged(ListChangeEvent event) {
             if ( event.getAction() == ListChangeEvent.Action.removeNew) {
                 this.attached = true;
@@ -312,5 +312,6 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
         public void removeListChangeListener(ListChangeListener l) {
             this.listListener = null;
         }
+*/
     }//class DocumentStateImpl
 }
