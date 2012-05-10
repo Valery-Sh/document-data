@@ -48,6 +48,7 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         if ( ! list.contains(selected) ) {
             newSel = list.isEmpty() ? null : list.get(0);
         }
+        
         event.setSelectedObject(newSel);
         this.getBinders().listChanged(event);
 //        event.setNewList(this.documents);

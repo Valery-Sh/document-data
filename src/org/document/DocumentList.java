@@ -4,21 +4,19 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Cannot:
- * <ul>
- *  <li>add  document which state: <code>attached == true;</code></li>
- *  <li>add  document which state: <code>editing == true;</code></li>
- *  <li>add  duplicate document</li>
- * </ul>
+ * Cannot: <ul> <li>add document which state:
+ * <code>attached == true;</code></li> <li>add document which state:
+ * <code>editing == true;</code></li> <li>add duplicate document</li> </ul>
  * document marked as new that is created by newDocument() always has state:
- * editing == true and attached == false.
- * When a document removes it 
- * 
- *   
- * 
+ * editing == true and attached == false. When a document removes it
+ *
+ *
+ *
  * @author V. Shyshkin
  */
 public class DocumentList<E extends Document> extends ObservableList<E> {
+
+    private E newDocument;
 
     public DocumentList(List baseList) {
         super(baseList);
@@ -32,7 +30,6 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     public DocumentList(int capacity) {
         super(capacity);
     }
-    private E newDocument;
 
     public E newDocument(E e) {
         // invoked to throw NullPointerException if e == null
@@ -53,18 +50,14 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         }
         return newDocument;
     }
-/*    protected void updateState(E e) {
-        DocumentState state;
-        if (!(e instanceof HasDocumentState)) {
-            return;
-        }
-        state = ((HasDocumentState) e).getDocumentState();
-        state.setEditing(true);
-//        state.addListChangeListener(this); // Must be before setAttached
-//        state.setAttached(false);
-        //addListChangeListener(state);
-    }
-*/
+    /*
+     * protected void updateState(E e) { DocumentState state; if (!(e instanceof
+     * HasDocumentState)) { return; } state = ((HasDocumentState)
+     * e).getDocumentState(); state.setEditing(true); //
+     * state.addListChangeListener(this); // Must be before setAttached //
+     * state.setAttached(false); //addListChangeListener(state); }
+     */
+
     public E getNewDocument() {
         return newDocument;
     }
@@ -76,6 +69,7 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     public boolean isNew(E e) {
         return newDocument == e;
     }
+
     public void cancelNew() {
         newDocument = null;
     }
@@ -86,7 +80,6 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         event.setResult(result);
         return event;
     }
-
 
     protected void fireNewDocument(E e, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this, ListChangeEvent.Action.appendNew);
@@ -106,33 +99,52 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         }
         super.fireEvent(event);
     }
-    protected void newRemoved(ListChangeEvent event) {
-        if (newDocument == null) {
-            return;
-        }
-        if ( contains(newDocument) ) {
-            ListChangeEvent e = new ListChangeEvent(this,ListChangeEvent.Action.removeNew);
-            e.setElement(newDocument);
-//            ((HasDocumentState)newDocument).getDocumentState().listChanged(e);
+    /*
+     * protected void newRemoved(ListChangeEvent event) { if (newDocument ==
+     * null) { return; } if ( contains(newDocument) ) { ListChangeEvent e = new
+     * ListChangeEvent(this,ListChangeEvent.Action.removeNew);
+     * e.setElement(newDocument); //
+     * ((HasDocumentState)newDocument).getDocumentState().listChanged(e); } }
+     */
+    /*
+     * public void listChanged(ListChangeEvent event) { if (newDocument == null)
+     * { return; } if (event.getAction() ==
+     * ListChangeEvent.Action.newElementState) { DocumentState state =
+     * (DocumentState) event.getSource(); Document doc = (Document)
+     * event.getElement(); if (doc != newDocument) { return; }
+     * state.removeListChangeListener(this); newDocument = null; }
+     *
+     * }
+     */
+    /**
+     * The method is used when one of the remove methods is called.
+     * When the given event objects defines one of the actions:
+     * <ul>
+     *  <li>remove</li>
+     *  <li>removeAll</li>
+     *  <li>removeObject</li>
+     *  <li>retainAll</li>
+     *  <li>set</li>
+     * </ul>
+     * and the modified list doesn't contain a document which is marked as "new"
+     * then the property <code>newDocument</code> set to null. 
+     * @param event the object of type {@link org.document.ListChangeEvent } 
+     */
+    @Override
+    protected void beforeFireEvent(ListChangeEvent event) {
+        switch (event.getAction()) {
+            case remove:
+            case removeAll:
+            case removeObject:
+            case retainAll:
+            case set:    
+                if ( containsNew() && ! contains(newDocument) ) {
+                    newDocument = null;
+                }
+                break;
         }
     }
 
-/*    public void listChanged(ListChangeEvent event) {
-        if (newDocument == null) {
-            return;
-        }
-        if (event.getAction() == ListChangeEvent.Action.newElementState) {
-            DocumentState state = (DocumentState) event.getSource();
-            Document doc = (Document) event.getElement();
-            if (doc != newDocument) {
-                return;
-            }
-            state.removeListChangeListener(this);
-            newDocument = null;
-        }
-
-    }
-*/
     protected static class ModifyValidateHandler implements ValidateHandler {
 
         protected DocumentList list;
@@ -165,13 +177,13 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
                     }
                 case retainAll:
                     break;
-                case set :    
+                case set:
                     e = event.getElement();
-                    if (list.containsNew() && list.isNew((Document)e)) {
+                    if (list.containsNew() && list.isNew((Document) e)) {
                         b = false;
                     }
                     break;
-                    
+
             }
             return b;
         }

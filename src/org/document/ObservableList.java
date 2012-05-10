@@ -329,9 +329,14 @@ public class ObservableList<E> implements java.util.List<E> {
     
     private List<ListChangeListener> listeners;
     private boolean observable;
-    
+
+    protected void beforeFireEvent(ListChangeEvent event) {
+    }    
+
     protected void fireEvent(ListChangeEvent event, Object result) {
+        
         event.setResult(result);
+        beforeFireEvent(event);
         fireEvent(event);
     }    
     protected void fireEvent(ListChangeEvent event) {
