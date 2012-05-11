@@ -1,7 +1,6 @@
 package org.document.binding;
 
 import java.util.EventObject;
-import org.document.PropertyBinder;
 
 /**
  *

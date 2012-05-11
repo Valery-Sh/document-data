@@ -37,4 +37,9 @@ public class LabelBinder extends AbstractBinder {
         return this.textField.getText();
     }
 
+    @Override
+    public void initComponentDefault() {
+        this.textField.setText("");
+    }
+
 }

@@ -1,7 +1,5 @@
 package org.document.binding;
 
-import org.document.PropertyBinder;
-
 /**
  *
  * @author V. Shyshkin

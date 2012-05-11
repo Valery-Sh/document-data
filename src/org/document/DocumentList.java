@@ -4,12 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Cannot: <ul> <li>add document which state:
- * <code>attached == true;</code></li> <li>add document which state:
- * <code>editing == true;</code></li> <li>add duplicate document</li> </ul>
- * document marked as new that is created by newDocument() always has state:
- * editing == true and attached == false. When a document removes it
- *
  *
  *
  * @author V. Shyshkin
@@ -32,7 +26,7 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     }
 
     public E newDocument(E e) {
-        // invoked to throw NullPointerException if e == null
+
         e.getPropertyStore();
 
         ListChangeEvent event = this.createNewElementState(e, false);
@@ -50,13 +44,6 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         }
         return newDocument;
     }
-    /*
-     * protected void updateState(E e) { DocumentState state; if (!(e instanceof
-     * HasDocumentState)) { return; } state = ((HasDocumentState)
-     * e).getDocumentState(); state.setEditing(true); //
-     * state.addListChangeListener(this); // Must be before setAttached //
-     * state.setAttached(false); //addListChangeListener(state); }
-     */
 
     public E getNewDocument() {
         return newDocument;
@@ -99,23 +86,6 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         }
         super.fireEvent(event);
     }
-    /*
-     * protected void newRemoved(ListChangeEvent event) { if (newDocument ==
-     * null) { return; } if ( contains(newDocument) ) { ListChangeEvent e = new
-     * ListChangeEvent(this,ListChangeEvent.Action.removeNew);
-     * e.setElement(newDocument); //
-     * ((HasDocumentState)newDocument).getDocumentState().listChanged(e); } }
-     */
-    /*
-     * public void listChanged(ListChangeEvent event) { if (newDocument == null)
-     * { return; } if (event.getAction() ==
-     * ListChangeEvent.Action.newElementState) { DocumentState state =
-     * (DocumentState) event.getSource(); Document doc = (Document)
-     * event.getElement(); if (doc != newDocument) { return; }
-     * state.removeListChangeListener(this); newDocument = null; }
-     *
-     * }
-     */
     /**
      * The method is used when one of the remove methods is called.
      * When the given event objects defines one of the actions:

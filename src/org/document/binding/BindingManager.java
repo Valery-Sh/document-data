@@ -1,6 +1,5 @@
 package org.document.binding;
 
-import java.util.Collection;
 import java.util.List;
 import org.document.*;
 
@@ -43,14 +42,19 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
 
     @Override
     public void listChanged(ListChangeEvent event) {
-        Document newSel = selected;
-        DocumentList<Document> list = (DocumentList)event.getSource();
+        T newSel = selected;
+        DocumentList<T> list = (DocumentList)event.getSource();
         if ( ! list.contains(selected) ) {
             newSel = list.isEmpty() ? null : list.get(0);
+            if ( selected != null ) {
+                //this.getDocumentBinder(list);
+                selected.getPropertyStore().removeDocumentChangeListener(getDocumentBinder(selected));
+            }
         }
         
         event.setSelectedObject(newSel);
-        this.getBinders().listChanged(event);
+        getBinders().listChanged(event);
+        setSelected(newSel);
 //        event.setNewList(this.documents);
             
     }

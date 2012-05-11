@@ -8,6 +8,7 @@ import org.document.binding.AbstractDocumentErrorBinder;
  * @author V. Shyshkin
  */
 public class DefaultDocumentErrorBinder extends AbstractDocumentErrorBinder{
+    
     protected JLabel textField;
     
     public DefaultDocumentErrorBinder(JLabel textField) {
@@ -56,5 +57,11 @@ public class DefaultDocumentErrorBinder extends AbstractDocumentErrorBinder{
             dataChanged(true);            
         }
     }
+
+    @Override
+    public void initComponentDefault() {
+        this.textField.setText("");
+    }
+
     
 }

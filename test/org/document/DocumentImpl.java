@@ -4,6 +4,7 @@
  */
 package org.document;
 
+import org.document.binding.PropertyBinder;
 import java.util.HashMap;
 import java.util.Map;
 

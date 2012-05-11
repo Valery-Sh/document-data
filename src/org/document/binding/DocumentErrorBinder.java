@@ -4,8 +4,6 @@
  */
 package org.document.binding;
 
-import org.document.binding.ErrorBinder;
-
 /**
  *
  * @author Valery

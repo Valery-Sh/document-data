@@ -4,6 +4,7 @@
  */
 package org.document;
 
+import org.document.binding.PropertyBinder;
 import org.junit.*;
 import static org.junit.Assert.*;
 

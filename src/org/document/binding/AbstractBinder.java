@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
-import org.document.PropertyBinder;
 import org.document.ValidationException;
 
 /**
@@ -32,7 +31,7 @@ public abstract class AbstractBinder implements PropertyBinder {
         if ( this.binderListeners == null) {
             this.binderListeners = new ArrayList<BinderListener>(1);
         }
-        this.binderListeners.add(l);
+        binderListeners.add(l);
     }
     @Override
     public void removeBinderListener(BinderListener l) {
@@ -48,7 +47,9 @@ public abstract class AbstractBinder implements PropertyBinder {
             case documentChange :
                 this.document = (Document)event.getNewValue();
                 if ( document != null && getPropertyName() != null) {
-                    init(document.getPropertyStore().get(getPropertyName()));
+                    initComponent(document.getPropertyStore().get(getPropertyName()));
+                } else if (document == null) {
+                    initComponentDefault();
                 }
                 break;
             case propertyChange :
@@ -159,7 +160,7 @@ public abstract class AbstractBinder implements PropertyBinder {
      */
 
     @Override
-    public void init(Object dataValue){
+    public void initComponent(Object dataValue){
         
     }
     protected abstract void setComponentValue(Object compValue);

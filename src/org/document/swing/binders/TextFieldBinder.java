@@ -19,7 +19,7 @@ public class TextFieldBinder extends AbstractBinder implements DocumentListener{
         textField.getDocument().addDocumentListener(this);
     }   
     @Override
-    public void init(Object dataValue) {
+    public void initComponent(Object dataValue) {
        textField.getDocument().removeDocumentListener(this);
        dataChanged(dataValue);
        textField.getDocument().addDocumentListener(this);
@@ -91,4 +91,9 @@ public class TextFieldBinder extends AbstractBinder implements DocumentListener{
         this.setComponentValue(value);
     }
 */
+
+    @Override
+    public void initComponentDefault() {
+        this.textField.setText("");
+    }
 }

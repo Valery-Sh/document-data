@@ -56,5 +56,9 @@ public class DefaultPropertyErrorBinder extends AbstractPropertyErrorBinder{
         }
         return true;
     }
+    @Override
+    public void initComponentDefault() {
+        this.textField.setText("");
+    }
 
 }

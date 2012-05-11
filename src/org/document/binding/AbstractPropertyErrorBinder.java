@@ -35,6 +35,8 @@ public abstract class AbstractPropertyErrorBinder extends AbstractBinder impleme
      */
     @Override
     public abstract Object getComponentValue();
+    @Override
+    public abstract void initComponentDefault();
 
     protected void setErrorFound(boolean value) {
         this.errorFound = value;

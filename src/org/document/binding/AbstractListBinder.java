@@ -20,16 +20,19 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
         this.documents = documents;
         binderListeners = new ArrayList<BinderListener>();
         this.properties = properties;
+        
         //ListSelectionListener ll = null;
 
     }
     
     protected final void init() {
+        removeComponentListener();
         setComponentModel();
         addComponentListener();
     }
 
     protected abstract void addComponentListener();
+    protected abstract void removeComponentListener();
     protected abstract void setComponentModel();
     /**
      * When extending the class the method is used instead of the 
@@ -58,9 +61,9 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
         Document document = (Document) event.getNewValue();
         switch (event.getAction()) {
             case documentChange:
-                if (document != null ) {
+//                if (document != null ) {
                     dataChanged(document);
-                }
+//                }
                 break;
         }//switch
     }
@@ -75,16 +78,15 @@ public abstract class AbstractListBinder<T extends Document> implements ListBind
     
     
     public void setComponentValue(Object value) {
-        //
-        // *** Samplefor ListBoxListBinder: this.jcomponent.setSelectedIndex((Integer)value);
-        //
+
         setComponentSelectedIndex((Integer)value);
     }
 
 
     protected void componentChanged(Object newValue) {
         int idx = (Integer)newValue;
-        fireChangeSelected(documents.get(idx), idx);         
+        Document o = idx >= 0 ? documents.get(idx) : null;
+        fireChangeSelected(o, idx);         
     }
             
     @Override

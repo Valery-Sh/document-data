@@ -4,6 +4,8 @@
  */
 package org.document;
 
+import org.document.binding.PropertyBinder;
+
 /**
  *
  * @author Valery

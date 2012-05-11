@@ -1,6 +1,7 @@
-package org.document;
+package org.document.binding;
 
-import org.document.binding.Binder;
+import org.document.DocumentChangeListener;
+import org.document.HasDocumentAlias;
 
 /**
  *
@@ -20,5 +21,6 @@ public interface PropertyBinder extends Binder,DocumentChangeListener, HasDocume
      * @param dataValue a data value. Before assign it to a component it should
      * be converted to a component value.
      */
-    void init(Object dataValue);
+    void initComponent(Object dataValue);
+    void initComponentDefault();
 }

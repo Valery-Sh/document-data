@@ -10,8 +10,10 @@ import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionListener;
 import org.document.binding.AbstractListBinder;
 import org.document.Document;
+import org.document.ListChangeEvent;
 
 /**
  *
@@ -32,6 +34,17 @@ public class ComboBoxListBinder<T extends Document> extends AbstractListBinder i
     protected void addComponentListener() {
         this.jcomponent.addActionListener(this);
 
+    }
+    @Override
+    protected void removeComponentListener() {
+        jcomponent.getActionListeners();
+        ActionListener[] listeners = jcomponent.getActionListeners();
+        if ( listeners != null ) {
+            for ( ActionListener l : listeners ) {
+                jcomponent.removeActionListener(l);
+            }
+        }
+        
     }
 
     @Override
@@ -56,6 +69,14 @@ public class ComboBoxListBinder<T extends Document> extends AbstractListBinder i
             componentChanged(getComponentSelectedIndex());
             jcomponent.repaint(); // if omitted then doesn't change presentation
         }
+    }
+
+    @Override
+    public void clearSelection() {
+    }
+
+    @Override
+    public void listChanged(ListChangeEvent event) {
     }
 
     public static class ComboBoxModelImpl<E extends Document> implements ComboBoxModel {

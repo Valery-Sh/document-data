@@ -10,7 +10,6 @@ import org.document.DocumentChangeListener;
 import org.document.DocumentState;
 import org.document.HasDocumentAlias;
 import org.document.HasDocumentState;
-import org.document.PropertyBinder;
 import org.document.PropertyStore;
 import org.document.ValidationException;
 import org.document.ValidatorCollection;
@@ -225,13 +224,13 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if (oldDocument != null && oldDocument != document) {
             oldDocumentStore.removeDocumentChangeListener(this);
         }
-
-        if (document == null) {
-            return;
-        }
+        // ??
 
         fireDocumentChanged(oldDocument, document);
         //refresh();
+        if (document == null) {
+            return;
+        }
 
         PropertyStore documentStore = getDocumentStore();
 
@@ -244,7 +243,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                         continue;
                     }
                     for (T b : l) {
-                        b.init(state.getDirtyValues().get(b.getPropertyName()));
+                        b.initComponent(state.getDirtyValues().get(b.getPropertyName()));
                     }
                 }
                 completeChanges();
@@ -275,7 +274,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             return;
         }
 
-        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.documentChange);
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
         event.setOldValue(oldDoc);
         event.setNewValue(newDoc);
 
@@ -303,7 +302,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             return;
         }
 
-        DocumentChangeEvent event = new DocumentChangeEvent(document, DocumentChangeEvent.Action.propertyError);
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyError);
         event.setPropertyName(propertyName);
         event.setException(e);
 

@@ -1,12 +1,12 @@
 package org.document.binding;
 
 import org.document.DocumentChangeListener;
-import org.document.binding.Binder;
+import org.document.ListChangeListener;
 
 /**
  *
  * @author V. Shyshkin
  */
-public interface ListBinder extends Binder,DocumentChangeListener{
-    
+public interface ListBinder extends Binder,DocumentChangeListener,ListChangeListener{
+     void clearSelection();
 }

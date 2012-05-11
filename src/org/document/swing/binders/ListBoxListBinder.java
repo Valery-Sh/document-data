@@ -35,6 +35,16 @@ public class ListBoxListBinder<T extends Document> extends AbstractListBinder im
         getJList().addListSelectionListener(this);
 
     }
+    @Override
+    protected void removeComponentListener() {
+        ListSelectionListener[] listeners = getJList().getListSelectionListeners();
+        if ( listeners != null ) {
+            for ( ListSelectionListener l : listeners ) {
+                getJList().removeListSelectionListener(l);
+            }
+        }
+        
+    }
 
     @Override
     protected void setComponentModel() {
@@ -49,6 +59,9 @@ public class ListBoxListBinder<T extends Document> extends AbstractListBinder im
     @Override
     protected void setComponentSelectedIndex(Integer selectedIndex) {
         getJList().setSelectedIndex(selectedIndex);
+        //getJList().repaint();
+        
+        
     }
 
     @Override
@@ -58,6 +71,16 @@ public class ListBoxListBinder<T extends Document> extends AbstractListBinder im
         }
         componentChanged(getJList().getSelectedIndex());
         //System.out.println("Selected: " + getJList().getSelectedIndex());
+    }
+
+    @Override
+    public void clearSelection() {
+        getJList().getSelectionModel().clearSelection();
+    }
+
+    @Override
+    public void listChanged(ListChangeEvent event) {
+       getJList().setModel(new ListModelImpl(properties, (DocumentList)event.getSource())); 
     }
 
     public static class ListModelImpl<E extends Document> implements ListModel {

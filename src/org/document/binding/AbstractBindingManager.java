@@ -143,7 +143,9 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         return result;
 
     }
-
+    public DocumentBinder getDocumentBinder(Document doc) {
+        return getDocumentBinder(getAlias(doc));
+    }
     public DocumentBinder getDocumentBinder(Object alias) {
         Object a = DEFAULT_ALIAS;
         if (alias != null) {
