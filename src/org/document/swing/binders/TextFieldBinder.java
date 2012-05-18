@@ -21,7 +21,8 @@ public class TextFieldBinder extends AbstractBinder implements DocumentListener{
     @Override
     public void initComponent(Object dataValue) {
        textField.getDocument().removeDocumentListener(this);
-       dataChanged(dataValue);
+       //dataChanged(dataValue);
+       setComponentValue(componentValueOf(dataValue));
        textField.getDocument().addDocumentListener(this);
     }
     @Override

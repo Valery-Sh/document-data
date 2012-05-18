@@ -9,9 +9,12 @@ import org.document.ValidationException;
  * @author V. Shyshkin
  */
 public abstract class AbstractListSelectionBinder extends AbstractBinder {
-
-    public AbstractListSelectionBinder() {
+    
+    protected Object component;
+    
+    public AbstractListSelectionBinder(Object component) {
         this.propertyName = "selected";
+        this.component = component;
         initBinder();
     }
     

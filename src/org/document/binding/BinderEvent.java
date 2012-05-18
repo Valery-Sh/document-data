@@ -86,7 +86,8 @@ public class BinderEvent extends EventObject {
         componentChangeValueError,
         componentValueChange,
         clearComponentChangeError,
-        componentSelectChange
+        componentSelectChange,
+        propertyChanging
         
     }
 }//class DocumentEvent

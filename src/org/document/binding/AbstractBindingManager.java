@@ -19,16 +19,20 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     protected T selected;
     protected ValidatorCollection validators;
     protected BindingRecognizer recognizer;
-    private List<DocumentSelectListener> selectDocumentListeners;
+    //private List<DocumentSelectListener> selectDocumentListeners;
     private List<T> sourceList;
     
     private ListState listState;
     private BinderSet listBinders;    
     
-    public AbstractBindingManager(List<T> sourceList) {
+    public AbstractBindingManager(List sourceList) {
         this();
         this.sourceList = sourceList;
         this.listState = new ListState();
+        listState.setDocumentList(new DocumentList(sourceList));
+
+        listBinders = new BinderSet(this);
+        
     }
 
     protected AbstractBindingManager() {
@@ -37,7 +41,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
 
 //        documentBindings = new HashMap<Object, DocumentBindings>();
         validators = new ValidatorCollection();
-        selectDocumentListeners = new ArrayList<DocumentSelectListener>();
+        //selectDocumentListeners = new ArrayList<DocumentSelectListener>();
 //        listBinding = new DocumentListBindings();
 //        listBinding.addDocumentChangeListener(this);
     }
@@ -45,6 +49,9 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     protected AbstractBindingManager(BindingRecognizer recognizer) {
         this();
         this.recognizer = recognizer;
+    }
+    protected ListState getListState() {
+        return this.listState;
     }
     protected BinderSet getBinders() {
         return this.binders;
@@ -58,13 +65,16 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         T old = this.selected;
         
         boolean markedNew = false;
-        this.selected = selected;
         this.binders.setDocument(selected);
+//        this.listState.setSelected(null);
+        Object o = listState.getSelected();
+        this.listState.setSelected(selected);
+        this.selected = selected;
         
         afterSetSelected(old);
         
         
-        fireSelectDocument(old, selected);
+        //fireSelectDocument(old, selected);
     }
     
 //    protected abstract void beforeSetSelected(T oldSelected);
@@ -72,10 +82,10 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     //protected abstract boolean isNew(T doc);
     
     private void fireSelectDocument(T oldSelected, T newSelected) {
-        DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
-        for (DocumentSelectListener l : selectDocumentListeners) {
-            l.documentSelect(event);
-        }
+        //DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
+        //for (DocumentSelectListener l : selectDocumentListeners) {
+        //    l.documentSelect(event);
+        //}
     }
 
     /*
@@ -95,6 +105,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         if (binder instanceof ListStateBinder) {
             binder.addBinderListener(this);
             listBinders.add(binder);
+            ((ListStateBinder)binder).setDocument(getListState());
         } else {
             binders.add(binder);
         }
@@ -218,14 +229,14 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         return true;
     }
 
-    public void addSelectDocumentListener(DocumentSelectListener l) {
+/*    public void addSelectDocumentListener(DocumentSelectListener l) {
         this.selectDocumentListeners.add(l);
     }
 
     public void removeSelectDocumentListener(DocumentSelectListener l) {
         this.selectDocumentListeners.remove(l);
     }
-
+*/
     public static class DefaultBindingRecognizerNew<T> implements BindingRecognizer<T> {
 
         @Override
@@ -303,7 +314,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         public void react(DocumentChangeEvent event) {
         }
 
-        @Override
+/*        @Override
         public void listChanged(ListChangeEvent event) {
             for (T b : binders) {
                 if ( b instanceof ListChangeListener) {
@@ -312,5 +323,6 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             }
 
         }
+*/
     }
 }//class AbstractBindingManager

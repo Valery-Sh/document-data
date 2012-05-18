@@ -55,6 +55,11 @@ public abstract class AbstractBinder implements PropertyBinder {
             case propertyChange :
                 this.dataChanged(event.getNewValue());
                 break;
+            case propertyChanging :
+                this.initComponent(event.getNewValue());
+                firePropertyChanging(event.getNewValue(), getComponentValue());
+                break;
+                
             case completeChanges :
                 componentChanged(getComponentValue());
                 break;
@@ -121,6 +126,11 @@ public abstract class AbstractBinder implements PropertyBinder {
         } catch(Exception e) {
             firePropertyError(e);
         }
+    }
+    private void firePropertyChanging(Object dataValue, Object componentValue) {
+        BinderEvent.Action action = BinderEvent.Action.propertyChanging;
+        BinderEvent event = new BinderEvent(this,action,dataValue,componentValue);
+        notifyListeners(event);
     }
     
     private void fireComponentValueChange(Object dataValue, Object componentValue) {

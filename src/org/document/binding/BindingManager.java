@@ -39,8 +39,29 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         }
         return b;
     }
-
+    
     @Override
+    public void listChanged(ListChangeEvent event) {
+        T newSel = selected;
+        DocumentList<T> list = (DocumentList)event.getSource();
+        List<Document> forListModel = new DocumentList<Document>(list);
+        
+        if ( ! list.contains(selected) ) {
+            newSel = list.isEmpty() ? null : list.get(0);
+            if ( selected != null ) {
+                //this.getDocumentBinder(list);
+                selected.getPropertyStore().removeDocumentChangeListener(getDocumentBinder(selected));
+            }
+        }
+        getListState().setDocumentList(forListModel);
+        //event.setSelectedObject(newSel);
+        //getBinders().listChanged(event);
+        setSelected(newSel);
+//        event.setNewList(this.documents);
+            
+    }
+
+/*    @Override
     public void listChanged(ListChangeEvent event) {
         T newSel = selected;
         DocumentList<T> list = (DocumentList)event.getSource();
@@ -53,12 +74,12 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         }
         
         event.setSelectedObject(newSel);
-        getBinders().listChanged(event);
+        //getBinders().listChanged(event);
         setSelected(newSel);
 //        event.setNewList(this.documents);
             
     }
-    
+*/    
 /*        @Override
         public void listChanged(ListChangeEvent event) {
                 DocumentList list = manager.getDocuments();

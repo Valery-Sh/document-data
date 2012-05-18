@@ -24,26 +24,30 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
     public JListBoxListBinder(JList component, String... properties) {
         super(component);
         this.properties = properties;
+        initBinders();
     }
 
     @Override
     protected PropertyBinder createSelectedBinder() {
-        return new JListSelectionBinder((JList)getAlias());
+        return new JListSelectionBinder((JList) getAlias());
     }
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new JListModelBinder((JList) getAlias(), properties);
     }
 
     public static class JListSelectionBinder extends AbstractListSelectionBinder implements ListSelectionListener {
 
-        protected JList component;
-        
+        //protected JList component;
         public JListSelectionBinder(JList component) {
-            super();
-            this.component = component;
-            
+            super(component);
+
+
+        }
+
+        protected JList getJList() {
+            return (JList) component;
         }
 
         @Override
@@ -51,38 +55,54 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             if (e.getValueIsAdjusting()) {
                 return;
             }
-            componentChanged(component.getSelectedIndex());
+            componentChanged(getJList().getSelectedIndex());
 
         }
 
         @Override
         protected void addComponentListeners() {
-            component.addListSelectionListener(this);
+            getJList().addListSelectionListener(this);
 
         }
 
         @Override
         protected void removeComponentListeners() {
-            ListSelectionListener[] listeners = component.getListSelectionListeners();
+            ListSelectionListener[] listeners = getJList().getListSelectionListeners();
             if (listeners != null) {
                 for (ListSelectionListener l : listeners) {
-                    component.removeListSelectionListener(l);
+                    getJList().removeListSelectionListener(l);
                 }
             }
 
         }
 
+        /**
+         * It is assumed that this method should be called when you want to set
+         * the value of the component and do not want that in response a
+         * component generated an event. In this implementation the method does
+         * nothing.
+         *
+         * @param dataValue a data value. Before assign it to a component it
+         * should be converted to a component value.
+         */
+        @Override
+        public void initComponent(Object dataValue) {
+            removeComponentListeners();
+            setComponentValue(componentValueOf(dataValue));
+            addComponentListeners();
+        }
+
         @Override
         public void setComponentValue(Object value) {
-            setComponentSelectedIndex((Integer)value);
+            setComponentSelectedIndex((Integer) value);
         }
 
         protected int getComponentSelectedIndex() {
-            return component.getSelectedIndex();
+            return getJList().getSelectedIndex();
         }
 
         protected void setComponentSelectedIndex(Integer selectedIndex) {
-            component.setSelectedIndex(selectedIndex);
+            getJList().setSelectedIndex(selectedIndex);
         }
 
         @Override
@@ -92,19 +112,18 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
 
         @Override
         protected Object componentValueOf(Object dataValue) {
-            Document doc = (Document)dataValue;
-            if ( doc == null ) {
+            Document doc = (Document) dataValue;
+            if (doc == null) {
                 return -1;
             }
             return getDocuments().indexOf(doc);
 
         }
-        
 
         @Override
         protected Object dataValueOf(Object compValue) {
-            int index = (Integer)compValue;
-            if ( index < 0 ) {
+            int index = (Integer) compValue;
+            if (index < 0) {
                 return null;
             }
             return getDocuments().get(index);
@@ -115,8 +134,8 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }//class JListSelectionBinder
-    
-    public static class JListModelBinder extends AbstractListModelBinder  {
+
+    public static class JListModelBinder extends AbstractListModelBinder {
 
         protected JList component;
         protected String[] properties;
@@ -126,11 +145,15 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             this.component = component;
             this.properties = properties;
         }
-
+        @Override
+        public void initComponent(Object dataValue) {
+            removeComponentListeners();
+            dataChanged(dataValue);
+            addComponentListeners();
+        }
 
         @Override
         protected void addComponentListeners() {
-
         }
 
         @Override
@@ -139,9 +162,9 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
 
         @Override
         public void setComponentValue(Object value) {
-            component.setModel(new ListModelImpl(properties, getDocuments())); 
+            component.clearSelection();
+            component.setModel(new ListModelImpl(properties, getDocuments()));
         }
-
 
         @Override
         public Object getComponentValue() {
@@ -150,19 +173,18 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
 
         @Override
         protected Object componentValueOf(Object dataValue) {
-            if ( getDocuments() == null ) {
+            if (getDocuments() == null) {
                 return null;
             }
             return new ListModelImpl(properties, getDocuments());
         }
-        
 
         @Override
         protected Object dataValueOf(Object compValue) {
-            if ( compValue == null) {
+            if (compValue == null) {
                 return null;
             }
-            return ((ListModelImpl)component.getModel()).documents;
+            return ((ListModelImpl) component.getModel()).documents;
         }
 
         @Override
@@ -170,6 +192,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }//class JListListModelBinder
+
     public static class ListModelImpl<E extends Document> implements ListModel {
 
         private List<E> documents;
@@ -207,5 +230,4 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         public void removeListDataListener(ListDataListener l) {
         }
     }
-    
 }

@@ -54,8 +54,11 @@ public class Person implements Document {
 
     public void setFirstName(String firstName) {
         document.validate("firstName", firstName);
-        this.firstName = firstName;
-        document.put("firstName", firstName);
+        document.set("firstName", firstName);
+        this.firstName = firstName;        
+        
+        
+        
     }
     public int getId() {
         return id;
@@ -71,7 +74,8 @@ public class Person implements Document {
     }
 
     public void setLastName(String lastName) {
+//        this.lastName = lastName;
+        document.set("lastName", lastName);
         this.lastName = lastName;
-        document.put("lastName", lastName);
     }
 }

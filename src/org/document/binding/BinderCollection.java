@@ -8,7 +8,7 @@ import org.document.ListChangeListener;
  *
  * @author V. Shyskin
  */
-public interface BinderCollection<T extends Binder> extends DocumentChangeListener, ListChangeListener {
+public interface BinderCollection<T extends Binder> extends DocumentChangeListener {//, ListChangeListener {
     void add(T binder);
     void remove(T binder);
     

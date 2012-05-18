@@ -55,16 +55,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
         String propertyName;
-        //PropertyBinder binder = null;
-        
-/*        if ( key instanceof PropertyBinder ) {
-            propertyName = ((PropertyBinder) key).getPropertyName();            
-            binder = (PropertyBinder)key;
-        } else {
-            propertyName = key.toString();
-            
-        }
-*/        
+
         propertyName = key.toString();
         Object oldValue = get(propertyName);        
         /**
@@ -78,26 +69,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
         if (!state.isEditing()) {
             state.setEditing(true);
         }
-        //if ( binder != null ) {
-        //    state.dirtyEditValues.put(propertyName, binder.getComponentValue());
-        //}
         validate(propertyName, value);
- /*try {
-            validate(propertyName, value);
-        } catch (ValidationException e) {
-            if (!documentChangeListeners.isEmpty()) {
-                DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateErrorNotify);
-                event.setPropertyName(propertyName);
-                //event.setBinder(binder);
-                event.setOldValue(oldValue);
-                event.setNewValue(value);
-                event.setException(e);
-                fireDocumentEvent(event);
-            }
-            return;
-            
-        }
- */ 
 
         /**
          * Here just calls
@@ -108,7 +80,6 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
         if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
-//            event.setBinder(binder);
             event.setOldValue(oldValue);
             event.setNewValue(value);
             fireDocumentEvent(event);
@@ -116,6 +87,39 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
 
     }
 
+//    @Override
+    public void set(Object key, Object value) {
+
+        if (key == null) {
+            throw new NullPointerException("The 'key' parameter cannot be null");
+        }
+        String propertyName;
+        propertyName = key.toString();
+        Object oldValue = get(propertyName);        
+        /**
+         * To avoid cyclic 'put' method invocation we do nothing
+         * when an old value equals to a new one
+         */
+        if ( DataUtils.equals(oldValue,value)) {
+            return;
+        }
+        
+        if (!state.isEditing()) {
+            state.setEditing(true);
+        }
+        validate(propertyName, value);
+
+
+        if (!documentChangeListeners.isEmpty()) {
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChanging);
+            event.setPropertyName(propertyName);
+//            event.setBinder(binder);
+            event.setOldValue(oldValue);
+            event.setNewValue(value);
+            fireDocumentEvent(event);
+        }
+    }
+    
     @Override
     public void addDocumentChangeListener(DocumentChangeListener listener) {
         this.documentChangeListeners.add(listener);

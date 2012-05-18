@@ -15,10 +15,9 @@ public abstract class ListStateBinder<T extends PropertyBinder>  extends Documen
     
     public ListStateBinder(Object alias) {
         super(alias);
-        initBinders();
     }
     
-    private void initBinders() {
+    protected final void initBinders() {
         this.add(createSelectedBinder());
         this.add(createListModelBinder());
         
@@ -51,7 +50,7 @@ public abstract class ListStateBinder<T extends PropertyBinder>  extends Documen
                 BinderEvent e = new BinderEvent(this,action,event.getDataValue(),event.getComponentValue());
                 for ( Object l : binderListeners) {
                     BinderListener bl = (BinderListener)l;
-                    bl.react(event);
+                    bl.react(e);
                 }
                 break;
         }
