@@ -1,55 +1,49 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.binding;
 
-import org.document.DocumentChangeEvent;
+import java.util.List;
+import org.document.Document;
+import org.document.ValidationException;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public class AbstractListSelectionBinder implements PropertyBinder {
+public abstract class AbstractListSelectionBinder extends AbstractBinder {
 
-    @Override
-    public String getPropertyName() {
-        return "selected";
+    public AbstractListSelectionBinder() {
+        this.propertyName = "selected";
+        initBinder();
+    }
+    
+    protected List<Document> getDocuments() {
+        if ( document == null ) {
+            return null;
+        }
+        return ((ListState)document).getDocumentList();
+    }
+    
+
+    protected final void initBinder() {
+        removeComponentListeners();
+        addComponentListeners();
     }
 
-    @Override
-    public void initComponent(Object dataValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    protected abstract void addComponentListeners();
+    protected abstract void removeComponentListeners();
 
+    
+    
     @Override
-    public void initComponentDefault() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public abstract void setComponentValue(Object value);
 
-    @Override
-    public Object getComponentValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
+            
     @Override
-    public void addBinderListener(BinderListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeBinderListener(BinderListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void react(DocumentChangeEvent event) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object getAlias() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public abstract Object getComponentValue();
+    
+    
+    //
+    // ==============================================
+    //
     
 }

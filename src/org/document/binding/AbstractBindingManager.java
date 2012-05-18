@@ -22,9 +22,13 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     private List<DocumentSelectListener> selectDocumentListeners;
     private List<T> sourceList;
     
+    private ListState listState;
+    private BinderSet listBinders;    
+    
     public AbstractBindingManager(List<T> sourceList) {
         this();
         this.sourceList = sourceList;
+        this.listState = new ListState();
     }
 
     protected AbstractBindingManager() {
@@ -84,18 +88,30 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * ListBinder) { addListBinder(docTypeId, binder); } }
      */
     public void addBinder(Binder binder) {
-        if (binder instanceof ListBinder) {
+/* Me       if (binder instanceof ListBinder) {
             binder.addBinderListener(this);
         }
-        this.binders.add(binder);
+*/
+        if (binder instanceof ListStateBinder) {
+            binder.addBinderListener(this);
+            listBinders.add(binder);
+        } else {
+            binders.add(binder);
+        }
         //addBinder("default doc type",binder);
     }
 
     public void removeBinder(Binder binder) {
-        if (binder instanceof ListBinder) {
+/* Me        if (binder instanceof ListBinder) {
             binder.removeBinderListener(this);
         }
-        this.binders.add(binder);
+*/
+        if (binder instanceof ListStateBinder) {
+            binder.removeBinderListener(this);
+            listBinders.remove(binder);
+        } else {
+            this.binders.add(binder);
+        }
         //addBinder("default doc type",binder);
     }
 

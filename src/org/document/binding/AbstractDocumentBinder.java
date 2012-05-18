@@ -4,15 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.document.Document;
-import org.document.DocumentChangeEvent;
-import org.document.DocumentChangeListener;
-import org.document.DocumentState;
-import org.document.HasDocumentAlias;
-import org.document.HasDocumentState;
-import org.document.PropertyStore;
-import org.document.ValidationException;
-import org.document.ValidatorCollection;
+import org.document.*;
 
 /**
  *
@@ -36,6 +28,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     protected AbstractDocumentBinder() {
         binders = new HashMap<String, List<T>>();
         binderListeners = new ArrayList<BinderListener>();
+        
         errorBinders = new HashMap<String, List<T>>();
         documentErrorBinders = new ArrayList<T>();
         validators = new ValidatorCollection();
@@ -457,6 +450,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                 try {
                     validate(event.getPropertyName(), event.getDataValue());
                     getDocumentStore().put(event.getPropertyName(), event.getDataValue());
+                    for ( BinderListener l : this.binderListeners) {
+                        
+                    }
                 } catch (ValidationException ex) {
                     firePropertyError(event.getPropertyName(), ex);
                 }
@@ -509,4 +505,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
         documentListeners.remove(l);
     }
+    @Override
+    public void listChanged(ListChangeEvent event) {
+    }
+
 }

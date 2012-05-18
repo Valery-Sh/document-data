@@ -144,11 +144,6 @@ public abstract class AbstractBinder implements PropertyBinder {
             l.react(event);
         }
     }
-    /**
-     * return current component value 
-     */
-    @Override
-    public abstract Object getComponentValue();
     
     /**
      * It is assumed that this method should be called when you want 
@@ -163,6 +158,12 @@ public abstract class AbstractBinder implements PropertyBinder {
     public void initComponent(Object dataValue){
         
     }
+    /**
+     * return current component value 
+     */
+    @Override
+    public abstract Object getComponentValue();
+    
     protected abstract void setComponentValue(Object compValue);
     protected abstract Object componentValueOf(Object dataValue);
     protected abstract Object dataValueOf(Object compValue);

@@ -1,6 +1,5 @@
 package org.document.binding;
 
-import java.util.Date;
 import java.util.List;
 import org.document.Document;
 import org.document.DocumentPropertyStore;
@@ -31,15 +30,15 @@ public class ListState implements Document {
     // ===================================================
     //
     private Document selected;
-    private List<Document> listModel;
+    private List<Document> documentList;
 
-    public List<Document> getListModel() {
-        return listModel;
+    public List<Document> getDocumentList() {
+        return documentList;
     }
 
-    public void setListModel(List<Document> listModel) {
-        this.listModel = listModel;
-        document.put("listModel", listModel);
+    public void setDocumentList(List<Document> list) {
+        this.documentList = list;
+        document.put("documentList", list);
     }
 
     public Document getSelected() {

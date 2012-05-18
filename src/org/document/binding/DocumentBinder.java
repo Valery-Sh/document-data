@@ -4,9 +4,6 @@
  */
 package org.document.binding;
 
-import org.document.ListChangeEvent;
-import org.document.binding.AbstractDocumentBinder;
-
 /**
  *
  * @author Valery
@@ -25,8 +22,5 @@ public class DocumentBinder<T extends PropertyBinder>  extends AbstractDocumentB
         return new DocumentBinder();
     }
 
-    @Override
-    public void listChanged(ListChangeEvent event) {
-    }
 
 }

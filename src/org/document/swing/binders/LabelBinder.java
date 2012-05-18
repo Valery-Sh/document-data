@@ -5,7 +5,7 @@ import org.document.binding.AbstractBinder;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class LabelBinder extends AbstractBinder {
     
