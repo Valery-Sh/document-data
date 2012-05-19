@@ -61,16 +61,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         this.binderListeners.remove(l);
     }
 
-    /**
-     * The
-     * <code>id</code> is a user defined identifier.
-     *
-     * @return user defined identifier
-     */
-//    @Override
-//    public Object getId() {
-//        return id;
-//    }
     protected void add(T binder, Map<String, List<T>> binderMap) {
         String propPath = ((PropertyBinder) binder).getPropertyName();
         List<T> blist = binderMap.get(propPath);
@@ -81,16 +71,12 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         addDocumentChangeListener(binder);
         blist.add(binder);
         binderMap.put(propPath, blist);
-        //binder.setDocumentBinding(this);
-
     }
 
     protected void add(T binder, List<T> binderList) {
         binderList.add(binder);
         binder.addBinderListener(this);
         addDocumentChangeListener(binder);
-//        binder.setDocumentBinding(this);
-
     }
 
     @Override
@@ -180,7 +166,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
     }
 
-    protected void firePropertyChanging(DocumentChangeEvent event) {
+/*    protected void firePropertyChanging(DocumentChangeEvent event) {
         String propName = event.getPropertyName();
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
@@ -195,7 +181,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             b.react(event);
         }
     }
-
+*/
     @Override
     public Document getDocument() {
         return document;
@@ -392,9 +378,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             setDocument((Document) event.getNewValue());
         } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChange)) {
             firePropertyChange(event);
-        } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChanging)) {
-            firePropertyChanging(event);
-        }
+        }// else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChanging)) {
+         //   firePropertyChanging(event);
+         //}
 
     }
 

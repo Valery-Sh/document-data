@@ -21,7 +21,7 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
     }
 
     private void init(List<T> sourceList) {
-        documents = new DocumentList(sourceList);
+        documents = new DocumentList(sourceList,this);
         documents.addListChangeListener(this);
     }
     

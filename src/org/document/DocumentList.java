@@ -2,6 +2,7 @@ package org.document;
 
 import java.util.Collection;
 import java.util.List;
+import org.document.binding.BindingManager;
 
 /**
  *
@@ -11,12 +12,17 @@ import java.util.List;
 public class DocumentList<E extends Document> extends ObservableList<E> {
 
     private E newDocument;
-
+    private BindingManager bindingManager;
+    
     public DocumentList(List baseList) {
         super(baseList);
-
     }
 
+    public DocumentList(List baseList, BindingManager bindingManager) {
+        super(baseList);
+        this.bindingManager = bindingManager;
+    }
+    
     public DocumentList() {
         this(0);
     }
@@ -25,6 +31,10 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         super(capacity);
     }
 
+    public BindingManager getBindingManager() {
+        return bindingManager;
+    }
+    
     public E newDocument(E e) {
 
         e.getPropertyStore();

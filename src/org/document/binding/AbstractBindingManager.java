@@ -1,8 +1,6 @@
 package org.document.binding;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import org.document.*;
 
 /**
@@ -16,7 +14,9 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
 //    protected Map<Object, DocumentBindings> documentBindings;
 //    protected ListBindings listBinding;
     protected T selected;
-    protected ValidatorCollection validators;
+    //protected ValidatorCollection validators;
+    protected Map<Object,Validator> validators;
+    
     protected BindingRecognizer recognizer;
     //private List<DocumentSelectListener> selectDocumentListeners;
     private List<T> sourceList;
@@ -30,7 +30,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
         listBinders = new BinderSet(this);
-        validators = new ValidatorCollection();
+        validators = new HashMap<Object,Validator>();
     }
 
     
@@ -38,10 +38,15 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         binders = new BinderSet(this);
         
     }
+    public void addValidator(Object alias, Validator validator) {
+        validators.put(alias, validator);
+    }
     
     protected ListState getListState() {
         return this.listState;
     }
+    
+    //public abstract AbstractBindingManager getBindingManager();
     
     protected BinderSet getBinders() {
         return this.binders;
