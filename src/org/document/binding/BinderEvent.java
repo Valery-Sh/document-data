@@ -49,7 +49,7 @@ public class BinderEvent extends EventObject {
         return componentValue;
     }
 
-    public void setComponentValueValue(Object componentValue) {
+    public void setComponentValue(Object componentValue) {
         this.componentValue = componentValue;
     }
 

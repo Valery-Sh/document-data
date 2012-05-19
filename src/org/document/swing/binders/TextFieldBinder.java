@@ -69,12 +69,6 @@ public class TextFieldBinder extends AbstractPropertyBinder implements DocumentL
     @Override
     public void removeUpdate(DocumentEvent e) {
         this.componentChanged(textField.getText());        
-        try {
-//            this.componentChanged(null, e.getDocument().getText(0,e.getDocument().getLength()));        
-        } catch(Exception ex){
-            
-        }
-        
     }
 
     @Override

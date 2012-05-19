@@ -37,8 +37,9 @@ public class ListState implements Document {
     }
 
     public void setDocumentList(List<Document> list) {
-        document.set("documentList", list);
+        
         this.documentList = list;
+        document.set("documentList", list);
     }
 
     public Document getSelected() {
@@ -46,8 +47,8 @@ public class ListState implements Document {
     }
 
     public void setSelected(Document selected) {
-        document.set("selected", selected);
         this.selected = selected;
+        document.set("selected", selected);
     }
 
 

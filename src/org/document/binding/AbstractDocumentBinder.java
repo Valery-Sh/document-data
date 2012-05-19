@@ -10,7 +10,7 @@ import org.document.*;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder,BinderListener, BinderCollection<T>, HasDocumentAlias {
+public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderCollection<T>, HasDocumentAlias {
 
     private Object alias;
     protected List<DocumentChangeListener> documentListeners;
@@ -28,7 +28,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     protected AbstractDocumentBinder() {
         binders = new HashMap<String, List<T>>();
         binderListeners = new ArrayList<BinderListener>();
-        
+
         errorBinders = new HashMap<String, List<T>>();
         documentErrorBinders = new ArrayList<T>();
         validators = new ValidatorCollection();
@@ -179,6 +179,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             b.react(event);
         }
     }
+
     protected void firePropertyChanging(DocumentChangeEvent event) {
         String propName = event.getPropertyName();
         Object oldValue = event.getOldValue();
@@ -291,7 +292,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
     }
 
-    
     protected void completeChanges() {
         if (document.getPropertyStore() == null) {
             return;
@@ -339,11 +339,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     }
 
-
     public ValidatorCollection getValidators() {
         return validators;
     }
-
 
     public void validate(String propPath, Object value) throws ValidationException {
         getValidators().validate(propPath, getDocumentStore(), value);
@@ -397,7 +395,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChanging)) {
             firePropertyChanging(event);
         }
-        
+
     }
 
     protected void validateOnEndEditing() {
@@ -427,56 +425,51 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     @Override
     public void react(BinderEvent event) {
-
         switch (event.getAction()) {
-            case componentValueChange:
-                if (getDocumentStore() instanceof HasDocumentState) {
-                    ((HasDocumentState) getDocumentStore()).getDocumentState().react(event);
-                }
-
-                if (!needChangeData(event.getPropertyName(), event.getDataValue())) {
-                    return;
-                }
-                try {
-                    validate(event.getPropertyName(), event.getDataValue());
-                    getDocumentStore().put(event.getPropertyName(), event.getDataValue());
-                } catch (ValidationException ex) {
-                    firePropertyError(event.getPropertyName(), ex);
-                }
-
-                //fireDocumentError(event.getException());
-                break;
-            case componentChangeValueError:
-
-                break;
             case clearComponentChangeError:
                 firePropertyError(event.getPropertyName(), event.getException());
                 break;
-            case propertyChanging:
-                if (getDocumentStore() instanceof HasDocumentState) {
-                    ((HasDocumentState) getDocumentStore()).getDocumentState().react(event);
-                }
-
-                if (!needChangeData(event.getPropertyName(), event.getDataValue())) {
-                    return;
-                }
-                try {
-                    validate(event.getPropertyName(), event.getDataValue());
-                } catch (ValidationException ex) {
-                    firePropertyError(event.getPropertyName(), ex);
-                    throw ex;
-                }
-                break;
-
         }
-    }
+            /*
+             * switch (event.getAction()) { case componentValueChange: if
+             * (getDocumentStore() instanceof HasDocumentState) {
+             * ((HasDocumentState)
+             * getDocumentStore()).getDocumentState().react(event); }
+             *
+             * if (!needChangeData(event.getPropertyName(),
+             * event.getDataValue())) { return; } try {
+             * validate(event.getPropertyName(), event.getDataValue());
+             * getDocumentStore().put(event.getPropertyName(),
+             * event.getDataValue()); } catch (ValidationException ex) {
+             * firePropertyError(event.getPropertyName(), ex); }
+             *
+             * //fireDocumentError(event.getException()); break;
+             *
+             * case componentChangeValueError:
+             *
+             * break; case propertyChanging: if (getDocumentStore() instanceof
+             * HasDocumentState) { ((HasDocumentState)
+             * getDocumentStore()).getDocumentState().react(event); }
+             *
+             * if (!needChangeData(event.getPropertyName(),
+             * event.getDataValue())) { return; } try {
+             * validate(event.getPropertyName(), event.getDataValue()); } catch
+             * (ValidationException ex) {
+             * firePropertyError(event.getPropertyName(), ex); throw ex; }
+             * break;
+             *
+             * }
+             */
+        }
 
-    /**
-     * Prepends cyclic data modifications.
-     *
-     * @param value a new value to be assigned
-     * @return
-     */
+        /**
+         * Prepends cyclic data modifications.
+         *
+         * @param value a new value to be assigned
+         * @return
+         */
+    
+
     protected boolean needChangeData(String propertyName, Object value) {
         boolean result = true;
         Object currentValue = getDocumentStore().get(propertyName);
@@ -507,8 +500,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
         documentListeners.remove(l);
     }
-/*    @Override
-    public void listChanged(ListChangeEvent event) {
-    }
-*/
+    /*
+     * @Override public void listChanged(ListChangeEvent event) { }
+     */
 }

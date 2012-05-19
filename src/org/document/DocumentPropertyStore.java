@@ -100,18 +100,18 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
          * To avoid cyclic 'put' method invocation we do nothing
          * when an old value equals to a new one
          */
-        if ( DataUtils.equals(oldValue,value)) {
-            return;
-        }
+    //    if ( DataUtils.equals(oldValue,value)) {
+     //       return;
+       // }
         
         if (!state.isEditing()) {
             state.setEditing(true);
         }
-        validate(propertyName, value);
+        //validate(propertyName, value);
 
 
         if (!documentChangeListeners.isEmpty()) {
-            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChanging);
+            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
 //            event.setBinder(binder);
             event.setOldValue(oldValue);
