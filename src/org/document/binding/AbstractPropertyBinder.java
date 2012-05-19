@@ -159,7 +159,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
             document.getPropertyStore().put(propertyName, convertedValue);
             fireComponentValueChange(convertedValue, componentValue);
         } catch (ValidationException e) {
-            throw e;
+            firePropertyError(e);
         } catch (Exception e) {
             firePropertyError(e);
         }

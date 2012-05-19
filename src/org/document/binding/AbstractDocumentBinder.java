@@ -429,6 +429,10 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             case clearComponentChangeError:
                 firePropertyError(event.getPropertyName(), event.getException());
                 break;
+            case componentChangeValueError:
+                firePropertyError(event.getPropertyName(), event.getException());
+                break;
+                
         }
             /*
              * switch (event.getAction()) { case componentValueChange: if
@@ -470,7 +474,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
          */
     
 
-    protected boolean needChangeData(String propertyName, Object value) {
+/*    protected boolean needChangeData(String propertyName, Object value) {
         boolean result = true;
         Object currentValue = getDocumentStore().get(propertyName);
 
@@ -484,7 +488,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
         return result;
     }
-
+*/
     @Override
     public void addDocumentChangeListener(DocumentChangeListener l) {
         if (documentListeners == null) {

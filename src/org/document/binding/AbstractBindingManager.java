@@ -1,6 +1,5 @@
 package org.document.binding;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,29 +29,20 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
-
         listBinders = new BinderSet(this);
+        validators = new ValidatorCollection();
+    }
+
+    
+    protected AbstractBindingManager() {
+        binders = new BinderSet(this);
         
     }
-
-    protected AbstractBindingManager() {
-
-        binders = new BinderSet(this);
-
-//        documentBindings = new HashMap<Object, DocumentBindings>();
-        validators = new ValidatorCollection();
-        //selectDocumentListeners = new ArrayList<DocumentSelectListener>();
-//        listBinding = new DocumentListBindings();
-//        listBinding.addDocumentChangeListener(this);
-    }
     
-    protected AbstractBindingManager(BindingRecognizer recognizer) {
-        this();
-        this.recognizer = recognizer;
-    }
     protected ListState getListState() {
         return this.listState;
     }
+    
     protected BinderSet getBinders() {
         return this.binders;
     }
@@ -61,97 +51,67 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     public void setSelected(T selected) {
-        //this.update(selected);
+        if ( sourceList == null ) {
+            setDocument(selected);
+            return;
+        }
+        
         T old = this.selected;
         
         boolean markedNew = false;
         this.binders.setDocument(selected);
-//        this.listState.setSelected(null);
         Object o = listState.getSelected();
         this.listState.setSelected(selected);
         this.selected = selected;
         
         afterSetSelected(old);
-        
-        
-        //fireSelectDocument(old, selected);
-    }
-    
-//    protected abstract void beforeSetSelected(T oldSelected);
-    protected abstract void afterSetSelected(T oldSelected);
-    //protected abstract boolean isNew(T doc);
-    
-    private void fireSelectDocument(T oldSelected, T newSelected) {
-        //DocumentSelectEvent event = new DocumentSelectEvent(this, oldSelected, newSelected);
-        //for (DocumentSelectListener l : selectDocumentListeners) {
-        //    l.documentSelect(event);
-        //}
     }
 
-    /*
-     * public void addBinder(Object docTypeId, Binder binder) { assert(docTypeId
-     * != null); assert(binder != null);
-     *
-     * if ( binder instanceof PropertyBinder) { addPropertyBinder(docTypeId,
-     * binder); } else if ( binder instanceof ErrorBinder) {
-     * addErrorBinder(docTypeId, binder); } else if ( binder instanceof
-     * ListBinder) { addListBinder(docTypeId, binder); } }
-     */
-    public void addBinder(Binder binder) {
-/* Me       if (binder instanceof ListBinder) {
-            binder.addBinderListener(this);
+    public void setDocument(T selected) {
+        if ( sourceList != null ) {
+            setSelected(selected);
+            return;
         }
-*/
+
+        T old = this.selected;
+        
+        boolean markedNew = false;
+        this.binders.setDocument(selected);
+    }
+    
+    protected abstract void afterSetSelected(T oldSelected);
+    
+
+    public void addBinder(Binder binder) {
         if (binder instanceof ListStateBinder) {
+            if ( sourceList == null ) {
+                throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
+            }
             binder.addBinderListener(this);
             listBinders.add(binder);
             ((ListStateBinder)binder).setDocument(getListState());
         } else {
             binders.add(binder);
         }
-        //addBinder("default doc type",binder);
     }
 
     public void removeBinder(Binder binder) {
-/* Me        if (binder instanceof ListBinder) {
-            binder.removeBinderListener(this);
-        }
-*/
         if (binder instanceof ListStateBinder) {
             binder.removeBinderListener(this);
             listBinders.remove(binder);
         } else {
             this.binders.add(binder);
         }
-        //addBinder("default doc type",binder);
     }
 
-    /*
-     * protected void addPropertyBinder(Object docTypeId, Binder binder) { if (
-     * ! documentBindings.containsKey(docTypeId)) { DocumentBindings db = new
-     * DocumentBindingHandler(); documentBindings.put(docTypeId, db); }
-     * documentBindings.get(docTypeId).add(binder); } protected void
-     * addErrorBinder(Object docTypeId, Binder binder) {
-     * addPropertyBinder(docTypeId, binder); }
-     *
-     * protected void addListBinder(Object docTypeId, Binder binder) {
-     * listBinding.add(binder); }
-     */
-    /*
-     * public ValidatorCollection getValidators(Object docTypeId) {
-     * DocumentBindings b = documentBindings.get(docTypeId); if ( b == null ) {
-     * return null; } return b.getValidators(); }
-     *
-     * public ValidatorCollection getValidators() { return
-     * getValidators("default doc type"); }
-     */
-    protected PropertyStore getPropertyDataStore() {
-        return this.selected.getPropertyStore();
+    protected PropertyStore getPropertyStore() {
+        return selected.getPropertyStore();
     }
 
     public void setRecognizer(BindingRecognizer recognizer) {
         this.recognizer = recognizer;
     }
+    
     //
     // ===========================================================
     //
@@ -194,14 +154,6 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         return result;
     }
 
-    /*
-     * protected DocumentBindings getBinding(Document doc) { if (doc == null) {
-     * return null; }
-     *
-     * DocumentBindings result; if (recognizer != null) { result =
-     * documentBindings.get(recognizer.getBindingId(doc)); } else { result =
-     * documentBindings.get("default doc type"); } return result; }
-     */
     @Override
     public void react(BinderEvent event) {
         switch (event.getAction()) {
@@ -227,22 +179,6 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             return false;
         }
         return true;
-    }
-
-/*    public void addSelectDocumentListener(DocumentSelectListener l) {
-        this.selectDocumentListeners.add(l);
-    }
-
-    public void removeSelectDocumentListener(DocumentSelectListener l) {
-        this.selectDocumentListeners.remove(l);
-    }
-*/
-    public static class DefaultBindingRecognizerNew<T> implements BindingRecognizer<T> {
-
-        @Override
-        public Object getBindingId(T document) {
-            return document.getClass();
-        }
     }
 
     public static class BinderSet<T extends Binder> implements BinderCollection<T> {
