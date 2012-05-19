@@ -1,10 +1,10 @@
 package org.document;
 
-import org.document.binding.BinderEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.document.binding.BinderEvent;
 
 /**
  *
@@ -69,7 +69,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
         if (!state.isEditing()) {
             state.setEditing(true);
         }
-        validate(propertyName, value);
+        //validate(propertyName, value);
 
         /**
          * Here just calls
@@ -77,14 +77,14 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
          */
         setPropertyValue(propertyName, value);
 
-        if (!documentChangeListeners.isEmpty()) {
+/*        if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
             event.setOldValue(oldValue);
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
-
+*/
     }
 
 //    @Override
@@ -140,6 +140,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
      * @param value
      * @throws ValidationException 
      */
+    @Override
     public void validate(Object key, Object value) throws ValidationException {
 /*        if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.validateProperty);
@@ -289,7 +290,10 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
         public void react(BinderEvent event) {
             if ( event.getAction() == BinderEvent.Action.componentValueChange ) {
                 dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());        
+            } else if ( event.getAction() == BinderEvent.Action.propertyChanging ) {
+                dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());        
             }
+
 
         }
         /**

@@ -14,17 +14,17 @@ import java.util.Map;
  * @author Valery
  */
 public class ValidatorCollection {
-    private Map<String,PropertyValidator> pvalidators;
+    private Map<String,PropertyValidatorOld> pvalidators;
     private List<DocumentValidator> lvalidators;
     public ValidatorCollection() {
-      pvalidators = new HashMap<String,PropertyValidator>();  
+      pvalidators = new HashMap<String,PropertyValidatorOld>();  
       lvalidators = new ArrayList<DocumentValidator>();  
     }
     public int add(DocumentValidator validator) {
         this.lvalidators.add(validator);
         return lvalidators.size()-1;
     } 
-    public  Map<String,PropertyValidator> getProperyValidators() {
+    public  Map<String,PropertyValidatorOld> getProperyValidators() {
         return pvalidators;
     }
     public  List<DocumentValidator> getDocumentValidators() {
@@ -37,7 +37,7 @@ public class ValidatorCollection {
     public void remove(int vindex) {
         this.lvalidators.remove(vindex);
     } 
-    public void add(String propPath,PropertyValidator validator) {
+    public void add(String propPath,PropertyValidatorOld validator) {
         this.pvalidators.put(propPath,validator);
     } 
     public void remove(String propPath) {
@@ -45,7 +45,7 @@ public class ValidatorCollection {
     } 
     
     public void validate(String propPath, PropertyStore doc, Object value) throws ValidationException {
-        PropertyValidator v = pvalidators.get(propPath);
+        PropertyValidatorOld v = pvalidators.get(propPath);
         if ( v == null ) {
             return;
         }
@@ -53,10 +53,10 @@ public class ValidatorCollection {
     }
     public void validateProperties(PropertyStore doc) throws ValidationException {
         String propPath;
-        for ( Map.Entry<String,PropertyValidator> es  : pvalidators.entrySet()) {
+        for ( Map.Entry<String,PropertyValidatorOld> es  : pvalidators.entrySet()) {
             propPath = es.getKey();
         
-            PropertyValidator v = pvalidators.get(propPath);
+            PropertyValidatorOld v = pvalidators.get(propPath);
             if ( v == null ) {
                 continue;
             }

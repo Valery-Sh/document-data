@@ -1,13 +1,13 @@
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
-import org.document.binding.AbstractBinder;
+import org.document.binding.AbstractPropertyBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class LabelBinder extends AbstractBinder {
+public class LabelBinder extends AbstractPropertyBinder {
     
     protected JLabel textField;
     

@@ -4,13 +4,13 @@
  */
 package org.document;
 
-import org.document.binding.AbstractBinder;
+import org.document.binding.AbstractPropertyBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class StringBinderImpl  extends AbstractBinder{
+public class StringBinderImpl  extends AbstractPropertyBinder{
     
     Object componentValue;
     

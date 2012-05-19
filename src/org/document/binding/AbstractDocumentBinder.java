@@ -439,10 +439,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                 }
                 try {
                     validate(event.getPropertyName(), event.getDataValue());
-                    //getDocumentStore().put(event.getPropertyName(), event.getDataValue());
-                    for ( BinderListener l : this.binderListeners) {
-                        
-                    }
+                    getDocumentStore().put(event.getPropertyName(), event.getDataValue());
                 } catch (ValidationException ex) {
                     firePropertyError(event.getPropertyName(), ex);
                 }

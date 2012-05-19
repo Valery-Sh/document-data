@@ -4,7 +4,7 @@
  */
 package org.document;
 
-import org.document.binding.AbstractBinder;
+import org.document.binding.AbstractPropertyBinder;
 import static org.junit.Assert.*;
 import org.junit.*;
 
@@ -34,7 +34,7 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of dataChanged method, of class AbstractBinder.
+     * Test of dataChanged method, of class AbstractPropertyBinder.
      */
     @Test
     public void testDataChanged() {
@@ -44,7 +44,7 @@ public class AbstractBinderTest {
         //
         // oldValue == null && newValue == null
         //
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         
         instance.dataChanged(newValue);
         assertNull(instance.getComponentValue());
@@ -71,19 +71,19 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of setDocumentBinding method, of class AbstractBinder.
+     * Test of setDocumentBinding method, of class AbstractPropertyBinder.
      */
     @Test
     public void testSetDocumentBinding() {
         System.out.println("setDocumentBinding");
         DocumentBindings binding = new MockDocumentBinding();
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         instance..setDocumentBinding(binding);
         assertTrue(binding == instance.binding);
     }
 
     /**
-     * Test of componentChanged method, of class AbstractBinder.
+     * Test of componentChanged method, of class AbstractPropertyBinder.
      */
     @Test
     public void testComponentChanged() {
@@ -93,7 +93,7 @@ public class AbstractBinderTest {
         //
         // oldValue == null && newValue == null
         //
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         DocumentBindings binding = new MockDocumentBinding();
         instance.setDocumentBinding(binding);
         
@@ -125,37 +125,37 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of protected setComponentValue method, of class AbstractBinder.
+     * Test of protected setComponentValue method, of class AbstractPropertyBinder.
      */
     @Test
     public void testSetComponentValue() {
         System.out.println("setComponentValue");
         Object compValue = "Bill";
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         instance.setComponentValue(compValue);
         assertEquals("Bill",instance.getComponentValue());
     }
 
     /**
-     * Test of protected getComponentValue method, of class AbstractBinder.
+     * Test of protected getComponentValue method, of class AbstractPropertyBinder.
      */
     @Test
     public void testGetComponentValue() {
         System.out.println("getComponentValue");
         Object compValue = "Bill";
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         instance.setComponentValue(compValue);
         assertEquals("Bill",instance.getComponentValue());
     }
     
     /**
-     * Test of protected setDataValue method, of class AbstractBinder.
+     * Test of protected setDataValue method, of class AbstractPropertyBinder.
      */
     @Test
     public void testSetDataValue() {
         System.out.println("setDataValue");
         Object dataValue = "Bill";
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         DocumentBindings binding = new MockDocumentBinding();
         instance.setDocumentBinding(binding);
         instance.setDataValue(dataValue);
@@ -164,13 +164,13 @@ public class AbstractBinderTest {
     }
     
     /**
-     * Test of protected getDataValue method, of class AbstractBinder.
+     * Test of protected getDataValue method, of class AbstractPropertyBinder.
      */
     @Test
     public void testGetDataValue() {
         System.out.println("getDataValue");
         Object dataValue = "Bill";
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         DocumentBindings binding = new MockDocumentBinding();
         instance.setDocumentBinding(binding);
         instance.setDataValue(dataValue);
@@ -179,13 +179,13 @@ public class AbstractBinderTest {
     }
     
     /**
-     * Test of componentValueOf method, of class AbstractBinder.
+     * Test of componentValueOf method, of class AbstractPropertyBinder.
      */
     @Test
     public void testComponentValueOf() {
         System.out.println("componentValueOf");
         Object dataValue = null;
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         Object expResult = null;
         Object result = instance.componentValueOf(dataValue);
         assertEquals(expResult, result);
@@ -197,13 +197,13 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of dataValueOf method, of class AbstractBinder.
+     * Test of dataValueOf method, of class AbstractPropertyBinder.
      */
     @Test
     public void testDataValueOf() {
         System.out.println("dataValueOf");
         Object compValue = null;
-        AbstractBinder instance = new AbstractBinderImpl();
+        AbstractPropertyBinder instance = new AbstractBinderImpl();
         Object expResult = null;
         Object result = instance.dataValueOf(compValue);
         assertEquals(expResult, result);
@@ -214,7 +214,7 @@ public class AbstractBinderTest {
         
     }
 
-    public class AbstractBinderImpl extends AbstractBinder {
+    public class AbstractBinderImpl extends AbstractPropertyBinder {
         
         protected Object componentValue;
         protected Object dataValue;

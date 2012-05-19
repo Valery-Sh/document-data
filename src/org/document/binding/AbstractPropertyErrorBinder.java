@@ -6,7 +6,7 @@ import org.document.DocumentChangeEvent;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractPropertyErrorBinder extends AbstractBinder implements PropertyErrorBinder {
+public abstract class AbstractPropertyErrorBinder extends AbstractPropertyBinder implements PropertyErrorBinder {
     
     protected Exception exception;
     protected boolean errorFound;

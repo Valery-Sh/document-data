@@ -5,20 +5,22 @@ package org.document.binding;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.document.DataUtils;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
+import org.document.PropertyValidator;
 import org.document.ValidationException;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractBinder implements PropertyBinder {
+public abstract class AbstractPropertyBinder implements PropertyBinder {
     
     private Object alias;
     protected String propertyName;
     protected Document document;
-
+    protected PropertyValidator validator;
     protected List<BinderListener> binderListeners;
     
     @Override
@@ -39,7 +41,12 @@ public abstract class AbstractBinder implements PropertyBinder {
             return;
         }
         this.binderListeners.remove(l);
-    }   
+    }
+
+    @Override
+    public void setValidator(PropertyValidator validator) {
+        this.validator = validator;
+    }
     
     @Override
     public void react(DocumentChangeEvent event) {
@@ -53,7 +60,9 @@ public abstract class AbstractBinder implements PropertyBinder {
                 }
                 break;
             case propertyChange :
-                this.dataChanged(event.getNewValue());
+                //this.dataChanged(event.getNewValue());
+                this.initComponent(event.getNewValue());
+                fireComponentValueChange(event.getNewValue(), getComponentValue());
                 break;
             case propertyChanging :
                 this.initComponent(event.getNewValue());
@@ -115,18 +124,43 @@ public abstract class AbstractBinder implements PropertyBinder {
     }
 
     
-    protected void componentChanged(Object newValue) {
+    protected void componentChangedOld(Object newValue) {
         fireClearPropertyError();
-        Object convValue;
+        Object convertedValue;
         try {
-            convValue = this.dataValueOf(newValue);
-            fireComponentValueChange(convValue,newValue);
+            convertedValue = this.dataValueOf(newValue);
+            fireComponentValueChange(convertedValue,newValue);
         } catch(ValidationException e) {
             throw e;
         } catch(Exception e) {
             firePropertyError(e);
         }
     }
+    protected void componentChanged(Object componentValue) {
+        if ( document == null ) {
+            return;
+        }
+        fireClearPropertyError();
+        Object convertedValue;
+        Object oldDataValue = document.getPropertyStore().get(propertyName);
+        try {
+            convertedValue = this.dataValueOf(componentValue);
+            if ( ! DataUtils.equals(convertedValue, document.getPropertyStore().get(propertyName))) {
+                return;
+            }
+            if ( validator != null ) {
+                validator.validate(convertedValue);
+            }
+            document.getPropertyStore().validate(propertyName, convertedValue);
+            document.getPropertyStore().put(propertyName, convertedValue);
+            fireComponentValueChange(convertedValue,componentValue);
+        } catch(ValidationException e) {
+            throw e;
+        } catch(Exception e) {
+            firePropertyError(e);
+        }
+    }
+    
     private void firePropertyChanging(Object dataValue, Object componentValue) {
         BinderEvent.Action action = BinderEvent.Action.propertyChanging;
         BinderEvent event = new BinderEvent(this,action,dataValue,componentValue);

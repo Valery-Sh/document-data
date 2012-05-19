@@ -8,7 +8,7 @@ import org.document.ValidationException;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractListSelectionBinder extends AbstractBinder {
+public abstract class AbstractListSelectionBinder extends AbstractPropertyBinder {
     
     protected Object component;
     

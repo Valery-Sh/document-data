@@ -3,13 +3,13 @@ package org.document.swing.binders;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.document.binding.AbstractBinder;
+import org.document.binding.AbstractPropertyBinder;
 
 /**
  *
  * @author Valery
  */
-public class TextFieldBinder extends AbstractBinder implements DocumentListener{
+public class TextFieldBinder extends AbstractPropertyBinder implements DocumentListener{
     
     protected JTextField textField;
     

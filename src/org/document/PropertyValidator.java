@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.document;
 
 /**
@@ -5,5 +9,5 @@ package org.document;
  * @author Valery
  */
 public interface PropertyValidator {
-    void validate(String propPath,PropertyStore doc, Object value) throws ValidationException;
+    void validate(Object value) throws ValidationException;
 }
