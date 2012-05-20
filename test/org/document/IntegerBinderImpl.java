@@ -33,7 +33,7 @@ public class IntegerBinderImpl extends AbstractPropertyBinder{
     }
 
     @Override
-    protected Object dataValueOf(Object compValue) {
+    protected Object propertyValueOf(Object compValue) {
         return compValue == null ? null : Integer.parseInt(compValue.toString().trim());
     }
     

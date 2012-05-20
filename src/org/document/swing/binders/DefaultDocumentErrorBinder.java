@@ -35,7 +35,7 @@ public class DefaultDocumentErrorBinder extends AbstractDocumentErrorBinder{
     }
 
     @Override
-    protected Object dataValueOf(Object compValue) {
+    protected Object propertyValueOf(Object compValue) {
         if ( compValue == null ) {
             return false;
         }
@@ -51,10 +51,12 @@ public class DefaultDocumentErrorBinder extends AbstractDocumentErrorBinder{
         super.notifyError(e);
         if ( ! isErrorFound() ) {
             textField.setVisible(false);
-            dataChanged(false);
+            //dataChanged(false);
+            propertyChanged(false);
         } else {
             textField.setVisible(true);
-            dataChanged(true);            
+            //dataChanged(true);            
+            propertyChanged(true);
         }
     }
 

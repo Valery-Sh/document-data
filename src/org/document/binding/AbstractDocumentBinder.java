@@ -229,7 +229,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                         continue;
                     }
                     for (T b : l) {
-                        b.initComponent(state.getDirtyValues().get(b.getPropertyName()));
+                        b.propertyChanged(state.getDirtyValues().get(b.getPropertyName()));
                     }
                 }
                 completeChanges();

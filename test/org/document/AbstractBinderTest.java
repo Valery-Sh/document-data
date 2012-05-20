@@ -197,7 +197,7 @@ public class AbstractBinderTest {
     }
 
     /**
-     * Test of dataValueOf method, of class AbstractPropertyBinder.
+     * Test of propertyValueOf method, of class AbstractPropertyBinder.
      */
     @Test
     public void testDataValueOf() {
@@ -205,11 +205,11 @@ public class AbstractBinderTest {
         Object compValue = null;
         AbstractPropertyBinder instance = new AbstractBinderImpl();
         Object expResult = null;
-        Object result = instance.dataValueOf(compValue);
+        Object result = instance.propertyValueOf(compValue);
         assertEquals(expResult, result);
         compValue = "Bill";
         expResult = "Bill";
-        result = instance.dataValueOf(compValue);
+        result = instance.propertyValueOf(compValue);
         assertEquals(expResult, result);
         
     }
@@ -231,7 +231,7 @@ public class AbstractBinderTest {
         }
 
         @Override
-        public Object dataValueOf(Object compValue) {
+        public Object propertyValueOf(Object compValue) {
             return compValue;
         }
 

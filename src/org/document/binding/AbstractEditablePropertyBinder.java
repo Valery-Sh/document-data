@@ -10,8 +10,10 @@ import org.document.*;
  * @author V. Shyshkin
  */
 public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBinder {
-
-    
+    /**
+     * 
+     * @param componentValue the new component specific value
+     */
     protected void componentChanged(Object componentValue) {
         if (document == null) {
             return;
@@ -26,13 +28,13 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         Object convertedValue;
         Object oldDataValue = document.getPropertyStore().get(propertyName);
         try {
-            convertedValue = this.dataValueOf(componentValue);
+            convertedValue = this.propertyValueOf(componentValue);
             if (DataUtils.equals(convertedValue, oldDataValue)) {
                 return;
             }
-            if ( document instanceof HasValidator ) {
-                Validator v = ((HasValidator)document).getValidator();
-                if ( v != null ) {
+            if (document instanceof HasValidator) {
+                Validator v = ((HasValidator) document).getValidator();
+                if (v != null) {
                     v.validate(propertyName, convertedValue);
                 }
             }
@@ -44,12 +46,12 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             firePropertyError(e);
         }
     }
-    
+
     @Override
     public void react(DocumentChangeEvent event) {
         super.react(event);
-        if (event.getAction() == DocumentChangeEvent.Action.completeChanges ) {
-                componentChanged(getComponentValue());
+        if (event.getAction() == DocumentChangeEvent.Action.completeChanges) {
+            componentChanged(getComponentValue());
         }
     }
 
@@ -93,8 +95,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * be converted to a component value.
      */
     @Override
-    public void initComponent(Object dataValue) {
-        Object convertedValue = this.componentValueOf(dataValue);
+    public void propertyChanged(Object propertyValue) {
+        Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
             return;
         }
@@ -102,6 +104,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         setComponentValue(convertedValue);
         addComponentListeners();
     }
+
     protected abstract void addComponentListeners();
+
     protected abstract void removeComponentListeners();
 }

@@ -1,25 +1,22 @@
 package org.document.samples;
 
 import java.util.Date;
-import org.document.*;
+import org.document.AbstractObjectDocument;
+import org.document.Validator;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class Person implements Document, HasValidator {
+public class Person extends AbstractObjectDocument {
 
-    protected DocumentPropertyStore document;
-    private Validator validator;
 
     public Person() {
-        // DocumentPropertyStore is a default PropertyStore
-        this.document = new DocumentPropertyStore(this);
+        super();
     }
 
     public Person(Validator validator) {
-        this();
-        this.validator = validator;
+        super(validator);
     }
 
     public Person(Validator validator,int id, String firstName, String lastName) {
@@ -27,14 +24,6 @@ public class Person implements Document, HasValidator {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-    //
-    // Document interface implementation
-    //
-
-    @Override
-    public PropertyStore getPropertyStore() {
-        return this.document;
     }
     //
     // ===================================================
@@ -50,7 +39,7 @@ public class Person implements Document, HasValidator {
 
     public void setBirthDay(Date birthDay) {
         this.birthDay = birthDay;
-        document.set("birthDay", birthDay);
+        document.bind("birthDay", birthDay);
     }
 
     public String getFirstName() {
@@ -58,10 +47,8 @@ public class Person implements Document, HasValidator {
     }
 
     public void setFirstName(String firstName) {
-        //document.validate("firstName", firstName);
-        //document.set("firstName", firstName);
         this.firstName = firstName;
-        document.set("firstName", firstName);
+        document.bind("firstName", firstName);
     }
 
     public int getId() {
@@ -70,7 +57,7 @@ public class Person implements Document, HasValidator {
 
     public void setId(int id) {
         this.id = id;
-        document.set("id", id);
+        document.bind("id", id);
     }
 
     public String getLastName() {
@@ -79,19 +66,10 @@ public class Person implements Document, HasValidator {
 
     public void setLastName(String lastName) {
 //        this.lastName = lastName;
-//        document.set("lastName", lastName);
+//        document.bind("lastName", lastName);
         this.lastName = lastName;
-        document.set("lastName", lastName);
+        document.bind("lastName", lastName);
     }
 
-    @Override
-    public Validator getValidator() {
-        return validator;
-    }
-
-    @Override
-    public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
 
 }

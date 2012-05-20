@@ -34,7 +34,7 @@ public class StringBinderImpl  extends AbstractPropertyBinder{
     }
 
     @Override
-    protected Object dataValueOf(Object compValue) {
+    protected Object propertyValueOf(Object compValue) {
         return compValue == null ? null : compValue.toString();
     }
 }

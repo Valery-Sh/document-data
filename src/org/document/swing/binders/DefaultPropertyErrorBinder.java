@@ -19,10 +19,12 @@ public class DefaultPropertyErrorBinder extends AbstractPropertyErrorBinder{
         super.notifyError(e);
         if ( ! errorFound ) {
             textField.setVisible(false);
-            dataChanged(false);
+            //dataChanged(false);
+            propertyChanged(false);
         } else {
             textField.setVisible(true);
-            dataChanged(true);            
+            //dataChanged(true);            
+            propertyChanged(true);
         }
     }
     
@@ -46,7 +48,7 @@ public class DefaultPropertyErrorBinder extends AbstractPropertyErrorBinder{
     }
 
     @Override
-    protected Object dataValueOf(Object compValue) {
+    protected Object propertyValueOf(Object compValue) {
         if ( compValue == null ) {
             return false;
         }

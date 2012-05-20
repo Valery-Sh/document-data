@@ -93,7 +93,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
     }
 
 //    @Override
-    public void set(Object key, Object value) {
+    public void bind(Object key, Object value) {
 
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
@@ -145,7 +145,7 @@ public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState
      * <code>put</code> method.
      *
      * @param name string property name
-     * @param value a value to be set
+     * @param value a value to be bind
      */
     protected void setPropertyValue(String name, Object value) {
         DataUtils.setValue(name, source, value);

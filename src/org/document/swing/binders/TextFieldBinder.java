@@ -37,13 +37,17 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
         textField.setText(s);
     }
 
+    /*************************************************************/
+    /*  The JTextField component specific methods implementation */
+    /*************************************************************/
+    
     @Override
     protected Object componentValueOf(Object dataValue) {
         return dataValue == null ? null : dataValue.toString();
     }
 
     @Override
-    protected Object dataValueOf(Object compValue) {
+    protected Object propertyValueOf(Object compValue) {
         String sv = compValue == null ? null : compValue.toString();
         if (sv != null && sv.trim().isEmpty()) {
             sv = null;
@@ -51,20 +55,6 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
         return sv;
     }
 
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-        this.componentChanged(textField.getText());
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-        this.componentChanged(textField.getText());
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-        System.out.println("*** NEWVALUE 3 = " + textField.getText());
-    }
 
     @Override
     public Object getComponentValue() {
@@ -86,4 +76,22 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
         textField.getDocument().removeDocumentListener(this);
 
     }
+    /*************************************************************/
+    /*   javax.swing.event.DocumentListener implementation       */
+    /*************************************************************/
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        this.componentChanged(textField.getText());
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        this.componentChanged(textField.getText());
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        System.out.println("*** NEWVALUE 3 = " + textField.getText());
+    }
+    
 }

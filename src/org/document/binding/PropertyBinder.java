@@ -18,9 +18,9 @@ public interface PropertyBinder extends Binder,DocumentChangeListener, HasDocume
      * to set the value of the component and do not want that in response
      * a component generated an event.
      * 
-     * @param dataValue a data value. Before assign it to a component it should
+     * @param propertyValue a data value. Before assign it to a component it should
      * be converted to a component value.
      */
-    void initComponent(Object dataValue);
+    void propertyChanged(Object propertyValue);
     void initComponentDefault();
 }

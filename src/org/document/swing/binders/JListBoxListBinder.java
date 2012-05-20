@@ -85,7 +85,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
          * should be converted to a component value.
          */
         @Override
-        public void initComponent(Object dataValue) {
+        public void propertyChanged(Object dataValue) {
             removeComponentListeners();
             setComponentValue(componentValueOf(dataValue));
             addComponentListeners();
@@ -120,7 +120,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         }
 
         @Override
-        protected Object dataValueOf(Object compValue) {
+        protected Object propertyValueOf(Object compValue) {
             int index = (Integer) compValue;
             if (index < 0) {
                 return null;
@@ -145,9 +145,10 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             this.properties = properties;
         }
         @Override
-        public void initComponent(Object dataValue) {
+        public void propertyChanged(Object dataValue) {
             removeComponentListeners();
-            dataChanged(dataValue);
+            //dataChanged(dataValue);
+            setComponentValue(dataValue);
             addComponentListeners();
         }
 
@@ -179,7 +180,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         }
 
         @Override
-        protected Object dataValueOf(Object compValue) {
+        protected Object propertyValueOf(Object compValue) {
             if (compValue == null) {
                 return null;
             }
