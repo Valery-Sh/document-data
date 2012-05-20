@@ -1,11 +1,11 @@
 package org.document.swing.binders;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.JList;
-import javax.swing.ListModel;
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.document.Document;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
@@ -16,11 +16,11 @@ import org.document.binding.PropertyBinder;
  *
  * @author V. Shyshkin
  */
-public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
+public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
 
     protected String[] properties;
 
-    public JListBoxListBinder(JList component, String... properties) {
+    public JComboBoxListBinder(JComboBox component, String... properties) {
         super(component);
         this.properties = properties;
         initBinders();
@@ -28,80 +28,67 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
 
     @Override
     protected PropertyBinder createSelectedBinder() {
-        return new JListSelectionBinder((JList) getAlias());
+        return new JComboBoxListBinder.JComboSelectionBinder((JComboBox) getAlias());
     }
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        return new JListModelBinder((JList) getAlias(), properties);
+        return new JComboBoxListBinder.JComboModelBinder((JComboBox) getAlias(), properties);
     }
 
-    public static class JListSelectionBinder extends AbstractListSelectionBinder implements ListSelectionListener {
+    public static class JComboSelectionBinder extends AbstractListSelectionBinder implements ActionListener {
 
         //protected JList component;
-        public JListSelectionBinder(JList component) {
+        public JComboSelectionBinder(JComboBox component) {
             super(component);
-
-
         }
 
-        protected JList getJList() {
-            return (JList) component;
+        protected JComboBox getJComboBox() {
+            return (JComboBox) component;
         }
 
         @Override
-        public void valueChanged(ListSelectionEvent e) {
-            if (e.getValueIsAdjusting()) {
-                return;
+        public void propertyChanged(Object propertyValue) {
+            super.propertyChanged(propertyValue);
+            getJComboBox().repaint();// if omitted then doesn't change selected item
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == getJComboBox()) {
+                componentChanged(getComponentSelectedIndex());
+                //getJComboBox().repaint(); // if omitted then doesn't change presentation
             }
-            componentChanged(getJList().getSelectedIndex());
-
         }
 
         @Override
         protected void addComponentListeners() {
-            getJList().addListSelectionListener(this);
+            getJComboBox().addActionListener(this);
 
         }
 
         @Override
         protected void removeComponentListeners() {
-            ListSelectionListener[] listeners = getJList().getListSelectionListeners();
+            getJComboBox().getActionListeners();
+            ActionListener[] listeners = getJComboBox().getActionListeners();
             if (listeners != null) {
-                for (ListSelectionListener l : listeners) {
-                    getJList().removeListSelectionListener(l);
+                for (ActionListener l : listeners) {
+                    getJComboBox().removeActionListener(l);
                 }
             }
 
         }
 
-        /**
-         * It is assumed that this method should be called when you want to set
-         * the value of the component and do not want that in response a
-         * component generated an event. In this implementation the method does
-         * nothing.
-         *
-         * @param dataValue a data value. Before assign it to a component it
-         * should be converted to a component value.
-         */
-/*        @Override
-        public void propertyChanged(Object dataValue) {
-            removeComponentListeners();
-            setComponentValue(componentValueOf(dataValue));
-            addComponentListeners();
-        }
-*/
         @Override
         public void setComponentValue(Object value) {
             setComponentSelectedIndex((Integer) value);
         }
 
         protected int getComponentSelectedIndex() {
-            return getJList().getSelectedIndex();
+            return getJComboBox().getSelectedIndex();
         }
 
         protected void setComponentSelectedIndex(Integer selectedIndex) {
-            getJList().setSelectedIndex(selectedIndex);
+            getJComboBox().setSelectedIndex(selectedIndex);
         }
 
         @Override
@@ -134,24 +121,18 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         }
     }//class JListSelectionBinder
 
-    public static class JListModelBinder extends AbstractListModelBinder {
+    public static class JComboModelBinder extends AbstractListModelBinder {
 
-        protected JList component;
+        protected JComboBox component;
         protected String[] properties;
 
-        public JListModelBinder(JList component, String... properties) {
+        public JComboModelBinder(JComboBox component, String... properties) {
             super();
             this.component = component;
             this.properties = properties;
         }
-/*        @Override
-        public void propertyChanged(Object dataValue) {
-            removeComponentListeners();
-            //dataChanged(dataValue);
-            setComponentValue(dataValue);
-            addComponentListeners();
-        }
-*/
+
+
         @Override
         protected void addComponentListeners() {
         }
@@ -162,8 +143,8 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
 
         @Override
         public void setComponentValue(Object value) {
-            component.clearSelection();
-            component.setModel(new ListModelImpl(properties, getDocuments()));
+            //component.clearSelection();
+            component.setModel(new JComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments()));
         }
 
         @Override
@@ -176,7 +157,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             if (getDocuments() == null) {
                 return null;
             }
-            return new ListModelImpl(properties, getDocuments());
+            return new JComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments());
         }
 
         @Override
@@ -184,7 +165,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             if (compValue == null) {
                 return null;
             }
-            return ((ListModelImpl) component.getModel()).documents;
+            return ((JComboBoxListBinder.ComboBoxModelImpl) component.getModel()).documents;
         }
 
         @Override
@@ -193,12 +174,13 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         }
     }//class JListListModelBinder
 
-    public static class ListModelImpl<E extends Document> implements ListModel {
+    public static class ComboBoxModelImpl<E extends Document> implements ComboBoxModel {
+        protected Object selectedObject;
 
         private List<E> documents;
         private String[] properties;
 
-        public ListModelImpl(String[] properties, List<E> documents) {
+        public ComboBoxModelImpl(String[] properties, List<E> documents) {
             this.documents = documents;
             this.properties = properties;
         }
@@ -216,7 +198,6 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             }
             String result = "";
             for (String nm : this.properties) {
-
                 result = result += " " + d.getPropertyStore().get(nm);
             }
             return result;
@@ -228,6 +209,24 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
 
         @Override
         public void removeListDataListener(ListDataListener l) {
+        }
+
+        @Override
+        public void setSelectedItem(Object anObject) {
+//        System.out.println("0) Combo setSelectedItem " + anObject);        
+            if ((selectedObject != null && !selectedObject.equals(anObject))
+                    || selectedObject == null && anObject != null) {
+                selectedObject = anObject;
+            } else {
+                if (anObject == null) {
+                    selectedObject = anObject;
+                }
+            }
+        }
+
+        @Override
+        public Object getSelectedItem() {
+            return selectedObject;
         }
     }
 }

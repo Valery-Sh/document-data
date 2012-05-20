@@ -5,7 +5,8 @@ package org.document.binding;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.document.*;
+import org.document.Document;
+import org.document.DocumentChangeEvent;
 
 /**
  *

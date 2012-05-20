@@ -1,16 +1,16 @@
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
-import org.document.binding.AbstractPropertyErrorBinder;
+import org.document.binding.AbstractErrorBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class DefaultPropertyErrorBinder extends AbstractPropertyErrorBinder{
+public class PropertyErrorBinder extends AbstractErrorBinder{
     protected JLabel textField;
     
-    public DefaultPropertyErrorBinder(String propName, JLabel textField) {
+    public PropertyErrorBinder(String propName, JLabel textField) {
         this.textField = textField;
         this.propertyName = propName;
     }   
@@ -26,6 +26,10 @@ public class DefaultPropertyErrorBinder extends AbstractPropertyErrorBinder{
             //dataChanged(true);            
             propertyChanged(true);
         }
+    }
+    @Override
+    public boolean isPropertyError() {
+        return true;
     }
     
     @Override
@@ -62,5 +66,6 @@ public class DefaultPropertyErrorBinder extends AbstractPropertyErrorBinder{
     public void initComponentDefault() {
         this.textField.setText("");
     }
+
 
 }

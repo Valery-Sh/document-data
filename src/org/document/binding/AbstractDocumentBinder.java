@@ -21,7 +21,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     protected Map<String, List<T>> binders;
     protected Map<String, List<T>> errorBinders;
     protected List<T> documentErrorBinders;
-
     protected Document document;
 
     protected AbstractDocumentBinder() {
@@ -80,7 +79,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     @Override
     public void add(T binder) {
         if (binder instanceof ErrorBinder) {
-            if (((ErrorBinder) binder).getPropertyName() == null) {
+            if (((PropertyBinder) binder).getPropertyName() == null) {
                 // documentStore error binder
                 add(binder, documentErrorBinders);
             } else {
@@ -117,7 +116,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     @Override
     public void remove(T binder) {
         if (binder instanceof ErrorBinder) {
-            if (((ErrorBinder) binder).getPropertyName() == null) {
+            if (((PropertyBinder) binder).getPropertyName() == null) {
                 // documentStore error binder
                 remove(binder, documentErrorBinders);
             } else {
@@ -229,7 +228,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                         continue;
                     }
                     for (T b : l) {
-                        b.propertyChanged(state.getDirtyValues().get(b.getPropertyName()));
+                        //b.propertyChanged(state.getDirtyValues().get(b.getPropertyName()));
+                        b.propertyChanged(documentStore.get(b.getPropertyName()));
                     }
                 }
                 completeChanges();
@@ -295,7 +295,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         event.setException(e);
 
         for (DocumentChangeListener l : documentListeners) {
-            if ((l instanceof PropertyErrorBinder) && propertyName.equals(((PropertyBinder) l).getPropertyName())) {
+            if ((l instanceof ErrorBinder) && propertyName.equals(((PropertyBinder) l).getPropertyName())) {
                 l.react(event);
             }
         }
@@ -311,14 +311,12 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         event.setException(e);
 
         for (DocumentChangeListener l : documentListeners) {
-            if (!(l instanceof DocumentErrorBinder)) {
-                continue;
+            if ((l instanceof ErrorBinder) && !((ErrorBinder) l).isPropertyError()) {
+                l.react(event);
             }
-            l.react(event);
         }
 
     }
-
 
     protected abstract DocumentBinder create();
 
@@ -348,7 +346,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             firePropertyChange(event);
         }
     }
-
 
     @Override
     public void react(BinderEvent event) {

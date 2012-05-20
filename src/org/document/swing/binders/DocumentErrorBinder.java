@@ -1,17 +1,17 @@
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
-import org.document.binding.AbstractDocumentErrorBinder;
+import org.document.binding.AbstractErrorBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class DefaultDocumentErrorBinder extends AbstractDocumentErrorBinder{
+public class DocumentErrorBinder extends AbstractErrorBinder{
     
     protected JLabel textField;
     
-    public DefaultDocumentErrorBinder(JLabel textField) {
+    public DocumentErrorBinder(JLabel textField) {
         this.textField = textField;
     }   
     
@@ -63,6 +63,11 @@ public class DefaultDocumentErrorBinder extends AbstractDocumentErrorBinder{
     @Override
     public void initComponentDefault() {
         this.textField.setText("");
+    }
+
+    @Override
+    public boolean isPropertyError() {
+        return false;
     }
 
     
