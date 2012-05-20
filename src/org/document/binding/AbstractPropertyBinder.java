@@ -47,7 +47,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
             case documentChange:
                 this.document = (Document) event.getNewValue();
                 if (document != null && getPropertyName() != null) {
-                    propertyChanged(document.getPropertyStore().get(getPropertyName()));
+                    propertyChanged(document.propertyStore().get(getPropertyName()));
                 } else if (document == null) {
                     initComponentDefault();
                 }

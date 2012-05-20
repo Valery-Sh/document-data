@@ -968,7 +968,7 @@ public class ObservableListTest {
         }
         
         @Override
-        public PropertyStore getPropertyStore() {
+        public PropertyStore propertyStore() {
             return store;
         }
     }

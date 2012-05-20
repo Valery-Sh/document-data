@@ -55,6 +55,13 @@ public abstract class AbstractErrorBinder extends AbstractPropertyBinder impleme
                 }
                 notifyError(event.getException());
                 break;
+            case propertyChange :
+                if ( event.getPropertyName() == null || ! event.getPropertyName().equals(getPropertyName())) {
+                    break;
+                }
+                notifyError(null);
+                break;
+                
         }//switch
     }
 

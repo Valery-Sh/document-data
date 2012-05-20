@@ -18,15 +18,15 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (document == null) {
             return;
         }
-        if (document.getPropertyStore() instanceof HasDocumentState) {
-            DocumentState state = ((HasDocumentState) document.getPropertyStore()).getDocumentState();
+        if (document.propertyStore() instanceof HasDocumentState) {
+            DocumentState state = ((HasDocumentState) document.propertyStore()).getDocumentState();
             state.getDirtyValues().put(propertyName, componentValue);
         }
 
         fireClearPropertyError();
 
         Object convertedValue;
-        Object oldDataValue = document.getPropertyStore().get(propertyName);
+        Object oldDataValue = document.propertyStore().get(propertyName);
         try {
             convertedValue = this.propertyValueOf(componentValue);
             if (DataUtils.equals(convertedValue, oldDataValue)) {
@@ -38,7 +38,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                     v.validate(propertyName, convertedValue);
                 }
             }
-            document.getPropertyStore().put(propertyName, convertedValue);
+            document.propertyStore().put(propertyName, convertedValue);
             fireComponentValueChange(convertedValue, componentValue);
         } catch (ValidationException e) {
             firePropertyError(e);

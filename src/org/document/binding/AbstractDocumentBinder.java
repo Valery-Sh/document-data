@@ -60,6 +60,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     protected void add(T binder, Map<String, List<T>> binderMap) {
         String propPath = ((PropertyBinder) binder).getPropertyName();
+        //Object propPath = ((PropertyBinder) binder).getPropertyName();
         List<T> blist = binderMap.get(propPath);
         if (blist == null) {
             blist = new ArrayList<T>();
@@ -153,14 +154,28 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         Object newValue = event.getNewValue();
 
         List<T> blist = binders.get(propName);
-        if (blist == null) {
-            return;
+        if (blist != null) {
+            for (Binder b : blist) {
+                //b.dataChanged(oldValue, newValue);
+                //b.dataChanged(newValue);
+                b.react(event);
+            }
         }
-        for (Binder b : blist) {
-            //b.dataChanged(oldValue, newValue);
-            //b.dataChanged(newValue);
-            b.react(event);
+        blist = errorBinders.get(propName);
+        if (blist != null) {
+            for (Binder b : blist) {
+                //b.dataChanged(oldValue, newValue);
+                //b.dataChanged(newValue);
+                b.react(event);
+            }
         }
+        blist = errorBinders.get("*");
+        if (blist != null) {
+            for (Binder b : blist) {
+                b.react(event);
+            }
+        }
+        
     }
 
     /*
@@ -179,7 +194,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     public PropertyStore getDocumentStore() {
         //return this.documentStore;
-        return document.getPropertyStore();
+        return document.propertyStore();
     }
 
     @Override
@@ -273,7 +288,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     }
 
     protected void completeChanges() {
-        if (document.getPropertyStore() == null) {
+        if (document.propertyStore() == null) {
             return;
         }
         DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.completeChanges);
@@ -295,7 +310,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         event.setException(e);
 
         for (DocumentChangeListener l : documentListeners) {
-            if ((l instanceof ErrorBinder) && propertyName.equals(((PropertyBinder) l).getPropertyName())) {
+            String nm = ((PropertyBinder) l).getPropertyName();
+            if ((l instanceof ErrorBinder) && 
+                 propertyName.equals(nm) || "*".equals(nm) ) {
                 l.react(event);
             }
         }
@@ -324,7 +341,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         DocumentBinder binder = create();
         binder.setChildName(childName);
         childs.add(binder);
-        if (document.getPropertyStore() != null) {
+        if (document.propertyStore() != null) {
             binder.setDocument((Document) getDocumentStore().get(childName));
         }
         return binder;

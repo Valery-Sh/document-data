@@ -19,13 +19,14 @@ public class PropertyErrorBinder extends AbstractErrorBinder{
         super.notifyError(e);
         if ( ! errorFound ) {
             textField.setVisible(false);
-            //dataChanged(false);
             propertyChanged(false);
         } else {
             textField.setVisible(true);
-            //dataChanged(true);            
             propertyChanged(true);
         }
+
+//        textField.setVisible(true);
+//        textField.setText((String)componentValueOf(true));
     }
     @Override
     public boolean isPropertyError() {
@@ -33,9 +34,13 @@ public class PropertyErrorBinder extends AbstractErrorBinder{
     }
     
     @Override
-    protected void setComponentValue(Object compValue) {
-        String s = compValue == null ? "" : compValue.toString();
+    protected void setComponentValue(Object componentValue) {
+        String s = componentValue == null ? "" : componentValue.toString();
         textField.setText(s);
+        /*textField.setText("");
+        errorFound = false;
+        textField.setVisible(false);
+        */
     }
     
     @Override
@@ -45,18 +50,18 @@ public class PropertyErrorBinder extends AbstractErrorBinder{
 
 
     @Override
-    protected Object componentValueOf(Object dataValue) {
-        boolean dv = (Boolean)dataValue;
+    protected Object componentValueOf(Object propertyValue) {
+        boolean dv = (Boolean)propertyValue;
         String result = "";
         return dv ? exception.getMessage() : ""; 
     }
 
     @Override
-    protected Object propertyValueOf(Object compValue) {
-        if ( compValue == null ) {
+    protected Object propertyValueOf(Object componentValue) {
+        if ( componentValue == null ) {
             return false;
         }
-        String s = compValue.toString().trim();
+        String s = componentValue.toString().trim();
         if ( s.isEmpty() ) {
             return false;
         }

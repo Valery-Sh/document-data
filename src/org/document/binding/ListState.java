@@ -23,7 +23,7 @@ public class ListState implements Document {
     // Document interface implementation
     //
     @Override
-    public PropertyStore getPropertyStore() {
+    public PropertyStore propertyStore() {
         return this.document;
     }
     //

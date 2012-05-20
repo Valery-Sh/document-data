@@ -37,7 +37,7 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     
     public E newDocument(E e) {
 
-        e.getPropertyStore();
+        e.propertyStore();
 
         ListChangeEvent event = this.createNewElementState(e, false);
         if (!validate(event)) {

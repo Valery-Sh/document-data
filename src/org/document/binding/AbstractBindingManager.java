@@ -110,7 +110,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     protected PropertyStore getPropertyStore() {
-        return selected.getPropertyStore();
+        return selected.propertyStore();
     }
 
     public void setRecognizer(BindingRecognizer recognizer) {

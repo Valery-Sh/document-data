@@ -82,7 +82,7 @@ public class MockDocumentBinding implements DocumentBindings{
 
     @Override
     public void setDocument(Document hasDocument, boolean completeChanges) {
-        this.document = hasDocument.getPropertyStore();
+        this.document = hasDocument.propertyStore();
     }
     
 }

@@ -22,6 +22,10 @@ public class PersonValidator extends AbstractValidator {
                 throw new ValidationException("  firstName", "'firstName'=" + value + " length cannot be 1");
             }
         } else if (key.equals("lastName")) {
+            if (value != null && value.toString().length() > 9 ) {
+                throw new ValidationException("  lastName", "lastName='" + value + "' length cannot be > 9");
+            }
+
         }
     }
 }//class PersonValidator

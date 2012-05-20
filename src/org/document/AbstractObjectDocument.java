@@ -25,7 +25,7 @@ public class AbstractObjectDocument implements Document, HasValidator {
     //
 
     @Override
-    public PropertyStore getPropertyStore() {
+    public PropertyStore propertyStore() {
         return this.propertyStore;
     }
     public void bind(String propertyName, Object value) {

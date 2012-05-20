@@ -198,7 +198,7 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
             }
             String result = "";
             for (String nm : this.properties) {
-                result = result += " " + d.getPropertyStore().get(nm);
+                result = result += " " + d.propertyStore().get(nm);
             }
             return result;
         }
