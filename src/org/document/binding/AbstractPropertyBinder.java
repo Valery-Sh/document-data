@@ -16,7 +16,6 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
     private Object alias;
     protected String propertyName;
     protected Document document;
-    protected PropertyValidator validator;
     protected List<BinderListener> binderListeners;
 
     @Override
@@ -40,10 +39,6 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
         this.binderListeners.remove(l);
     }
 
-    @Override
-    public void setValidator(PropertyValidator validator) {
-        this.validator = validator;
-    }
 
     @Override
     public void react(DocumentChangeEvent event) {
@@ -55,20 +50,10 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
                 } else if (document == null) {
                     initComponentDefault();
                 }
-                break;
+                return;
             case propertyChange:
-                //this.dataChanged(event.getNewValue());
                 this.initComponent(event.getNewValue());
-                //fireComponentValueChange(event.getNewValue(), getComponentValue());
-                break;
-            /*
-             * case propertyChanging: this.initComponent(event.getNewValue());
-             * firePropertyChanging(event.getNewValue(), getComponentValue());
-             * break;
-             */
-            case completeChanges:
-                componentChanged(getComponentValue());
-                break;
+                return;
         }//switch
     }
 
@@ -121,51 +106,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
         return result;
     }
 
-    protected void componentChangedOld(Object newValue) {
-        fireClearPropertyError();
-        Object convertedValue;
-        try {
-            convertedValue = this.dataValueOf(newValue);
-//            fireComponentValueChange(convertedValue, newValue);
-        } catch (ValidationException e) {
-            throw e;
-        } catch (Exception e) {
-            firePropertyError(e);
-        }
-    }
-
-    protected void componentChanged(Object componentValue) {
-        if (document == null) {
-            return;
-        }
-        if (document.getPropertyStore() instanceof HasDocumentState) {
-            DocumentState state = ((HasDocumentState) document.getPropertyStore()).getDocumentState();
-            state.getDirtyValues().put(propertyName, componentValue);
-        }
-
-        fireClearPropertyError();
-
-        Object convertedValue;
-        Object oldDataValue = document.getPropertyStore().get(propertyName);
-        try {
-            convertedValue = this.dataValueOf(componentValue);
-            if (DataUtils.equals(convertedValue, oldDataValue)) {
-                return;
-            }
-            if (validator != null) {
-                validator.validate(convertedValue);
-            }
-            document.getPropertyStore().validate(propertyName, convertedValue);
-            document.getPropertyStore().put(propertyName, convertedValue);
-            fireComponentValueChange(convertedValue, componentValue);
-        } catch (ValidationException e) {
-            firePropertyError(e);
-        } catch (Exception e) {
-            firePropertyError(e);
-        }
-    }
-
-    private void firePropertyChanging(Object dataValue, Object componentValue) {
+/*    private void firePropertyChanging(Object dataValue, Object componentValue) {
         BinderEvent.Action action = BinderEvent.Action.propertyChanging;
         BinderEvent event = new BinderEvent(this, action, dataValue, componentValue);
         notifyListeners(event);
@@ -195,7 +136,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
             l.react(event);
         }
     }
-
+*/
     /**
      * It is assumed that this method should be called when you want to set the
      * value of the component and do not want that in response a component
@@ -206,6 +147,11 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
      */
     @Override
     public void initComponent(Object dataValue) {
+        Object convertedValue = this.componentValueOf(dataValue);
+        if (!needChangeComponent(convertedValue)) {
+            return;
+        }
+        setComponentValue(convertedValue);
     }
 
     /**
@@ -213,20 +159,14 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
      */
     @Override
     public abstract Object getComponentValue();
-
+    
+    //protected abstract void componentChanged(Object componentValue);
+    
     protected abstract void setComponentValue(Object compValue);
 
     protected abstract Object componentValueOf(Object dataValue);
 
     protected abstract Object dataValueOf(Object compValue);
+    
 
-    /**
-     * For test purpose
-     */
-    public Object getValueByName() {
-        if (document == null) {
-            return null;
-        }
-        return document.getPropertyStore().get(getPropertyName());
-    }
 }

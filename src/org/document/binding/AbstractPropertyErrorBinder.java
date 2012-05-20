@@ -22,9 +22,6 @@ public abstract class AbstractPropertyErrorBinder extends AbstractPropertyBinder
         }
     }
     
-    @Override
-    public void componentChanged(Object newValue) {
-    }
 
     public boolean isErrorFound() {
         return errorFound;

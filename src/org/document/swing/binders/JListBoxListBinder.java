@@ -7,7 +7,6 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.document.Document;
-import org.document.DocumentList;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
 import org.document.binding.ListStateBinder;

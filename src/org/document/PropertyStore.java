@@ -12,7 +12,7 @@ public interface PropertyStore extends Serializable {
 
     void put(Object key, Object value);
 
-    void validate(Object key, Object value) throws ValidationException;
+    //void validate(Object key, Object value) throws ValidationException;
     
     void addDocumentChangeListener(DocumentChangeListener listener);
 

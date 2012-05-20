@@ -2,13 +2,12 @@ package org.document.binding;
 
 import java.util.List;
 import org.document.Document;
-import org.document.ValidationException;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractListSelectionBinder extends AbstractPropertyBinder {
+public abstract class AbstractListSelectionBinder extends AbstractEditablePropertyBinder {
     
     protected Object component;
     

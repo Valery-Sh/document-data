@@ -3,41 +3,39 @@ package org.document.swing.binders;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.document.binding.AbstractPropertyBinder;
+import org.document.binding.AbstractEditablePropertyBinder;
 
 /**
  *
  * @author Valery
  */
-public class TextFieldBinder extends AbstractPropertyBinder implements DocumentListener{
-    
+public class TextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener {
+
     protected JTextField textField;
-    
+
     public TextFieldBinder(String propName, JTextField textField) {
         this.textField = textField;
         this.propertyName = propName;
-        textField.getDocument().addDocumentListener(this);
-    }   
-    @Override
-    public void initComponent(Object dataValue) {
-       textField.getDocument().removeDocumentListener(this);
-       //dataChanged(dataValue);
-       setComponentValue(componentValueOf(dataValue));
-       textField.getDocument().addDocumentListener(this);
+        initBinder();
     }
+
+    protected final void initBinder() {
+        textField.getDocument().removeDocumentListener(this);
+        textField.getDocument().addDocumentListener(this);
+    }
+    
     @Override
     protected void setComponentValue(Object compValue) {
         String s = compValue == null ? "" : compValue.toString();
         String oldValue = textField.getText();
-        if ( s.isEmpty() && (oldValue == null || oldValue.isEmpty()) ) {
+        if (s.isEmpty() && (oldValue == null || oldValue.isEmpty())) {
             return;
         }
-        if ( oldValue != null && oldValue.equals(s) ) {
+        if (oldValue != null && oldValue.equals(s)) {
             return;
         }
         textField.setText(s);
     }
-
 
     @Override
     protected Object componentValueOf(Object dataValue) {
@@ -47,7 +45,7 @@ public class TextFieldBinder extends AbstractPropertyBinder implements DocumentL
     @Override
     protected Object dataValueOf(Object compValue) {
         String sv = compValue == null ? null : compValue.toString();
-        if ( sv != null && sv.trim().isEmpty()) {
+        if (sv != null && sv.trim().isEmpty()) {
             sv = null;
         }
         return sv;
@@ -55,20 +53,12 @@ public class TextFieldBinder extends AbstractPropertyBinder implements DocumentL
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-//        System.out.println("*** NEWVALUE 1 = " + textField.getText());
-        
-        this.componentChanged(textField.getText()); 
-/*        try {
-            this.componentChanged(null, e.getDocument().getText(0,e.getDocument().getLength()));        
-        } catch(Exception ex){
-            System.out.println("____ insertUpdate " + ex.getMessage()) ;
-        }
-*/
+        this.componentChanged(textField.getText());
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-        this.componentChanged(textField.getText());        
+        this.componentChanged(textField.getText());
     }
 
     @Override
@@ -80,15 +70,20 @@ public class TextFieldBinder extends AbstractPropertyBinder implements DocumentL
     public Object getComponentValue() {
         return this.textField.getText();
     }
-    
-/*    @Override
-    public void setDirtyComponentValue(Object value) {
-        this.setComponentValue(value);
-    }
-*/
 
     @Override
     public void initComponentDefault() {
         this.textField.setText("");
+    }
+
+    @Override
+    protected void addComponentListeners() {
+        textField.getDocument().addDocumentListener(this);
+    }
+
+    @Override
+    protected void removeComponentListeners() {
+        textField.getDocument().removeDocumentListener(this);
+
     }
 }

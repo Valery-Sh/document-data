@@ -2,7 +2,6 @@ package org.document.binding;
 
 import org.document.DocumentChangeListener;
 import org.document.HasDocumentAlias;
-import org.document.PropertyValidator;
 
 /**
  *
@@ -14,7 +13,6 @@ public interface PropertyBinder extends Binder,DocumentChangeListener, HasDocume
      * @return a property name as a <code>String</code>.
      */
     String getPropertyName();
-    void setValidator(PropertyValidator validator);
     /**
      * It is assumed that this method should be called when you want 
      * to set the value of the component and do not want that in response

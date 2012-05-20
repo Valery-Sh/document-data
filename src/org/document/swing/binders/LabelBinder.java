@@ -42,4 +42,5 @@ public class LabelBinder extends AbstractPropertyBinder {
         this.textField.setText("");
     }
 
+
 }
