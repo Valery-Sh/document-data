@@ -48,14 +48,12 @@ public class DocumentErrorBinder extends AbstractErrorBinder{
     
     @Override
     public void notifyError(Exception e) {
-        super.notifyError(e);
-        if ( ! isErrorFound() ) {
+        //super.notifyError(e);
+        if ( e == null ) {
             textField.setVisible(false);
-            //dataChanged(false);
             propertyChanged(false);
         } else {
             textField.setVisible(true);
-            //dataChanged(true);            
             propertyChanged(true);
         }
     }

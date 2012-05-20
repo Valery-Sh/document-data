@@ -16,8 +16,8 @@ public class PropertyErrorBinder extends AbstractErrorBinder{
     }   
     @Override
     public void notifyError(Exception e) {
-        super.notifyError(e);
-        if ( ! errorFound ) {
+        //super.notifyError(e);
+        if ( e == null ) {
             textField.setVisible(false);
             propertyChanged(false);
         } else {

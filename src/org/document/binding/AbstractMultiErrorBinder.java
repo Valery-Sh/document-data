@@ -1,9 +1,7 @@
 package org.document.binding;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import javax.swing.JLabel;
 import org.document.DocumentChangeEvent;
 
 /**
@@ -15,7 +13,11 @@ public abstract class AbstractMultiErrorBinder extends AbstractErrorBinder {
     private Set<String> propertySet;
     protected List<String> errorProperties;
     protected List<Exception> exceptions;
-
+    /**
+     * Indicates that all properties will use the binder
+     */
+    protected boolean allProperties;
+    
     public AbstractMultiErrorBinder() {
         propertyName = "*";
         propertySet = new HashSet<String>();
@@ -23,7 +25,16 @@ public abstract class AbstractMultiErrorBinder extends AbstractErrorBinder {
         exceptions = new ArrayList<Exception>();
     }
 
-    public Set<String> getPropertySet() {
+    public AbstractMultiErrorBinder(String... propertyNames) {
+        this();
+        getPropertySet().addAll(Arrays.asList(propertyNames));
+    }   
+    public AbstractMultiErrorBinder(boolean allProperies) {
+        this();
+        this.allProperties = allProperies;
+    }   
+    
+    public final Set<String> getPropertySet() {
         return propertySet;
     }
 
@@ -44,12 +55,12 @@ public abstract class AbstractMultiErrorBinder extends AbstractErrorBinder {
             setVisible(false);
             propertyChanged(false);
         }
-        if (!propertySet.contains(property)) {
+        if ( (! allProperties) && !propertySet.contains(property)){
             return;
         }
         if (e == null) {
             int idx = errorProperties.indexOf(property);
-            if (errorProperties.contains(property)) {
+            if (idx >= 0) {
                 errorProperties.remove(idx);
                 exceptions.remove(idx);
             }

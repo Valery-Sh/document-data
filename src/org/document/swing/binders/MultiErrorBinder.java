@@ -4,6 +4,7 @@
  */
 package org.document.swing.binders;
 
+import java.util.Arrays;
 import javax.swing.JLabel;
 import org.document.binding.AbstractMultiErrorBinder;
 
@@ -14,8 +15,18 @@ import org.document.binding.AbstractMultiErrorBinder;
 public class MultiErrorBinder extends AbstractMultiErrorBinder{
     protected JLabel textField;
     
+    
     public MultiErrorBinder(JLabel textField) {
         super();
+        this.textField = textField;                
+    }   
+    public MultiErrorBinder(JLabel textField, String... propertyNames) {
+        super(propertyNames);
+        getPropertySet().addAll(Arrays.asList(propertyNames));
+        this.textField = textField;                
+    }   
+    public MultiErrorBinder(JLabel textField, boolean allProperies) {
+        super(allProperies);
         this.textField = textField;
     }   
     
