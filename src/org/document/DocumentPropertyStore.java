@@ -5,26 +5,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.document.binding.BinderEvent;
+import org.document.schema.DocumentGroup;
+import org.document.schema.DocumentSchema;
+import org.document.schema.HasSchema;
+import org.document.schema.SchemaUtils;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class DocumentPropertyStore<T> implements PropertyStore, HasDocumentState {
+public class DocumentPropertyStore<T extends Document> implements PropertyStore, HasDocumentState, HasSchema {
 
     protected transient DocumentStateImpl state;
     protected T source;
     protected List<DocumentChangeListener> documentChangeListeners;
-
+    protected DocumentSchema localSchema;
+    protected DocumentGroup group;
+    
     public DocumentPropertyStore(T source) {
         this.state = new DocumentStateImpl(this);
         this.source = source;
         this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
+        localSchema = SchemaUtils.createSchema(source.getClass());
 //        this.state.fillValidEditValues();
     }
 
     public T getObject() {
         return source;
+    }
+    public DocumentSchema getSchema() {
+        DocumentSchema ds;
+
+        if (group != null) {
+            ds = group.getSchema(source);
+        } else if (localSchema != null) {
+            ds = localSchema;
+        } else {
+            localSchema = SchemaUtils.createSchema(source.getClass());
+            ds = localSchema;
+        }
+
+        return ds;
     }
 
     @Override

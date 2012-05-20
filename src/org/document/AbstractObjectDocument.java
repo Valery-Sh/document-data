@@ -7,12 +7,12 @@ package org.document;
  */
 public class AbstractObjectDocument implements Document, HasValidator {
 
-    protected DocumentPropertyStore document;
-    private Validator validator;
+    protected transient DocumentPropertyStore propertyStore;
+    private transient Validator validator;
 
     public AbstractObjectDocument() {
         // DocumentPropertyStore is a default PropertyStore
-        this.document = new DocumentPropertyStore(this);
+        this.propertyStore = new DocumentPropertyStore(this);
     }
 
     public AbstractObjectDocument(Validator validator) {
@@ -26,9 +26,11 @@ public class AbstractObjectDocument implements Document, HasValidator {
 
     @Override
     public PropertyStore getPropertyStore() {
-        return this.document;
+        return this.propertyStore;
     }
-
+    public void bind(String propertyName, Object value) {
+        propertyStore.bind(propertyName, value);
+    }
     @Override
     public Validator getValidator() {
         return validator;

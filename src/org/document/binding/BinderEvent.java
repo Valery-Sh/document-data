@@ -30,7 +30,7 @@ public class BinderEvent extends EventObject {
         this.componentValue = componentValue;
         this.dataValue = dataValue;
     }
-    public BinderEvent(ListBinder source,Action action,Object dataValue,Object componentValue ) {
+    public BinderEvent(ListStateBinder source,Action action,Object dataValue,Object componentValue ) {
         this(source);
         this.action = action;
         this.componentValue = componentValue;
