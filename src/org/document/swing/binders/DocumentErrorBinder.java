@@ -1,6 +1,7 @@
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
+import org.document.Document;
 import org.document.binding.AbstractErrorBinder;
 
 /**
@@ -68,5 +69,4 @@ public class DocumentErrorBinder extends AbstractErrorBinder{
         return false;
     }
 
-    
 }

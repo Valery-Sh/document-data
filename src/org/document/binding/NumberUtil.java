@@ -91,12 +91,13 @@ public class NumberUtil {
     public static <T> T toNumber(String value, T clazz) {
         
         BigDecimal bd = bigDecimalOf(value);
-        if ( clazz.equals(BigDecimal.class)) {
-            return (T)bd;
+        
+        if ( clazz.equals(Byte.class)) {
+            return (T)(Byte)bd.byteValueExact();
+        } if ( clazz.equals(Short.class)) {
+            return (T)(Short)bd.shortValueExact();
         } else if ( clazz.equals(Integer.class)) {
             return (T)(Integer)bd.intValueExact();
-        } else if ( clazz.equals(Byte.class)) {
-            return (T)(Byte)bd.byteValueExact();
         } else if ( clazz.equals(Long.class)) {
             return (T)(Long)bd.longValueExact();
         } else if ( clazz.equals(Float.class)) {
@@ -105,6 +106,8 @@ public class NumberUtil {
             return (T)(Double)bd.doubleValue();
         } else if ( clazz.equals(BigInteger.class)) {
             return (T)(BigInteger)bd.toBigIntegerExact();
+        } else if ( clazz.equals(BigDecimal.class)) {
+            return (T)bd;
         } else if ( clazz.equals(String.class)) {
             return (T)(String)bd.toPlainString();
         }

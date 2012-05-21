@@ -9,7 +9,7 @@ import org.document.DocumentChangeEvent;
  * @author V. Shyshkin
  */
 public abstract class AbstractMultiErrorBinder extends AbstractErrorBinder {
-
+    protected String propertyWithError;
     private Set<String> propertySet;
     protected List<String> errorProperties;
     protected List<Exception> exceptions;
@@ -48,6 +48,7 @@ public abstract class AbstractMultiErrorBinder extends AbstractErrorBinder {
     }
 
     public void notifyError(String property, Exception e) {
+        propertyWithError = property;
         if (property == null) {
             errorProperties.clear();
             exceptions.clear();

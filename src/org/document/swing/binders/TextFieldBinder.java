@@ -4,6 +4,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.document.binding.AbstractEditablePropertyBinder;
+import org.document.binding.DefaultBinderConvertor;
 
 /**
  *
@@ -22,6 +23,7 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
     protected final void initBinder() {
         textField.getDocument().removeDocumentListener(this);
         textField.getDocument().addDocumentListener(this);
+        converter = new DefaultBinderConvertor(this);
     }
     
     @Override
@@ -45,8 +47,15 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
     protected Object componentValueOf(Object dataValue) {
         return dataValue == null ? null : dataValue.toString();
     }
-
     @Override
+    protected Object propertyValueOf(Object compValue) {
+        if ( converter == null ) {
+            converter = new DefaultBinderConvertor(this);
+        }
+        return converter.propertyValueOf(compValue);
+    }
+
+/*    @Override
     protected Object propertyValueOf(Object compValue) {
         String sv = compValue == null ? null : compValue.toString();
         if (sv != null && sv.trim().isEmpty()) {
@@ -54,7 +63,7 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
         }
         return sv;
     }
-
+*/
 
     @Override
     public Object getComponentValue() {

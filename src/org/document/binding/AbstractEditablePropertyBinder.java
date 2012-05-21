@@ -43,7 +43,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         } catch (ValidationException e) {
             firePropertyError(e);
         } catch (Exception e) {
-            firePropertyError(e);
+            ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName +"'. Invalid value: " + componentValue );
+            firePropertyError(ve);
         }
     }
 

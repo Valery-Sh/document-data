@@ -6,6 +6,7 @@ package org.document.swing.binders;
 
 import java.util.Arrays;
 import javax.swing.JLabel;
+import org.document.ValidationException;
 import org.document.binding.AbstractMultiErrorBinder;
 
 /**
@@ -33,6 +34,11 @@ public class MultiErrorBinder extends AbstractMultiErrorBinder{
     @Override
     protected void setComponentValue(Object componentValue) {
         String s = componentValue == null ? "" : componentValue.toString();
+/*    if ( exception != null && (exception instanceof ValidationException)) {
+            ValidationException e = (ValidationException)exception;
+            s += "Property name='" + e.getPropertyName() + "'; " + e.getMessage();
+        }
+*/        
         textField.setText(s);
     }
 

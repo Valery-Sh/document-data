@@ -1,5 +1,6 @@
 package org.document.binding;
 
+import org.document.Document;
 import org.document.DocumentChangeListener;
 import org.document.HasDocumentAlias;
 
@@ -8,6 +9,10 @@ import org.document.HasDocumentAlias;
  * @author V. Shyshkin
  */
 public interface PropertyBinder extends Binder,DocumentChangeListener, HasDocumentAlias {
+    Document getDocument();
+    
+    BinderConverter getConverter();
+    void setConverter(BinderConverter converter);   
     /**
      * Returns a property name whose value is bound to a component.
      * @return a property name as a <code>String</code>.

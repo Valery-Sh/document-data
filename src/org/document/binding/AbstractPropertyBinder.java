@@ -18,12 +18,28 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
     protected String propertyName;
     protected Document document;
     protected List<BinderListener> binderListeners;
+    
+    protected BinderConverter converter;
 
     @Override
     public Object getAlias() {
         return alias;
     }
 
+    @Override
+    public BinderConverter getConverter() {
+        return converter;
+    }
+    
+    public void setConverter(BinderConverter converter) {
+        this.converter = converter;
+    }
+
+    @Override
+    public Document getDocument() {
+        return document;
+    }
+    
     @Override
     public void addBinderListener(BinderListener l) {
         if (this.binderListeners == null) {

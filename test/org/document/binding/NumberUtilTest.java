@@ -190,49 +190,54 @@ public class NumberUtilTest {
     @Test
     public void testToNumber() {
         System.out.println("testToNumber(String) default");
-        String str = "123";
+
+        String str = "127";
+        Object expResult = Byte.parseByte(str);
+        Object result = NumberUtil.toNumber(str, Byte.class);
+        assertEquals(expResult, result);
+        assertTrue(result instanceof Byte);
         
-        Object expResult = new Integer(123);
-        Object result = NumberUtil.toNumber(str, Integer.class);
+        
+        expResult = Short.parseShort(str);
+        result = NumberUtil.toNumber(str, Short.class);
+        assertEquals(expResult, result);
+        assertTrue(result instanceof Short);
+
+        str = "123";
+        expResult = new Integer(123);
+        result = NumberUtil.toNumber(str, Integer.class);
         assertEquals(expResult, result);
         assertTrue(result instanceof Integer);
         
+        
+        expResult = 123L;
+        result = NumberUtil.toNumber(str, Long.class);
+        assertEquals(expResult, result);
+        assertTrue(result instanceof Long);
+        
+        expResult = new Float("123.4");
+        result = NumberUtil.toNumber("123.4", Float.class);
+        assertEquals(expResult, result);
+        
+        expResult = new Double("123.4");
+        result = NumberUtil.toNumber("123.4", Double.class);
+        assertEquals(expResult, result);
+        assertTrue(result instanceof Double);
+        
+
+        expResult = new BigInteger("123");
+        result = NumberUtil.toNumber("123", BigInteger.class);
+        assertEquals(expResult, result);
+        assertTrue(result instanceof BigInteger);
+
         str = "123.01";
         expResult = new BigDecimal("123.01");
         result = NumberUtil.toNumber(str, BigDecimal.class);
         assertEquals(expResult, result);
         assertTrue(result instanceof BigDecimal);
         
-        
-        str = "127";
-        expResult = Byte.parseByte(str);
-        result = NumberUtil.toNumber(str, Byte.class);
-        assertEquals(expResult, result);
-        assertTrue(result instanceof Byte);
-        
-
-        expResult = 127L;
-        result = NumberUtil.toNumber(str, Long.class);
-        assertEquals(expResult, result);
-        assertTrue(result instanceof Long);
-        
-        expResult = new Float("127.1");
-        result = NumberUtil.toNumber("127.1", Float.class);
-        assertEquals(expResult, result);
-        
-        expResult = new Double("127.1");
-        result = NumberUtil.toNumber("127.1", Double.class);
-        assertEquals(expResult, result);
-        assertTrue(result instanceof Double);
-        
-
-        expResult = new BigInteger("127");
-        result = NumberUtil.toNumber("127", BigInteger.class);
-        assertEquals(expResult, result);
-        assertTrue(result instanceof BigInteger);
-
-        expResult = "127.01";
-        result = NumberUtil.toNumber("12701E-2", String.class);
+        expResult = "123.01";
+        result = NumberUtil.toNumber("12301E-2", String.class);
         assertEquals(expResult, result);
         assertTrue(result instanceof String);
         
@@ -285,6 +290,8 @@ public class NumberUtilTest {
         System.out.println("BiDec=" +bd + "; SCALE: " + bd.scale());
         assertEquals(bd.scale(), 3);
         
+        assertTrue(Number.class.isAssignableFrom(Integer.class));
+
     }
 }
     
