@@ -11,7 +11,8 @@ import org.document.binding.DefaultBinderConvertor;
  * @author Valery
  */
 public class TextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener {
-
+    
+    public String _ID_;
     protected JTextField textField;
 
     public TextFieldBinder(String propName, JTextField textField) {
@@ -95,6 +96,7 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
 
     @Override
     public void removeUpdate(DocumentEvent e) {
+        javax.swing.text.Document dd;
         this.componentChanged(textField.getText());
     }
 

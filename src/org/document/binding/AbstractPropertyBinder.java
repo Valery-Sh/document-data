@@ -13,12 +13,13 @@ import org.document.DocumentChangeEvent;
  * @author V. Shyshkin
  */
 public abstract class AbstractPropertyBinder implements PropertyBinder {
-
+    
+    
+    
     private Object alias;
     protected String propertyName;
     protected Document document;
     protected List<BinderListener> binderListeners;
-    
     protected BinderConverter converter;
 
     @Override
@@ -31,6 +32,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
         return converter;
     }
     
+    @Override
     public void setConverter(BinderConverter converter) {
         this.converter = converter;
     }

@@ -10,12 +10,16 @@ import org.document.*;
  * @author V. Shyshkin
  */
 public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBinder {
+    protected boolean componentBusy;    
     /**
      * 
      * @param componentValue the new component specific value
      */
     protected void componentChanged(Object componentValue) {
         if (document == null) {
+            return;
+        }
+        if (componentBusy ) {
             return;
         }
         if (document.propertyStore() instanceof HasDocumentState) {
@@ -38,6 +42,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                     v.validate(propertyName, convertedValue);
                 }
             }
+            componentBusy = true;
             document.propertyStore().put(propertyName, convertedValue);
             fireComponentValueChange(convertedValue, componentValue);
         } catch (ValidationException e) {
@@ -45,6 +50,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         } catch (Exception e) {
             ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName +"'. Invalid value: " + componentValue );
             firePropertyError(ve);
+        } finally {
+            componentBusy = false;
         }
     }
 
@@ -97,6 +104,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      */
     @Override
     public void propertyChanged(Object propertyValue) {
+        if ( componentBusy ) {
+            return;
+        }
         Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
             return;

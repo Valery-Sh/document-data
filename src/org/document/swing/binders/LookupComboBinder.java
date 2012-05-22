@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import org.document.binding.AbstractEditablePropertyBinder;
+import org.document.binding.DefaultBinderConvertor;
 
 /**
  *
@@ -14,14 +15,18 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     
     protected JComboBox component;
     
+    
     public LookupComboBinder(String propName, JComboBox component) {
         this.component = component;
         this.propertyName = propName;
         initBinder();
     }
     protected final void initBinder() {
-        
+        component.removeActionListener(this);
+        component.addActionListener(this);
+        converter = new DefaultBinderConvertor(this);
     }
+    
     @Override
     protected void addComponentListeners() {
         component.addActionListener(this);
@@ -34,22 +39,29 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
 
     @Override
     public Object getComponentValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return component.getModel().getSelectedItem();
     }
 
     @Override
-    protected void setComponentValue(Object compValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected void setComponentValue(Object componentValue) {
+        component.getModel().setSelectedItem(componentValue);
     }
 
     @Override
-    protected Object componentValueOf(Object dataValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected Object componentValueOf(Object propertyValue) {
+        if (converter != null) {
+            return converter.componentValueOf(propertyValue);
+        }
+        return null;
     }
 
     @Override
-    protected Object propertyValueOf(Object compValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected Object propertyValueOf(Object componentValue) {
+        if (converter != null) {
+            return converter.propertyValueOf(componentValue);
+        }
+        return null;
+
     }
 
     @Override
@@ -59,7 +71,18 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        componentChanged(component.getModel().getSelectedItem());
     }
     
+/*    protected static class DefaultLookupComboConverter extends DefaultBinderConvertor {
+        
+        public DefaultLookupComboConverter(PropertyBinder binder) {
+            super(binder);
+        }
+        
+        public Object componentValueOf(Object propertyValue) {
+            
+        }
+    }
+*/
 }

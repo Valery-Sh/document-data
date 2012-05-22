@@ -51,7 +51,7 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
     
     @Override
     public C componentValueOf(P propertyValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return (C)propertyValue;
     }
     
 }
