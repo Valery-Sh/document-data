@@ -97,7 +97,6 @@ public class DocumentChangeEvent extends EventObject {
     public enum Action {
         documentChange,
         propertyChange,
-        propertyChanging,
         completeChanges,
         editingChange,
         propertyError, // notifies ErrorBinders

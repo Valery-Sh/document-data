@@ -10,7 +10,8 @@ import org.document.*;
  * @author V. Shyshkin
  */
 public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBinder {
-    protected boolean componentBusy;    
+    
+    protected boolean componentBusy;  //propertyValueChangingInProgressByTheBinder
     /**
      * 
      * @param componentValue the new component specific value
@@ -61,12 +62,6 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (event.getAction() == DocumentChangeEvent.Action.completeChanges) {
             componentChanged(getComponentValue());
         }
-    }
-
-    private void firePropertyChanging(Object dataValue, Object componentValue) {
-        BinderEvent.Action action = BinderEvent.Action.propertyChanging;
-        BinderEvent event = new BinderEvent(this, action, dataValue, componentValue);
-        notifyListeners(event);
     }
 
     private void fireComponentValueChange(Object dataValue, Object componentValue) {

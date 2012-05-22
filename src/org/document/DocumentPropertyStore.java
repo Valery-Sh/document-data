@@ -96,21 +96,12 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         if (!state.isEditing()) {
             state.setEditing(true);
         }
-        //validate(propertyName, value);
-
         /**
          * Here just calls DataUtils.setValue(propertyName.toString(), source,
          * value);
          */
         setPropertyValue(propertyName, value);
 
-        /*
-         * if (!documentChangeListeners.isEmpty()) { DocumentChangeEvent event =
-         * new DocumentChangeEvent(this,
-         * DocumentChangeEvent.Action.propertyChange);
-         * event.setPropertyName(propertyName); event.setOldValue(oldValue);
-         * event.setNewValue(value); fireDocumentEvent(event); }
-         */
     }
 
 //    @Override
@@ -250,8 +241,6 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         @Override
         public void react(BinderEvent event) {
             if (event.getAction() == BinderEvent.Action.componentValueChange) {
-                dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());
-            } else if (event.getAction() == BinderEvent.Action.propertyChanging) {
                 dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());
             }
 

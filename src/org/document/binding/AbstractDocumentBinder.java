@@ -261,6 +261,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                     //this.notifyDocumentError(e);
                     fireDocumentError(e);
                 }
+
             }
         }
         for (DocumentBinder child : childs) {
