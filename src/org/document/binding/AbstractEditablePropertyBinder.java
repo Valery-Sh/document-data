@@ -11,7 +11,7 @@ import org.document.*;
  */
 public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBinder {
     
-    protected boolean componentBusy;  //propertyValueChangingInProgressByTheBinder
+    protected boolean binderIsStillChangingProperty;  //propertyValueChangingInProgressByTheBinder
     /**
      * 
      * @param componentValue the new component specific value
@@ -20,7 +20,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (document == null) {
             return;
         }
-        if (componentBusy ) {
+        if (binderIsStillChangingProperty ) {
             return;
         }
         if (document.propertyStore() instanceof HasDocumentState) {
@@ -43,19 +43,26 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                     v.validate(propertyName, convertedValue);
                 }
             }
-            componentBusy = true;
+            binderIsStillChangingProperty = true;
             document.propertyStore().put(propertyName, convertedValue);
+            
             fireComponentValueChange(convertedValue, componentValue);
+            //binderIsStillChangingProperty = false;
+            //updateComponentView(convertedValue);
         } catch (ValidationException e) {
             firePropertyError(e);
         } catch (Exception e) {
             ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName +"'. Invalid value: " + componentValue );
             firePropertyError(ve);
         } finally {
-            componentBusy = false;
+            binderIsStillChangingProperty = false;
         }
     }
-
+    
+    protected void updateComponentView(Object propertyValue) {
+        
+    }
+    
     @Override
     public void react(DocumentChangeEvent event) {
         super.react(event);
@@ -99,7 +106,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      */
     @Override
     public void propertyChanged(Object propertyValue) {
-        if ( componentBusy ) {
+        if ( binderIsStillChangingProperty ) {
             return;
         }
         Object convertedValue = this.componentValueOf(propertyValue);

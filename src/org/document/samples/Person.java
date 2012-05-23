@@ -10,7 +10,7 @@ import org.document.Validator;
  */
 public class Person extends AbstractObjectDocument {
     
-    private Integer id;
+    private int id;
     private String firstName;
     private String lastName;
     private Date birthDay;
@@ -49,11 +49,11 @@ public class Person extends AbstractObjectDocument {
         bind("firstName", firstName);
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
         bind("id", id);
     }

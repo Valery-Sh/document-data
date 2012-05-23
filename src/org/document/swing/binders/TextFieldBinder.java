@@ -1,8 +1,11 @@
 package org.document.swing.binders;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.PlainDocument;
 import org.document.binding.AbstractEditablePropertyBinder;
 import org.document.binding.DefaultBinderConvertor;
 
@@ -10,7 +13,7 @@ import org.document.binding.DefaultBinderConvertor;
  *
  * @author Valery
  */
-public class TextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener {
+public class TextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener, ActionListener {
     
     public String _ID_;
     protected JTextField textField;
@@ -25,6 +28,8 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
         textField.getDocument().removeDocumentListener(this);
         textField.getDocument().addDocumentListener(this);
         converter = new DefaultBinderConvertor(this);
+        
+        textField.addActionListener(this);
     }
     
     @Override
@@ -37,6 +42,7 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
         if (oldValue != null && oldValue.equals(s)) {
             return;
         }
+        //((PlainDocument)textField.getDocument()).getDefaultRootElement()
         textField.setText(s);
     }
 
@@ -45,26 +51,22 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
     /*************************************************************/
     
     @Override
-    protected Object componentValueOf(Object dataValue) {
-        return dataValue == null ? null : dataValue.toString();
-    }
-    @Override
-    protected Object propertyValueOf(Object compValue) {
+    protected Object componentValueOf(Object propertyValue) {
+//        return dataValue == null ? null : dataValue.toString();
         if ( converter == null ) {
             converter = new DefaultBinderConvertor(this);
         }
-        return converter.propertyValueOf(compValue);
+        return converter.componentValueOf(propertyValue);
+        
+    }
+    @Override
+    protected Object propertyValueOf(Object componentValue) {
+        if ( converter == null ) {
+            converter = new DefaultBinderConvertor(this);
+        }
+        return converter.propertyValueOf(componentValue);
     }
 
-/*    @Override
-    protected Object propertyValueOf(Object compValue) {
-        String sv = compValue == null ? null : compValue.toString();
-        if (sv != null && sv.trim().isEmpty()) {
-            sv = null;
-        }
-        return sv;
-    }
-*/
 
     @Override
     public Object getComponentValue() {
@@ -92,17 +94,24 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
     @Override
     public void insertUpdate(DocumentEvent e) {
         this.componentChanged(textField.getText());
+        System.out.println("*** insertUpdate = " + textField.getText());        
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
         javax.swing.text.Document dd;
         this.componentChanged(textField.getText());
+        System.out.println("*** removeUpdate = " + textField.getText());        
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        System.out.println("*** NEWVALUE 3 = " + textField.getText());
+        System.out.println("*** changeUpdate = " + textField.getText());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("*** actionPerformed = " + textField.getText());
     }
     
 }
