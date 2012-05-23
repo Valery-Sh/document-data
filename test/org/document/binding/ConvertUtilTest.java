@@ -6,6 +6,8 @@ package org.document.binding;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import static org.junit.Assert.*;
@@ -86,6 +88,11 @@ public class ConvertUtilTest {
         expResult = new BigDecimal("-12.3");
         result = ConvertUtil.bigDecimalOf(str);
         assertEquals(expResult, result);        
+
+        str = "   -12,3       ";
+        expResult = new BigDecimal("-12.3");
+        result = ConvertUtil.bigDecimalOf(str);
+        assertEquals(expResult, result);        
         
         try {
             ConvertUtil.bigDecimalOf("+");
@@ -100,11 +107,11 @@ public class ConvertUtilTest {
         //
         // We allow ',' as a decimal separator ( now check decimal group)
         //
-        str = "   -1,23,456,78.3       ";
+/*        str = "   -1,23,456,78.3       ";
         expResult = new BigDecimal("-12345678.3");
         result = ConvertUtil.bigDecimalOf(str);
         assertEquals(expResult, result);        
-        
+*/        
         try {
             ConvertUtil.bigDecimalOf(",1");
             ConvertUtil.bigDecimalOf("1,");
@@ -375,8 +382,20 @@ public class ConvertUtilTest {
      */
     @Test
     public void testMy() {
-        System.out.println("BIGDECIMAL");
+        System.out.println("Date = " + (new Date()));
         String str = null;
+        NumberFormat nf = new DecimalFormat();
+        ((DecimalFormat)nf).toPattern();
+        System.out.println("Number = " + nf.format(1234567.78));
+        System.out.println("Number pattern = " + ((DecimalFormat)nf).toPattern());
+        BigDecimal bd = new BigDecimal("1234.56");
+        System.out.println("BigDec = " + bd);        
+        try {
+            System.out.println("parse pattern = " + ((DecimalFormat)nf).parse("1234567,78"));        
+        }catch(Exception e) {
+            
+        }
+        
 
     }
 }

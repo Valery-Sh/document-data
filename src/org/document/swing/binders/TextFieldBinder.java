@@ -94,24 +94,24 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
     @Override
     public void insertUpdate(DocumentEvent e) {
         this.componentChanged(textField.getText());
-        System.out.println("*** insertUpdate = " + textField.getText());        
+        //System.out.println("*** insertUpdate = " + textField.getText());        
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
         javax.swing.text.Document dd;
         this.componentChanged(textField.getText());
-        System.out.println("*** removeUpdate = " + textField.getText());        
+        //System.out.println("*** removeUpdate = " + textField.getText());        
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        System.out.println("*** changeUpdate = " + textField.getText());
+        //System.out.println("*** changeUpdate = " + textField.getText());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("*** actionPerformed = " + textField.getText());
+        propertyChanged(document.propertyStore().get(propertyName));
     }
     
 }

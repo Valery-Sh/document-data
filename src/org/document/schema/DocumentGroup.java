@@ -1,7 +1,6 @@
 
 package org.document.schema;
 
-import java.util.Map;
 import org.document.Document;
 
 /**

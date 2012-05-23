@@ -33,7 +33,7 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
         
         Class propertyType = definePropertyType();
         
-        boolean isPrimitive = propertyType.isPrimitive();
+        //boolean isPrimitive = propertyType.isPrimitive();
         Class wrapper = null; 
         if ( propertyType.isPrimitive() ) {
              wrapper = DataUtils.getWrapper(propertyType);
