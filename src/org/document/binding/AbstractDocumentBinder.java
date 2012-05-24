@@ -29,7 +29,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         errorBinders = new HashMap<String, List<T>>();
         documentErrorBinders = new ArrayList<T>();
         childs = new ArrayList<DocumentBinder>();
-
     }
 
     protected AbstractDocumentBinder(Object alias) {
@@ -47,19 +46,33 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return null;
     }
 
-    @Override
+/*    @Override
     public void addBinderListener(BinderListener l) {
-        this.binderListeners.add(l);
+        binderListeners.add(l);
+        if (binderListeners.size() > 1 ) {
+            throw new IndexOutOfBoundsException("AbstractDocumentBinder. Only one BinderListener can be registered");
+        }
+
     }
 
     @Override
     public void removeBinderListener(BinderListener l) {
-        this.binderListeners.remove(l);
+        binderListeners.remove(l);
     }
+*/
 
+    @Override
+    public abstract void addBinderListener(BinderListener l);
+    
+    @Override
+    public abstract void removeBinderListener(BinderListener l);
+    
+    protected List<BinderListener> getBinderListeners() {
+        return binderListeners;
+    }
     protected void add(T binder, Map<String, List<T>> binderMap) {
         String propertyName = ((PropertyBinder) binder).getPropertyName();
-        //Object propPath = ((PropertyBinder) binder).getPropertyName();
+
         List<T> blist = binderMap.get(propertyName);
         if (blist == null) {
             blist = new ArrayList<T>();

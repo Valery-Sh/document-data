@@ -129,7 +129,6 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
-//            event.setBinder(binder);
             event.setOldValue(oldValue);
             event.setNewValue(value);
             fireDocumentEvent(event);
@@ -138,12 +137,12 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
 
     @Override
     public void addDocumentChangeListener(DocumentChangeListener listener) {
-        this.documentChangeListeners.add(listener);
+        documentChangeListeners.add(listener);
     }
 
     @Override
     public void removeDocumentChangeListener(DocumentChangeListener listener) {
-        this.documentChangeListeners.remove(listener);
+        documentChangeListeners.remove(listener);
     }
 
     @Override

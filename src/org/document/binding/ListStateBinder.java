@@ -34,6 +34,20 @@ public abstract class ListStateBinder<T extends PropertyBinder>  extends Documen
     }
     
     @Override
+    public void addBinderListener(BinderListener l) {
+        getBinderListeners().add(l);
+        if (getBinderListeners().size() > 1 ) {
+            throw new IndexOutOfBoundsException("AbstractDocumentBinder. Only one BinderListener can be registered");
+        }
+
+    }
+
+    @Override
+    public void removeBinderListener(BinderListener l) {
+        binderListeners.remove(l);
+    }
+    
+    @Override
     public void react(BinderEvent event) {
 
         switch (event.getAction()) {

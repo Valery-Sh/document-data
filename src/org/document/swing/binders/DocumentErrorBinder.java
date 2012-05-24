@@ -1,7 +1,6 @@
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
-import org.document.Document;
 import org.document.binding.AbstractErrorBinder;
 
 /**
@@ -50,6 +49,7 @@ public class DocumentErrorBinder extends AbstractErrorBinder{
     @Override
     public void notifyError(Exception e) {
         //super.notifyError(e);
+        exception = e;
         if ( e == null ) {
             textField.setVisible(false);
             propertyChanged(false);

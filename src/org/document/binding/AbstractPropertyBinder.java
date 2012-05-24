@@ -48,6 +48,10 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
             this.binderListeners = new ArrayList<BinderListener>(1);
         }
         binderListeners.add(l);
+        if (binderListeners.size() > 1 ) {
+            throw new IndexOutOfBoundsException("Only one BinderListener can be registered");
+        }
+        
     }
 
     @Override

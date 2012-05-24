@@ -21,5 +21,12 @@ public class DocumentBinder<T extends PropertyBinder>  extends AbstractDocumentB
     protected DocumentBinder create() {
         return new DocumentBinder();
     }
+    @Override
+    public void addBinderListener(BinderListener l) {
+    }
+
+    @Override
+    public void removeBinderListener(BinderListener l) {
+    }
 
 }
