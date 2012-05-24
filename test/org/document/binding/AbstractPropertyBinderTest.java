@@ -38,17 +38,6 @@ public class AbstractPropertyBinderTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of getAlias method, of class AbstractPropertyBinder.
-     */
-    @Test
-    public void testGetAlias() {
-        System.out.println("getAlias");
-        AbstractPropertyBinder instance = new AbstractPropertyBinderImpl();
-        Object expResult = null;
-        Object result = instance.getAlias();
-        assertEquals(expResult, result);
-    }
 
     /**
      * Test of getConverter method, of class AbstractPropertyBinder.

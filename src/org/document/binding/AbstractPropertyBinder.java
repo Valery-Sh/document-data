@@ -22,11 +22,11 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
 
-    @Override
+/*    @Override
     public Object getAlias() {
         return alias;
     }
-
+*/
     @Override
     public BinderConverter getConverter() {
         return converter;

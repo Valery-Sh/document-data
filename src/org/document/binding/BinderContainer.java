@@ -7,10 +7,11 @@ import org.document.DocumentChangeListener;
  *
  * @author V. Shyskin
  */
-public interface BinderCollection<T extends Binder> extends DocumentChangeListener {//, ListChangeListener {
+public interface BinderContainer<T extends Binder> extends DocumentChangeListener {//, ListChangeListener {
+    
     void add(T binder);
     void remove(T binder);
-    
+    Object getAlias();
     //BinderCollection getSubset(Object subsetId);
     Document getDocument();
     void setDocument(Document object);

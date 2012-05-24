@@ -10,7 +10,7 @@ import org.document.*;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderCollection<T>, HasDocumentAlias {
+public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderContainer<T> {//, HasDocumentAlias {
 
     private Object alias;
     protected List<DocumentChangeListener> documentListeners;

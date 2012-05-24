@@ -2,13 +2,13 @@ package org.document.binding;
 
 import org.document.Document;
 import org.document.DocumentChangeListener;
-import org.document.HasDocumentAlias;
+//import org.document.HasDocumentAlias;
 
 /**
  *
  * @author V. Shyshkin
  */
-public interface PropertyBinder extends Binder,DocumentChangeListener, HasDocumentAlias {
+public interface PropertyBinder extends Binder,DocumentChangeListener {//, HasDocumentAlias {
     Document getDocument();
     
     BinderConverter getConverter();

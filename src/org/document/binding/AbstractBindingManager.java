@@ -10,7 +10,7 @@ import org.document.*;
 public abstract class AbstractBindingManager<T extends Document> implements BinderListener {
 
     protected static final String DEFAULT_ALIAS = "default alias";
-    private BinderSet binderCollection;
+    private BinderMap documentBinders;
 //    protected Map<Object, DocumentBindings> documentBindings;
 //    protected ListBindings listBinding;
     protected T selected;
@@ -22,19 +22,19 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     private List<T> sourceList;
     
     private ListState listState;
-    private BinderSet listBinderCollection;    
+    private BinderMap documentListBinders;    
     
     public AbstractBindingManager(List sourceList) {
         this();
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
-        listBinderCollection = new BinderSet(this);
+        documentListBinders = new BinderMap(this);
         //validators = new HashMap<Object,Validator>();
     }
     
     protected AbstractBindingManager() {
-        binderCollection = new BinderSet(this);
+        documentBinders = new BinderMap(this);
     }
 /*    public void addValidator(Object alias, Validator validator) {
         validators.put(alias, validator);
@@ -44,8 +44,8 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         return this.listState;
     }
     
-    protected BinderSet getBinders() {
-        return this.binderCollection;
+    protected BinderMap getBinders() {
+        return this.documentBinders;
     }
     public T getSelected() {
         return selected;
@@ -60,7 +60,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         T old = this.selected;
         
         boolean markedNew = false;
-        this.binderCollection.setDocument(selected);
+        this.documentBinders.setDocument(selected);
         Object o = listState.getSelected();
         this.listState.setSelected(selected);
         this.selected = selected;
@@ -77,7 +77,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         T old = this.selected;
         
         boolean markedNew = false;
-        this.binderCollection.setDocument(selected);
+        this.documentBinders.setDocument(selected);
     }
     
     protected abstract void afterSetSelected(T oldSelected);
@@ -89,7 +89,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
             }
             binder.addBinderListener(this);
-            listBinderCollection.add(binder);
+            documentListBinders.add(binder);
             ((ListStateBinder)binder).setDocument(getListState());
             
         } else {
@@ -105,10 +105,10 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     public void removeBinder(Binder binder) {
         if (binder instanceof ListStateBinder) {
             binder.removeBinderListener(this);
-            listBinderCollection.remove(binder);
-        } else {
-            this.binderCollection.add(binder);
-        }
+            documentListBinders.remove(binder);
+        }// else {
+         //   this.binderCollection.add(binder);
+        //}
     }
 
     protected PropertyStore getPropertyStore() {
@@ -140,13 +140,28 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     public DocumentBinder getDocumentBinder(Document doc) {
         return getDocumentBinder(getAlias(doc));
     }
+    
     public DocumentBinder getDocumentBinder(Object alias) {
         Object a = DEFAULT_ALIAS;
         if (alias != null) {
             a = alias;
         }
+        
+        DocumentBinder result = (DocumentBinder)documentBinders.get(a);
+        if (result == null) {
+            result = new DocumentBinder(a);
+            documentBinders.add(result);
+        }
+        return result;
+    }
 
-        Set<Binder> set = binderCollection.getSubset(a);
+/*    public DocumentBinder getDocumentBinder(Object alias) {
+        Object a = DEFAULT_ALIAS;
+        if (alias != null) {
+            a = alias;
+        }
+
+        Set<Binder> set = documentBinders.getSubset(a);
         DocumentBinder result = null;
         for (Binder b : set) {
             if (b instanceof DocumentBinder) {
@@ -156,11 +171,11 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         }
         if (result == null) {
             result = new DocumentBinder(a);
-            binderCollection.add(result);
+            documentBinders.add(result);
         }
         return result;
     }
-
+*/
     @Override
     public void react(BinderEvent event) {
         switch (event.getAction()) {
@@ -188,27 +203,54 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         return true;
     }
 
-    public static class BinderSet<T extends Binder> implements BinderCollection<T> {
+    public static class BinderMap<T extends Binder> implements BinderContainer<T> {
 
         private AbstractBindingManager bindingManager;
         private Document selected;
-        private Set<T> binders;
+        private Map<Object,T> binders;
 
-        public BinderSet(AbstractBindingManager bindingManager) {
-            this.binders = new HashSet<T>();
+        public BinderMap(AbstractBindingManager bindingManager) {
+            this.binders = new HashMap<Object,T>();
             this.bindingManager = bindingManager;
         }
-
+        /**
+         * Now doesn't in use
+         * @return 
+         */
+        @Override
+        public Object getAlias() {
+            return "documentBinders";
+        }
+        
         @Override
         public void add(T binder) {
-            binders.add(binder);
+            binders.put(((BinderContainer)binder).getAlias(),binder);
         }
 
         @Override
         public void remove(T binder) {
             binders.remove(binder);
         }
+        public T get(Object alias) {
+            return this.binders.get(alias);
+        }
 
+/*        public Set<T> getSubset(Object alias) {
+            Set<T> subset = new HashSet<T>();
+            for (T b : binders) {
+                if (b instanceof HasDocumentAlias) {
+                    Object a = ((HasDocumentAlias) b).getAlias();
+                    if (a == alias) {
+                        subset.add(b);
+                    } else if (a != null && a.equals(alias)) {
+                        subset.add(b);
+                    } else if (alias != null && alias.equals(a)) {
+                        subset.add(b);
+                    }
+                }
+            }
+            return subset;
+        }
         public Set<T> getSubset(Object alias) {
             Set<T> subset = new HashSet<T>();
             for (T b : binders) {
@@ -225,14 +267,14 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             }
             return subset;
         }
-
+*/
         @Override
         public void setDocument(Document newDocument) {
 
             Document oldSelected = this.selected;
             this.selected = newDocument;
 
-            for (T b : binders) {
+            for (T b : binders.values()) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
                 e.setOldValue(oldSelected);
                 e.setNewValue(newDocument);
