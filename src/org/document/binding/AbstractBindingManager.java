@@ -10,46 +10,42 @@ import org.document.*;
 public abstract class AbstractBindingManager<T extends Document> implements BinderListener {
 
     protected static final String DEFAULT_ALIAS = "default alias";
-    private BinderSet binders;
+    private BinderSet binderCollection;
 //    protected Map<Object, DocumentBindings> documentBindings;
 //    protected ListBindings listBinding;
     protected T selected;
     //protected ValidatorCollection validators;
-    protected Map<Object,Validator> validators;
+//    protected Map<Object,Validator> validators;
     
     protected BindingRecognizer recognizer;
     //private List<DocumentSelectListener> selectDocumentListeners;
     private List<T> sourceList;
     
     private ListState listState;
-    private BinderSet listBinders;    
+    private BinderSet listBinderCollection;    
     
     public AbstractBindingManager(List sourceList) {
         this();
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
-        listBinders = new BinderSet(this);
-        validators = new HashMap<Object,Validator>();
+        listBinderCollection = new BinderSet(this);
+        //validators = new HashMap<Object,Validator>();
     }
-
     
     protected AbstractBindingManager() {
-        binders = new BinderSet(this);
-        
+        binderCollection = new BinderSet(this);
     }
-    public void addValidator(Object alias, Validator validator) {
+/*    public void addValidator(Object alias, Validator validator) {
         validators.put(alias, validator);
     }
-    
+*/    
     protected ListState getListState() {
         return this.listState;
     }
     
-    //public abstract AbstractBindingManager getBindingManager();
-    
     protected BinderSet getBinders() {
-        return this.binders;
+        return this.binderCollection;
     }
     public T getSelected() {
         return selected;
@@ -64,7 +60,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         T old = this.selected;
         
         boolean markedNew = false;
-        this.binders.setDocument(selected);
+        this.binderCollection.setDocument(selected);
         Object o = listState.getSelected();
         this.listState.setSelected(selected);
         this.selected = selected;
@@ -81,7 +77,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         T old = this.selected;
         
         boolean markedNew = false;
-        this.binders.setDocument(selected);
+        this.binderCollection.setDocument(selected);
     }
     
     protected abstract void afterSetSelected(T oldSelected);
@@ -93,19 +89,25 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
             }
             binder.addBinderListener(this);
-            listBinders.add(binder);
+            listBinderCollection.add(binder);
             ((ListStateBinder)binder).setDocument(getListState());
+            
         } else {
-            binders.add(binder);
+            throw new IllegalArgumentException("The 'binder' argument type must be  org.document.ListStateBinder or it's subclass");
         }
+        
+        
+        //else {
+          //  binders.add(binder);
+        //}
     }
 
     public void removeBinder(Binder binder) {
         if (binder instanceof ListStateBinder) {
             binder.removeBinderListener(this);
-            listBinders.remove(binder);
+            listBinderCollection.remove(binder);
         } else {
-            this.binders.add(binder);
+            this.binderCollection.add(binder);
         }
     }
 
@@ -144,7 +146,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             a = alias;
         }
 
-        Set<Binder> set = binders.getSubset(a);
+        Set<Binder> set = binderCollection.getSubset(a);
         DocumentBinder result = null;
         for (Binder b : set) {
             if (b instanceof DocumentBinder) {
@@ -154,7 +156,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         }
         if (result == null) {
             result = new DocumentBinder(a);
-            binders.add(result);
+            binderCollection.add(result);
         }
         return result;
     }
@@ -243,27 +245,17 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             return this.selected;
         }
 
-        @Override
-        public void addDocumentChangeListener(DocumentChangeListener l) {
+        //@Override
+/*        public void addDocumentChangeListener(DocumentChangeListener l) {
         }
         
-        @Override
+        //@Override
         public void removeDocumentChangeListener(DocumentChangeListener l) {
         }
-
+*/
         @Override
         public void react(DocumentChangeEvent event) {
         }
 
-/*        @Override
-        public void listChanged(ListChangeEvent event) {
-            for (T b : binders) {
-                if ( b instanceof ListChangeListener) {
-                    ((ListChangeListener)b).listChanged(event);
-                }            
-            }
-
-        }
-*/
     }
 }//class AbstractBindingManager

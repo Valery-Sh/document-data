@@ -91,8 +91,16 @@ public class AbstractEditablePropertyBinderTest {
         instance.propertyChanged("Tom");
         assertEquals("Tom",instance.getComponentValue());
     }
-
-
+ private int count = 0;
+ 
+ public void testMy1() {
+   count++;
+   assertEquals(1, count);
+ }
+ public void testMy2() {
+    count++;
+    assertEquals(1, count);
+ }
     public static class EditablePropertyBinderImpl extends AbstractEditablePropertyBinder implements PropertyChangeListener {
         
         protected ComponentImpl component;

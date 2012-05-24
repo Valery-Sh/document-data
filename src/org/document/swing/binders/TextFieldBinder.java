@@ -26,9 +26,9 @@ public class TextFieldBinder extends AbstractEditablePropertyBinder implements D
     protected final void initBinder() {
         textField.getDocument().removeDocumentListener(this);
         textField.getDocument().addDocumentListener(this);
-        converter = new DefaultBinderConvertor(this);
-        
+        textField.removeActionListener(this);
         textField.addActionListener(this);
+        converter = new DefaultBinderConvertor(this);
     }
     
     @Override

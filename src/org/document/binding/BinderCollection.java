@@ -2,7 +2,6 @@ package org.document.binding;
 
 import org.document.Document;
 import org.document.DocumentChangeListener;
-import org.document.ListChangeListener;
 
 /**
  *
@@ -15,7 +14,7 @@ public interface BinderCollection<T extends Binder> extends DocumentChangeListen
     //BinderCollection getSubset(Object subsetId);
     Document getDocument();
     void setDocument(Document object);
-    void addDocumentChangeListener(DocumentChangeListener l);
-    void removeDocumentChangeListener(DocumentChangeListener l);
+   // void addDocumentChangeListener(DocumentChangeListener l);
+   // void removeDocumentChangeListener(DocumentChangeListener l);
 
 }
