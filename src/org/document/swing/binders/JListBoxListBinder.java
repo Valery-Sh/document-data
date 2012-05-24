@@ -74,23 +74,6 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             }
 
         }
-
-        /**
-         * It is assumed that this method should be called when you want to set
-         * the value of the component and do not want that in response a
-         * component generated an event. In this implementation the method does
-         * nothing.
-         *
-         * @param dataValue a data value. Before assign it to a component it
-         * should be converted to a component value.
-         */
-/*        @Override
-        public void propertyChanged(Object dataValue) {
-            removeComponentListeners();
-            setComponentValue(componentValueOf(dataValue));
-            addComponentListeners();
-        }
-*/
         @Override
         public void setComponentValue(Object value) {
             setComponentSelectedIndex((Integer) value);

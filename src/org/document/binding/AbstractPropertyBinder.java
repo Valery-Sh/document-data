@@ -52,7 +52,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
 
     @Override
     public void removeBinderListener(BinderListener l) {
-        if (this.binderListeners == null) {
+        if (binderListeners == null || binderListeners.isEmpty()) {
             return;
         }
         this.binderListeners.remove(l);

@@ -22,5 +22,4 @@ public class DocumentBinder<T extends PropertyBinder>  extends AbstractDocumentB
         return new DocumentBinder();
     }
 
-
 }

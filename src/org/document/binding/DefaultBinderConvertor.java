@@ -27,8 +27,8 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
     }
 
     @Override
-    public P propertyValueOf(C componentValue) {
-        Object result = null;
+    public Object propertyValueOf(Object componentValue) {
+        Object result;
         String s = componentValue == null ? "" : componentValue.toString();
         
         Class propertyType = definePropertyType();
@@ -45,16 +45,20 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
             result = ConvertUtil.toNumber(s, propertyType);
         }  else if ( Number.class.isAssignableFrom(propertyType)) {
             result = ConvertUtil.toNumber(s, propertyType);
+        } else if ( propertyType.equals(Boolean.class) || propertyType.equals(boolean.class)) {
+            result = ConvertUtil.toBoolean(s, propertyType);
         } else if ( propertyType.equals(java.util.Date.class) ||
                     propertyType.equals(java.sql.Date.class) ||
                     propertyType.equals(java.util.Calendar.class) ) {
             result = ConvertUtil.toDate(s, propertyType);
+        } else {
+            result = componentValue;
         }
-        return (P)result;
+        return result;
     }
     
     @Override
-    public C componentValueOf(P propertyValue) {
+    public Object componentValueOf(Object propertyValue) {
         Object result = null;
         String s = propertyValue == null ? "" : propertyValue.toString();
         Class propertyType = definePropertyType();        
@@ -73,8 +77,12 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
             result = ConvertUtil.stringOf((java.sql.Date)propertyValue);
         } else if ( propertyType.equals(java.util.Calendar.class) ) {
             result = ConvertUtil.stringOf((java.util.Calendar)propertyValue);
+        } else if ( propertyType.equals(Boolean.class) ) {
+            result = ConvertUtil.stringOf((Boolean)propertyValue);
+        } else {
+            result = s;
         }
-        return (C)result;
+        return result;
     }
     
     protected Class definePropertyType() {

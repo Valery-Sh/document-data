@@ -11,6 +11,41 @@ import java.util.Calendar;
  * @author V. Shyskin
  */
 public class ConvertUtil {
+    
+    public static String stringOf(Boolean bool) {
+        if (bool == null) {
+            return "";
+        }
+        return bool ? "true" : "false";
+    }
+    
+    public static String sanitizeBoolean(String str) {
+        if (str == null || str.trim().length() == 0) {
+            return "";
+        }
+        String s = str.trim().toLowerCase();
+        String result = s;
+        
+        if ( s.equals("true") || s.equals("yes") ||  s.equals("y")) {
+            result = "true";
+        } else  if (s.equals("false") || s.equals("no") || s.equals("n")) {
+            result = "false";
+        }
+        return result;
+        
+    }
+    public static Boolean toBoolean(String value, Class clazz) {
+        String s = sanitizeBoolean(value);
+        Boolean result;
+        if (s.length() == 0 && (((Class) clazz).isPrimitive()) ) {
+            result = false;
+        } else if (s.length() == 0){
+            result =  null;
+        } else {
+            result = Boolean.valueOf(s);
+        }
+        return result;
+    }
 
     public static String stringOf(Number number) {
         DecimalFormat df = new DecimalFormat();

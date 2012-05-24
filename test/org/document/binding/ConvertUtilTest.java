@@ -377,6 +377,66 @@ public class ConvertUtilTest {
         
 
     }    
+    
+     /**
+     * Test of default sanitizeBoolean method, of class ConvertUtil.
+     */
+    @Test
+    public void testSanitizeBoolean() {
+        System.out.println("sanitizeBoolean(String)");
+        String str = null;
+        String expResult;
+        String result = ConvertUtil.sanitizeBoolean(str);
+        assertTrue(result.isEmpty());
+        
+        str = "";
+        result = ConvertUtil.sanitizeBoolean(str);
+        assertTrue(result.isEmpty());  
+
+        str = "  tRuE ";
+        expResult = "true";
+        result = ConvertUtil.sanitizeBoolean(str);
+        assertEquals(expResult,result);  
+
+        str = "  Y ";
+        expResult = "true";
+        result = ConvertUtil.sanitizeBoolean(str);
+        assertEquals(expResult,result);  
+
+        str = "  FaLsE ";
+        expResult = "false";
+        result = ConvertUtil.sanitizeBoolean(str);
+        assertEquals(expResult,result);  
+
+        str = "  N ";
+        expResult = "false";
+        result = ConvertUtil.sanitizeBoolean(str);
+        assertEquals(expResult,result);  
+        
+    }    
+    
+     /**
+     * Test of default toBoolean method, of class ConvertUtil.
+     */
+    @Test
+    public void testToBoolean() {
+        System.out.println("toBoolean(String, Class)");
+        
+        String str = null;
+        Boolean expResult;
+        Boolean result = ConvertUtil.toBoolean(str,Boolean.class);
+        assertNull(result);
+        expResult = false;
+        result = ConvertUtil.toBoolean(str,boolean.class);
+        assertFalse(result);
+        
+        str = "";
+        result = ConvertUtil.toBoolean(str,Boolean.class);
+        assertNull(result);
+        result = ConvertUtil.toBoolean(str,boolean.class);
+        assertFalse(result);
+        
+    }
      /**
      * Test of default numberOf method, of class ConvertUtil.
      */

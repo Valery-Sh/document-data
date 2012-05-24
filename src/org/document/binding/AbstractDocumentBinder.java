@@ -15,7 +15,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     private Object alias;
     protected List<DocumentChangeListener> documentListeners;
     protected List<BinderListener> binderListeners;
-    protected Object id;
     protected String childName;
     protected List<DocumentBinder> childs;
     protected Map<String, List<T>> binders;
@@ -59,16 +58,16 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     }
 
     protected void add(T binder, Map<String, List<T>> binderMap) {
-        String propPath = ((PropertyBinder) binder).getPropertyName();
+        String propertyName = ((PropertyBinder) binder).getPropertyName();
         //Object propPath = ((PropertyBinder) binder).getPropertyName();
-        List<T> blist = binderMap.get(propPath);
+        List<T> blist = binderMap.get(propertyName);
         if (blist == null) {
             blist = new ArrayList<T>();
         }
         binder.addBinderListener(this);
         addDocumentChangeListener(binder);
         blist.add(binder);
-        binderMap.put(propPath, blist);
+        binderMap.put(propertyName, blist);
     }
 
     protected void add(T binder, List<T> binderList) {
@@ -178,15 +177,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         
     }
 
-    /*
-     * protected void firePropertyChanging(DocumentChangeEvent event) { String
-     * propName = event.getPropertyName(); Object oldValue =
-     * event.getOldValue(); Object newValue = event.getNewValue();
-     *
-     * List<T> blist = binders.get(propName); if (blist == null) { return; } for
-     * (Binder b : blist) { //b.dataChanged(oldValue, newValue);
-     * //b.dataChanged(newValue); b.react(event); } }
-     */
     @Override
     public Document getDocument() {
         return document;
@@ -295,7 +285,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.completeChanges);
         for (Map.Entry<String, List<T>> ent : this.binders.entrySet()) {
             for (Binder b : ent.getValue()) {
-                //b.componentChanged(b.getComponentValue());
                 b.react(event);
             }
         }
@@ -338,11 +327,11 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     protected abstract DocumentBinder create();
 
-    public AbstractDocumentBinder createChild(String childName) {
+    public DocumentBinder createChild(String childName) {
         DocumentBinder binder = create();
         binder.setChildName(childName);
         childs.add(binder);
-        if (document.propertyStore() != null) {
+        if (document != null && document.propertyStore() != null) {
             binder.setDocument((Document) getDocumentStore().get(childName));
         }
         return binder;
@@ -352,7 +341,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return this.childName;
     }
 
-    public void setChildName(String childName) {
+    protected void setChildName(String childName) {
         this.childName = childName;
     }
 
@@ -388,7 +377,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     @Override
     public void removeDocumentChangeListener(DocumentChangeListener l) {
-        if (documentListeners == null) {
+        if (documentListeners == null || documentListeners.isEmpty()) {
             return;
         }
         documentListeners.remove(l);

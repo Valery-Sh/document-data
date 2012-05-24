@@ -91,6 +91,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     }
 
     private void notifyListeners(BinderEvent event) {
+        if ( binderListeners == null ) {
+            return;
+        }
         for (BinderListener l : binderListeners) {
             l.react(event);
         }

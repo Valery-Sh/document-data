@@ -153,7 +153,7 @@ public class DefaultDocumentBindingTest {
     @Test
     public void testCompleteChanges_1() {
         System.out.println("DefaultDocumentBinding.completeChanges_1");
-        DocumentImpl doc = new DocumentImpl();
+        PropertyStoreImpl doc = new PropertyStoreImpl();
         doc.put("firstName", "Bill");
         doc.put("height", 175);
         
@@ -181,7 +181,7 @@ public class DefaultDocumentBindingTest {
         //
         // Try embedded document
         //
-        DocumentImpl addrDoc = new DocumentImpl();
+        PropertyStoreImpl addrDoc = new PropertyStoreImpl();
         addrDoc.put("country", "UK");
         addrDoc.put("zipCode", 99955);
         doc.put("address", addrDoc);
@@ -308,7 +308,7 @@ public class DefaultDocumentBindingTest {
     public void testSetDocument() {
         System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
         DocumentBindingHandler instance = new DocumentBindingHandler();
-        DocumentImpl doc = new DocumentImpl();
+        PropertyStoreImpl doc = new PropertyStoreImpl();
         instance.setDocument(doc,true);        
         PropertyStore result = instance.getDocumentStore();
         assertTrue( doc == result);
@@ -325,7 +325,7 @@ public class DefaultDocumentBindingTest {
         // change document
         //
         Object component = new MockComponent();
-        PropertyStore doc1 = new DocumentImpl();
+        PropertyStore doc1 = new PropertyStoreImpl();
         doc1.put("firstName", "Jone");
         MockBinder binder = (MockBinder)MockBinder.create("firstName", component);
         

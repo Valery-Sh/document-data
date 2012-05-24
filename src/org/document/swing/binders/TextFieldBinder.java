@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.PlainDocument;
 import org.document.binding.AbstractEditablePropertyBinder;
 import org.document.binding.DefaultBinderConvertor;
 
