@@ -2,6 +2,7 @@ package org.document.binding;
 
 import java.util.*;
 import org.document.*;
+import org.document.PropertyStore.Alias;
 
 /**
  * The class allows to declare any object of type {@link org.document.Document }
@@ -35,8 +36,8 @@ import org.document.*;
  *<p>
  * <code>BindingManager</code> class is a factory of objects of type
  * <code>DocumentBinder</code>. These objects are stored in the 
- * Map-table. To access 
- * the object one of three overloaded methods may be used:
+ * Map-table. To access  the object one of three overloaded 
+ * methods may be used:
  * <code>
  *<ul>
  *	<li>DocumentBinder getDocumentBinder(Class clazz)</li>
@@ -45,31 +46,32 @@ import org.document.*;
  *</ul>
  * </code>
  * <p>
- * Using the values of the supplied parameters, the constructor creates an array
- * of two elements. Each method builds an array in its own way. The method
- * <code>getDocumentBinder (Class clazz)</code> builds:
+ * Using the values of the supplied parameters, the constructor creates an object
+ * of type {@link PersonBinder.Alias}. Each method builds an object array in 
+ * its own way. The method <code>getDocumentBinder(Class clazz)</code>
+ * builds:
  * <code>
  * <pre>
- *		new Object[]{clazz, "default"}
+ *		new Alias(clazz, "default")
  * </pre>
  * </code>
  *
  * The method getDocumentBinder(Class clazz,String str) creates:
  * <code>
  * <pre>
- *		new Object[]{clazz, "default"}
+ *		new Alias(clazz, "default")
  * </pre>
  * </code>
  *
  * And the method getDocumentBinder() produces:
  * <code>
  * <pre>
- *		new Object[]{Object.clazz, "default"}
+ *		new Alias(Object.clazz, "default")
  * </pre>
  * </code>
  *
  *
- * The resulting array is used as the <code>key</code> to 
+ * The resulting object is used as the <code>key</code> to 
  * the map-table of objects of type <code>DocumentBinder</code>.
  *
  * When invoke a method <code>getDocumentBinder</code> , then if the 
@@ -80,7 +82,7 @@ import org.document.*;
  *
  * <code>BindingManager</code> does not impose any restrictions 
  * on the actual document classes. The only requirement is that 
- * every document should be a class that* implements the interface
+ * every document should be a class that implements the interface
  * <code>Document</code>.
  * <p>
  * This raises a problem related to the way in which
@@ -105,10 +107,11 @@ import org.document.*;
  * objects that implement <code>PropertyStore</code>, are the 
  * objects of class {@link org.document.DocumentPropertyStore } . 
  * The constructor of this class takes a parameter of type 
- * <code>Document</code> and creates an array of two elements. 
- * The first element is a subtype of the class <code>Document</code>,
+ * <code>Document</code> and creates an object of type <code>PropertyStore.Alias</code>. 
+ * The constructor accepts two parameters:
+ * The first is a subtype of the class <code>Document</code>,
  * and the second is a string of characters with a value of "default".
- * This array becomes the <code>alias</code> property value. When a
+ * This object becomes the <code>alias</code> property value. When a
  * <code>BindingManager</code> looks for a <code>DocumentBinder</code> 
  * in the table, then, if a <code>BindingRecognizer</code> is not 
  * <code>null</code>, it is used to search for, otherwise,
@@ -148,34 +151,35 @@ import org.document.*;
  */
 public abstract class AbstractBindingManager<T extends Document> implements BinderListener {
 
-    /**
-     * 
-     */
-    protected static final String DEFAULT_ALIAS = "default alias";
     private BinderMap documentBinders;
-//    protected Map<Object, DocumentBindings> documentBindings;
-//    protected ListBindings listBinding;
     /**
-     * 
+     *  Stores a reference to a document that is declared as <code>selected</code>.
      */
     protected T selected;
-    //protected ValidatorCollection validators;
-//    protected Map<Object,Validator> validators;
     /**
-     * 
+     * Contains custom <code>DocumentRecognizer</code> if defined.
      */
     protected BindingRecognizer recognizer;
-    //private List<DocumentSelectListener> selectDocumentListeners;
+    /**
+     * List of documents set by a constructor call.
+     */
     private List<T> sourceList;
     private ListState listState;
     private BinderMap documentListBinders;
 
     /**
+     * Creates an instance of the class for a given list of documents.
+     * If the parameter is not <code>null</code> then only 
+     * documents that the list contains may be declared 
+     * <code>selected</code>.
      * 
      * @param sourceList
      */
     public AbstractBindingManager(List sourceList) {
         this();
+        if ( sourceList == null ) {
+            return;
+        }
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
@@ -184,7 +188,9 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     /**
-     * 
+     * Create an instance of the class. 
+     * Instances created with this constructor may set
+     * any document as <code>selected</code>.
      */
     protected AbstractBindingManager() {
         documentBinders = new BinderMap(this);
@@ -196,35 +202,42 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
 
     /**
      * 
-     * @return
+     * @return an object of type {@link ListState} 
      */
     protected ListState getListState() {
         return this.listState;
     }
 
     /**
-     * 
-     * @return
+     * @return an object of type BinderMap that serves as a container
+     * for objects of type {@link DocumentBinder).
      */
     protected BinderMap getBinders() {
         return this.documentBinders;
     }
 
     /**
-     * 
-     * @return
+     * @return an object of type {@link org.document.Document)
+     * or it's subtype that currently is set as <i><code>selected</code></i>.
      */
     public T getSelected() {
         return selected;
     }
-
+    /**
+     * Indicates whether a given document is <code><i>selected</i></code>.
+     * @param document an object to be checked
+     * @return <code>true</code> if a given object is set <code>selected</code>. <code>false</code>
+     * otherwise.
+     */
     boolean isSelected(T document) {
         return document == getSelected() && document != null ? true : false;
     }
 
     /**
-     * 
-     * @param selected
+     * Sets a given object <code><i>selected</i></code>.
+     * Assigns a new document to all appropriate objects of
+     * type {@link DocumentBinder}.
+     * @param selected an object to be set <code>selected</code>
      */
     public void setSelected(T selected) {
         if (sourceList == null) {
@@ -244,8 +257,13 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     /**
-     * 
-     * @param selected
+     * Sets a given object <code><i>selected</i></code>.
+     * Assigns a new document to all appropriate objects of
+     * type {@link DocumentBinder}. 
+     * <P>The method provides the same functionality as 
+     * {@link #setSelected(org.document.Document) and those two methods may be 
+     * used interchangebly.
+     * @param selected an object to be set <code>selected</code>
      */
     public void setDocument(T selected) {
         if (sourceList != null) {
@@ -320,49 +338,37 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     //
     // ===========================================================
     //
+
     /**
      * 
      * @param doc
      * @return
      */
-    public Object getAlias(Document doc) {
-        Object result;
-        if (doc == null) {
-            return null;
+    public DocumentBinder findDocumentBinder(Document doc) {
+        if ( this.recognizer != null ) {
+            return findDocumentBinder(recognizer, doc);
         }
+        Alias key = doc.propertyStore().getAlias();
+        
+//Object o1 = new PropertyStore.Alias(Person.class,"default");        
+//Object o2 = new PropertyStore.Alias(Person.class,"default");        
 
-        if (recognizer != null) {
-            result = recognizer.getBindingId(doc);
-        } else {
-            result = DEFAULT_ALIAS;
+//boolean b = o1.equals(o2);
+        DocumentBinder result = (DocumentBinder) documentBinders.get(key);        
+        if (result == null ) {
+            result = (DocumentBinder)documentBinders.get(new Alias(Object.class,key.getSubAlias()));
         }
         return result;
-
     }
-
-    /**
-     * 
-     * @param doc
-     * @return
-     */
-    public DocumentBinder getDocumentBinder(Document doc) {
-        return getDocumentBinder(getAlias(doc));
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public DocumentBinder getDocumentBinder() {
+    protected DocumentBinder findDocumentBinder(BindingRecognizer br,Document doc) {
         return null;
     }
-
     /**
      * 
      * @param alias
      * @return
      */
-    public DocumentBinder getDocumentBinder(Object alias) {
+/*    public DocumentBinder getDocumentBinder(Object alias) {
         Object a = DEFAULT_ALIAS;
         if (alias != null) {
             a = alias;
@@ -375,28 +381,24 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         }
         return result;
     }
-
-    /*    public DocumentBinder getDocumentBinder(Object alias) {
-     Object a = DEFAULT_ALIAS;
-     if (alias != null) {
-     a = alias;
-     }
-
-     Set<Binder> set = documentBinders.getSubset(a);
-     DocumentBinder result = null;
-     for (Binder b : set) {
-     if (b instanceof DocumentBinder) {
-     result = (DocumentBinder) b;
-     break;
-     }
-     }
-     if (result == null) {
-     result = new DocumentBinder(a);
-     documentBinders.add(result);
-     }
-     return result;
-     }
-     */
+    */ 
+    public DocumentBinder getDocumentBinder(Class clazz) {
+        return getDocumentBinder(clazz,"default");
+    }
+    public DocumentBinder getDocumentBinder(Class clazz, String subAlias) {
+        Object key  = new Alias(clazz,subAlias);
+        DocumentBinder result = (DocumentBinder) documentBinders.get(key);
+        if (result == null) {
+            result = new DocumentBinder(key);
+            documentBinders.add(result);
+        }
+        return result;
+        
+    }
+    public DocumentBinder getDocumentBinder() {
+        return getDocumentBinder(Object.class,"default");
+    }
+    
     /**
      * 
      * @param event
@@ -484,39 +486,6 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             return this.binders.get(alias);
         }
 
-        /*        public Set<T> getSubset(Object alias) {
-         Set<T> subset = new HashSet<T>();
-         for (T b : binders) {
-         if (b instanceof HasDocumentAlias) {
-         Object a = ((HasDocumentAlias) b).getAlias();
-         if (a == alias) {
-         subset.add(b);
-         } else if (a != null && a.equals(alias)) {
-         subset.add(b);
-         } else if (alias != null && alias.equals(a)) {
-         subset.add(b);
-         }
-         }
-         }
-         return subset;
-         }
-         public Set<T> getSubset(Object alias) {
-         Set<T> subset = new HashSet<T>();
-         for (T b : binders) {
-         if (b instanceof HasDocumentAlias) {
-         Object a = ((HasDocumentAlias) b).getAlias();
-         if (a == alias) {
-         subset.add(b);
-         } else if (a != null && a.equals(alias)) {
-         subset.add(b);
-         } else if (alias != null && alias.equals(a)) {
-         subset.add(b);
-         }
-         }
-         }
-         return subset;
-         }
-         */
         /**
          * 
          * @param newDocument
@@ -526,13 +495,20 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
 
             Document oldSelected = this.selected;
             this.selected = newDocument;
-
-            for (T b : binders.values()) {
+            Binder b = bindingManager.findDocumentBinder(selected);
+            if ( b != null ) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
                 e.setOldValue(oldSelected);
                 e.setNewValue(newDocument);
                 b.react(e);
             }
+/*            for (T b : binders.values()) {
+                DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
+                e.setOldValue(oldSelected);
+                e.setNewValue(newDocument);
+                b.react(e);
+            }
+*/ 
         }
 
         /**
@@ -544,14 +520,6 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             return this.selected;
         }
 
-        //@Override
-/*        public void addDocumentChangeListener(DocumentChangeListener l) {
-         }
-        
-         //@Override
-         public void removeDocumentChangeListener(DocumentChangeListener l) {
-         }
-         */
         /**
          * 
          * @param event

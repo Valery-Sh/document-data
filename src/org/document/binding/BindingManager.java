@@ -53,7 +53,10 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         if ( ! list.contains(selected) ) {
             newSel = list.isEmpty() ? null : list.get(0);
             if ( selected != null ) {
-                selected.propertyStore().removeDocumentChangeListener(getDocumentBinder(selected));
+                Object o = findDocumentBinder(selected);
+                if ( o != null ) {
+                    selected.propertyStore().removeDocumentChangeListener(findDocumentBinder(selected));
+                }
             }
         }
         getListState().setDocumentList(forListModel);

@@ -40,7 +40,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     /**
      * 
      */
-    protected Object alias;
+    protected Alias alias;
     
     /**
      * 
@@ -51,7 +51,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         this.source = source;
         this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
         localSchema = SchemaUtils.createSchema(source.getClass());
-        alias = new Object[] {source.getClass(),"default"};
+        alias = new Alias(source.getClass(),"default");
 //        this.state.fillValidEditValues();
     }
 
@@ -237,7 +237,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * @return
      */
     @Override
-    public Object getAlias() {
+    public Alias getAlias() {
         return alias;
     }
 

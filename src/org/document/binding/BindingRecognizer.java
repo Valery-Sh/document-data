@@ -1,13 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.binding;
+
+import org.document.Document;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public interface BindingRecognizer<T> {
-    Object getBindingId(T document);
+public interface BindingRecognizer {
+    DocumentBinder getBinder(Document document);
 }

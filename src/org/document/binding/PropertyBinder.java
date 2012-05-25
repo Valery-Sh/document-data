@@ -28,4 +28,5 @@ public interface PropertyBinder extends Binder,DocumentChangeListener {//, HasDo
      */
     void propertyChanged(Object propertyValue);
     void initComponentDefault();
+    
 }

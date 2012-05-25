@@ -14,7 +14,9 @@ public class ListState implements Document {
     protected DocumentPropertyStore document;
 
     public ListState() {
+        //
         // DocumentPropertyStore is a default PropertyStore
+        //
         this.document = new DocumentPropertyStore(this);
     }
 
