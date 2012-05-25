@@ -278,14 +278,19 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     /**
-     * 
-     * @param oldSelected
+     * May be overriden by subclasses to provide additional 
+     * actions for a given old selected document.
+     * @param oldSelected an object that has been set 
+     * <code>selected</code> before a new one.
+     * @see BindingManager#afterSetSelected(org.document.Document)  
      */
     protected abstract void afterSetSelected(T oldSelected);
 
     /**
-     * 
-     * @param binder
+     * Registers a given binder.
+     * The parameter must be of type {@link ListStateBinder}. 
+     * Otherwise the method does nothing.
+     * @param binder a binder to be registered
      */
     public void addBinder(Binder binder) {
         if (binder instanceof ListStateBinder) {
@@ -307,8 +312,10 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     /**
-     * 
-     * @param binder
+     * Unregisters a given binder.
+     * The parameter must be of type {@link ListStateBinder}. 
+     * Otherwise the method does nothing.
+     * @param binder a binder to be unregistered
      */
     public void removeBinder(Binder binder) {
         if (binder instanceof ListStateBinder) {
@@ -319,17 +326,14 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         //}
     }
 
-    /**
-     * 
-     * @return
-     */
-    protected PropertyStore getPropertyStore() {
-        return selected.propertyStore();
-    }
 
     /**
-     * 
-     * @param recognizer
+     * Sets a custom recognizer that is used to associate an object
+     * of type <code>Document</code> with a corresponding object of type
+     * <code>DocumentBinder</code>.
+     * If the parameter is <code>null</code> than no custom 
+     * recognizee is used
+     * @param recognizer an object to be set as a recognizer
      */
     public void setRecognizer(BindingRecognizer recognizer) {
         this.recognizer = recognizer;
@@ -340,51 +344,53 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     //
 
     /**
-     * 
-     * @param doc
-     * @return
+     * Tries to find a corresponding object of type 
+     * <code>DocumentBinder</code> for a given document.
+     * @param doc a document, for which the search
+     * @return an object of type <code>DocumentBinder</code> or 
+     * <code>null</code> if the search is not successful
      */
     public DocumentBinder findDocumentBinder(Document doc) {
-        if ( this.recognizer != null ) {
-            return findDocumentBinder(recognizer, doc);
+        if ( recognizer != null ) {
+            return recognizer.getBinder(doc);
         }
         Alias key = doc.propertyStore().getAlias();
-        
-//Object o1 = new PropertyStore.Alias(Person.class,"default");        
-//Object o2 = new PropertyStore.Alias(Person.class,"default");        
 
-//boolean b = o1.equals(o2);
         DocumentBinder result = (DocumentBinder) documentBinders.get(key);        
         if (result == null ) {
             result = (DocumentBinder)documentBinders.get(new Alias(Object.class,key.getSubAlias()));
         }
         return result;
     }
-    protected DocumentBinder findDocumentBinder(BindingRecognizer br,Document doc) {
-        return null;
-    }
-    /**
-     * 
-     * @param alias
-     * @return
-     */
-/*    public DocumentBinder getDocumentBinder(Object alias) {
-        Object a = DEFAULT_ALIAS;
-        if (alias != null) {
-            a = alias;
-        }
 
-        DocumentBinder result = (DocumentBinder) documentBinders.get(a);
-        if (result == null) {
-            result = new DocumentBinder(a);
-            documentBinders.add(result);
-        }
-        return result;
-    }
-    */ 
+    /**
+     * Returns an existing or new instance of type <code>DocumentBinder</code>
+     * for a given class.
+     * Delegates method call to the method {@link AbstractBindingManager#getDocumentBinder(java.lang.Class, java.lang.String) 
+     * with the <code>clazz</code> as the first parameter and a string value 
+     * <code>"default"</code> as the second.
+     * If a document binder doesn't exist for a given parameter value
+     * then a new one is created with an <code>alias</code> property 
+     * set to  <code><pre>new Alias(clazz,"default")</pre></code>.
+     * @param clazz an object that a method uses to search or create an object
+     * of type <code>DocumentBinder</code>
+     * @return an existing or new instance of type <code>DocumentBinder</code>
+     */
     public DocumentBinder getDocumentBinder(Class clazz) {
         return getDocumentBinder(clazz,"default");
     }
+    /**
+     * Returns an existing or new instance of type <code>DocumentBinder</code>
+     * for a given class and subAlias.
+     * If a document binder doesn't exist for a given parameter values
+     * then a new one is created with an <code>alias</code> property 
+     * set to  <code><pre>new Alias(clazz,subAlias)</pre></code>.
+     * @param clazz an object that a method uses together with the second 
+     * parameter to search or create an object of type <code>DocumentBinder</code>
+     * @param subAlias an object that a method uses together with the first parameter 
+     * to search or create an object of type <code>DocumentBinder</code>
+     * @return an existing or new instance of type <code>DocumentBinder</code>
+     */
     public DocumentBinder getDocumentBinder(Class clazz, String subAlias) {
         Object key  = new Alias(clazz,subAlias);
         DocumentBinder result = (DocumentBinder) documentBinders.get(key);
