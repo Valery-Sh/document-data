@@ -65,9 +65,4 @@ public class MockPropertyBinder implements PropertyBinder{
         this.reactAction = event.getAction();
     }
 
-    @Override
-    public Object getAlias() {
-        return null;
-    }
-    
 }

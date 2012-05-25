@@ -12,27 +12,61 @@ import org.document.schema.SchemaUtils;
 
 /**
  *
+ * @param <T> 
  * @author V. Shyshkin
  */
 public class DocumentPropertyStore<T extends Document> implements PropertyStore, HasDocumentState, HasSchema {
 
+    /**
+     * 
+     */
     protected transient DocumentStateImpl state;
+    /**
+     * 
+     */
     protected T source;
+    /**
+     * 
+     */
     protected List<DocumentChangeListener> documentChangeListeners;
+    /**
+     * 
+     */
     protected DocumentSchema localSchema;
+    /**
+     * 
+     */
     protected DocumentGroup group;
+    /**
+     * 
+     */
+    protected Object alias;
     
+    /**
+     * 
+     * @param source
+     */
     public DocumentPropertyStore(T source) {
         this.state = new DocumentStateImpl(this);
         this.source = source;
         this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
         localSchema = SchemaUtils.createSchema(source.getClass());
+        alias = new Object[] {source.getClass(),"default"};
 //        this.state.fillValidEditValues();
     }
 
+    /**
+     * 
+     * @return
+     */
     public T getObject() {
         return source;
     }
+    
+    /**
+     * 
+     * @return
+     */
     public DocumentSchema getSchema() {
         DocumentSchema ds;
 
@@ -48,6 +82,11 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         return ds;
     }
 
+    /**
+     * 
+     * @param key
+     * @return
+     */
     @Override
     public Object get(Object key) {
         Object result;
@@ -105,6 +144,11 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     }
 
 //    @Override
+    /**
+     * 
+     * @param key
+     * @param value
+     */
     public void bind(Object key, Object value) {
 
         if (key == null) {
@@ -135,16 +179,28 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         }
     }
 
+    /**
+     * 
+     * @param listener
+     */
     @Override
     public void addDocumentChangeListener(DocumentChangeListener listener) {
         documentChangeListeners.add(listener);
     }
 
+    /**
+     * 
+     * @param listener
+     */
     @Override
     public void removeDocumentChangeListener(DocumentChangeListener listener) {
         documentChangeListeners.remove(listener);
     }
 
+    /**
+     * 
+     * @return
+     */
     @Override
     public DocumentState getDocumentState() {
         return state;
@@ -177,6 +233,15 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     }
 
     /**
+     * 
+     * @return
+     */
+    @Override
+    public Object getAlias() {
+        return alias;
+    }
+
+    /**
      *
      */
     protected static class DocumentStateImpl implements DocumentState {
@@ -184,9 +249,19 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         private boolean editing;
         private PropertyStore documentStore;
         private Map beforeEditValues;
+        /**
+         * 
+         */
         protected Map dirtyEditValues;
+        /**
+         * 
+         */
         protected Map<String, DocumentChangeEvent> propertyErrors;
 
+        /**
+         * 
+         * @param documentStore
+         */
         public DocumentStateImpl(PropertyStore documentStore) {
             this.documentStore = documentStore;
             beforeEditValues = new HashMap();
@@ -194,11 +269,19 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             propertyErrors = new HashMap<String, DocumentChangeEvent>();
         }
 
+        /**
+         * 
+         * @return
+         */
         @Override
         public boolean isEditing() {
             return editing;
         }
 
+        /**
+         * 
+         * @param editing
+         */
         @Override
         public void setEditing(boolean editing) {
             if (this.editing == editing) {
@@ -227,6 +310,10 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             }
         }
 
+        /**
+         * 
+         * @return
+         */
         @Override
         public Map<String, Object> getDirtyValues() {
             return this.dirtyEditValues;
@@ -237,6 +324,10 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             return this.getPropertyErrors();
         }
 */
+        /**
+         * 
+         * @param event
+         */
         @Override
         public void react(BinderEvent event) {
             if (event.getAction() == BinderEvent.Action.componentValueChange) {

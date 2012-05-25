@@ -7,7 +7,9 @@ import java.io.Serializable;
  * @author V. Shyshkin
  */
 public interface PropertyStore extends Serializable {
-
+    
+    Object getAlias();
+    
     Object get(Object key);
 
     void put(Object key, Object value);
