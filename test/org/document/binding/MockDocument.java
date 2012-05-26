@@ -42,5 +42,10 @@ public class MockDocument implements PropertyStore{
     public void removeDocumentChangeListener(DocumentChangeListener listener) {
         
     }
+
+    @Override
+    public Alias getAlias() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

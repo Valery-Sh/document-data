@@ -10,9 +10,10 @@ package org.document.binding;
  */
 public class DocumentBinder<T extends PropertyBinder>  extends AbstractDocumentBinder {
 
-    protected DocumentBinder(Object alias) {
+/*    protected DocumentBinder(Object alias) {
         super(alias);
     }
+*/ 
     protected DocumentBinder() {
         super();
     }

@@ -993,6 +993,11 @@ public class ObservableListTest {
         public void removeDocumentChangeListener(DocumentChangeListener listener) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        @Override
+        public Alias getAlias() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
         
     }
     

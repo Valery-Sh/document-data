@@ -12,7 +12,7 @@ import org.document.*;
  */
 public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderContainer<T> {//, HasDocumentAlias {
 
-    private Object alias;
+    //private Object alias;
     protected List<DocumentChangeListener> documentListeners;
     protected List<BinderListener> binderListeners;
     protected String childName;
@@ -31,45 +31,45 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         childs = new ArrayList<DocumentBinder>();
     }
 
-    protected AbstractDocumentBinder(Object alias) {
-        this();
-        this.alias = alias;
-    }
-
-    @Override
-    public Object getAlias() {
-        return alias;
-    }
-
+    /*    protected AbstractDocumentBinder(Object alias) {
+     this();
+     //        this.alias = alias;
+     }
+     */
+    /*    @Override
+     public Object getAlias() {
+     return alias;
+     }
+     */
     @Override
     public Object getComponentValue() {
         return null;
     }
 
-/*    @Override
-    public void addBinderListener(BinderListener l) {
-        binderListeners.add(l);
-        if (binderListeners.size() > 1 ) {
-            throw new IndexOutOfBoundsException("AbstractDocumentBinder. Only one BinderListener can be registered");
-        }
+    /*    @Override
+     public void addBinderListener(BinderListener l) {
+     binderListeners.add(l);
+     if (binderListeners.size() > 1 ) {
+     throw new IndexOutOfBoundsException("AbstractDocumentBinder. Only one BinderListener can be registered");
+     }
 
-    }
+     }
 
-    @Override
-    public void removeBinderListener(BinderListener l) {
-        binderListeners.remove(l);
-    }
-*/
-
+     @Override
+     public void removeBinderListener(BinderListener l) {
+     binderListeners.remove(l);
+     }
+     */
     @Override
     public abstract void addBinderListener(BinderListener l);
-    
+
     @Override
     public abstract void removeBinderListener(BinderListener l);
-    
+
     protected List<BinderListener> getBinderListeners() {
         return binderListeners;
     }
+
     protected void add(T binder, Map<String, List<T>> binderMap) {
         String propertyName = ((PropertyBinder) binder).getPropertyName();
 
@@ -187,7 +187,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                 b.react(event);
             }
         }
-        
+
     }
 
     @Override
@@ -314,8 +314,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
         for (DocumentChangeListener l : documentListeners) {
             String nm = ((PropertyBinder) l).getPropertyName();
-            if ((l instanceof ErrorBinder) && 
-                 propertyName.equals(nm) || "*".equals(nm) ) {
+            if ((l instanceof ErrorBinder)
+                    && propertyName.equals(nm) || "*".equals(nm)) {
                 l.react(event);
             }
         }

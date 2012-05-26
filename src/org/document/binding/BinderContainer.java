@@ -11,7 +11,7 @@ public interface BinderContainer<T extends Binder> extends DocumentChangeListene
     
     void add(T binder);
     void remove(T binder);
-    Object getAlias();
+    //Object getAlias();
     //BinderCollection getSubset(Object subsetId);
     Document getDocument();
     void setDocument(Document object);

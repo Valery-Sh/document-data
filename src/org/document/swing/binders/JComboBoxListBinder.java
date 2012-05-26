@@ -28,12 +28,12 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
 
     @Override
     protected PropertyBinder createSelectedBinder() {
-        return new JComboBoxListBinder.JComboSelectionBinder((JComboBox) getAlias());
+        return new JComboBoxListBinder.JComboSelectionBinder((JComboBox) getComponent());
     }
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        return new JComboBoxListBinder.JComboModelBinder((JComboBox) getAlias(), properties);
+        return new JComboBoxListBinder.JComboModelBinder((JComboBox) getComponent(), properties);
     }
 
     public static class JComboSelectionBinder extends AbstractListSelectionBinder implements ActionListener {

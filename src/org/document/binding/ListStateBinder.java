@@ -12,15 +12,20 @@ import org.document.Document;
  * @author V. Shyshkin
  */
 public abstract class ListStateBinder<T extends PropertyBinder>  extends DocumentBinder {
-    
-    public ListStateBinder(Object alias) {
-        super(alias);
+    protected Object component;
+    public ListStateBinder(Object component) {
+        super();
+        this.component = component;
     }
     
     protected final void initBinders() {
         this.add(createSelectedBinder());
         this.add(createListModelBinder());
         
+    }
+
+    public Object getComponent() {
+        return component;
     }
     
     protected abstract T createSelectedBinder();

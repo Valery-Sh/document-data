@@ -151,7 +151,7 @@ import org.document.PropertyStore.Alias;
  */
 public abstract class AbstractBindingManager<T extends Document> implements BinderListener {
 
-    private BinderMap documentBinders;
+    private DocumentBinderContainer documentBinders;
     /**
      *  Stores a reference to a document that is declared as <code>selected</code>.
      */
@@ -165,7 +165,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      */
     private List<T> sourceList;
     private ListState listState;
-    private BinderMap documentListBinders;
+    private Map<Object,ListStateBinder> documentListBinders;
 
     /**
      * Creates an instance of the class for a given list of documents.
@@ -183,7 +183,8 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
-        documentListBinders = new BinderMap(this);
+        //documentListBinders = new BinderMap(this);
+        documentListBinders = new HashMap<Object,ListStateBinder>();        
         //validators = new HashMap<Object,Validator>();
     }
 
@@ -193,7 +194,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * any document as <code>selected</code>.
      */
     protected AbstractBindingManager() {
-        documentBinders = new BinderMap(this);
+        documentBinders = new DocumentBinderContainer(this);
     }
     /*    public void addValidator(Object alias, Validator validator) {
      validators.put(alias, validator);
@@ -212,7 +213,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * @return an object of type BinderMap that serves as a container
      * for objects of type {@link DocumentBinder).
      */
-    protected BinderMap getBinders() {
+    protected DocumentBinderContainer getBinders() {
         return this.documentBinders;
     }
 
@@ -292,23 +293,13 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * Otherwise the method does nothing.
      * @param binder a binder to be registered
      */
-    public void addBinder(Binder binder) {
-        if (binder instanceof ListStateBinder) {
-            if (sourceList == null) {
+    public void addBinder(ListStateBinder binder) {
+          if (sourceList == null) {
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
             }
             binder.addBinderListener(this);
-            documentListBinders.add(binder);
+            documentListBinders.put(binder.getComponent(),binder);
             ((ListStateBinder) binder).setDocument(getListState());
-
-        } else {
-            throw new IllegalArgumentException("The 'binder' argument type must be  org.document.ListStateBinder or it's subclass");
-        }
-
-
-        //else {
-        //  binders.add(binder);
-        //}
     }
 
     /**
@@ -317,13 +308,9 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * Otherwise the method does nothing.
      * @param binder a binder to be unregistered
      */
-    public void removeBinder(Binder binder) {
-        if (binder instanceof ListStateBinder) {
+    public void removeBinder(ListStateBinder binder) {
             binder.removeBinderListener(this);
             documentListBinders.remove(binder);
-        }// else {
-        //   this.binderCollection.add(binder);
-        //}
     }
 
 
@@ -350,7 +337,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * @return an object of type <code>DocumentBinder</code> or 
      * <code>null</code> if the search is not successful
      */
-    public DocumentBinder findDocumentBinder(Document doc) {
+    public DocumentBinder documentBinderOf(Document doc) {
         if ( recognizer != null ) {
             return recognizer.getBinder(doc);
         }
@@ -395,19 +382,37 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         Object key  = new Alias(clazz,subAlias);
         DocumentBinder result = (DocumentBinder) documentBinders.get(key);
         if (result == null) {
-            result = new DocumentBinder(key);
-            documentBinders.add(result);
+            result = new DocumentBinder();
+            documentBinders.add(key,result);
         }
         return result;
         
     }
+    /**
+     * Returns an existing or new instance of type <code>DocumentBinder</code>
+     * for a class <code>java.lang.Objectclass</code>  class and "default" subAlias.
+     * If a document binder doesn't exist 
+     * then a new one is created with an <code>alias</code> property 
+     * set to  <code><pre>new Alias(Object.class,"default")</pre></code>.
+     * @return an existing or new instance of type <code>DocumentBinder</code>
+     */
     public DocumentBinder getDocumentBinder() {
         return getDocumentBinder(Object.class,"default");
     }
     
     /**
      * 
-     * @param event
+     * Invoked when the {@link ListState } object has changed its state.
+     * <code>BindingManages</code> is responsible for handling events
+     * that can be fired by {@link ListStateBinder}. When a new binder 
+     * of type <code>ListStateBinder</code> is added then the binding manager 
+     * registers itself as a listener of events of type {@link BinderEvent}.
+     * <p>
+     * if  <code>event</code> represents an action
+     * {@link BinderEvent.Action#componentSelectChange } then the method set a
+     * new <code><i>selected</i></code> document.
+     * 
+     * @param event an event object of type {@link BinderEvent}
      */
     @Override
     public void react(BinderEvent event) {
@@ -424,23 +429,11 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     /**
-     * Prepends cyclic data modifications.
-     *
-     * @param document 
-     * @return
-     */
-    protected boolean needChangeSelected(Document document) {
-        if (document == this.selected) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
+     * A container of objects of type <code>DocumentBinder</code>
      * 
-     * @param <T>
+     * @param <T> a type that implements the {@link DocumentBinder } 
      */
-    public static class BinderMap<T extends Binder> implements BinderContainer<T> {
+    public static class DocumentBinderContainer<T extends DocumentBinder> { //implements BinderContainer<T> {
 
         private AbstractBindingManager bindingManager;
         private Document selected;
@@ -450,58 +443,39 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
          * 
          * @param bindingManager
          */
-        public BinderMap(AbstractBindingManager bindingManager) {
+        public DocumentBinderContainer(AbstractBindingManager bindingManager) {
             this.binders = new HashMap<Object, T>();
             this.bindingManager = bindingManager;
         }
 
-        /**
-         * Now doesn't in use
-         *
-         * @return
-         */
-        @Override
-        public Object getAlias() {
-            return "documentBinders";
+        public void add(Object key,T binder) {
+            binders.put(key, binder);
         }
-
         /**
          * 
          * @param binder
          */
-        @Override
-        public void add(T binder) {
-            binders.put(((BinderContainer) binder).getAlias(), binder);
-        }
-
-        /**
-         * 
-         * @param binder
-         */
-        @Override
         public void remove(T binder) {
             binders.remove(binder);
         }
-
         /**
          * 
-         * @param alias
+         * @param key
          * @return
          */
-        public T get(Object alias) {
-            return this.binders.get(alias);
+        public T get(Object key) {
+            return this.binders.get(key);
         }
 
         /**
          * 
          * @param newDocument
          */
-        @Override
         public void setDocument(Document newDocument) {
 
             Document oldSelected = this.selected;
             this.selected = newDocument;
-            Binder b = bindingManager.findDocumentBinder(selected);
+            Binder b = bindingManager.documentBinderOf(selected);
             if ( b != null ) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
                 e.setOldValue(oldSelected);
@@ -515,23 +489,6 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
                 b.react(e);
             }
 */ 
-        }
-
-        /**
-         * 
-         * @return
-         */
-        @Override
-        public Document getDocument() {
-            return this.selected;
-        }
-
-        /**
-         * 
-         * @param event
-         */
-        @Override
-        public void react(DocumentChangeEvent event) {
         }
     }
 }//class AbstractBindingManager

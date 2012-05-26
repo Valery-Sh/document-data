@@ -39,7 +39,7 @@ public class AbstractDocumentBinderTest {
     @Test
     public void testAdd() {
         System.out.println("DocumentBinder.add(Binder)");
-        DocumentBinder instance = new DocumentBinder("persons");
+        DocumentBinder instance = new DocumentBinder();
         PropertyBinder binder = new MockPropertyBinder("firstName");
         instance.add(binder);
         assertTrue(instance.getBinders("firstName").get(0) == binder);
@@ -51,7 +51,7 @@ public class AbstractDocumentBinderTest {
     @Test
     public void testRemove() {
         System.out.println("DocumentBinder.remove(Binder)");
-        DocumentBinder instance = new DocumentBinder("persons");
+        DocumentBinder instance = new DocumentBinder();
         PropertyBinder binder1 = new MockPropertyBinder("firstName");
         instance.add(binder1);
         PropertyBinder binder2 = new MockPropertyBinder("lastName");
@@ -74,7 +74,7 @@ public class AbstractDocumentBinderTest {
         System.out.println("DocumentBinder.completeChanges");
 
         PropertyBinder binder = new MockPropertyBinder("firstName");
-        DocumentBinder instance = new DocumentBinder("test_alias");
+        DocumentBinder instance = new DocumentBinder();
         instance.document = new DocumentImpl();
         PropertyStore store = instance.document.propertyStore();
         store.put("firstName", "Bill");
@@ -106,7 +106,7 @@ public class AbstractDocumentBinderTest {
     @Test
     public void testGetDocument() {
         System.out.println("DocumentBinder.getDocument()");
-        DocumentBinder instance = new DocumentBinder("person");
+        DocumentBinder instance = new DocumentBinder();
         Document doc = new DocumentImpl();
         instance.setDocument(doc);
         assertTrue(instance.getDocument() == doc);
@@ -120,7 +120,7 @@ public class AbstractDocumentBinderTest {
     public void testSetDocument() {
         System.out.println("DefaultBindingManager.setDocument(Document,boolean)");
         PropertyBinder binder = new MockPropertyBinder("firstName");
-        DocumentBinder personDocumentBinder = new DocumentBinder("person");
+        DocumentBinder personDocumentBinder = new DocumentBinder();
         DocumentBinder addrDocumentBinder = personDocumentBinder.createChild("address");
 
         Document doc = new DocumentImpl();

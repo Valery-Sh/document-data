@@ -39,5 +39,10 @@ public class PropertyStoreImpl implements PropertyStore{
     public void removeDocumentChangeListener(DocumentChangeListener listener) {
         this.documentListeners.remove(listener);
     }
+
+    @Override
+    public Alias getAlias() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

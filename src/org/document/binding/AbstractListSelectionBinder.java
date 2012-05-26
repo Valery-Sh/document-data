@@ -30,7 +30,9 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
         addComponentListeners();
     }
 
+    @Override
     protected abstract void addComponentListeners();
+    @Override
     protected abstract void removeComponentListeners();
 
     

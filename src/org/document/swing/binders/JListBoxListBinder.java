@@ -28,12 +28,12 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
 
     @Override
     protected PropertyBinder createSelectedBinder() {
-        return new JListSelectionBinder((JList) getAlias());
+        return new JListSelectionBinder((JList) getComponent());
     }
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        return new JListModelBinder((JList) getAlias(), properties);
+        return new JListModelBinder((JList) getComponent(), properties);
     }
 
     public static class JListSelectionBinder extends AbstractListSelectionBinder implements ListSelectionListener {
