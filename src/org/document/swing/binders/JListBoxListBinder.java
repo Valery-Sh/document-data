@@ -1,5 +1,6 @@
 package org.document.swing.binders;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JList;
 import javax.swing.ListModel;
@@ -7,8 +8,13 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.document.Document;
+import org.document.DocumentChangeEvent;
+import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
+import org.document.binding.AbstractPropertyBinder;
+import org.document.binding.BinderConverter;
+import org.document.binding.BinderListener;
 import org.document.binding.ListStateBinder;
 import org.document.binding.PropertyBinder;
 
@@ -36,6 +42,38 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         return new JListModelBinder((JList) getComponent(), properties);
     }
 
+    @Override
+    protected PropertyBinder createDocumentChangeEventBinder() {
+        return new JListDocumentChangeBinder((JList) getComponent());
+    }
+    public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder {
+
+        
+        public JListDocumentChangeBinder(JList component) {
+            super(component);
+        }
+
+        protected JList getJList() {
+            return (JList) component;
+        }
+
+        @Override
+        protected void notifyComponentOf(DocumentChangeEvent event) {
+            if ( event == null ) {
+                return;
+            }
+
+            JListBoxListBinder.ListBoxModelImpl model = (JListBoxListBinder.ListBoxModelImpl)getJList().getModel();
+            String[] props = model.getProperties();
+            if ( Arrays.asList(props).contains(event.getPropertyName()) ) {
+                getJList().repaint();
+                
+            }
+        }
+
+
+    }
+    
     public static class JListSelectionBinder extends AbstractListSelectionBinder implements ListSelectionListener {
 
         //protected JList component;
@@ -146,7 +184,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         @Override
         public void setComponentValue(Object value) {
             component.clearSelection();
-            component.setModel(new ListModelImpl(properties, getDocuments()));
+            component.setModel(new ListBoxModelImpl(properties, getDocuments()));
         }
 
         @Override
@@ -159,7 +197,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             if (getDocuments() == null) {
                 return null;
             }
-            return new ListModelImpl(properties, getDocuments());
+            return new ListBoxModelImpl(properties, getDocuments());
         }
 
         @Override
@@ -167,7 +205,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
             if (compValue == null) {
                 return null;
             }
-            return ((ListModelImpl) component.getModel()).documents;
+            return ((ListBoxModelImpl) component.getModel()).documents;
         }
 
         @Override
@@ -176,12 +214,12 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         }
     }//class JListListModelBinder
 
-    public static class ListModelImpl<E extends Document> implements ListModel {
+    public static class ListBoxModelImpl<E extends Document> implements ListModel {
 
         private List<E> documents;
         private String[] properties;
 
-        public ListModelImpl(String[] properties, List<E> documents) {
+        public ListBoxModelImpl(String[] properties, List<E> documents) {
             this.documents = documents;
             this.properties = properties;
         }
@@ -189,6 +227,10 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
         @Override
         public int getSize() {
             return documents.size();
+        }
+
+        public String[] getProperties() {
+            return properties;
         }
 
         @Override

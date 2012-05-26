@@ -41,15 +41,36 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * 
      */
     protected Alias alias;
-    
+
+/*    protected Document create(){
+        Document doc = new Document() {
+            @Override
+            public PropertyStore propertyStore() {
+                return DocumentPropertyStore.this;
+            }
+            
+        };
+        return doc;
+        
+    }
+*/ 
+    /**
+     * For test purpose
+     */
+    public DocumentPropertyStore() {
+        this.state = new DocumentStateImpl(this);
+        this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
+    }
     /**
      * 
      * @param source
      */
     public DocumentPropertyStore(T source) {
-        this.state = new DocumentStateImpl(this);
+        this();
+        if ( source == null ) {
+            throw new IllegalArgumentException("Constructor DocumentPropertyStore cannot accept null parameter value");
+        }
         this.source = source;
-        this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
         localSchema = SchemaUtils.createSchema(source.getClass());
         alias = new Alias(source.getClass(),"default");
 //        this.state.fillValidEditValues();
@@ -90,6 +111,9 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     @Override
     public Object get(Object key) {
         Object result;
+        if ( source == null ) {
+            return null;
+        }
         if (source instanceof MapDocument) {
             result = DataUtils.getValue(key.toString(), ((MapDocument) source).getMap());
         } else {
@@ -171,7 +195,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
 
 
         if (!documentChangeListeners.isEmpty()) {
-            DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyChange);
+            DocumentChangeEvent event = new DocumentChangeEvent(this.source, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
             event.setOldValue(oldValue);
             event.setNewValue(value);
@@ -287,8 +311,10 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             if (this.editing == editing) {
                 return;
             }
-
             DocumentPropertyStore d = (DocumentPropertyStore) documentStore;
+            if ( d.source == null ) {
+                return;
+            }
 
             if (this.editing && !editing) {
                 try {

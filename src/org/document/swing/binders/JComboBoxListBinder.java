@@ -2,11 +2,15 @@ package org.document.swing.binders;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.event.ListDataListener;
 import org.document.Document;
+import org.document.DocumentChangeEvent;
+import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
 import org.document.binding.ListStateBinder;
@@ -34,6 +38,39 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
     @Override
     protected PropertyBinder createListModelBinder() {
         return new JComboBoxListBinder.JComboModelBinder((JComboBox) getComponent(), properties);
+    }
+
+    @Override
+    protected PropertyBinder createDocumentChangeEventBinder() {
+        return new JComboBoxListBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
+    }
+    public static class JComboDocumentChangeBinder extends AbstractListDocumentChangeBinder {
+
+        
+        public JComboDocumentChangeBinder(JComboBox component) {
+            super(component);
+        }
+
+        protected JComboBox getJComboBox() {
+            return (JComboBox) component;
+        }
+
+        @Override
+        protected void notifyComponentOf(DocumentChangeEvent event) {
+            if ( event == null ) {
+                return;
+            }
+            ComboBoxModelImpl model = (ComboBoxModelImpl)getJComboBox().getModel();
+            String[] props = model.getProperties();
+            if ( Arrays.asList(props).contains(event.getPropertyName()) ) {
+                //Document d = (())
+                Object selItem = model.getElement((Document)event.getSource());
+                model.setSelectedItem(selItem);
+                getJComboBox().repaint();
+            }
+        }
+
+
     }
 
     public static class JComboSelectionBinder extends AbstractListSelectionBinder implements ActionListener {
@@ -193,6 +230,10 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
         @Override
         public Object getElementAt(int index) {
             Document d = documents.get(index);
+            return getElement(d);
+        }
+        public Object getElement(Document d) {
+            
             if (d == null) {
                 return null;
             }
@@ -201,6 +242,10 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
                 result = result += " " + d.propertyStore().get(nm);
             }
             return result;
+        }
+
+        public String[] getProperties() {
+            return properties;
         }
 
         @Override

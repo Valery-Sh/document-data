@@ -36,6 +36,7 @@ package org.document;
  *   }
  * }
  * </pre>
+ * 
  * @see org.document.samples.Person
  * @author V. Shyshkin
  */
@@ -45,7 +46,9 @@ public class AbstractObjectDocument implements Document, HasValidator {
     private transient Validator validator;
 
     public AbstractObjectDocument() {
+        //
         // DocumentPropertyStore is a default PropertyStore
+        //
         this.propertyStore = new DocumentPropertyStore(this);
     }
 
@@ -61,11 +64,19 @@ public class AbstractObjectDocument implements Document, HasValidator {
     public PropertyStore propertyStore() {
         return this.propertyStore;
     }
-
-    public void bind(String propertyName, Object value) {
+    /**
+     * Just calls {@link DocumentPropertyStore#bind(java.lang.Object, java.lang.Object) 
+     * methods.
+     * @param propertyName the property name
+     * @param value the value of the property whose name is defined by the 
+     * first parameter
+     */
+    protected void bind(String propertyName, Object value) {
         propertyStore.bind(propertyName, value);
     }
-
+    //
+    // HasValidator implementation
+    //
     @Override
     public Validator getValidator() {
         return validator;

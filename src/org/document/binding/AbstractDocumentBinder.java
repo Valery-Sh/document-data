@@ -91,6 +91,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     @Override
     public void add(T binder) {
+        if ( binder == null ) {
+            return;
+        }
         if (binder instanceof ErrorBinder) {
             if (((PropertyBinder) binder).getPropertyName() == null) {
                 // documentStore error binder
@@ -128,6 +131,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
     @Override
     public void remove(T binder) {
+        if ( binder == null ) {
+            return;
+        }
         if (binder instanceof ErrorBinder) {
             if (((PropertyBinder) binder).getPropertyName() == null) {
                 // documentStore error binder

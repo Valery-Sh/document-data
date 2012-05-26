@@ -21,7 +21,7 @@ public abstract class ListStateBinder<T extends PropertyBinder>  extends Documen
     protected final void initBinders() {
         this.add(createSelectedBinder());
         this.add(createListModelBinder());
-        
+        this.add(createDocumentChangeEventBinder());
     }
 
     public Object getComponent() {
@@ -30,6 +30,7 @@ public abstract class ListStateBinder<T extends PropertyBinder>  extends Documen
     
     protected abstract T createSelectedBinder();
     protected abstract T createListModelBinder();
+    protected abstract T createDocumentChangeEventBinder();
     
     protected List<Document> getDocuments() {
         if ( getDocument() == null ) {

@@ -97,7 +97,7 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         super.fireEvent(event);
     }
     /**
-     * The method is used when one of the remove methods is called.
+     * The method is used when one of the remove or set  methods is called.
      * When the given event objects defines one of the actions:
      * <ul>
      *  <li>remove</li>

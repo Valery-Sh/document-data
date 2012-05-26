@@ -183,7 +183,11 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
-        //documentListBinders = new BinderMap(this);
+            if ( listState.getDocumentList() != null ) {
+                for ( Document d : listState.getDocumentList()) {
+                    d.propertyStore().addDocumentChangeListener(listState.documentChangeHandler());
+                }
+             }
         documentListBinders = new HashMap<Object,ListStateBinder>();        
         //validators = new HashMap<Object,Validator>();
     }
