@@ -90,8 +90,12 @@ public abstract class AbstractMultiErrorBinder extends AbstractErrorBinder {
                 this.notifyError(event.getException());
                 break;
             case documentChange:
+                //notifyError(null, null);
+                break;
+            case documentChanging:
                 notifyError(null, null);
                 break;
+                
             case propertyError:
                 if (event.getPropertyName() == null) {
                     break;

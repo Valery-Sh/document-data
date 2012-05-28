@@ -227,7 +227,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if (oldDocument != null && oldDocument != document) {
             oldDocumentStore.removeDocumentChangeListener(this);
         }
-
+        fireDocumentChanging(oldDocument, document);
         fireDocumentChanged(oldDocument, document);
 
         if (document == null) {
@@ -270,6 +270,19 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             } else if (d instanceof Document) {
                 child.setDocument((Document) d);
             }
+        }
+    }
+    private void fireDocumentChanging(Document oldDoc, Document newDoc) {
+        if (this.documentListeners == null || documentListeners.isEmpty()) {
+            return;
+        }
+
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChanging);
+        event.setOldValue(oldDoc);
+        event.setNewValue(newDoc);
+
+        for (DocumentChangeListener l : documentListeners) {
+            l.react(event);
         }
     }
 
