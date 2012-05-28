@@ -12,9 +12,6 @@ import org.document.DocumentChangeEvent;
 import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
-import org.document.binding.AbstractPropertyBinder;
-import org.document.binding.BinderConverter;
-import org.document.binding.BinderListener;
 import org.document.binding.ListStateBinder;
 import org.document.binding.PropertyBinder;
 

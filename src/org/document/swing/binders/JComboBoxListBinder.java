@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JList;
 import javax.swing.event.ListDataListener;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
