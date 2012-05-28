@@ -11,6 +11,9 @@ package org.document;
 public class ValidationException extends RuntimeException{
     
     private String propertyName;
+    private Object propertyValue;
+    private Object componentValue;
+    
     
 /*    public ValidationException(String message) {
         super(message);
@@ -31,5 +34,22 @@ public class ValidationException extends RuntimeException{
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }
+
+    public Object getPropertyValue() {
+        return propertyValue;
+    }
+
+    public void setPropertyValue(Object propertyValue) {
+        this.propertyValue = propertyValue;
+    }
+
+    public Object getComponentValue() {
+        return componentValue;
+    }
+
+    public void setComponentValue(Object componentValue) {
+        this.componentValue = componentValue;
+    }
+    
     
 }

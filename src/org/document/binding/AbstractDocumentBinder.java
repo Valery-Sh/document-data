@@ -174,16 +174,12 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         List<T> blist = binders.get(propName);
         if (blist != null) {
             for (Binder b : blist) {
-                //b.dataChanged(oldValue, newValue);
-                //b.dataChanged(newValue);
                 b.react(event);
             }
         }
         blist = errorBinders.get(propName);
         if (blist != null) {
             for (Binder b : blist) {
-                //b.dataChanged(oldValue, newValue);
-                //b.dataChanged(newValue);
                 b.react(event);
             }
         }
@@ -193,7 +189,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                 b.react(event);
             }
         }
-
     }
 
     @Override
@@ -202,7 +197,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     }
 
     public PropertyStore getDocumentStore() {
-        //return this.documentStore;
         return document.propertyStore();
     }
 
@@ -233,10 +227,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if (oldDocument != null && oldDocument != document) {
             oldDocumentStore.removeDocumentChangeListener(this);
         }
-        // ??
 
         fireDocumentChanged(oldDocument, document);
-        //refresh();
+
         if (document == null) {
             return;
         }
@@ -265,12 +258,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                             v.validate(document);
                         }
                     }
-
                 } catch (ValidationException e) {
-                    //this.notifyDocumentError(e);
                     fireDocumentError(e);
                 }
-
             }
         }
         for (DocumentBinder child : childs) {
