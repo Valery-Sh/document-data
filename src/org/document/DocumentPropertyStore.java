@@ -40,7 +40,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     /**
      * 
      */
-    protected Alias alias;
+    protected Object alias;
 
 /*    protected Document create(){
         Document doc = new Document() {
@@ -72,7 +72,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         }
         this.source = source;
         localSchema = SchemaUtils.createSchema(source.getClass());
-        alias = new Alias(source.getClass(),"default");
+        alias = source.getClass().getName();
 //        this.state.fillValidEditValues();
     }
 
@@ -261,7 +261,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * @return
      */
     @Override
-    public Alias getAlias() {
+    public Object getAlias() {
         return alias;
     }
 

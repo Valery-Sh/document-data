@@ -37,11 +37,16 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
             int index,
             boolean isSelected,
             boolean cellHasFocus) {
-
-        if (value == null) {
+        
+        PropertyStore ps;
+        if (value != null) {
+            ps = ((Document) value).propertyStore();
+        } else if (! isSelected) {
+            ps = null;
+        } else {
             return this;
         }
-        PropertyStore ps = ((Document) value).propertyStore();
+        
 
         for (int i = 0; i < getComponents().length; i++) {
             if (!(getComponents()[i] instanceof JLabel)) {
@@ -49,9 +54,14 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
             }
             JLabel lb = (JLabel) getComponents()[i];
             lb.setOpaque(false);
-
-            Object o = ps.get(properties[i]);
-            String s = o == null ? "" : o.toString();
+            Object o = " ";
+            String s = " ";
+            if ( ps != null ) {
+                o = ps.get(properties[i]);
+                s = o == null ? "" : o.toString();
+            } else {
+                s = " ? ";
+            }
 
             lb.setText(s);
         }

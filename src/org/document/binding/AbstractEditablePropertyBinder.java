@@ -84,7 +84,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         notifyListeners(event);
     }
 
-    private void firePropertyError(Exception e) {
+    protected void firePropertyError(Exception e) {
         BinderEvent.Action action = BinderEvent.Action.componentChangeValueError;
         BinderEvent event = new BinderEvent(this, action, e);
         notifyListeners(event);

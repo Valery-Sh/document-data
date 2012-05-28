@@ -45,7 +45,7 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
             
     @Override
     public Object getComponentValue() {
-        return "";
+        return null;
     }
     
     
@@ -56,12 +56,12 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
     @Override
     protected Object componentValueOf(Object propertyValue) {
         this.notifyComponentOf((DocumentChangeEvent)propertyValue);
-        return "";
+        return null;
     }
 
     @Override
-    protected Object propertyValueOf(Object compValue) {
-        return "";
+    protected Object propertyValueOf(Object compomentValue) {
+        return null;
     }
 
     @Override

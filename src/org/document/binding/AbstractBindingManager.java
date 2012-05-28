@@ -345,12 +345,9 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         if ( recognizer != null ) {
             return recognizer.getBinder(doc);
         }
-        Alias key = doc.propertyStore().getAlias();
+        Object key = doc.propertyStore().getAlias();
 
         DocumentBinder result = (DocumentBinder) documentBinders.get(key);        
-        if (result == null ) {
-            result = (DocumentBinder)documentBinders.get(new Alias(Object.class,key.getSubAlias()));
-        }
         return result;
     }
 
@@ -368,8 +365,23 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * @return an existing or new instance of type <code>DocumentBinder</code>
      */
     public DocumentBinder getDocumentBinder(Class clazz) {
-        return getDocumentBinder(clazz,"default");
+        String alias = clazz == null ? null : clazz.getName();
+        return getDocumentBinder(alias);
     }
+    public DocumentBinder getDocumentBinder(String alias) {
+        Object key  = alias;
+        if ( alias == null ) {
+            key = "default";
+        }
+        DocumentBinder result = (DocumentBinder) documentBinders.get(key);
+        if (result == null) {
+            result = new DocumentBinder();
+            documentBinders.add(key,result);
+        }
+        return result;
+
+    }
+    
     /**
      * Returns an existing or new instance of type <code>DocumentBinder</code>
      * for a given class and subAlias.

@@ -15,12 +15,20 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     
     protected JComboBox component;
     
+    public LookupComboBinder(JComboBox component) {
+        this.component = component;
+        initBinder();
+    }
     
     public LookupComboBinder(String propName, JComboBox component) {
         this.component = component;
         this.propertyName = propName;
         initBinder();
     }
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+    
     protected final void initBinder() {
         component.removeActionListener(this);
         component.addActionListener(this);

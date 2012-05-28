@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 public interface PropertyStore extends Serializable {
     
-    Alias getAlias();
+    Object getAlias();
     
     Object get(Object key);
 
@@ -21,14 +21,14 @@ public interface PropertyStore extends Serializable {
     void removeDocumentChangeListener(DocumentChangeListener listener);
     
     public static class Alias {
-        protected Class clazz;
+        protected Object clazz;
         protected String subAlias;
-        public Alias(Class clazz, String subAlias) {
+        public Alias(Object clazz, String subAlias) {
             this.clazz = clazz;
             this.subAlias = subAlias;
         }
 
-        public Class getClazz() {
+        public Object getClazz() {
             return clazz;
         }
 
@@ -36,7 +36,7 @@ public interface PropertyStore extends Serializable {
             return subAlias;
         }
 
-        public void setClazz(Class clazz) {
+        public void setClazz(Object clazz) {
             this.clazz = clazz;
         }
 
