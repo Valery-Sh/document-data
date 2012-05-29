@@ -356,7 +356,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
          */
         @Override
         public void react(BinderEvent event) {
-            if (event.getAction() == BinderEvent.Action.componentValueChange) {
+            if (event.getAction() == BinderEvent.Action.componentChange) {
                 dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());
             }
 

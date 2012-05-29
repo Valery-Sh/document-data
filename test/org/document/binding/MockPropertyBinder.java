@@ -24,12 +24,12 @@ public class MockPropertyBinder implements PropertyBinder{
         return this.document;
     }
 
-    @Override
+    //@Override
     public BinderConverter getConverter() {
         return null;
     }
 
-    @Override
+    //@Override
     public void setConverter(BinderConverter converter) {
         
     }
@@ -60,7 +60,7 @@ public class MockPropertyBinder implements PropertyBinder{
     public void removeBinderListener(BinderListener l) {
     }
 
-    @Override
+//    @Override
     public void react(DocumentChangeEvent event) {
         this.reactAction = event.getAction();
     }

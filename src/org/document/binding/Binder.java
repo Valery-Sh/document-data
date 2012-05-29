@@ -6,7 +6,7 @@ import org.document.DocumentChangeListener;
  *
  * @author V. Shyshkin
  */
-public interface Binder extends DocumentChangeListener {
+public interface Binder { //extends DocumentChangeListener {
 
     Object getComponentValue();
 

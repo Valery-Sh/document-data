@@ -6,6 +6,6 @@ package org.document;
  */
 public interface Validator {
     void validate(Document document);
-    void validate(Object key, Object value);
+    void validate(Object key, Object value, Document document);
     
 }

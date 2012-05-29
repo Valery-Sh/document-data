@@ -9,24 +9,6 @@ import org.document.DocumentChangeEvent;
 public abstract class AbstractErrorBinder extends AbstractPropertyBinder implements ErrorBinder {
     
     protected Exception exception;
-//    protected boolean errorFound;
-    
-/*    @Override
-    public void notifyError(Exception e) {
-        //this.source = source;
-        this.exception = e;
-        if ( e == null ) {
-            errorFound = false;
-        } else {
-            errorFound = true;
-        }
-    }
-*/    
-
-//    public boolean isErrorFound() {
-//        return errorFound;
-//    }
-
     /**
      * return current component value
      */
@@ -37,9 +19,7 @@ public abstract class AbstractErrorBinder extends AbstractPropertyBinder impleme
     @Override
     public abstract boolean isPropertyError();
 
-//    protected void setErrorFound(boolean value) {
-//        this.errorFound = value;
-//    }
+
     @Override
     public void react(DocumentChangeEvent event) {
         switch(event.getAction()) {

@@ -13,7 +13,7 @@ public class DocumentChangeEvent extends EventObject {
     private String propertyName;
     private Object oldValue;
     private Object newValue;    
-    private Exception exception;
+    private ValidationException exception;
     private Object oldAlias;
     private Object newAlias;    
     
@@ -85,11 +85,11 @@ public class DocumentChangeEvent extends EventObject {
         this.propertyName = propertyName;
     }
 
-    public Exception getException() {
+    public ValidationException getException() {
         return exception;
     }
 
-    public void setException(Exception exception) {
+    public void setException(ValidationException exception) {
         this.exception = exception;
     }
 

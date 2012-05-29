@@ -3,6 +3,7 @@ package org.document.binding;
 import java.util.*;
 import javax.swing.JLabel;
 import org.document.DocumentChangeEvent;
+import org.document.ValidationException;
 
 /**
  *
@@ -44,7 +45,7 @@ public abstract class AbstractMultiErrorBinder extends AbstractErrorBinder {
     }
 
     @Override
-    public void notifyError(Exception e) {
+    public void notifyError(ValidationException e) {
     }
 
     public void notifyError(String property, Exception e) {

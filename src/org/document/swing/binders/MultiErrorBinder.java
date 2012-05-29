@@ -6,6 +6,7 @@ package org.document.swing.binders;
 
 import java.util.Arrays;
 import javax.swing.JLabel;
+import org.document.ValidationException;
 import org.document.binding.AbstractMultiErrorBinder;
 
 /**
@@ -73,6 +74,26 @@ public class MultiErrorBinder extends AbstractMultiErrorBinder{
     @Override
     public boolean isPropertyError() {
         return true;
+    }
+
+    @Override
+    public void notifyError(String propertyName, ValidationException e) {
+        this.notifyError(e);
+    }
+
+    
+    public void notifyFixed() {
+        this.notifyError(null);
+    }
+
+    @Override
+    public void notifyFixed(String propertyName, ValidationException e) {
+        notifyError(e);
+    }
+
+    @Override
+    public void clear(String propertyName) {
+        notifyError(null);
     }
 
     

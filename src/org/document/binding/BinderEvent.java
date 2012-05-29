@@ -1,6 +1,7 @@
 package org.document.binding;
 
 import java.util.EventObject;
+import org.document.ValidationException;
 
 /**
  *
@@ -11,7 +12,7 @@ public class BinderEvent extends EventObject {
     private Action action;
     private Object componentValue;
     private Object dataValue;    
-    private Exception exception;
+    private ValidationException exception;
     private Binder binder;
     
     public BinderEvent(Binder source) {
@@ -21,7 +22,7 @@ public class BinderEvent extends EventObject {
         this(source);
         this.action = action;
     }
-    public BinderEvent(Binder source, Action action, Exception e ) {
+    public BinderEvent(Binder source, Action action, ValidationException e ) {
         this(source, action);
         this.exception = e;
     }
@@ -65,11 +66,11 @@ public class BinderEvent extends EventObject {
         return ((PropertyBinder)getSource()).getPropertyName();
     }
 
-    public Exception getException() {
+    public ValidationException getException() {
         return exception;
     }
 
-    public void setException(Exception exception) {
+    public void setException(ValidationException exception) {
         this.exception = exception;
     }
 
@@ -83,9 +84,10 @@ public class BinderEvent extends EventObject {
 
     
     public enum Action {
-        componentChangeValueError,
-        componentValueChange,
-        clearComponentChangeError,
+        componentChangeError,
+        componentChange,
+        clearError,
+        fixError,
         componentSelectChange
     }
 }//class DocumentEvent

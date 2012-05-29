@@ -492,11 +492,11 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             Document oldSelected = this.selected;
             this.selected = newDocument;
             Binder b = bindingManager.documentBinderOf(selected);
-            if ( b != null ) {
+            if ( b != null && (b instanceof DocumentChangeListener)) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
                 e.setOldValue(oldSelected);
                 e.setNewValue(newDocument);
-                b.react(e);
+                ((DocumentChangeListener)b).react(e);
             }
 /*            for (T b : binders.values()) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);

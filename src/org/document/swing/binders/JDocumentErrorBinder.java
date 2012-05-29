@@ -1,17 +1,18 @@
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
+import org.document.ValidationException;
 import org.document.binding.AbstractErrorBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class DocumentErrorBinder extends AbstractErrorBinder{
+public class JDocumentErrorBinder extends AbstractErrorBinder{
     
     protected JLabel textField;
     
-    public DocumentErrorBinder(JLabel textField) {
+    public JDocumentErrorBinder(JLabel textField) {
         this.textField = textField;
     }   
     
@@ -47,7 +48,7 @@ public class DocumentErrorBinder extends AbstractErrorBinder{
     }
     
     @Override
-    public void notifyError(Exception e) {
+    public void notifyError(ValidationException e) {
         //super.notifyError(e);
         exception = e;
         if ( e == null ) {
@@ -67,6 +68,26 @@ public class DocumentErrorBinder extends AbstractErrorBinder{
     @Override
     public boolean isPropertyError() {
         return false;
+    }
+
+    @Override
+    public void notifyError(String propertyName, ValidationException e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    
+    public void notifyFixed() {
+        notifyError(null);
+    }
+
+    @Override
+    public void notifyFixed(String propertyName, ValidationException e) {
+        notifyError(e);
+    }
+
+    @Override
+    public void clear(String propertyName) {
+        this.notifyError(null);
     }
 
 }

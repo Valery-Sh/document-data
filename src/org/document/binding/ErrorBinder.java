@@ -1,14 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.binding;
+
+import org.document.ValidationException;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public interface ErrorBinder {
-     void notifyError(Exception e);
+     void notifyError(ValidationException e); // TO BE REMOVED
+     
+     void notifyError(String propertyName,ValidationException e);
+     //void notifyFixed();
+     void notifyFixed(String propertyName,ValidationException e);
+     void clear(String propertyName);
+     //void clear();
+     
+     
      boolean isPropertyError();
 }

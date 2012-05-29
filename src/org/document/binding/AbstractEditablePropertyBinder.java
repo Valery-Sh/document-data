@@ -10,25 +10,27 @@ import org.document.*;
  * @author V. Shyshkin
  */
 public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBinder {
-    
+
     protected boolean binderIsStillChangingProperty;  //propertyValueChangingInProgressByTheBinder
+
     /**
-     * 
+     *
      * @param componentValue the new component specific value
      */
-    protected void componentChanged(Object componentValue) {
+    protected void componentChanged(boolean notifyOfErrors, Object componentValue) {
         if (document == null) {
             return;
         }
-        if (binderIsStillChangingProperty ) {
+        if (binderIsStillChangingProperty) {
             return;
         }
         if (document.propertyStore() instanceof HasDocumentState) {
             DocumentState state = ((HasDocumentState) document.propertyStore()).getDocumentState();
             state.getDirtyValues().put(propertyName, componentValue);
         }
-
-        fireClearPropertyError();
+        if (notifyOfErrors) {
+            fireClearPropertyError();
+        }
 
         Object convertedValue;
         Object oldDataValue = document.propertyStore().get(propertyName);
@@ -40,58 +42,74 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             if (document instanceof HasValidator) {
                 Validator v = ((HasValidator) document).getValidator();
                 if (v != null) {
-                    v.validate(propertyName, convertedValue);
+                    v.validate(propertyName, convertedValue, document);
                 }
             }
             binderIsStillChangingProperty = true;
             document.propertyStore().put(propertyName, convertedValue);
-            
+
             fireComponentValueChange(convertedValue, componentValue);
+            /*
+             * Some error binders may accumulate property error info 
+             * until fixed. So we  must notify them that an error fixed.
+             */
+            fireClearPropertyError();
             //binderIsStillChangingProperty = false;
             //updateComponentView(convertedValue);
         } catch (ValidationException e) {
-            firePropertyError(e);
+            if (notifyOfErrors) {
+                firePropertyError(e);
+            }
         } catch (Exception e) {
-            ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName +"'. Invalid value: " + componentValue );
-            firePropertyError(ve);
+            if (notifyOfErrors) {
+                ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName + "'. Invalid value: " + componentValue,document);
+                firePropertyError(ve);
+            }
         } finally {
             binderIsStillChangingProperty = false;
         }
     }
-    
-    protected void updateComponentView(Object propertyValue) {
-        
+
+    /**
+     *
+     * @param componentValue the new component specific value
+     */
+    protected void componentChanged(Object componentValue) {
+        this.componentChanged(true, componentValue);
     }
-    
+
+    protected void updateComponentView(Object propertyValue) {
+    }
+
     @Override
     public void react(DocumentChangeEvent event) {
         super.react(event);
         if (event.getAction() == DocumentChangeEvent.Action.completeChanges) {
-            componentChanged(getComponentValue());
+            componentChanged(false, getComponentValue());
         }
     }
 
     private void fireComponentValueChange(Object dataValue, Object componentValue) {
         BinderEvent.Action action =
-                BinderEvent.Action.componentValueChange;
+                BinderEvent.Action.componentChange;
         BinderEvent event = new BinderEvent(this, action, dataValue, componentValue);
         notifyListeners(event);
     }
 
     private void fireClearPropertyError() {
-        BinderEvent.Action action = BinderEvent.Action.clearComponentChangeError;
+        BinderEvent.Action action = BinderEvent.Action.clearError;
         BinderEvent event = new BinderEvent(this, action, null);
         notifyListeners(event);
     }
 
-    protected void firePropertyError(Exception e) {
-        BinderEvent.Action action = BinderEvent.Action.componentChangeValueError;
+    protected void firePropertyError(ValidationException e) {
+        BinderEvent.Action action = BinderEvent.Action.componentChangeError;
         BinderEvent event = new BinderEvent(this, action, e);
         notifyListeners(event);
     }
 
     private void notifyListeners(BinderEvent event) {
-        if ( binderListeners == null ) {
+        if (binderListeners == null) {
             return;
         }
         for (BinderListener l : binderListeners) {
@@ -109,7 +127,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      */
     @Override
     public void propertyChanged(Object propertyValue) {
-        if ( binderIsStillChangingProperty ) {
+        if (binderIsStillChangingProperty) {
             return;
         }
         Object convertedValue = this.componentValueOf(propertyValue);

@@ -11,21 +11,20 @@ public class PersonValidator extends AbstractValidator {
         Person p = (Person) document;
         String lastName = p.getLastName();
         if (lastName == null || lastName.isEmpty()) {
-            throw new ValidationException("  lastName cannot be null or empty");
+            throw new ValidationException("  lastName cannot be null or empty",document);
         }
     }
 
     @Override
-    public void validate(Object key, Object value) {
+    public void validate(Object key, Object value, Document document) {
         if (key.equals("firstName")) {
             if (value != null && value.toString().length() == 1) {
-                throw new ValidationException("  firstName", "'firstName'=" + value + " length cannot be 1");
+                throw new ValidationException("  firstName", "'firstName'=" + value + " length cannot be 1",document);
             }
         } else if (key.equals("lastName")) {
             if (value != null && value.toString().length() > 9 ) {
-                throw new ValidationException("  lastName", "lastName='" + value + "' length cannot be > 9");
+                throw new ValidationException("  lastName", "lastName='" + value + "' length cannot be > 9",document);
             }
-
         }
     }
 }//class PersonValidator

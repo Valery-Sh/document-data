@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
+import org.document.DocumentChangeListener;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractPropertyBinder implements PropertyBinder {
-    
-    
+public abstract class AbstractPropertyBinder implements PropertyBinder, DocumentChangeListener {
     
     private Object alias;
     protected String propertyName;
@@ -27,12 +26,12 @@ public abstract class AbstractPropertyBinder implements PropertyBinder {
         return alias;
     }
 */
-    @Override
+   // @Override
     public BinderConverter getConverter() {
         return converter;
     }
     
-    @Override
+   // @Override
     public void setConverter(BinderConverter converter) {
         this.converter = converter;
     }

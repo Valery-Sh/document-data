@@ -36,7 +36,7 @@ public class AbstractValidator implements Validator{
     }
 
     @Override
-    public void validate(Object key, Object value) {
+    public void validate(Object key, Object value, Document document) {
     }
     
 }

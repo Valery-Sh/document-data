@@ -76,9 +76,6 @@ public class BdLookupComboBinder<E> extends AbstractEditablePropertyBinder imple
     @Override
     protected void setComponentValue(Object componentValue) {
         component.getModel().setSelectedItem(componentValue);
-        if ( componentValue == null  ) {
-            firePropertyError(new ValidationException("Theris no for"));
-        }
     }
 
     @Override
@@ -94,6 +91,9 @@ public class BdLookupComboBinder<E> extends AbstractEditablePropertyBinder imple
             result = d;
             break;
 
+        }
+        if ( result == null ) {
+            firePropertyError(new ValidationException("Theris no for",document));
         }
         return result;
     }

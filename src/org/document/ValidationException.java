@@ -8,23 +8,24 @@ package org.document;
  *
  * @author Valery
  */
-public class ValidationException extends RuntimeException{
-    
+public class ValidationException extends RuntimeException {
+
     private String propertyName;
     private Object propertyValue;
     private Object componentValue;
-    
-    
-/*    public ValidationException(String message) {
-        super(message);
-    }
-*/
-    public ValidationException(String propertyName,String message) {
+    private Document document;
+
+    /*    public ValidationException(String message) {
+     super(message);
+     }
+     */
+    public ValidationException(String propertyName, String message, Document document) {
         super(message);
         this.propertyName = propertyName;
     }
-    public ValidationException(String message) {
-        this(null,message);
+
+    public ValidationException(String message, Document document) {
+        this(null, message, document);
     }
 
     public String getPropertyName() {
@@ -50,6 +51,13 @@ public class ValidationException extends RuntimeException{
     public void setComponentValue(Object componentValue) {
         this.componentValue = componentValue;
     }
-    
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
     
 }
