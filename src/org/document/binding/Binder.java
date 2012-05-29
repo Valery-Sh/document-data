@@ -1,7 +1,5 @@
 package org.document.binding;
 
-import org.document.DocumentChangeListener;
-
 /**
  *
  * @author V. Shyshkin

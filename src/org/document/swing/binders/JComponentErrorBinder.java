@@ -59,10 +59,10 @@ public abstract class JComponentErrorBinder implements ErrorBinder {
     }
 
     public void notifyFixed() {
-        notifyFixed("*document", null);
+        notifyFixed("*document");
     }
     @Override
-    public void notifyFixed(String propertyName,ValidationException e) {
+    public void notifyFixed(String propertyName) {
         clear(propertyName);
     }
     

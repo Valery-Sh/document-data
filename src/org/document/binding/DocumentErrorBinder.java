@@ -40,10 +40,10 @@ public class DocumentErrorBinder implements ErrorBinder{
     }
 
     public void notifyFixed() {
-        notifyFixed("*document", null);
+        notifyFixed("*document");
     }
     @Override
-    public void notifyFixed(String propertyName,ValidationException e) {
+    public void notifyFixed(String propertyName) {
         String pName = propertyName;
         if ( propertyName == null ) {
             pName = "*document";
@@ -54,7 +54,7 @@ public class DocumentErrorBinder implements ErrorBinder{
             return;
         }        
         for ( ErrorBinder b : ebinders) {
-            b.notifyFixed(propertyName, e);
+            b.notifyFixed(propertyName);
         }
         
     }

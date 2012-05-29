@@ -10,6 +10,7 @@ public interface ErrorBinder {
      void notifyError(ValidationException e); // TO BE REMOVED
      
      void notifyError(String propertyName,ValidationException e);
-     void notifyFixed(String propertyName,ValidationException e);
+     void notifyFixed(String propertyName);
+     //void notifyFixed(String propertyName,ValidationException e);
      void clear(String propertyName);
 }

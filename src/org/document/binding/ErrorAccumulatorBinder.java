@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.binding;
 
 import java.util.ArrayList;
@@ -16,13 +12,13 @@ import org.document.ValidationException;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public class ErrorAccumulatorBinder extends AbstractPropertyBinder{
+public class ErrorAccumulatorBinder implements ErrorBinder{
     
     private Set<String> propertySet;
     private Map<Document,ValidationException> documentExceptions;
-    private Map<String,Map<Document,ValidationException>> propertyExceptions;
+    private Map<String,Map<Document,ValidationException>> exceptions;
     
     /**
      * Indicates that all properties will use the binder
@@ -32,10 +28,10 @@ public class ErrorAccumulatorBinder extends AbstractPropertyBinder{
 
     
     public ErrorAccumulatorBinder() {
-        propertyName = "*";
+        
         this.allProperties = true;
         propertySet = new HashSet<String>();
-        propertyExceptions = new HashMap<String,Map<Document,ValidationException>>();
+        exceptions = new HashMap<String,Map<Document,ValidationException>>();
     }
 
     public ErrorAccumulatorBinder(String... propertyNames) {
@@ -47,36 +43,80 @@ public class ErrorAccumulatorBinder extends AbstractPropertyBinder{
     public final Set<String> getPropertySet() {
         return propertySet;
     }
-
+    /**
+     * Document error found.
+     * @param e 
+     */
     @Override
-    public String getPropertyName() {
-        return "*";
+    public void notifyError(ValidationException e) {
+        notifyError("*document", e);
     }
-    
-    
     @Override
-    public Object getComponentValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected void setComponentValue(Object compValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected Object componentValueOf(Object dataValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected Object propertyValueOf(Object compValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void notifyError(String propertyName,ValidationException e) {
+        String pName = propertyName;
+        if ( propertyName == null ) {
+            pName = "*document";
+        }
+        Map<Document,ValidationException> m = exceptions.get(pName); 
+        if ( m == null) {
+            m = new HashMap<Document,ValidationException>();
+        }        
+        exceptions.put(pName, m);
+        m.put(e.getDocument(), e);
     }
 
-    @Override
-    public void initComponentDefault() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void notifyFixed() {
+        notifyFixed("*document", null);
     }
+    @Override
+    public void notifyFixed(String propertyName,ValidationException e) {
+        String pName = propertyName;
+        if ( propertyName == null ) {
+            pName = "*document";
+        }
+        Map<Document,ValidationException> m = exceptions.get(pName); 
+        if ( m == null) {
+            m = new HashMap<Document,ValidationException>();
+        }        
+        exceptions.put(pName, m);
+        m.put(e.getDocument(), e);
+    }
+    @Override
+    public void clear(String propertyName) {
+        String pName = propertyName;
+        if ( propertyName == null ) {
+            pName = "*document";
+        }
+        List<ErrorBinder> ebinders = binders.get(pName); 
+
+        if ( ebinders == null || ebinders.isEmpty()) {
+            return;
+        }        
+        for ( ErrorBinder b : ebinders) {
+            b.clear(propertyName);
+        }
+    }    
+    protected void add(String propertyName,ErrorBinder binder) {
+        String pName = propertyName;
+        if ( propertyName == null ) {
+            pName = "*document";
+        }
+        List<ErrorBinder> ebinders = binders.get(pName); 
+        if ( ebinders == null ) {
+            ebinders = new ArrayList<ErrorBinder>();
+            binders.put(propertyName, ebinders);
+        }
+        if ( ebinders.contains(binder)) {
+            throw new IllegalArgumentException("The same ErrorBinder for propertyName='"+propertyName+"' already exists.");
+        }
+        ebinders.add(binder);
+    }
+    protected void add(ErrorBinder binder) {
+        this.add("*document",binder);
+    }
+
+    public void clear() {
+        clear("*document");
+    }    
     
 }
