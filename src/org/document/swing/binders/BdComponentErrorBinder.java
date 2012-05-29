@@ -13,11 +13,11 @@ import org.document.binding.ErrorBinder;
  *
  * @author V. Shyshkin
  */
-public abstract class JComponentErrorBinder implements ErrorBinder {
+public abstract class BdComponentErrorBinder implements ErrorBinder {
     
     private JComponent component;
     
-    public JComponentErrorBinder(JComponent component)  {
+    public BdComponentErrorBinder(JComponent component)  {
         this.component = component;
     }
     @Override

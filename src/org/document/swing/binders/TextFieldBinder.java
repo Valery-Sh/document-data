@@ -12,12 +12,12 @@ import org.document.binding.DefaultBinderConvertor;
  *
  * @author Valery
  */
-public class TextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener, ActionListener {
+public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener, ActionListener {
     
     public String _ID_;
     protected JTextField textField;
 
-    public TextFieldBinder(String propName, JTextField textField) {
+    public BdTextFieldBinder(String propName, JTextField textField) {
         this.textField = textField;
         this.propertyName = propName;
         initBinder();

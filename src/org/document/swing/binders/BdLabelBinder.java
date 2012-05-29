@@ -8,11 +8,11 @@ import org.document.binding.DefaultBinderConvertor;
  *
  * @author V. Shyshkin
  */
-public class LabelBinder extends AbstractPropertyBinder {
+public class BdLabelBinder extends AbstractPropertyBinder {
     
     protected JLabel textField;
     
-    public LabelBinder(String propName, JLabel textField) {
+    public BdLabelBinder(String propName, JLabel textField) {
         this.textField = textField;
         this.propertyName = propName;
         initBinder();
