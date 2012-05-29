@@ -17,55 +17,28 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     protected List<BinderListener> binderListeners;
     protected String childName;
     protected List<DocumentBinder> childs;
-    protected Map<String, List<T>> binders;
-    protected Map<String, List<T>> errorBinders;
+    protected Map<String,List<T>> binders;
     protected List<T> documentErrorBinders;
     protected Document document;
     protected DocumentErrorBinder documentErrorBinder;
     
     protected AbstractDocumentBinder() {
-        binders = new HashMap<String, List<T>>();
         binderListeners = new ArrayList<BinderListener>();
-
-        errorBinders = new HashMap<String, List<T>>();
         documentErrorBinders = new ArrayList<T>();
         childs = new ArrayList<DocumentBinder>();
         documentErrorBinder = new DocumentErrorBinder();
+        binders = new HashMap<String,List<T>>();
     }
 
     public DocumentErrorBinder getDocumentErrorBinder() {
         return documentErrorBinder;
     }
 
-    /*    protected AbstractDocumentBinder(Object alias) {
-     this();
-     //        this.alias = alias;
-     }
-     */
-    /*    @Override
-     public Object getAlias() {
-     return alias;
-     }
-     */
     @Override
     public Object getComponentValue() {
         return null;
     }
 
-    /*    @Override
-     public void addBinderListener(BinderListener l) {
-     binderListeners.add(l);
-     if (binderListeners.size() > 1 ) {
-     throw new IndexOutOfBoundsException("AbstractDocumentBinder. Only one BinderListener can be registered");
-     }
-
-     }
-
-     @Override
-     public void removeBinderListener(BinderListener l) {
-     binderListeners.remove(l);
-     }
-     */
     @Override
     public abstract void addBinderListener(BinderListener l);
 
@@ -103,8 +76,11 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
      * @param propertyName if document error binder then must be "null"
      * @param binder 
      */
-    public void add(String propertyName,ErrorBinder binder) {
+    public void addErrorBinder(String propertyName,ErrorBinder binder) {
         documentErrorBinder.add(propertyName, binder);
+    }
+    public void addErrorBinder(ErrorBinder binder) {
+        documentErrorBinder.add("*document", binder);
     }
     
     @Override
@@ -112,19 +88,19 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if ( binder == null ) {
             return;
         }
-        if (binder instanceof ErrorBinder) {
-/*            if (((PropertyBinder) binder).getPropertyName() == null) {
-                // documentStore error binder
-                add(binder, documentErrorBinders);
-            } else {
-                add(binder, errorBinders);
-            }
-*/          
-            //document level error binder
-            documentErrorBinder.add("*document",(ErrorBinder)binder);
-        } else if (binder instanceof PropertyBinder) {
-            add(binder, binders);
+        String propertyName = ((PropertyBinder) binder).getPropertyName();
+
+        List<T> blist = binders.get(propertyName);
+        if (blist == null) {
+            blist = new ArrayList<T>();
         }
+        binder.addBinderListener(this);
+        if ( binder instanceof DocumentChangeListener ) {
+            addDocumentChangeListener((DocumentChangeListener)binder);
+        }
+        blist.add(binder);
+        binders.put(propertyName, blist);
+
     }
 
     protected void remove(T binder, Map<String, List<T>> binderMap) {
@@ -181,50 +157,21 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             
     }
 
-    public Map<String, List<T>> getBinders() {
+/*    public Map<String, List<T>> getBinders() {
         return this.binders;
     }
 
     public List<T> getBinders(String propertyName) {
         return this.binders.get(propertyName);
     }
-
-    public Map<String, List<T>> getErrorBinders() {
-        return this.errorBinders;
-    }
-
-    public List<T> getErrorBinders(String propertyName) {
-        return this.errorBinders.get(propertyName);
-    }
-
-    public List<T> getDocumentErrorBinders() {
-        return this.documentErrorBinders;
-    }
+*/
 
     protected void firePropertyChange(DocumentChangeEvent event) {
         String propName = event.getPropertyName();
-        Object oldValue = event.getOldValue();
-        Object newValue = event.getNewValue();
 
         List<T> blist = binders.get(propName);
         if (blist != null) {
             for (Binder b : blist ) {
-                if ( b instanceof DocumentChangeListener) {
-                    ((DocumentChangeListener)b).react(event);
-                }
-            }
-        }
-        blist = errorBinders.get(propName);
-        if (blist != null) {
-            for (Binder b : blist) {
-                if ( b instanceof DocumentChangeListener) {
-                    ((DocumentChangeListener)b).react(event);
-                }
-            }
-        }
-        blist = errorBinders.get("*");
-        if (blist != null) {
-            for (Binder b : blist) {
                 if ( b instanceof DocumentChangeListener) {
                     ((DocumentChangeListener)b).react(event);
                 }
@@ -271,7 +218,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
 
         this.document = object;
-
+        documentErrorBinder.setDocument(document);
+        
         if (this.document != null) {
             getDocumentStore().addDocumentChangeListener(this);
         }
@@ -301,8 +249,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                     }
                 }
                 //completeChanges();
-                fireDocumentError(null);
-                documentErrorBinder.notifyFixed();
+                //fireDocumentError(null);
+                documentErrorBinder.clear();
                 try {
                     if (document instanceof HasValidator) {
                         Validator v = ((HasValidator) document).getValidator();
@@ -311,7 +259,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                         }
                     }
                 } catch (ValidationException e) {
-                    fireDocumentError(e);
+                    documentErrorBinder.notifyError(e);
                 }
             }
         }
@@ -375,7 +323,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
     }
 
-    protected void firePropertyError(String propertyName, ValidationException e) {
+/*    protected void firePropertyError(String propertyName, ValidationException e) {
         if (this.documentListeners == null || documentListeners.isEmpty()) {
             return;
         }
@@ -393,8 +341,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
 
     }
-
-    protected void fireDocumentError(ValidationException e) {
+*/
+/*    protected void fireDocumentError(ValidationException e) {
         if (this.documentListeners == null || documentListeners.isEmpty()) {
             return;
         }
@@ -409,7 +357,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
 
     }
-
+*/
     protected abstract DocumentBinder create();
 
     public DocumentBinder createChild(String childName) {
@@ -444,11 +392,9 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         switch (event.getAction()) {
             case clearError:
                 documentErrorBinder.clear(event.getPropertyName());
-                //firePropertyError(event.getPropertyName(), event.getException());
                 break;
             case componentChangeError:
                 documentErrorBinder.notifyError(event.getPropertyName(), event.getException());
-                //firePropertyError(event.getPropertyName(), event.getException());
                 break;
 
         }

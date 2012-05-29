@@ -114,10 +114,6 @@ public class DocumentErrorBinder implements ErrorBinder{
         }
         
     }    
-    @Override
-    public boolean isPropertyError() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     /**
      * Returns a current document object.
      * @return an object of type {@link org.document.Document}
