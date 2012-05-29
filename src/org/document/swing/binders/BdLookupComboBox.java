@@ -13,7 +13,7 @@ import org.document.binding.BindingManager;
  *
  * @author Valery
  */
-public class JLookupComboBox extends JComboBox {
+public class BdLookupComboBox extends JComboBox {
     
     private String documentAlias;
     
@@ -26,16 +26,16 @@ public class JLookupComboBox extends JComboBox {
     
     private BindingManager bindingManager;
     
-    public JLookupComboBox() {
+    public BdLookupComboBox() {
         super();
     }
     
 
-    public JLookupComboBox(String targetProperty) {
+    public BdLookupComboBox(String targetProperty) {
         this(targetProperty,null);
     }
 
-    public JLookupComboBox(String targetProperty, List<? extends Document> modelSource) {
+    public BdLookupComboBox(String targetProperty, List<? extends Document> modelSource) {
         this();
         if ( modelSource != null ) {
             this.setModel(new DocumentComboBoxModel(modelSource));

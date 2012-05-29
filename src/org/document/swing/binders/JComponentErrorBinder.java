@@ -5,6 +5,7 @@
 package org.document.swing.binders;
 
 import javax.swing.JComponent;
+import org.document.Document;
 import org.document.ValidationException;
 import org.document.binding.ErrorBinder;
 
@@ -58,26 +59,13 @@ public abstract class JComponentErrorBinder implements ErrorBinder {
         getComponent().setVisible(true);
     }
 
-    public void notifyFixed() {
-        notifyFixed("*document");
+    public void notifyFixed(Document document) {
+        notifyFixed("*document",document);
     }
     @Override
-    public void notifyFixed(String propertyName) {
-        clear(propertyName);
-    }
-    
-
-    public void clear() {
-        clear("*document");
-    }    
-    
-    @Override
-    public void clear(String propertyName) {
-        
+    public void notifyFixed(String propertyName,Document document) {
         setMessage("");
         getComponent().setEnabled(false);
         getComponent().setVisible(false);
-        
-    }    
-    
+    }
 }

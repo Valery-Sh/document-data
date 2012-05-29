@@ -19,15 +19,15 @@ import org.document.binding.DefaultBinderConvertor;
  */
 public class BdLookupComboBinder<E> extends AbstractEditablePropertyBinder implements ActionListener {
 
-    protected JLookupComboBox component;
+    protected BdLookupComboBox component;
     //private String[] lookupProperties;
 
-    public BdLookupComboBinder(JLookupComboBox component) {
+    public BdLookupComboBinder(BdLookupComboBox component) {
         this.component = component;
         initBinder();
     }
 
-    public BdLookupComboBinder(String propName, JLookupComboBox component) {
+    public BdLookupComboBinder(String propName, BdLookupComboBox component) {
         this.component = component;
         this.propertyName = propName;
         initBinder();

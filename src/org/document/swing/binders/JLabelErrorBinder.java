@@ -10,8 +10,8 @@ import javax.swing.JLabel;
  *
  * @author Valery
  */
-public class BdLabelErrorBinder extends JComponentErrorBinder{
-    public BdLabelErrorBinder(JLabel label) {
+public class JLabelErrorBinder extends JComponentErrorBinder{
+    public JLabelErrorBinder(JLabel label) {
         super(label);
     }
 

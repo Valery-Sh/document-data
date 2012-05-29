@@ -11,7 +11,7 @@ import org.document.ValidationException;
  *
  * @author V. Valery
  */
-public class DocumentErrorBinder implements ErrorBinder{
+public class DocumentErrorBinder {
     
     private Document document;
     private Map<String,List<ErrorBinder>> binders;
@@ -20,11 +20,11 @@ public class DocumentErrorBinder implements ErrorBinder{
         binders = new HashMap<String,List<ErrorBinder>>();
     }
 
-    @Override
+
     public void notifyError(ValidationException e) {
         notifyError("*document", e);
     }
-    @Override
+
     public void notifyError(String propertyName,ValidationException e) {
         String pName = propertyName;
         if ( propertyName == null ) {
@@ -42,7 +42,7 @@ public class DocumentErrorBinder implements ErrorBinder{
     public void notifyFixed() {
         notifyFixed("*document");
     }
-    @Override
+
     public void notifyFixed(String propertyName) {
         String pName = propertyName;
         if ( propertyName == null ) {
@@ -54,7 +54,7 @@ public class DocumentErrorBinder implements ErrorBinder{
             return;
         }        
         for ( ErrorBinder b : ebinders) {
-            b.notifyFixed(propertyName);
+            b.notifyFixed(propertyName,document);
         }
         
     }
@@ -82,7 +82,6 @@ public class DocumentErrorBinder implements ErrorBinder{
         clear("*document");
     }    
     
-    @Override
     public void clear(String propertyName) {
         String pName = propertyName;
         if ( propertyName == null ) {
@@ -94,7 +93,7 @@ public class DocumentErrorBinder implements ErrorBinder{
             return;
         }        
         for ( ErrorBinder b : ebinders) {
-            b.clear(propertyName);
+            b.notifyFixed(propertyName,document);
         }
     }    
     

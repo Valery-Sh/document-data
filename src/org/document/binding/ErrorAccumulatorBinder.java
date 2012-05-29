@@ -65,11 +65,15 @@ public class ErrorAccumulatorBinder implements ErrorBinder{
         m.put(e.getDocument(), e);
     }
 
-    public void notifyFixed() {
-        notifyFixed("*document", null);
+    public void notifyFixed(Document document) {
+        notifyFixed("*document",document);
     }
+    
     @Override
-    public void notifyFixed(String propertyName,ValidationException e) {
+    public void notifyFixed(String propertyName,Document document) {
+        if ( document == null ) {
+            return;
+        }
         String pName = propertyName;
         if ( propertyName == null ) {
             pName = "*document";
@@ -78,45 +82,7 @@ public class ErrorAccumulatorBinder implements ErrorBinder{
         if ( m == null) {
             m = new HashMap<Document,ValidationException>();
         }        
-        exceptions.put(pName, m);
-        m.put(e.getDocument(), e);
+        m.remove(document);
+        
     }
-    @Override
-    public void clear(String propertyName) {
-        String pName = propertyName;
-        if ( propertyName == null ) {
-            pName = "*document";
-        }
-        List<ErrorBinder> ebinders = binders.get(pName); 
-
-        if ( ebinders == null || ebinders.isEmpty()) {
-            return;
-        }        
-        for ( ErrorBinder b : ebinders) {
-            b.clear(propertyName);
-        }
-    }    
-    protected void add(String propertyName,ErrorBinder binder) {
-        String pName = propertyName;
-        if ( propertyName == null ) {
-            pName = "*document";
-        }
-        List<ErrorBinder> ebinders = binders.get(pName); 
-        if ( ebinders == null ) {
-            ebinders = new ArrayList<ErrorBinder>();
-            binders.put(propertyName, ebinders);
-        }
-        if ( ebinders.contains(binder)) {
-            throw new IllegalArgumentException("The same ErrorBinder for propertyName='"+propertyName+"' already exists.");
-        }
-        ebinders.add(binder);
-    }
-    protected void add(ErrorBinder binder) {
-        this.add("*document",binder);
-    }
-
-    public void clear() {
-        clear("*document");
-    }    
-    
 }

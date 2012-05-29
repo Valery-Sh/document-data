@@ -19,11 +19,11 @@ import org.document.binding.PropertyBinder;
  *
  * @author V. Shyshkin
  */
-public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
+public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
 
     protected String[] properties;
 
-    public JComboBoxListBinder(JComboBox component, String... properties) {
+    public BdComboBoxListBinder(JComboBox component, String... properties) {
         super(component);
         this.properties = properties;
         initBinders();
@@ -31,17 +31,17 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
 
     @Override
     protected PropertyBinder createSelectedBinder() {
-        return new JComboBoxListBinder.JComboSelectionBinder((JComboBox) getComponent());
+        return new BdComboBoxListBinder.JComboSelectionBinder((JComboBox) getComponent());
     }
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        return new JComboBoxListBinder.JComboModelBinder((JComboBox) getComponent(), properties);
+        return new BdComboBoxListBinder.JComboModelBinder((JComboBox) getComponent(), properties);
     }
 
     @Override
     protected PropertyBinder createDocumentChangeEventBinder() {
-        return new JComboBoxListBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
+        return new BdComboBoxListBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
     }
     public static class JComboDocumentChangeBinder extends AbstractListDocumentChangeBinder {
 
@@ -180,7 +180,7 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
         @Override
         public void setComponentValue(Object value) {
             //component.clearSelection();
-            component.setModel(new JComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments()));
+            component.setModel(new BdComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments()));
         }
 
         @Override
@@ -193,7 +193,7 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
             if (getDocuments() == null) {
                 return null;
             }
-            return new JComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments());
+            return new BdComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments());
         }
 
         @Override
@@ -201,7 +201,7 @@ public class JComboBoxListBinder<T extends PropertyBinder> extends ListStateBind
             if (compValue == null) {
                 return null;
             }
-            return ((JComboBoxListBinder.ComboBoxModelImpl) component.getModel()).documents;
+            return ((BdComboBoxListBinder.ComboBoxModelImpl) component.getModel()).documents;
         }
 
         @Override

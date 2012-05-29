@@ -19,11 +19,11 @@ import org.document.binding.PropertyBinder;
  *
  * @author V. Shyshkin
  */
-public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
+public class BdListBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
 
     protected String[] properties;
 
-    public JListBoxListBinder(JList component, String... properties) {
+    public BdListBoxListBinder(JList component, String... properties) {
         super(component);
         this.properties = properties;
         initBinders();
@@ -60,7 +60,7 @@ public class JListBoxListBinder<T extends PropertyBinder> extends ListStateBinde
                 return;
             }
 
-            JListBoxListBinder.ListBoxModelImpl model = (JListBoxListBinder.ListBoxModelImpl)getJList().getModel();
+            BdListBoxListBinder.ListBoxModelImpl model = (BdListBoxListBinder.ListBoxModelImpl)getJList().getModel();
             String[] props = model.getProperties();
             if ( Arrays.asList(props).contains(event.getPropertyName()) ) {
                 getJList().repaint();
