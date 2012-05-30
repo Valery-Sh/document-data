@@ -12,7 +12,6 @@ import org.document.swing.binders.BdLabelBinder;
  */
 public class BdLabel extends JLabel implements Serializable, HasBinder{
     
-//    public static final String PROP_SAMPLE_PROPERTY = "sampleProperty";
     private String documentAlias;
     private PropertyBinder binder;
     private String propertyName;
