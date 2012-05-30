@@ -39,14 +39,20 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
             boolean cellHasFocus) {
         
         PropertyStore ps;
-        if (value != null) {
+/*        if (value != null) {
             ps = ((Document) value).propertyStore();
         } else if (! isSelected) {
             ps = null;
         } else {
             return this;
         }
-        
+*/
+        if (value != null && (value instanceof Document)) {
+            ps = ((Document) value).propertyStore();
+        }else {
+            return this;
+        }
+          
 
         for (int i = 0; i < getComponents().length; i++) {
             if (!(getComponents()[i] instanceof JLabel)) {

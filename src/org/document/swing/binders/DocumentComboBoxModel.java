@@ -17,7 +17,9 @@ public class DocumentComboBoxModel<E extends Document> implements ComboBoxModel 
 
     public DocumentComboBoxModel(List<E> documents) {
         this.documents = documents;
-        this.selectedObject = documents.get(0);
+        if ( documents != null  && ! documents.isEmpty()) {
+            this.selectedObject = documents.get(0);
+        }
         //this.properties = properties;
 
     }
