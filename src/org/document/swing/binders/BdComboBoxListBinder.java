@@ -69,7 +69,6 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
             }
         }
 
-
     }
 
     public static class JComboSelectionBinder extends AbstractListSelectionBinder implements ActionListener {
@@ -208,6 +207,7 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
         public void initComponentDefault() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
     }//class JListListModelBinder
 
     public static class ComboBoxModelImpl<E extends Document> implements ComboBoxModel {

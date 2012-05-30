@@ -12,11 +12,15 @@ public class BdLabelBinder extends AbstractPropertyBinder {
     
     protected JLabel textField;
     
-    public BdLabelBinder(String propName, JLabel textField) {
+    public BdLabelBinder(String propertyName, JLabel textField) {
         this.textField = textField;
-        this.propertyName = propName;
+        this.propertyName = propertyName;
         initBinder();
     }   
+    public BdLabelBinder(JLabel textField) {
+        this.textField = textField;
+        initBinder();
+    }       
     protected final void initBinder() {
         converter = new DefaultBinderConvertor(this);
     }

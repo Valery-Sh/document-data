@@ -316,8 +316,42 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             binder.removeBinderListener(this);
             documentListBinders.remove(binder);
     }
+    
+    public void addBinder(String propertyName,String alias,HasBinder object) {
+        Binder b = object.getBinder();
+        if ( b instanceof PropertyBinder) {
+            PropertyBinder pb = (PropertyBinder)b;
+            pb.setPropertyName(propertyName);
+            getDocumentBinder(alias).add(pb);
+        }
+    }
 
+    public void addBinder(String propertyName,Class alias,HasBinder object) {
+        this.addBinder(propertyName,alias.getName(),object);
+    }
+    public void addBinder(Class alias,HasBinder object) {
+        Binder b = object.getBinder();
+        if ( b instanceof PropertyBinder) {
+            PropertyBinder pb = (PropertyBinder)b;
+            String nm = pb.getPropertyName();
+            if ( nm != null ) {
+                getDocumentBinder(alias).add(pb);
+            }
+        }
+        
+    }
+    public void addBinder(HasBinder object) {
+        Binder b = object.getBinder();
+        if ( b instanceof PropertyBinder) {
+            PropertyBinder pb = (PropertyBinder)b;
+            String nm = pb.getPropertyName();
+            if ( nm != null ) {
+                getDocumentBinder("default").add(pb);
+            }
+        }
 
+    }
+    
     /**
      * Sets a custom recognizer that is used to associate an object
      * of type <code>Document</code> with a corresponding object of type
@@ -348,6 +382,9 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         Object key = doc.propertyStore().getAlias();
 
         DocumentBinder result = (DocumentBinder) documentBinders.get(key);        
+        if ( result == null) {
+            result = (DocumentBinder) documentBinders.get("default");        
+        }
         return result;
     }
 
@@ -413,7 +450,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * @return an existing or new instance of type <code>DocumentBinder</code>
      */
     public DocumentBinder getDocumentBinder() {
-        return getDocumentBinder(Object.class,"default");
+        return getDocumentBinder("default");
     }
     
     /**

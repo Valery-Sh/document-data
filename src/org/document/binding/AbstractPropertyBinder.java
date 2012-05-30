@@ -83,7 +83,10 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
     public String getPropertyName() {
         return this.propertyName;
     }
-
+    @Override
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
 
     /**
      * Prepends cyclic component modifications.

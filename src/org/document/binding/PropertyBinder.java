@@ -11,13 +11,15 @@ import org.document.DocumentChangeListener;
 public interface PropertyBinder extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
 
     Document getDocument();
-
+    
     /**
      * Returns a property name whose value is bound to a component.
      *
      * @return a property name as a <code>String</code>.
      */
     String getPropertyName();
+    
+    void setPropertyName(String propertyName);
 
     /**
      * It is assumed that this method should be called when you want to set the
