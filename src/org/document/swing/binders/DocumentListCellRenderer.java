@@ -17,12 +17,14 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
 
     private String[] properties;
     private Color listBackground;
+  //  private Color listSelectionForeground;
 
     public DocumentListCellRenderer(String... properties) {
         this.properties = properties;
         setOpaque(false);
         setLayout(new java.awt.GridLayout());
         listBackground = Color.WHITE;
+        //listSelectionForeground = Color.WHITE;
         for (int i = 0; i < properties.length; i++) {
             JLabel lb = new JLabel();
             lb.setOpaque(false);
@@ -87,7 +89,8 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
 
             // check if this cell is selected
         } else if (isSelected) {
-            foreground = list.getSelectionForeground();//Color.WHITE;
+            //foreground = Color.WHITE;//getListSelectionForeground();
+            foreground = list.getSelectionForeground();
             background = list.getSelectionBackground();
         } else {
             background = getListBackground();
@@ -96,6 +99,15 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
         this.setOpaque(true);
         this.setBackground(background);
         this.setForeground(foreground);
+        
+        for (int i = 0; i < getComponents().length; i++) {
+            if (!(getComponents()[i] instanceof JLabel)) {
+                continue;
+            }
+            JLabel lb = (JLabel) getComponents()[i];
+            lb.setForeground(foreground);
+            
+        }        
         return this;
     }
 
@@ -114,4 +126,13 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
     public void setListBackground(Color listBackground) {
         this.listBackground = listBackground;
     }
+
+/*    public Color getListSelectionForeground() {
+        return listSelectionForeground;
+    }
+
+    public void setListSelectionForeground(Color listSelectionForeground) {
+        this.listSelectionForeground = listSelectionForeground;
+    }
+*/    
 }
