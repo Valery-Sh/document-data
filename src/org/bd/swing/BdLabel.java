@@ -7,7 +7,7 @@ import org.document.binding.HasBinder;
 import org.document.binding.PropertyBinder;
 import org.document.swing.binders.BdLabelBinder;
 /**
- *
+ * The
  * @author V. Shyshkin
  */
 public class BdLabel extends JLabel implements Serializable, HasBinder{
