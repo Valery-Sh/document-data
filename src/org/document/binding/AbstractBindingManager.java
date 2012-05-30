@@ -3,9 +3,8 @@ package org.document.binding;
 import java.util.*;
 import org.document.*;
 import org.document.PropertyStore.Alias;
-
 /**
- * The class allows to declare any object of type {@link org.document.Document }
+ * This class allows to declare any object of type {@link org.document.Document }
  * as <code><i>selected</i></code> and start binding procedure for it.  
  *
  * The method {@link setSelected(Document) } announces the 
