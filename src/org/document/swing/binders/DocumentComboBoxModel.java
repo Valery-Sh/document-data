@@ -20,8 +20,6 @@ public class DocumentComboBoxModel<E extends Document> implements ComboBoxModel 
         if ( documents != null  && ! documents.isEmpty()) {
             this.selectedObject = documents.get(0);
         }
-        //this.properties = properties;
-
     }
 
     @Override
@@ -38,18 +36,6 @@ public class DocumentComboBoxModel<E extends Document> implements ComboBoxModel 
         return  documents.get(index);
     }
 
-/*    public Object getElement(Document d) {
-
-        if (d == null) {
-            return null;
-        }
-        String result = "";
-        for (String nm : this.properties) {
-            result = result += " " + d.propertyStore().get(nm);
-        }
-        return result;
-    }
-*/
     public String[] getProperties() {
         return properties;
     }
@@ -64,7 +50,6 @@ public class DocumentComboBoxModel<E extends Document> implements ComboBoxModel 
 
     @Override
     public void setSelectedItem(Object anObject) {
-//        System.out.println("0) Combo setSelectedItem " + anObject);        
         if ((selectedObject != null && !selectedObject.equals(anObject))
                 || selectedObject == null && anObject != null) {
             selectedObject = anObject;
@@ -80,7 +65,4 @@ public class DocumentComboBoxModel<E extends Document> implements ComboBoxModel 
         return selectedObject;
     }
     
-    public class DocumentItem {
-        
-    }
 }
