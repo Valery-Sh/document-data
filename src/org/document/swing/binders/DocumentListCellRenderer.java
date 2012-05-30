@@ -49,7 +49,9 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
 */
         if (value != null && (value instanceof Document)) {
             ps = ((Document) value).propertyStore();
-        }else {
+        } else if (value == null && ! isSelected) {
+            ps = null;
+        } else {
             return this;
         }
           
