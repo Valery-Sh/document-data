@@ -17,7 +17,7 @@ public class BdLookupComboBox extends JComboBox {
     
     private String documentAlias;
     
-    private String targetProperty;
+    private String propertyName;
     //private List<Document> modelSource;
     private String[] displayProperties;
     private String lookupProperty;
@@ -41,7 +41,7 @@ public class BdLookupComboBox extends JComboBox {
             this.setModel(new DocumentComboBoxModel(modelSource));
             
         }
-        this.targetProperty = targetProperty;
+        this.propertyName = targetProperty;
     }
     
     public List<? extends Document> getModelSource() {
@@ -58,16 +58,16 @@ public class BdLookupComboBox extends JComboBox {
         BindingManager oldBindingManager = this.bindingManager;
         this.bindingManager = bindingManager;
         if ( bindingManager != null &&
-             targetProperty != null &&
+             propertyName != null &&
              displayProperties != null &&
              getModelSource() != null &&
              documentAlias != null   ) {
             if ( binder == null ) {
-                binder = new BdLookupComboBinder(targetProperty,this);
+                binder = new BdLookupComboBinder(propertyName,this);
                 bindingManager.getDocumentBinder(documentAlias).add(binder);
             } else {
                 oldBindingManager.getDocumentBinder(documentAlias).remove(binder);
-                binder = new BdLookupComboBinder(targetProperty,this);
+                binder = new BdLookupComboBinder(propertyName,this);
                 bindingManager.getDocumentBinder(documentAlias).add(binder);
             }
         }
@@ -82,16 +82,16 @@ public class BdLookupComboBox extends JComboBox {
         String oldAlias = this.documentAlias;
         this.documentAlias = documentAlias;
         if ( bindingManager != null &&
-             targetProperty != null &&
+             propertyName != null &&
              displayProperties != null &&
              getModelSource() != null &&   
              documentAlias != null   ) {
             if ( binder == null ) {
-                binder = new BdLookupComboBinder(targetProperty,this);
+                binder = new BdLookupComboBinder(propertyName,this);
                 bindingManager.getDocumentBinder(documentAlias).add(binder);
             } else {
                 bindingManager.getDocumentBinder(oldAlias).remove(binder);
-                binder = new BdLookupComboBinder(targetProperty,this);
+                binder = new BdLookupComboBinder(propertyName,this);
                 bindingManager.getDocumentBinder(documentAlias).add(binder);
                 
             }
@@ -100,13 +100,13 @@ public class BdLookupComboBox extends JComboBox {
     }
 
 
-    public String getTargetProperty() {
-        return targetProperty;
+    public String getPropertyName() {
+        return propertyName;
     }
 
-    public void setTargetProperty(String targetProperty) {
+    public void setPropertyName(String targetProperty) {
 //        String oldTargetProperty = this.targetProperty;
-        this.targetProperty = targetProperty;
+        this.propertyName = targetProperty;
         if ( bindingManager != null &&
              targetProperty != null &&
              displayProperties != null &&
@@ -128,12 +128,12 @@ public class BdLookupComboBox extends JComboBox {
     public void setModel(List<? extends Document> modelSource) {
         setModel(new DocumentComboBoxModel(modelSource));
         if ( bindingManager != null &&
-             targetProperty != null &&
+             propertyName != null &&
              displayProperties != null &&
              getModelSource() != null &&   
              documentAlias != null   ) {
             if ( binder == null ) {
-                binder = new BdLookupComboBinder(targetProperty,this);
+                binder = new BdLookupComboBinder(propertyName,this);
                 bindingManager.getDocumentBinder(documentAlias).add(binder);
             }
         }
@@ -149,12 +149,12 @@ public class BdLookupComboBox extends JComboBox {
              setRenderer(new DocumentListCellRenderer(displayProperties));
         }        
         if ( bindingManager != null &&
-             targetProperty != null &&
+             propertyName != null &&
              displayProperties != null &&
              getModelSource() != null &&   
              documentAlias != null   ) {
             if ( binder == null ) {
-                binder = new BdLookupComboBinder(targetProperty,this);
+                binder = new BdLookupComboBinder(propertyName,this);
                 bindingManager.getDocumentBinder(documentAlias).add(binder);
             }
         }

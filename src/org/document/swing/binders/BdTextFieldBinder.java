@@ -17,9 +17,14 @@ public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements
     public String _ID_;
     protected JTextField textField;
 
-    public BdTextFieldBinder(String propName, JTextField textField) {
+    public BdTextFieldBinder(JTextField textField) {
         this.textField = textField;
-        this.propertyName = propName;
+        initBinder();
+    }
+    
+    public BdTextFieldBinder(String propertyName, JTextField textField) {
+        this.textField = textField;
+        this.propertyName = propertyName;
         initBinder();
     }
 
