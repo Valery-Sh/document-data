@@ -73,7 +73,6 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         this.source = source;
         localSchema = SchemaUtils.createSchema(source.getClass());
         alias = source.getClass().getName();
-//        this.state.fillValidEditValues();
     }
 
     /**
@@ -114,8 +113,8 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         if ( source == null ) {
             return null;
         }
-        if (source instanceof MapDocument) {
-            result = DataUtils.getValue(key.toString(), ((MapDocument) source).getMap());
+        if (source instanceof KeyValueMap) {
+            result = DataUtils.getValue(key.toString(), ((KeyValueMap) source).getMap());
         } else {
             result = DataUtils.getValue(key.toString(), source);
         }
@@ -239,7 +238,11 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * @param value a value to be bind
      */
     protected void setPropertyValue(String name, Object value) {
-        DataUtils.setValue(name, source, value);
+        if ( source instanceof KeyValueMap ) {
+            ((KeyValueMap)source).put(name, value);
+        } else {
+            DataUtils.setValue(name, source, value);
+        }
     }
 
     /**
@@ -264,7 +267,9 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     public Object getAlias() {
         return alias;
     }
-
+    public void setAlias(Object alias) {
+        this.alias = alias;
+    }
     /**
      *
      */
@@ -359,8 +364,6 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             if (event.getAction() == BinderEvent.Action.componentChange) {
                 dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());
             }
-
-
         }
         /**
          * Can be called only by a

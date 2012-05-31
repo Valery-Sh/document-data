@@ -40,7 +40,7 @@ import org.document.PropertyStore.Alias;
  * <code>
  *<ul>
  *	<li>DocumentBinder getDocumentBinder(Class clazz)</li>
- *	<li>DocumentBinder getDocumentBinder(Class clazz, String str)</li>
+ *	<li>DocumentBinder getDocumentBinder(String alias)</li> 
  *	<li>DocumentBinder getDocumentBinder()</li>
  *</ul>
  * </code>
@@ -430,7 +430,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * to search or create an object of type <code>DocumentBinder</code>
      * @return an existing or new instance of type <code>DocumentBinder</code>
      */
-    public DocumentBinder getDocumentBinder(Class clazz, String subAlias) {
+/*    public DocumentBinder getDocumentBinder(Class clazz, String subAlias) {
         Object key  = new Alias(clazz,subAlias);
         DocumentBinder result = (DocumentBinder) documentBinders.get(key);
         if (result == null) {
@@ -440,6 +440,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         return result;
         
     }
+*/ 
     /**
      * Returns an existing or new instance of type <code>DocumentBinder</code>
      * for a class <code>java.lang.Objectclass</code>  class and "default" subAlias.
