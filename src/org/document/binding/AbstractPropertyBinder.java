@@ -81,6 +81,9 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
     public void react(DocumentChangeEvent event) {
         switch (event.getAction()) {
             case documentChange:
+                if ( isStopped() ) {
+                    return;
+                }
                 this.document = (Document) event.getNewValue();
                 if (document != null && getPropertyName() != null) {
                     propertyChanged(document.propertyStore().get(getPropertyName()));
@@ -95,6 +98,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(propertyName)) {
                     return;
                 }
+                this.stopped = false;
                 this.document = (Document) event.getNewValue();
                 if (document != null && getPropertyName() != null) {
                     propertyChanged(document.propertyStore().get(getPropertyName()));
@@ -112,7 +116,8 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 this.stopped = true;
                 return;
             case propertyChange:
-                this.propertyChanged(event.getNewValue());
+                if ( ! isStopped() )
+                    this.propertyChanged(event.getNewValue());
                 return;
         }//switch
     }

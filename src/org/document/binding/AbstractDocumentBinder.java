@@ -131,7 +131,6 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             return;
         }
         String propertyName = ((PropertyBinder) binder).getPropertyName();
-
         List<T> blist = binders.get(propertyName);
         if (blist == null) {
             blist = new ArrayList<T>();
@@ -142,7 +141,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
         blist.add(binder);
         binders.put(propertyName, blist);
-
+        resume(propertyName);
     }
 
     protected void remove(T binder, Map<String, List<T>> binderMap) {

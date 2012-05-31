@@ -18,6 +18,10 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * @param componentValue the new component specific value
      */
     protected void componentChanged(boolean notifyOfErrors, Object componentValue) {
+        if (isStopped()) {
+            return;
+        }
+
         if (document == null) {
             return;
         }
@@ -62,7 +66,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             }
         } catch (Exception e) {
             if (notifyOfErrors) {
-                ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName + "'. Invalid value: " + componentValue,document);
+                ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName + "'. Invalid value: " + componentValue, document);
                 firePropertyError(ve);
             }
         } finally {
@@ -78,12 +82,12 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         this.componentChanged(true, componentValue);
     }
 
-    protected void updateComponentView(Object propertyValue) {
-    }
-
     @Override
     public void react(DocumentChangeEvent event) {
         super.react(event);
+        if (isStopped()) {
+            return;
+        }
         if (event.getAction() == DocumentChangeEvent.Action.completeChanges) {
             componentChanged(false, getComponentValue());
         }
@@ -128,6 +132,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     @Override
     public void propertyChanged(Object propertyValue) {
         if (binderIsStillChangingProperty) {
+            return;
+        }
+        if (isStopped()) {
             return;
         }
         Object convertedValue = this.componentValueOf(propertyValue);
