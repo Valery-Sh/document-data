@@ -104,6 +104,5 @@ public class DocumentChangeEvent extends EventObject {
         editingChange,
         propertyError, // notifies ErrorBinders
         documentError, // notifies ErrorBinders
-        
     }
 }

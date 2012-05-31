@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.swing.binders;
 
 import javax.swing.JLabel;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class BdLabelErrorBinder extends BdComponentErrorBinder{
     public BdLabelErrorBinder(JLabel label) {

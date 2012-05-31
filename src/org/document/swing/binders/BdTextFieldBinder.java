@@ -24,7 +24,7 @@ public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements
     
     public BdTextFieldBinder(String propertyName, JTextField textField) {
         this.textField = textField;
-        this.propertyName = propertyName;
+        this.boundPproperty = propertyName;
         initBinder();
     }
 
@@ -115,7 +115,7 @@ public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        propertyChanged(document.propertyStore().get(propertyName));
+        propertyChanged(document.propertyStore().get(boundPproperty));
     }
     
 }

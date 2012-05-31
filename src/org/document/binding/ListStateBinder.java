@@ -59,7 +59,7 @@ public abstract class ListStateBinder<T extends PropertyBinder>  extends Documen
         switch (event.getAction()) {
             case componentChange:
                 BinderEvent.Action action = event.getAction();
-                if ( ((PropertyBinder)event.getSource()).getPropertyName().equals("selected")) {
+                if ( ((PropertyBinder)event.getSource()).getBoundProperty().equals("selected")) {
                     action = BinderEvent.Action.componentSelectChange;
                 }
                 BinderEvent e = new BinderEvent(this,action,event.getDataValue(),event.getComponentValue());

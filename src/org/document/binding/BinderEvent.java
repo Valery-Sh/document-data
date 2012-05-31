@@ -63,7 +63,7 @@ public class BinderEvent extends EventObject {
     }
 
     public String getPropertyName() {
-        return ((PropertyBinder)getSource()).getPropertyName();
+        return ((PropertyBinder)getSource()).getBoundProperty();
     }
 
     public ValidationException getException() {

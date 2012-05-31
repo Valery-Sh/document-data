@@ -39,9 +39,9 @@ import org.document.PropertyStore.Alias;
  * methods may be used:
  * <code>
  *<ul>
- *	<li>DocumentBinder getDocumentBinder(String alias)</li> 
- *	<li>DocumentBinder getDocumentBinder(Class clazz)</li>
- *	<li>DocumentBinder getDocumentBinder()</li>
+ *	<li>DocumentBinder getPropertyBinders(String alias)</li> 
+ *	<li>DocumentBinder getPropertyBinders(Class clazz)</li>
+ *	<li>DocumentBinder getPropertyBinders()</li>
  *</ul>
  * </code>
  * <p>
@@ -51,7 +51,7 @@ import org.document.PropertyStore.Alias;
  * The resulting object is used as the <code>key</code> to 
  * the map-table of objects of type <code>DocumentBinder</code>.
  *
- * When invoke a method <code>getDocumentBinder</code> , then if the 
+ * When invoke a method <code>getPropertyBinders</code> , then if the 
  * table already has an object with the appropriate key, then it 
  * returns. Otherwise, the method creates a new instance of the 
  * <code>DocumentBinder</code> and put it in the map-table.
@@ -103,7 +103,7 @@ import org.document.PropertyStore.Alias;
  * If you know that <code>BindingManager</code> will be used
  * for processing the same type of documents, for example,
  * <code>Person</code>, then the method without parameters or
- * getDocumentBinder(Person.class) fit.
+ * getPropertyBinders(Person.class) fit.
  * 
  * @author V. Shishkin
  */
@@ -180,10 +180,10 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * @return an object of type {@link DocumentBinderContainer}
      * that contains the objects of type {@link DocumentBinder).
      */
-    protected DocumentBinderContainer getBinders() {
+/*    protected DocumentBinderContainer getBinders() {
         return this.documentBinders;
     }
-
+*/
     /**
      * @return an object of type {@link org.document.Document)
      * or it's subtype that currently is set as <i><code>selected</code></i>.
@@ -282,38 +282,17 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
     
     public void bind(String propertyName,String alias,HasBinder object) {
-        Binder b = object.getBinder();
-        if ( b instanceof PropertyBinder) {
-            PropertyBinder pb = (PropertyBinder)b;
-            pb.setPropertyName(propertyName);
-            getDocumentBinder(alias).add(pb);
-        }
+        getPropertyBinders(alias).bind(object);
     }
 
     public void bind(String propertyName,Class alias,HasBinder object) {
         this.bind(propertyName,alias.getName(),object);
     }
     public void bind(Class alias,HasBinder object) {
-        Binder b = object.getBinder();
-        if ( b instanceof PropertyBinder) {
-            PropertyBinder pb = (PropertyBinder)b;
-            String nm = pb.getPropertyName();
-            if ( nm != null ) {
-                getDocumentBinder(alias).add(pb);
-            }
-        }
-        
+        getPropertyBinders(alias).bind(object);
     }
     public void bind(HasBinder object) {
-        Binder b = object.getBinder();
-        if ( b instanceof PropertyBinder) {
-            PropertyBinder pb = (PropertyBinder)b;
-            String nm = pb.getPropertyName();
-            if ( nm != null ) {
-                getDocumentBinder("default").add(pb);
-            }
-        }
-
+        getPropertyBinders("default").bind(object);
     }
     
     /**
@@ -351,11 +330,22 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         }
         return result;
     }
+    /**
+     * Returns an existing or new instance of type <code>DocumentBinder</code>
+     * for a class <code>java.lang.Objectclass</code>  class and "default" subAlias.
+     * If a document binder doesn't exist 
+     * then a new one is created with an <code>alias</code> property 
+     * set to  <code><pre>new Alias(Object.class,"default")</pre></code>.
+     * @return an existing or new instance of type <code>DocumentBinder</code>
+     */
+    public DocumentBinder getPropertyBinders() {
+        return getPropertyBinders("default");
+    }
 
     /**
      * Returns an existing or new instance of type <code>DocumentBinder</code>
      * for a given class.
-     * Delegates method call to the method {@link AbstractBindingManager#getDocumentBinder(java.lang.Class, java.lang.String) 
+     * Delegates method call to the method {@link AbstractBindingManager#getPropertyBinders(java.lang.Class, java.lang.String) 
      * with the <code>clazz</code> as the first parameter and a string value 
      * <code>"default"</code> as the second.
      * If a document binder doesn't exist for a given parameter value
@@ -365,11 +355,11 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * of type <code>DocumentBinder</code>
      * @return an existing or new instance of type <code>DocumentBinder</code>
      */
-    public DocumentBinder getDocumentBinder(Class clazz) {
+    public DocumentBinder getPropertyBinders(Class clazz) {
         String alias = clazz == null ? null : clazz.getName();
-        return getDocumentBinder(alias);
+        return getPropertyBinders(alias);
     }
-    public DocumentBinder getDocumentBinder(String alias) {
+    public DocumentBinder getPropertyBinders(String alias) {
         Object key  = alias;
         if ( alias == null ) {
             key = "default";
@@ -382,42 +372,65 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         return result;
 
     }
-    
+
     /**
-     * Returns an existing or new instance of type <code>DocumentBinder</code>
-     * for a given class and subAlias.
-     * If a document binder doesn't exist for a given parameter values
-     * then a new one is created with an <code>alias</code> property 
-     * set to  <code><pre>new Alias(clazz,subAlias)</pre></code>.
-     * @param clazz an object that a method uses together with the second 
-     * parameter to search or create an object of type <code>DocumentBinder</code>
-     * @param subAlias an object that a method uses together with the first parameter 
-     * to search or create an object of type <code>DocumentBinder</code>
-     * @return an existing or new instance of type <code>DocumentBinder</code>
-     */
-/*    public DocumentBinder getDocumentBinder(Class clazz, String subAlias) {
-        Object key  = new Alias(clazz,subAlias);
-        DocumentBinder result = (DocumentBinder) documentBinders.get(key);
-        if (result == null) {
-            result = new DocumentBinder();
-            documentBinders.add(key,result);
-        }
-        return result;
-        
-    }
-*/ 
-    /**
-     * Returns an existing or new instance of type <code>DocumentBinder</code>
-     * for a class <code>java.lang.Objectclass</code>  class and "default" subAlias.
+     * Returns an existing or new instance of type <code>DocumentErrorBinder</code>
+     * for a "default" alias.
      * If a document binder doesn't exist 
      * then a new one is created with an <code>alias</code> property 
-     * set to  <code><pre>new Alias(Object.class,"default")</pre></code>.
-     * @return an existing or new instance of type <code>DocumentBinder</code>
+     * set to  <code>"default"</code> string value.
+     * @return an existing or new instance of type <code>DocumentErrorBinder</code>
+     * @see org.document.binding.DocumentErrorBinder 
+     * @see org.document.binding.DocumentErrorBinder 
+     * @see #getErrorBinders(java.lang.String) 
+     * @see #getErrorBinders(java.lang.Class) 
      */
-    public DocumentBinder getDocumentBinder() {
-        return getDocumentBinder("default");
+    public DocumentErrorBinder getErrorBinders() {
+        return getPropertyBinders("default").getDocumentErrorBinder();
+    }
+
+    /**
+     * Returns an existing or new instance of type <code>DocumentErrorBinder</code>
+     * for a given class.
+     * Delegates method call to the method 
+     * {@link AbstractBindingManager#getErrorBinders(java.lang.String) 
+     * with a string value <code>clazz.getName()</code> as a parameter value.
+     * @return an existing or new instance of type <code>DocumentErrorBinder</code>
+     * @see org.document.binding.DocumentErrorBinder 
+     * @see #getErrorBinders() 
+     * @see #getErrorBinders(java.lang.String) 
+     */
+    public DocumentErrorBinder getErrorBinders(Class clazz) {
+        String alias = clazz == null ? null : clazz.getName();
+        return getErrorBinders(alias);
     }
     
+    /**
+     * Returns an existing or new instance of type <code>DocumentErrorBinder</code>
+     * for a given alias.
+     * If a document error binder doesn't exist 
+     * then a new one is created with an <code>alias</code> property 
+     * set to  <code>alias</code> parameter value.
+     * @return an existing or new instance of type <code>DocumentErrorBinder</code>
+     * @see org.document.binding.DocumentErrorBinder 
+     * @see #getErrorBinders() 
+     * @see #getErrorBinders(java.lang.Class) 
+     */
+    
+    public DocumentErrorBinder getErrorBinders(String alias) {
+        Object key  = alias;
+        if ( alias == null ) {
+            key = "default";
+        }
+        DocumentBinder db = (DocumentBinder) documentBinders.get(key);
+        if (db == null) {
+            db = new DocumentBinder();
+            documentBinders.add(key,db);
+        }
+        return db.getDocumentErrorBinder();
+    }
+    
+
     /**
      * 
      * Invoked when the {@link ListState } object has changed its state.

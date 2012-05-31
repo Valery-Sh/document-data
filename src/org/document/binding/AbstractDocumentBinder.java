@@ -94,7 +94,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     }
 
     protected void add(T binder, Map<String, List<T>> binderMap) {
-        String propertyName = ((PropertyBinder) binder).getPropertyName();
+        String propertyName = ((PropertyBinder) binder).getBoundProperty();
 
         List<T> blist = binderMap.get(propertyName);
         if (blist == null) {
@@ -115,16 +115,26 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             addDocumentChangeListener((DocumentChangeListener)binder);
         }
     }
-    /**
-     * 
-     * @param propertyName if document error binder then must be "null"
-     * @param binder 
-     */
-    public void addErrorBinder(String propertyName,ErrorBinder binder) {
-        documentErrorBinder.add(propertyName, binder);
+
+    public void bind(HasBinder component) {
+        Binder b = component.getBinder();
+        if ( b instanceof PropertyBinder) {
+            PropertyBinder pb = (PropertyBinder)b;
+            String nm = pb.getBoundProperty();
+            if ( nm != null ) {
+                add((T)pb);
+            }
+        }
     }
-    public void addErrorBinder(ErrorBinder binder) {
-        documentErrorBinder.add("*document", binder);
+    
+    public void bind(String propertyName,ErrorBinder binder) {
+        documentErrorBinder.bind(propertyName, binder);
+    }
+    public void bindDocument(ErrorBinder binder) {
+        documentErrorBinder.bindDocument(binder);
+    }
+    public void bind(HasErrorBinder component) {
+        documentErrorBinder.bind(component);
     }
     
     @Override
@@ -132,7 +142,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if ( binder == null ) {
             return;
         }
-        String propertyName = ((PropertyBinder) binder).getPropertyName();
+        String propertyName = ((PropertyBinder) binder).getBoundProperty();
         List<T> blist = binders.get(propertyName);
         if (blist == null) {
             blist = new ArrayList<T>();
@@ -151,7 +161,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
     }
 
     protected void remove(T binder, Map<String, List<T>> binderMap) {
-        String propPath = ((PropertyBinder) binder).getPropertyName();
+        String propPath = ((PropertyBinder) binder).getBoundProperty();
         List<T> blist = binderMap.get(propPath);
         if (blist == null || blist.isEmpty()) {
             return;
@@ -164,7 +174,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         //removeDocumentChangeListener(binder);
         blist.remove(binder);
         if (blist.isEmpty()) {
-            binderMap.remove(((PropertyBinder) binder).getPropertyName());
+            binderMap.remove(((PropertyBinder) binder).getBoundProperty());
         }
 
     }
@@ -191,7 +201,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         } else  if (binder instanceof ErrorBinder) {
             documentErrorBinder.remove("*document", (ErrorBinder)binder);
         }
-/*            if (((PropertyBinder) binder).getPropertyName() == null) {
+/*            if (((PropertyBinder) binder).getBoundProperty() == null) {
                 // documentStore error binder
                 remove(binder, documentErrorBinders);
             } else {
@@ -293,8 +303,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                         continue;
                     }
                     for (T b : l) {
-                        //b.propertyChanged(state.getDirtyValues().get(b.getPropertyName()));
-                        b.propertyChanged(documentStore.get(b.getPropertyName()));
+                        //b.propertyChanged(state.getDirtyValues().get(b.getBoundProperty()));
+                        b.propertyChanged(documentStore.get(b.getBoundProperty()));
                     }
                 }
 */ 
@@ -378,11 +388,11 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
 
         DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.propertyError);
-        event.setPropertyName(propertyName);
+        event.setBoundProperty(propertyName);
         event.setException(e);
 
         for (DocumentChangeListener l : documentListeners) {
-            String nm = ((PropertyBinder) l).getPropertyName();
+            String nm = ((PropertyBinder) l).getBoundProperty();
             if ((l instanceof ErrorBinder)
                     && propertyName.equals(nm) || "*".equals(nm)) {
                 l.react(event);

@@ -89,9 +89,9 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
         Class propertyType;
         if ( getDocument().propertyStore() instanceof HasSchema) {
             DocumentSchema sc = ((HasSchema)getDocument().propertyStore()).getSchema();
-            propertyType = sc.getField(binder.getPropertyName()).getPropertyType();
+            propertyType = sc.getField(binder.getBoundProperty()).getPropertyType();
         } else {
-            Object o = getDocument().propertyStore().get(binder.getPropertyName());
+            Object o = getDocument().propertyStore().get(binder.getBoundProperty());
             propertyType = o == null ? Object.class : o.getClass();
         }
         return propertyType;

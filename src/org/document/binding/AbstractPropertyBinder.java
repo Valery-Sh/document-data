@@ -16,7 +16,7 @@ import org.document.DocumentChangeListener;
 public abstract class AbstractPropertyBinder implements PropertyBinder, DocumentChangeListener {
     
     private Object alias;
-    protected String propertyName;
+    protected String boundPproperty;
     protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
@@ -76,8 +76,8 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                     return;
                 }
                 this.document = (Document) event.getNewValue();
-                if (document != null && getPropertyName() != null) {
-                    propertyChanged(document.propertyStore().get(getPropertyName()));
+                if (document != null && getBoundProperty() != null) {
+                    propertyChanged(document.propertyStore().get(getBoundProperty()));
                 } else if (document == null) {
                     initComponentDefault();
                 }
@@ -86,13 +86,13 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 if ( ! isSuspended() ) {
                     return;
                 }
-                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(propertyName)) {
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundPproperty)) {
                     return;
                 }
                 this.suspended = false;
                 this.document = (Document) event.getNewValue();
-                if (document != null && getPropertyName() != null) {
-                    propertyChanged(document.propertyStore().get(getPropertyName()));
+                if (document != null && getBoundProperty() != null) {
+                    propertyChanged(document.propertyStore().get(getBoundProperty()));
                 } else if (document == null) {
                     initComponentDefault();
                 }
@@ -101,7 +101,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 if ( isSuspended() ) {
                     return;
                 }
-                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(propertyName)) {
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundPproperty)) {
                     return;
                 }
                 this.suspended = true;
@@ -114,12 +114,12 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
     }
 
     @Override
-    public String getPropertyName() {
-        return this.propertyName;
+    public String getBoundProperty() {
+        return this.boundPproperty;
     }
     @Override
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setBoundProperty(String propertyName) {
+        this.boundPproperty = propertyName;
     }
 
     /**

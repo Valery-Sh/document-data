@@ -14,7 +14,7 @@ import org.document.Document;
 public abstract class AbstractListModelBinder  extends AbstractPropertyBinder {
 
     public AbstractListModelBinder() {
-        this.propertyName = "documentList";
+        this.boundPproperty = "documentList";
         initBinder();
     }
     

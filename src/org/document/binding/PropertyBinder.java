@@ -17,9 +17,9 @@ public interface PropertyBinder extends Binder {//,DocumentChangeListener {//, H
      *
      * @return a property name as a <code>String</code>.
      */
-    String getPropertyName();
+    String getBoundProperty();
     
-    void setPropertyName(String propertyName);
+    void setBoundProperty(String propertyName);
 
     /**
      * It is assumed that this method should be called when you want to set the

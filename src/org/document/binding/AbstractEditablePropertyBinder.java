@@ -30,14 +30,14 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         }
         if (document.propertyStore() instanceof HasDocumentState) {
             DocumentState state = ((HasDocumentState) document.propertyStore()).getDocumentState();
-            state.getDirtyValues().put(propertyName, componentValue);
+            state.getDirtyValues().put(boundPproperty, componentValue);
         }
-        if (notifyOfErrors) {
-            fireClearPropertyError();
-        }
+        //if (notifyOfErrors) {
+        fireClearPropertyError();
+        //}
 
         Object convertedValue;
-        Object oldDataValue = document.propertyStore().get(propertyName);
+        Object oldDataValue = document.propertyStore().get(boundPproperty);
         try {
             convertedValue = this.propertyValueOf(componentValue);
             if (DataUtils.equals(convertedValue, oldDataValue)) {
@@ -46,11 +46,11 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             if (document instanceof HasValidator) {
                 Validator v = ((HasValidator) document).getValidator();
                 if (v != null) {
-                    v.validate(propertyName, convertedValue, document);
+                    v.validate(boundPproperty, convertedValue, document);
                 }
             }
             binderIsStillChangingProperty = true;
-            document.propertyStore().put(propertyName, convertedValue);
+            document.propertyStore().put(boundPproperty, convertedValue);
 
             fireComponentValueChange(convertedValue, componentValue);
             /*
@@ -66,7 +66,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             }
         } catch (Exception e) {
             if (notifyOfErrors) {
-                ValidationException ve = new ValidationException(propertyName, "Property name= '" + propertyName + "'. Invalid value: " + componentValue, document);
+                ValidationException ve = new ValidationException(boundPproperty, "Property name= '" + boundPproperty + "'. Invalid value: " + componentValue, document);
                 firePropertyError(ve);
             }
         } finally {
