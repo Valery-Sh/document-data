@@ -20,19 +20,12 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
     protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
-    protected boolean stopped;
+    protected boolean suspended;
 
-/*    @Override
-    public Object getAlias() {
-        return alias;
-    }
-*/
-   // @Override
     public BinderConverter getConverter() {
         return converter;
     }
     
-   // @Override
     public void setConverter(BinderConverter converter) {
         this.converter = converter;
     }
@@ -42,17 +35,15 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
         return document;
     }
 
-    public boolean isStopped() {
-        return stopped;
+    public boolean isSuspended() {
+        return suspended;
     }
-    @Override
-    public void stop() {
-        this.stopped = true;
+    public void suspend() {
+        this.suspended = true;
     }
 
-    @Override
     public void resume() {
-        this.stopped = false;
+        this.suspended = false;
             
     }
 
@@ -81,7 +72,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
     public void react(DocumentChangeEvent event) {
         switch (event.getAction()) {
             case documentChange:
-                if ( isStopped() ) {
+                if ( isSuspended() ) {
                     return;
                 }
                 this.document = (Document) event.getNewValue();
@@ -92,13 +83,13 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 }
                 return;
             case resumeBinding:
-                if ( ! isStopped() ) {
+                if ( ! isSuspended() ) {
                     return;
                 }
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(propertyName)) {
                     return;
                 }
-                this.stopped = false;
+                this.suspended = false;
                 this.document = (Document) event.getNewValue();
                 if (document != null && getPropertyName() != null) {
                     propertyChanged(document.propertyStore().get(getPropertyName()));
@@ -106,17 +97,17 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                     initComponentDefault();
                 }
                 return;
-            case stopBinding:
-                if ( isStopped() ) {
+            case suspendBinding:
+                if ( isSuspended() ) {
                     return;
                 }
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(propertyName)) {
                     return;
                 }
-                this.stopped = true;
+                this.suspended = true;
                 return;
             case propertyChange:
-                if ( ! isStopped() )
+                if ( ! isSuspended() )
                     this.propertyChanged(event.getNewValue());
                 return;
         }//switch

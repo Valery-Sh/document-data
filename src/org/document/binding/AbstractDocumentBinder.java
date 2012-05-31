@@ -12,7 +12,7 @@ import org.document.*;
  */
 public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderContainer<T> {//, HasDocumentAlias {
     
-    private boolean stopped;
+    private boolean suspended;
     //private Object alias;
     protected List<DocumentChangeListener> documentListeners;
     protected List<BinderListener> binderListeners;
@@ -31,26 +31,27 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         binders = new HashMap<String,List<T>>();
     }
     
-    public boolean isStopped() {
-        return stopped;
+    public boolean isSuspended() {
+        return suspended;
     }
-    public void stopAll() {
-        this.stopped = true;
-        stop(null);
+    public void suspendAll() {
+        this.suspended = true;
+        suspend(null);
     }
 
     public void resumeAll() {
-        this.stopped = false;
+        this.suspended = false;
         resume(null);
         
     }
     
-    public void stop(String propertyName) {
-        if (this.documentListeners == null || documentListeners.isEmpty()) {
+    public void suspend(String propertyName) {
+
+        if (documentListeners == null || documentListeners.isEmpty()) {
             return;
         }
 
-        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.stopBinding);
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.suspendBinding);
         event.setPropertyName(propertyName);
 
         for (DocumentChangeListener l : documentListeners) {
@@ -66,7 +67,8 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
 
         DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.resumeBinding);
         event.setPropertyName(propertyName);
-
+        event.setNewValue(document);
+        
         for (DocumentChangeListener l : documentListeners) {
             l.react(event);
         }
@@ -141,7 +143,11 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         }
         blist.add(binder);
         binders.put(propertyName, blist);
-        resume(propertyName);
+        if ( isSuspended() ) {
+            suspend(propertyName);
+        } else {
+            resume(propertyName);
+        }
     }
 
     protected void remove(T binder, Map<String, List<T>> binderMap) {
@@ -267,7 +273,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if (oldDocument != null && oldDocument != document) {
             oldDocumentStore.removeDocumentChangeListener(this);
         }
-        if ( ! isStopped() ) {
+        if ( ! isSuspended() ) {
             fireDocumentChanging(oldDocument, document);
             fireDocumentChanged(oldDocument, document);
         }
@@ -341,6 +347,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
             l.react(event);
         }
     }
+    
     /**
      * Tries to resolve all pending component changes.
      * Is invoked for the old document and only from the 

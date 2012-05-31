@@ -18,7 +18,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * @param componentValue the new component specific value
      */
     protected void componentChanged(boolean notifyOfErrors, Object componentValue) {
-        if (isStopped()) {
+        if (isSuspended()) {
             return;
         }
 
@@ -85,7 +85,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     @Override
     public void react(DocumentChangeEvent event) {
         super.react(event);
-        if (isStopped()) {
+        if (isSuspended()) {
             return;
         }
         if (event.getAction() == DocumentChangeEvent.Action.completeChanges) {
@@ -134,7 +134,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (binderIsStillChangingProperty) {
             return;
         }
-        if (isStopped()) {
+        if (isSuspended()) {
             return;
         }
         Object convertedValue = this.componentValueOf(propertyValue);
