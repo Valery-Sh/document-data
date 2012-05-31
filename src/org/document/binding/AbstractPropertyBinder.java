@@ -20,6 +20,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
     protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
+    protected boolean stopped;
 
 /*    @Override
     public Object getAlias() {
@@ -40,7 +41,21 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
     public Document getDocument() {
         return document;
     }
-    
+
+    public boolean isStopped() {
+        return stopped;
+    }
+    @Override
+    public void stop() {
+        this.stopped = true;
+    }
+
+    @Override
+    public void resume() {
+        this.stopped = false;
+            
+    }
+
     @Override
     public void addBinderListener(BinderListener l) {
         if (this.binderListeners == null) {
@@ -72,6 +87,29 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 } else if (document == null) {
                     initComponentDefault();
                 }
+                return;
+            case resumeBinding:
+                if ( ! isStopped() ) {
+                    return;
+                }
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(propertyName)) {
+                    return;
+                }
+                this.document = (Document) event.getNewValue();
+                if (document != null && getPropertyName() != null) {
+                    propertyChanged(document.propertyStore().get(getPropertyName()));
+                } else if (document == null) {
+                    initComponentDefault();
+                }
+                return;
+            case stopBinding:
+                if ( isStopped() ) {
+                    return;
+                }
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(propertyName)) {
+                    return;
+                }
+                this.stopped = true;
                 return;
             case propertyChange:
                 this.propertyChanged(event.getNewValue());

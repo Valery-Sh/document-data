@@ -69,6 +69,7 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
             }
         }
 
+
     }
 
     public static class JComboSelectionBinder extends AbstractListSelectionBinder implements ActionListener {

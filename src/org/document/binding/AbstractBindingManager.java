@@ -39,37 +39,15 @@ import org.document.PropertyStore.Alias;
  * methods may be used:
  * <code>
  *<ul>
- *	<li>DocumentBinder getDocumentBinder(Class clazz)</li>
  *	<li>DocumentBinder getDocumentBinder(String alias)</li> 
+ *	<li>DocumentBinder getDocumentBinder(Class clazz)</li>
  *	<li>DocumentBinder getDocumentBinder()</li>
  *</ul>
  * </code>
  * <p>
- * Using the values of the supplied parameters, the constructor creates an object
- * of type {@link PersonBinder.Alias}. Each method builds an object array in 
- * its own way. The method <code>getDocumentBinder(Class clazz)</code>
- * builds:
- * <code>
- * <pre>
- *		new Alias(clazz, "default")
- * </pre>
- * </code>
- *
- * The method getDocumentBinder(Class clazz,String str) creates:
- * <code>
- * <pre>
- *		new Alias(clazz, "default")
- * </pre>
- * </code>
- *
- * And the method getDocumentBinder() produces:
- * <code>
- * <pre>
- *		new Alias(Object.clazz, "default")
- * </pre>
- * </code>
- *
- *
+ * The second methods just calls the first with a parameter value that equals to 
+ * <code>clazz.getName()</code>. The third method also calls the first 
+ * with a string parameter value that equals to  <code>"default"</code>.
  * The resulting object is used as the <code>key</code> to 
  * the map-table of objects of type <code>DocumentBinder</code>.
  *
@@ -85,9 +63,9 @@ import org.document.PropertyStore.Alias;
  * <code>Document</code>.
  * <p>
  * This raises a problem related to the way in which
- * <code>BinidingManager</code> looks for a document that is declared as
- * <code><i>selected</i></code> to the appropriate
- * <code>DocumentBinder</code>.
+ * <code>BinidingManager</code> looks for an appropriate
+ * <code>DocumentBinder</code> to a given document. For this purpose serves a 
+ * method named {@link #documentBinderOf(org.document.Document) }.
  *
  * The {@link org.document.binding.BindingRecognizer } interface helps to solve this 
  * problem. The application developer can create a class that 
@@ -100,25 +78,23 @@ import org.document.PropertyStore.Alias;
  * is based on the property with a name <code><i>alias</i></code>,
  * which the {@link org.document.PropertyStore} defines.
  * <p>
- * Classes of type Document are closely related to objects of type
+ * Classes of type <code>Document</code> are closely related to objects of type
  * <code>PropertyStore</code>. These objects do have a property
  * <code><i>alias</i></code>. In the standard implementation the 
  * objects that implement <code>PropertyStore</code>, are the 
  * objects of class {@link org.document.DocumentPropertyStore } . 
  * The constructor of this class takes a parameter of type 
- * <code>Document</code> and creates an object of type <code>PropertyStore.Alias</code>. 
- * The constructor accepts two parameters:
- * The first is a subtype of the class <code>Document</code>,
- * and the second is a string of characters with a value of "default".
- * This object becomes the <code>alias</code> property value. When a
- * <code>BindingManager</code> looks for a <code>DocumentBinder</code> 
+ * <code>Document document</code> creates a string  
+ * <code>document.getClass().getName()</code> and set it as a value of 
+ * <code>alias</code>.
+ *  When a <code>BindingManager</code> looks for a <code>DocumentBinder</code> 
  * in the table, then, if a <code>BindingRecognizer</code> is not 
  * <code>null</code>, it is used to search for, otherwise,
  * <code>BindingManager</code> retrieves the value of the
  * <code>alias</code> from the document's <code>PropertyStore</code> and 
  * uses that value as the key to the map-table. If the search is 
  * successful then a <code>DocumentBinder</code> returned. If not, 
- * the search continues for the key <code>{Object.class, "default"}</code>.
+ * the search continues for the key <code>"default"</code>.
  * If not found, then <code>null</code> value is returned and the 
  * document will not be used for binding.
  *<p>
@@ -128,24 +104,7 @@ import org.document.PropertyStore.Alias;
  * for processing the same type of documents, for example,
  * <code>Person</code>, then the method without parameters or
  * getDocumentBinder(Person.class) fit.
- * <p>
- * Why do we need a method with two parameters? Suppose you 
- * run a query to a database that contains objects of 
- * type Person. Querying the SQL database can have a 
- * non predictable set of the returned fields. We can not 
- * create the appropriate bean-object for every possible 
- * request. But we can create a class based on the key/value pairs,
- * for example, using {@link java.util.Map}. Such class already exists 
- * in the library. {@link KeyValueMap } class implements the
- * <code>Document</code> interface, is not a Bean-object and contains methods
- * <code>get</code> and <code>put</code> methods to access the key/value 
- * pairs. The class has a constructor that accepts a parameter
- * <code>subAlias</code> of type </code>String. It's
- * <code>PropertyStore</code> builds  <code>alias</code> as an array:
  * 
- * <code><pre>Object [] {KeyValueMap.class, subAlias}</pre></code>.
- * 
- * @param <T> 
  * @author V. Shishkin
  */
 public abstract class AbstractBindingManager<T extends Document> implements BinderListener {
@@ -170,9 +129,14 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * Creates an instance of the class for a given list of documents.
      * If the parameter is not <code>null</code> then only 
      * documents that the list contains may be declared 
-     * <code>selected</code>.
+     * <code>selected</code>. <p>
+     * First of all a new object of type {@link DocumentList} is created. It is
+     * a wrapper list of the parameter <code>sourceList</code>. Each document 
+     * in the list is assigned a listener of an event of type 
+     * {@link DocumentChangeEvent}. From this point the binding manager becomes
+     * aware of every change in a document content.
      * 
-     * @param sourceList
+     * @param sourceList the list of documents
      */
     public AbstractBindingManager(List sourceList) {
         this();
@@ -213,8 +177,8 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     }
 
     /**
-     * @return an object of type BinderMap that serves as a container
-     * for objects of type {@link DocumentBinder).
+     * @return an object of type {@link DocumentBinderContainer}
+     * that contains the objects of type {@link DocumentBinder).
      */
     protected DocumentBinderContainer getBinders() {
         return this.documentBinders;
@@ -283,7 +247,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
 
     /**
      * May be overriden by subclasses to provide additional 
-     * actions for a given old selected document.
+     * actions for a given <i>old</i> selected document.
      * @param oldSelected an object that has been set 
      * <code>selected</code> before a new one.
      * @see BindingManager#afterSetSelected(org.document.Document)  
@@ -292,11 +256,14 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
 
     /**
      * Registers a given binder.
-     * The parameter must be of type {@link ListStateBinder}. 
-     * Otherwise the method does nothing.
+     * 
      * @param binder a binder to be registered
+     * @see ListStateBinder
+     * @throws an exception of type @{@link java.lang.IllegalArgumentException}
+     * in case when the binding manager was created without a document list 
+     * specified
      */
-    public void addBinder(ListStateBinder binder) {
+    public void bind(ListStateBinder binder) {
           if (sourceList == null) {
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
             }
@@ -307,16 +274,14 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
 
     /**
      * Unregisters a given binder.
-     * The parameter must be of type {@link ListStateBinder}. 
-     * Otherwise the method does nothing.
-     * @param binder a binder to be unregistered
+     * @param binder the binder of type {@link ListStateBinder} to be unregistered
      */
-    public void removeBinder(ListStateBinder binder) {
+    public void unbind(ListStateBinder binder) {
             binder.removeBinderListener(this);
             documentListBinders.remove(binder);
     }
     
-    public void addBinder(String propertyName,String alias,HasBinder object) {
+    public void bind(String propertyName,String alias,HasBinder object) {
         Binder b = object.getBinder();
         if ( b instanceof PropertyBinder) {
             PropertyBinder pb = (PropertyBinder)b;
@@ -325,10 +290,10 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         }
     }
 
-    public void addBinder(String propertyName,Class alias,HasBinder object) {
-        this.addBinder(propertyName,alias.getName(),object);
+    public void bind(String propertyName,Class alias,HasBinder object) {
+        this.bind(propertyName,alias.getName(),object);
     }
-    public void addBinder(Class alias,HasBinder object) {
+    public void bind(Class alias,HasBinder object) {
         Binder b = object.getBinder();
         if ( b instanceof PropertyBinder) {
             PropertyBinder pb = (PropertyBinder)b;
@@ -339,7 +304,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         }
         
     }
-    public void addBinder(HasBinder object) {
+    public void bind(HasBinder object) {
         Binder b = object.getBinder();
         if ( b instanceof PropertyBinder) {
             PropertyBinder pb = (PropertyBinder)b;

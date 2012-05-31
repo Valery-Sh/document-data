@@ -9,7 +9,10 @@ import org.document.DocumentChangeListener;
  * @author V. Shyshkin
  */
 public interface PropertyBinder extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
-
+    
+    void stop();
+    void resume();
+            
     Document getDocument();
     
     /**

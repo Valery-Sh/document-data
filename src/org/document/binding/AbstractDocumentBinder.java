@@ -11,7 +11,8 @@ import org.document.*;
  * @author V. Shyshkin
  */
 public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderContainer<T> {//, HasDocumentAlias {
-
+    
+    private boolean stopped;
     //private Object alias;
     protected List<DocumentChangeListener> documentListeners;
     protected List<BinderListener> binderListeners;
@@ -28,6 +29,47 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         childs = new ArrayList<DocumentBinder>();
         documentErrorBinder = new DocumentErrorBinder();
         binders = new HashMap<String,List<T>>();
+    }
+    
+    public boolean isStopped() {
+        return stopped;
+    }
+    public void stopAll() {
+        this.stopped = true;
+        stop(null);
+    }
+
+    public void resumeAll() {
+        this.stopped = false;
+        resume(null);
+        
+    }
+    
+    public void stop(String propertyName) {
+        if (this.documentListeners == null || documentListeners.isEmpty()) {
+            return;
+        }
+
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.stopBinding);
+        event.setPropertyName(propertyName);
+
+        for (DocumentChangeListener l : documentListeners) {
+            l.react(event);
+        }
+        
+    }
+
+    public void resume(String propertyName) {
+        if (this.documentListeners == null || documentListeners.isEmpty()) {
+            return;
+        }
+
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.resumeBinding);
+        event.setPropertyName(propertyName);
+
+        for (DocumentChangeListener l : documentListeners) {
+            l.react(event);
+        }
     }
 
     public DocumentErrorBinder getDocumentErrorBinder() {
@@ -226,8 +268,10 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if (oldDocument != null && oldDocument != document) {
             oldDocumentStore.removeDocumentChangeListener(this);
         }
-        fireDocumentChanging(oldDocument, document);
-        fireDocumentChanged(oldDocument, document);
+        if ( ! isStopped() ) {
+            fireDocumentChanging(oldDocument, document);
+            fireDocumentChanged(oldDocument, document);
+        }
 
         if (document == null) {
             return;
@@ -238,7 +282,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         if (documentStore instanceof HasDocumentState) {
             DocumentState state = ((HasDocumentState) documentStore).getDocumentState();
             if (state.isEditing()) {
-                for (Map.Entry<String, List<T>> e : binders.entrySet()) {
+/*                for (Map.Entry<String, List<T>> e : binders.entrySet()) {
                     List<T> l = e.getValue();
                     if (l == null) {
                         continue;
@@ -248,8 +292,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
                         b.propertyChanged(documentStore.get(b.getPropertyName()));
                     }
                 }
-                //completeChanges();
-                //fireDocumentError(null);
+*/ 
                 documentErrorBinder.clear();
                 try {
                     if (document instanceof HasValidator) {

@@ -96,6 +96,8 @@ public class DocumentChangeEvent extends EventObject {
     
     public enum Action {
         documentChange,
+        stopBinding,
+        resumeBinding,
         documentChanging,
         propertyChange,
         completeChanges,
