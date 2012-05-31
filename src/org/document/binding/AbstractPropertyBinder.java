@@ -3,6 +3,7 @@
  */
 package org.document.binding;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.document.Document;
@@ -13,10 +14,10 @@ import org.document.DocumentChangeListener;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractPropertyBinder implements PropertyBinder, DocumentChangeListener {
+public abstract class AbstractPropertyBinder implements Serializable,PropertyBinder, DocumentChangeListener {
     
     private Object alias;
-    protected String boundPproperty;
+    protected String boundProperty;
     protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
@@ -86,7 +87,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 if ( ! isSuspended() ) {
                     return;
                 }
-                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundPproperty)) {
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
                     return;
                 }
                 this.suspended = false;
@@ -101,7 +102,7 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
                 if ( isSuspended() ) {
                     return;
                 }
-                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundPproperty)) {
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
                     return;
                 }
                 this.suspended = true;
@@ -115,11 +116,11 @@ public abstract class AbstractPropertyBinder implements PropertyBinder, Document
 
     @Override
     public String getBoundProperty() {
-        return this.boundPproperty;
+        return this.boundProperty;
     }
     @Override
     public void setBoundProperty(String propertyName) {
-        this.boundPproperty = propertyName;
+        this.boundProperty = propertyName;
     }
 
     /**

@@ -13,7 +13,7 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
     protected Object component;
 
     public AbstractListDocumentChangeBinder(Object component) {
-        this.boundPproperty = "documentChangeEvent";
+        this.boundProperty = "documentChangeEvent";
         this.component = component;
         initBinder();
     }

@@ -12,7 +12,7 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
     protected Object component;
     
     public AbstractListSelectionBinder(Object component) {
-        this.boundPproperty = "selected";
+        this.boundProperty = "selected";
         this.component = component;
         initBinder();
     }

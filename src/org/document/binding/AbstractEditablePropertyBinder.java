@@ -30,14 +30,14 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         }
         if (document.propertyStore() instanceof HasDocumentState) {
             DocumentState state = ((HasDocumentState) document.propertyStore()).getDocumentState();
-            state.getDirtyValues().put(boundPproperty, componentValue);
+            state.getDirtyValues().put(boundProperty, componentValue);
         }
         //if (notifyOfErrors) {
         fireClearPropertyError();
         //}
 
         Object convertedValue;
-        Object oldDataValue = document.propertyStore().get(boundPproperty);
+        Object oldDataValue = document.propertyStore().get(boundProperty);
         try {
             convertedValue = this.propertyValueOf(componentValue);
             if (DataUtils.equals(convertedValue, oldDataValue)) {
@@ -46,11 +46,11 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             if (document instanceof HasValidator) {
                 Validator v = ((HasValidator) document).getValidator();
                 if (v != null) {
-                    v.validate(boundPproperty, convertedValue, document);
+                    v.validate(boundProperty, convertedValue, document);
                 }
             }
             binderIsStillChangingProperty = true;
-            document.propertyStore().put(boundPproperty, convertedValue);
+            document.propertyStore().put(boundProperty, convertedValue);
 
             fireComponentValueChange(convertedValue, componentValue);
             /*
@@ -66,7 +66,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             }
         } catch (Exception e) {
             if (notifyOfErrors) {
-                ValidationException ve = new ValidationException(boundPproperty, "Property name= '" + boundPproperty + "'. Invalid value: " + componentValue, document);
+                ValidationException ve = new ValidationException(boundProperty, "Property name= '" + boundProperty + "'. Invalid value: " + componentValue, document);
                 firePropertyError(ve);
             }
         } finally {
