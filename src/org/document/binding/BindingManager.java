@@ -25,6 +25,11 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         documents.addListChangeListener(this);
     }
     
+    @Override
+    public void setSourceList(List sourceList) {
+        super.setSourceList(sourceList);
+        init(sourceList);
+    }
     public DocumentList getDocuments() {
         return documents;
     }

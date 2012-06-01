@@ -1,8 +1,9 @@
 package org.document.binding;
 
 import java.util.*;
+import javax.swing.JComponent;
 import org.document.*;
-import org.document.PropertyStore.Alias;
+
 /**
  * This class allows to declare any object of type {@link org.document.Document }
  * as <code><i>selected</i></code> and start binding procedure for it.  
@@ -107,13 +108,15 @@ import org.document.PropertyStore.Alias;
  * 
  * @author V. Shishkin
  */
-public abstract class AbstractBindingManager<T extends Document> implements BinderListener {
+public abstract class AbstractBindingManager<T extends Document>  implements BinderListener {
 
     private DocumentBinderContainer documentBinders;
     /**
      *  Stores a reference to a document that is declared as <code>selected</code>.
      */
     protected T selected;
+    
+    private boolean active;
     /**
      * Contains custom <code>DocumentRecognizer</code> if defined.
      */
@@ -125,6 +128,15 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
     private ListState listState;
     private Map<Object,ListStateBinder> documentListBinders;
 
+    /**
+     * Create an instance of the class. 
+     * Instances created with this constructor may set
+     * any document as <code>selected</code>.
+     */
+    protected AbstractBindingManager() {
+        documentBinders = new DocumentBinderContainer(this);
+    }
+    
     /**
      * Creates an instance of the class for a given list of documents.
      * If the parameter is not <code>null</code> then only 
@@ -143,6 +155,10 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
         if ( sourceList == null ) {
             return;
         }
+        initSourceList(sourceList);
+        //validators = new HashMap<Object,Validator>();
+    }
+    private void initSourceList(List sourceList) {
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
@@ -152,17 +168,40 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
                 }
              }
         documentListBinders = new HashMap<Object,ListStateBinder>();        
-        //validators = new HashMap<Object,Validator>();
     }
 
-    /**
-     * Create an instance of the class. 
-     * Instances created with this constructor may set
-     * any document as <code>selected</code>.
-     */
-    protected AbstractBindingManager() {
-        documentBinders = new DocumentBinderContainer(this);
+    public List<T> getSourceList() {
+        return sourceList;
     }
+    
+    public void setSourceList(List sourceList) {
+        initSourceList(sourceList);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        if ( this.active == active ) {
+            return;
+        }
+        if ( ! active ) {
+            setSelected(null);
+            this.active = active;
+        } else {
+            this.active = active;
+            if ( sourceList != null ) {
+                if ( sourceList.isEmpty() ) {
+                    setSelected(null);
+                }
+                setSelected(sourceList.get(0));
+            } else {
+                setSelected(selected);
+            }
+        }
+    }
+    
     /*    public void addValidator(Object alias, Validator validator) {
      validators.put(alias, validator);
      }
@@ -212,7 +251,10 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             setDocument(selected);
             return;
         }
-
+        if ( ! isActive() ) {
+            return;
+        }
+        
         T old = this.selected;
 
         boolean markedNew = false;
@@ -238,7 +280,7 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
             setSelected(selected);
             return;
         }
-
+        this.active = true;
         T old = this.selected;
 
         boolean markedNew = false;
@@ -319,6 +361,11 @@ public abstract class AbstractBindingManager<T extends Document> implements Bind
      * <code>null</code> if the search is not successful
      */
     public DocumentBinder documentBinderOf(Document doc) {
+        if ( doc == null && selected != null ) {
+            return documentBinderOf(selected);
+        } else if ( doc == null) {
+            return (DocumentBinder) documentBinders.get("default");                    
+        }
         if ( recognizer != null ) {
             return recognizer.getBinder(doc);
         }
