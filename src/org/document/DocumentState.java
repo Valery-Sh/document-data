@@ -14,5 +14,8 @@ import org.document.binding.BinderListener;
 public interface DocumentState extends BinderListener{
     boolean isEditing();
     void setEditing(boolean editing);
+    boolean isAttached();
+    void setAttached(boolean attached);
+    
     Map<String,Object> getDirtyValues();
 }

@@ -9,7 +9,7 @@ import org.document.*;
  */
 public class BindingManager<T extends Document> extends AbstractBindingManager<T> implements ListChangeListener {
 
-    protected DocumentList<Document> documents;
+    //protected DocumentList<Document> documents;
     
     public BindingManager(List<T> sourceList) {
         super(sourceList);
@@ -21,8 +21,8 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
     }
 
     private void init(List<T> sourceList) {
-        documents = new DocumentList(sourceList,this);
-        documents.addListChangeListener(this);
+        //getDocuments() = new DocumentList(sourceList,this);
+        getDocuments().addListChangeListener(this);
     }
     
     @Override
@@ -31,13 +31,13 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         init(sourceList);
     }
     public DocumentList getDocuments() {
-        return documents;
+        return (DocumentList)getListState().getDocumentList();
     }
 
     @Override
     protected void afterSetSelected(T oldSelected) {
-        if (documents.isNew(oldSelected) && !isEditing(oldSelected)) {
-            documents.cancelNew();
+        if (getDocuments().isNew(oldSelected) && !isEditing(oldSelected)) {
+            getDocuments().cancelNew();
         }
     }
 
@@ -72,6 +72,12 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
      */
     @Override
     public void listChanged(ListChangeEvent event) {
+        if ( event.getAction() == ListChangeEvent.Action.beforeClear ||
+             event.getAction() == ListChangeEvent.Action.beforeRemoveAll ||
+             event.getAction() == ListChangeEvent.Action.beforeRetainAll   ) {        
+            return;
+        }
+        updateDocumentState(event);
         T newSel = selected;
         DocumentList<T> list = (DocumentList)event.getSource();
         DocumentList<Document> forListModel = new DocumentList<Document>(list);
@@ -98,6 +104,79 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         
         setSelected(newSel);
     }
-
+    protected void updateDocumentState(ListChangeEvent e) {
+        switch(e.getAction()) {
+            case add : 
+            case append :
+                if ( (Boolean)e.getResult() ) {
+                    this.updateAttachState((T)e.getElement(), true);
+                }
+                break;
+            case appendNew :      
+            case removeObject :
+                if ( (Boolean)e.getResult() ) {
+                    this.updateAttachState((T)e.getElement(), false);
+                }
+                break;
+            case remove :
+                this.updateAttachState((T)e.getElement(), false);
+                break;
+            case set : 
+                if (e.getResult() != null) {
+                    //old document
+                    this.updateAttachState((T)e.getResult(), false);
+                } 
+                if (e.getElement() != null) {
+                    //new document
+                    this.updateAttachState((T)e.getResult(), true);
+                } 
+                break;
+            case beforeClear : 
+                DocumentList<T> l = (DocumentList)e.getCollection();
+                for ( T d : l ) {
+                    updateAttachState(d, false);
+                }
+                break;
+            case appendAll :
+            case addAll :    
+                l = (DocumentList)e.getCollection();
+                if ( (Boolean)e.getResult() ) {
+                    for ( T d : l ) {
+                        updateAttachState(d, true);
+                    }
+                }
+                break;
+            case beforeRemoveAll : 
+                if ( getDocuments() == null ) {
+                    break;
+                }
+                l = (DocumentList)e.getCollection();
+                DocumentList dl = getDocuments();
+                if ( (Boolean)e.getResult() ) {
+                    for ( T d : l ) {
+                        if ( dl.contains(d) ) {
+                            updateAttachState(d, false);
+                        }    
+                    }
+                }
+                break;
+            case beforeRetainAll : 
+                if ( getDocuments() == null ) {
+                    break;
+                }
+                l = (DocumentList)e.getCollection();
+                dl = getDocuments();
+                if ( (Boolean)e.getResult() ) {
+                    for ( T d : l ) {
+                        if ( ! dl.contains(d) ) {
+                            updateAttachState(d, false);
+                        }    
+                    }
+                }
+                break;
+                
+        }//switch
+    }
+    
 
 }

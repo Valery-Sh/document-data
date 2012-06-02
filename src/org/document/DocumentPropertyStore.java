@@ -179,20 +179,13 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         }
         String propertyName;
         propertyName = key.toString();
-        Object oldValue = get(propertyName);
-        /**
-         * To avoid cyclic 'put' method invocation we do nothing when an old
-         * value equals to a new one
-         */
-        //    if ( DataUtils.equals(oldValue,value)) {
-        //       return;
-        // }
-        if (!state.isEditing()) {
-            state.setEditing(true);
-        }
-        //validate(propertyName, value);
-
-
+        Object oldValue = null;
+        //if ( ! propertyName.startsWith("document.state")) {
+            oldValue = get(propertyName);
+            if (!state.isEditing()) {
+                state.setEditing(true);
+            }
+        //}
         if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this.source, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
@@ -274,7 +267,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      *
      */
     protected static class DocumentStateImpl implements DocumentState {
-
+        private boolean attached;
         private boolean editing;
         private PropertyStore documentStore;
         private Map beforeEditValues;
@@ -298,6 +291,16 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             propertyErrors = new HashMap<String, DocumentChangeEvent>();
         }
 
+        @Override
+        public boolean isAttached() {
+            return attached;
+        }
+
+        @Override
+        public void setAttached(boolean attached) {
+            this.attached = attached;
+        }
+
         /**
          * 
          * @return
@@ -313,20 +316,23 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
          */
         @Override
         public void setEditing(boolean editing) {
+            if ( ! attached ) {
+                return;
+            }
             if (this.editing == editing) {
                 return;
             }
-            DocumentPropertyStore d = (DocumentPropertyStore) documentStore;
-            if ( d.source == null ) {
+            DocumentPropertyStore ps = (DocumentPropertyStore) documentStore;
+            if ( ps.source == null ) {
                 return;
             }
 
             if (this.editing && !editing) {
                 try {
-                    if (d.source instanceof HasValidator) {
-                        Validator v = ((HasValidator) d.source).getValidator();
+                    if (ps.source instanceof HasValidator) {
+                        Validator v = ((HasValidator) ps.source).getValidator();
                         if (v != null) {
-                            v.validate((Document)d.source);
+                            v.validate((Document)ps.source);
                         }
                     }
                     this.editing = editing;
@@ -334,10 +340,11 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
                 }
             } else if (!this.editing) {
                 beforeEditValues.clear();
-                DataUtils.putAll(beforeEditValues, d.source);
+                DataUtils.putAll(beforeEditValues, ps.source);
                 dirtyEditValues.clear();
                 dirtyEditValues.putAll(beforeEditValues);
                 this.editing = editing;
+                //ps.bind("document.state.editing", editing);
             }
         }
 

@@ -162,11 +162,26 @@ public abstract class AbstractBindingManager<T extends Document>  implements Bin
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
         if ( listState.getDocumentList() != null ) {
-            for ( Document d : listState.getDocumentList()) {
-                d.propertyStore().addDocumentChangeListener(listState.documentChangeHandler());
+            for ( T d : (DocumentList<T>)listState.getDocumentList()) {
+                //d.propertyStore().addDocumentChangeListener(listState.documentChangeHandler());
+                updateAttachState(d, true);
             }
         }
         documentListBinders = new HashMap<Object,ListStateBinder>();        
+    }
+    protected void updateAttachState(T doc, boolean attached) {
+        
+        if ( doc instanceof HasDocumentState ) {
+            DocumentState st = ((HasDocumentState)doc.propertyStore()).getDocumentState();
+            if ( st.isAttached() ) {
+                doc.propertyStore().removeDocumentChangeListener(getListState().documentChangeHandler());
+            }
+            if ( attached ) {
+                doc.propertyStore().addDocumentChangeListener(getListState().documentChangeHandler());                
+            }
+            st.setAttached(attached);
+        }
+        
     }
 
     public List<T> getSourceList() {
@@ -281,9 +296,17 @@ public abstract class AbstractBindingManager<T extends Document>  implements Bin
         }
         this.active = true;
         T old = this.selected;
-
-        boolean markedNew = false;
+        if ( old != null && (old.propertyStore() instanceof HasDocumentState) ) {
+            ((HasDocumentState)old.propertyStore()).getDocumentState().setAttached(false);
+            
+        }
+        if ( selected != null && (selected.propertyStore() instanceof HasDocumentState) ) {
+            ((HasDocumentState)selected.propertyStore()).getDocumentState().setAttached(true);
+            
+        }
+        
         this.documentBinders.setDocument(selected);
+        
     }
 
     /**

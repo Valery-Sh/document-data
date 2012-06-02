@@ -115,8 +115,11 @@ public class ListChangeEvent<E> extends EventObject{
         addAll,
         removeObject, 
         remove, 
+        beforeRemoveAll, 
         removeAll, 
+        beforeRetainAll, 
         retainAll,
+        beforeClear,
         clear,
         appendNew,
         removeNew
