@@ -4,15 +4,9 @@
  */
 package org.document.binding;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.util.List;
-import javax.swing.JComponent;
 import org.document.Document;
-import org.document.binding.BindingManager;
-import org.document.binding.BindingRecognizer;
-import org.document.binding.HasBinder;
-import org.document.binding.ListStateBinder;
+import org.document.DocumentList;
 
 /**
  *
@@ -100,5 +94,22 @@ public class BdDataSource<T extends Document> {//extends JComponent{
     public void setRecognizer(BindingRecognizer recognizer) {
         bindingManager.setRecognizer(recognizer);
     }
+    public int selectedIndex() {
+        if ( getSelected() == null ) {
+            return -1;
+        }
+        return getDocuments().indexOf(getSelected());
+    }
+    public T getSelected() {
+        return (T)bindingManager.getSelected();
+    }
 
+    public void setSelected(T selected) {
+        bindingManager.setSelected(selected);
+    }
+
+    public DocumentList getDocuments() {
+        return bindingManager.getDocuments();
+    }
+    
 }

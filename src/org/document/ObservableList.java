@@ -253,6 +253,17 @@ public class ObservableList<E> implements java.util.List<E> {
         fireEvent(event, e);
         return e;
     }
+    /**
+     * Create a new object of type <code>ListChangeEvent</code> for a given
+     *  index, element and result. 
+     * The method is called from the method {@link #set(int, java.lang.Object) } 
+     *  in order to notify of element replace.
+     * @param index the index of the element which is to be replaced by <code>set</code>
+     * method.
+     * @param element a new element to be set
+     * @param result an old element 
+     * @return a new object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createSet(int index,E element,E result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.set);
         event.setIndex(index);

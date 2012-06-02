@@ -1,7 +1,6 @@
 package org.document.binding;
 
 import java.util.*;
-import javax.swing.JComponent;
 import org.document.*;
 
 /**
@@ -162,11 +161,11 @@ public abstract class AbstractBindingManager<T extends Document>  implements Bin
         this.sourceList = sourceList;
         this.listState = new ListState();
         listState.setDocumentList(new DocumentList(sourceList));
-            if ( listState.getDocumentList() != null ) {
-                for ( Document d : listState.getDocumentList()) {
-                    d.propertyStore().addDocumentChangeListener(listState.documentChangeHandler());
-                }
-             }
+        if ( listState.getDocumentList() != null ) {
+            for ( Document d : listState.getDocumentList()) {
+                d.propertyStore().addDocumentChangeListener(listState.documentChangeHandler());
+            }
+        }
         documentListBinders = new HashMap<Object,ListStateBinder>();        
     }
 
@@ -194,8 +193,9 @@ public abstract class AbstractBindingManager<T extends Document>  implements Bin
             if ( sourceList != null ) {
                 if ( sourceList.isEmpty() ) {
                     setSelected(null);
+                } else {
+                    setSelected(sourceList.get(0));
                 }
-                setSelected(sourceList.get(0));
             } else {
                 setSelected(selected);
             }
@@ -257,7 +257,6 @@ public abstract class AbstractBindingManager<T extends Document>  implements Bin
         
         T old = this.selected;
 
-        boolean markedNew = false;
         this.documentBinders.setDocument(selected);
         Object o = listState.getSelected();
         this.listState.setSelected(selected);

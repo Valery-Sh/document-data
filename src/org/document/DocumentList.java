@@ -34,10 +34,16 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     public BindingManager getBindingManager() {
         return bindingManager;
     }
-    
+    /**
+     * Appends a given element to the end of the list.
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of a new element added.
+     * @param e the  element to be added
+     * @return the added document or null if something wrong 
+     */
     public E newDocument(E e) {
 
-        e.propertyStore();
+        //e.propertyStore();
 
         ListChangeEvent event = this.createNewElementState(e, false);
         if (!validate(event)) {
@@ -49,7 +55,6 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         this.setObservable(true);
         if (b) {
             newDocument = e;
-            //updateState(e);
             fireEvent(event, b);
         }
         return newDocument;
@@ -70,11 +75,28 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     public void cancelNew() {
         newDocument = null;
     }
-
+    /**
+     * Creates a new object of type <code>ListChangeEvent</code>.
+     * Sets the event properties values:
+     * <ul>
+     *   <li>action  to {@link ListChangeEvent.Action#appendNew}</li>
+     *   <li>element to the value of the parameter <code>e</code></li>   
+     *   <li>result to the same value as <code>e</code> or null if element
+     *      cannot be added.
+     * </ul>
+     * @param e the element to be added
+     * @param result <code>true</code> if the element added otherwise <code>false</code>
+     * @return a new instance of {@link ListChangeEvent }
+     */
     protected ListChangeEvent createNewElementState(E e, boolean result) {
-        ListChangeEvent event = new ListChangeEvent(this, ListChangeEvent.Action.append);
+        ListChangeEvent event = new ListChangeEvent(this, ListChangeEvent.Action.appendNew);
         event.setElement(e);
         event.setResult(result);
+        if ( result  ) {
+            event.setIndex(this.size()-1);
+        } else {
+            event.setIndex(-1);
+        }
         return event;
     }
 
@@ -87,10 +109,6 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
 
     @Override
     protected void fireEvent(ListChangeEvent event) {
-//        if (!(event.getAction() == ListChangeEvent.Action.appendNew )) {
-//            listChanged(event); // first handle internally    
-//        }
-
         if (!isObservable()) {
             return;
         }

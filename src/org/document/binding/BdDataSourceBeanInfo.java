@@ -64,13 +64,12 @@ public class BdDataSourceBeanInfo extends SimpleBeanInfo {
     private static final int METHOD_bind2 = 2;
     private static final int METHOD_bind3 = 3;
     private static final int METHOD_bind4 = 4;
-    private static final int METHOD_getSourceList5 = 5;
-    private static final int METHOD_unbind6 = 6;
+    private static final int METHOD_unbind5 = 5;
 
     // Method array 
     /*lazy MethodDescriptor*/
     private static MethodDescriptor[] getMdescriptor(){
-        MethodDescriptor[] methods = new MethodDescriptor[7];
+        MethodDescriptor[] methods = new MethodDescriptor[6];
     
         try {
             methods[METHOD_bind0] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("bind", new Class[] {org.document.binding.ListStateBinder.class})); // NOI18N
@@ -83,10 +82,8 @@ public class BdDataSourceBeanInfo extends SimpleBeanInfo {
             methods[METHOD_bind3].setDisplayName ( "" );
             methods[METHOD_bind4] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("bind", new Class[] {org.document.binding.HasBinder.class})); // NOI18N
             methods[METHOD_bind4].setDisplayName ( "" );
-            methods[METHOD_getSourceList5] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("getSourceList", new Class[] {})); // NOI18N
-            methods[METHOD_getSourceList5].setDisplayName ( "" );
-            methods[METHOD_unbind6] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("unbind", new Class[] {org.document.binding.ListStateBinder.class})); // NOI18N
-            methods[METHOD_unbind6].setDisplayName ( "" );
+            methods[METHOD_unbind5] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("unbind", new Class[] {org.document.binding.ListStateBinder.class})); // NOI18N
+            methods[METHOD_unbind5].setDisplayName ( "" );
         }
         catch( Exception e) {}//GEN-HEADEREND:Methods
 
