@@ -36,9 +36,9 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
 
     @Override
     protected void afterSetSelected(T oldSelected) {
-        if (getDocuments().isNew(oldSelected) && !isEditing(oldSelected)) {
-            getDocuments().cancelNew();
-        }
+//        if (getDocuments().isNew(oldSelected) && !isEditing(oldSelected)) {
+//            getDocuments().cancelNew();
+//        }
     }
 
     protected boolean isEditing(T doc) {
@@ -61,8 +61,8 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
      *   <li>{@link DocumentList#remove(int) }</li> 
      *   <li>{@link DocumentList#removeAll(java.util.Collection) }</li> 
      *   <li>{@link DocumentList#retainAll(java.util.Collection) }</li> 
-     *   <li>{@link DocumentList#newDocument)}</li> 
-     *   <li>{@link DocumentList#newDocument(org.document.Document) }</li> 
+     *   <li>{@link DocumentList#addAndSelect)}</li> 
+     *   <li>{@link DocumentList#addAndSelect(org.document.Document) }</li> 
      *   <li>{@link DocumentList#clear()  }</li> 
      * 
      * </ul>
@@ -80,9 +80,9 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         updateDocumentState(event);
         T newSel = selected;
         DocumentList<T> list = (DocumentList)event.getSource();
-        DocumentList<Document> forListModel = new DocumentList<Document>(list);
-        if ( event.getAction() == ListChangeEvent.Action.appendNew && (Boolean)event.getResult() ) {
-            newSel = list.getNewDocument();
+        DocumentList<T> forListModel = new DocumentList<T>(list);
+        if ( event.getAction() == ListChangeEvent.Action.addAndSelect && (Boolean)event.getResult() ) {
+            newSel = list.getLast();
         } else if ( ! list.contains(selected) ) {
             T oldSel = null;
             if ( event.getAction() == ListChangeEvent.Action.set ) {
@@ -112,7 +112,7 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
                     this.updateAttachState((T)e.getElement(), true);
                 }
                 break;
-            case appendNew :      
+            case addAndSelect :      
             case removeObject :
                 if ( (Boolean)e.getResult() ) {
                     this.updateAttachState((T)e.getElement(), false);

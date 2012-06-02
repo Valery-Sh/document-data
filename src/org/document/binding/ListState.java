@@ -12,7 +12,7 @@ import org.document.PropertyStore;
  *
  * @author V. Shyshkin
  */
-public class ListState implements Document {
+public class ListState<T> implements Document {
 
     protected DocumentPropertyStore listStatePropertyStore;
     private DocumentChangeHandler documentChangeHandler;
@@ -41,14 +41,14 @@ public class ListState implements Document {
     // ===================================================
     //
     private Document selected;
-    private List<Document> documentList;
+    private List<T> documentList;
     private DocumentChangeEvent documentChangeEvent;
     
-    public List<Document> getDocumentList() {
+    public List<T> getDocumentList() {
         return documentList;
     }
 
-    public void setDocumentList(List<Document> list) {
+    public void setDocumentList(List<T> list) {
         this.documentList = list;
         listStatePropertyStore.bind("documentList", list);
     }
@@ -92,7 +92,7 @@ public class ListState implements Document {
          */
         @Override
         public void react(DocumentChangeEvent event) {
-            if ( "document.state.editing".equals(event.getPropertyName()) &&
+/*            if ( "document.state.editing".equals(event.getPropertyName()) &&
                  (Boolean)event.getNewValue() ) {
                 if ( getDocumentList() instanceof DocumentList) {
                     DocumentList dl = (DocumentList)getDocumentList();
@@ -102,8 +102,9 @@ public class ListState implements Document {
                 }
                 
             } else { 
-                setDocumentChangeEvent(event);
-            }
+*/ 
+            setDocumentChangeEvent(event);
+//            }
         }
     } 
 }

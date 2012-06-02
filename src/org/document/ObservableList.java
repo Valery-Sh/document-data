@@ -271,7 +271,8 @@ public class ObservableList<E> implements java.util.List<E> {
 
     @Override
     public E set(int index, E element) {
-        ListChangeEvent event = this.createSet(index, element,null);
+        
+        ListChangeEvent event = this.createSet(index, element,get(index));
         if ( ! validate(event) ) {
             return null;
         }
@@ -305,7 +306,6 @@ public class ObservableList<E> implements java.util.List<E> {
         if ( ! validate(event) ) {
             return;
         }
-
         this.baseList.add(index,element);
         fireEvent(event,element);
     }

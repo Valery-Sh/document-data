@@ -569,7 +569,7 @@ public abstract class AbstractBindingManager<T extends Document>  implements Bin
 
         /**
          * 
-         * @param newDocument
+         * @param addAndSelect
          */
         public void setDocument(Document newDocument) {
 
@@ -585,7 +585,7 @@ public abstract class AbstractBindingManager<T extends Document>  implements Bin
 /*            for (T b : binders.values()) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
                 e.setOldValue(oldSelected);
-                e.setNewValue(newDocument);
+                e.setNewValue(addAndSelect);
                 b.react(e);
             }
 */ 

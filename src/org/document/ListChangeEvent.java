@@ -121,7 +121,7 @@ public class ListChangeEvent<E> extends EventObject{
         retainAll,
         beforeClear,
         clear,
-        appendNew,
+        addAndSelect,
         removeNew
         
     }

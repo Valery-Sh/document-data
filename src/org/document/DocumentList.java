@@ -5,21 +5,33 @@ import java.util.List;
 import org.document.binding.BindingManager;
 
 /**
- *
+ * The class gets any collection of objects of type <code>Document</code>
+ * that implements {@link java.util.List} and uses it as a document store.
+ * There are two main differences  between this class and it's superclass.
+ * First, is that the methods that add a new element are not allowed to
+ * complete there operation if an element is already in the list. Second is that 
+ * that For each document to be added, this object registers itself as 
+ * an event handler of  <code>DocumentChangeEvent</code>. Accordingly for 
+ * each element to be removed  the list unregisters itself. In addition, 
+ * each new document is marked as <code><i>attached</i></code>. And when a 
+ * document is removed it is marked as <code><i>detached</i></code>.
  *
  * @author V. Shyshkin
  */
 public class DocumentList<E extends Document> extends ObservableList<E> {
 
-    private E newDocument;
+
     private BindingManager bindingManager;
     
-    public DocumentList(List baseList) {
+    ValidateHandler validateHandler;
+    
+    public DocumentList(List<E> baseList) {
         super(baseList);
+        validateHandler = new ValidateHandlerImpl();
     }
 
-    public DocumentList(List baseList, BindingManager bindingManager) {
-        super(baseList);
+    public DocumentList(List<E> baseList, BindingManager bindingManager) {
+        this(baseList);
         this.bindingManager = bindingManager;
     }
     
@@ -41,11 +53,11 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
      * @param e the  element to be added
      * @return the added document or null if something wrong 
      */
-    public E newDocument(E e) {
+    public E addAndSelect(E e) {
 
         //e.propertyStore();
 
-        ListChangeEvent event = this.createNewElementState(e, false);
+        ListChangeEvent event = this.createAddAndSelect(e, false);
         if (!validate(event)) {
             return null;
         }
@@ -54,32 +66,23 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         boolean b = this.add(e);
         this.setObservable(true);
         if (b) {
-            newDocument = e;
             fireEvent(event, b);
         }
-        return newDocument;
+        return e;
     }
 
-    public E getNewDocument() {
-        return newDocument;
+    public E getLast() {
+        if ( isEmpty() ) {
+            return null;
+        }
+        return get(size()-1);
     }
 
-    public boolean containsNew() {
-        return newDocument != null;
-    }
-
-    public boolean isNew(E e) {
-        return newDocument == e;
-    }
-
-    public void cancelNew() {
-        newDocument = null;
-    }
     /**
      * Creates a new object of type <code>ListChangeEvent</code>.
      * Sets the event properties values:
      * <ul>
-     *   <li>action  to {@link ListChangeEvent.Action#appendNew}</li>
+     *   <li>action  to {@link ListChangeEvent.Action#addAndSelect}</li>
      *   <li>element to the value of the parameter <code>e</code></li>   
      *   <li>result to the same value as <code>e</code> or null if element
      *      cannot be added.
@@ -88,8 +91,8 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
      * @param result <code>true</code> if the element added otherwise <code>false</code>
      * @return a new instance of {@link ListChangeEvent }
      */
-    protected ListChangeEvent createNewElementState(E e, boolean result) {
-        ListChangeEvent event = new ListChangeEvent(this, ListChangeEvent.Action.appendNew);
+    protected ListChangeEvent createAddAndSelect(E e, boolean result) {
+        ListChangeEvent event = new ListChangeEvent(this, ListChangeEvent.Action.addAndSelect);
         event.setElement(e);
         event.setResult(result);
         if ( result  ) {
@@ -100,20 +103,15 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         return event;
     }
 
-    protected void fireNewDocument(E e, boolean result) {
-        ListChangeEvent event = new ListChangeEvent(this, ListChangeEvent.Action.appendNew);
-        event.setElement(e);
-        event.setResult(result);
-        fireEvent(event);
-    }
 
-    @Override
+/*    @Override
     protected void fireEvent(ListChangeEvent event) {
         if (!isObservable()) {
             return;
         }
         super.fireEvent(event);
     }
+    */ 
     /**
      * The method is used when one of the remove or set  methods is called.
      * When the given event objects defines one of the actions:
@@ -125,10 +123,10 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
      *  <li>set</li>
      * </ul>
      * and the modified list doesn't contain a document which is marked as "new"
-     * then the property <code>newDocument</code> set to null. 
+     * then the property <code>addAndSelect</code> set to null. 
      * @param event the object of type {@link org.document.ListChangeEvent } 
      */
-    @Override
+/*    @Override
     protected void beforeFireEvent(ListChangeEvent event) {
         switch (event.getAction()) {
             case remove:
@@ -136,19 +134,16 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
             case removeObject:
             case retainAll:
             case set:    
-                if ( containsNew() && ! contains(newDocument) ) {
-                    newDocument = null;
-                }
                 break;
         }
     }
+*/
+    protected class ValidateHandlerImpl implements ValidateHandler {
 
-    protected static class ModifyValidateHandler implements ValidateHandler {
+//        protected DocumentList list;
 
-        protected DocumentList list;
-
-        public ModifyValidateHandler(DocumentList list) {
-            this.list = list;
+        public ValidateHandlerImpl() {//DocumentList list) {
+  //          this.list = list;
         }
 
         @Override
@@ -157,27 +152,24 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
             switch (event.getAction()) {
                 case add:
                 case append:
+                case addAndSelect:
                     Object e = event.getElement();
-                    if (list.contains(e)) {
-                        b = false;
-                    }
-                    break;
-                case appendNew:
-                    if (list.containsNew()) {
+                    if (contains(e)) {
                         b = false;
                     }
                     break;
                 case addAll:
                 case appendAll:
                     Collection c = event.getCollection();
-                    if (list.containsAny(c)) {
+                    if (containsAny(c)) {
                         b = false;
                     }
                 case retainAll:
                     break;
                 case set:
-                    e = event.getElement();
-                    if (list.containsNew() && list.isNew((Document) e)) {
+                    e = event.getElement(); //new element in set method
+                    //Document old = (Document)event.getResult();
+                    if (contains(e)) {
                         b = false;
                     }
                     break;

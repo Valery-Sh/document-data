@@ -27,10 +27,6 @@ public class AbstractValidator implements Validator{
         this.parameters = params;
     }
 
-/*    public Object getAlias() {
-        return alias;
-    }
-*/    
     @Override
     public void validate(Document document) {
     }

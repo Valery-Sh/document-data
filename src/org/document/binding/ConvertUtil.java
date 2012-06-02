@@ -105,40 +105,18 @@ public class ConvertUtil {
             if ( c == groupSeparator ) {
                 continue;
             }
-            if ( c == groupSeparator ) {
-                continue;
-            }
             
             if (Character.isWhitespace(c)) {
                 continue;
             }
             sbt.append(c);
         }
-//        String s = sbt.toString();
-//        sb = new StringBuilder(sbt.length());
         if ( decSeparator != '.') {
             int idx = sbt.indexOf(String.valueOf(decSeparator));
             if ( idx >=0 ) {
                 sbt.setCharAt(idx, '.');
             }
         }
-/*        if (s.contains(",")) {
-            for (int i = 0; i < sbt.length(); i++) {
-                char c = sbt.charAt(i);
-                if (c == '.') {
-                    sb.append(sbt, i, sbt.length());
-                    break;
-                }
-                if (c == ',' && i != 0 && i < sbt.length() - 1
-                        && Character.isDigit(sbt.charAt(i - 1))
-                        && Character.isDigit(sbt.charAt(i + 1))) {
-                    continue;
-                }
-                sb.append(c);
-            }
-            return sb.toString();
-        }
-        */
         return sbt.toString();
     }
 
