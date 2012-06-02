@@ -82,7 +82,19 @@ public class ObservableList<E> implements java.util.List<E> {
             a[size()] = null;
         return a;
     }
-
+    /**
+     * Appends a given element to the end of the list.
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of a new element added. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#append}.
+     * <p>
+     * @param e the  element to be added
+     * @return <code>true</code> if an element is appended to the list.
+     * <code>false</code> otherwise. If the list already contains 
+     *  an element to be added than the method does nothing and returns 
+     * <code>false</code>.
+     */
     @Override
     public boolean add(E e) {
         ListChangeEvent event = this.createAppend(e, false);
@@ -102,7 +114,20 @@ public class ObservableList<E> implements java.util.List<E> {
         event.setResult(result);
         return event;
     }
-    
+
+    /**
+     * Removes the specified element from the list.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of an element is removed. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#removeObject}.
+     * <p>
+     * @param o the object to be removed
+     * @return the true if the object i actually removed
+     * {@inheritDoc }
+     * @see java.util.List#remove(java.lang.Object) 
+     */
     @Override
     public boolean remove(Object o) {
         
@@ -141,6 +166,22 @@ public class ObservableList<E> implements java.util.List<E> {
         return b;
     }
 
+    /**
+     * Appends all or none elements of the given collection the end of the list.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of a collection of elements is added. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#appendAll}.
+     * <p>
+     * @param c the  collection of elements to be added
+     * @return <code>true</code> if an element is inserted to the list.
+     * <code>false</code> otherwise. If at least a single element from the
+     * specified collections already exists in the list  than the method does
+     * nothing and returns false.
+     * {@inheritDoc }
+     * @see java.util.List#addAll(java.util.Collection) } 
+     */
     @Override
     public boolean addAll(Collection<? extends E> c) {
         ListChangeEvent event = this.createAppendAll(c, false);
@@ -160,7 +201,25 @@ public class ObservableList<E> implements java.util.List<E> {
         event.setResult(result);
         return event;
     }
-
+    /**
+     * Inserts all or none elements of the given collection into
+     * the the list at the specified position.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of a collection of elements is inserted. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#addAll}.
+     * <p>
+     * @param c the  collection of elements to be inserted
+     * @param index the index  at wich a first element of the specified 
+     * collection is to be inserted
+     * @return <code>true</code> if all element are inserted into the list.
+     * <code>false</code> otherwise. If at least a single element from the
+     * specified collections already exists in the list  than the method does
+     * nothing and returns false.
+     * {@inheritDoc }
+     * @see java.util.List#addAll(java.util.Collection) } 
+     */
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
         ListChangeEvent event = this.createAddAll(index,c, false);
@@ -182,9 +241,19 @@ public class ObservableList<E> implements java.util.List<E> {
         return event;
     }
     /**
-     * {@inheritDoc}
-     * @param c
-     * @return 
+     * Removes all of the elements of the list that are also
+     * contained in the specified collection.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of a collection of elements is added. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#removeAll}.
+     * <p>
+     * @param c the  collection of elements to be removed
+     * @return <code>true</code> if the elements of the collection are removed
+     * <code>false</code> otherwise.
+     * {@inheritDoc }
+     * @see java.util.List#removeAll(java.util.Collection) } 
      */
     @Override
     public boolean removeAll(Collection<?> c) {
@@ -212,7 +281,21 @@ public class ObservableList<E> implements java.util.List<E> {
         event.setResult(result);
         return event;
     }
-
+    /**
+     * Removes from this collection all of its elements that are not contained
+     * in the specified collection.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of a collection of elements is removed. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#retainAll}.
+     * <p>
+     * @param c the  collection of elements that is to be retained
+     * @return <code>true</code> the list changed
+     * <code>false</code> otherwise.
+     * {@inheritDoc }
+     * @see java.util.List#retainAll(java.util.Collection) } 
+     */
     @Override
     public boolean retainAll(Collection<?> c) {
         ListChangeEvent event = this.createBeforeRetainAll(c, false);
@@ -242,6 +325,15 @@ public class ObservableList<E> implements java.util.List<E> {
         return event;
     }
 
+    /** 
+     * Removes all of the elements from the list.
+     * Fires an event of type {@link ListChangeEvent } twice. First to
+     * to notify of the event with action 
+     * {@link ListChangeEvent.Action#beforeClear}. Second after the operation
+     * completes with the <code>action<</code> that equals
+     * {@link ListChangeEvent.Action#clear}.
+     * @see java.util.List
+     */
     @Override
     public void clear() {
         ListChangeEvent event = this.createBeforeClear();
@@ -300,8 +392,25 @@ public class ObservableList<E> implements java.util.List<E> {
         return event;
     }
 
+    /**
+     * Inserts a given element in the specified position of the list.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of a new element added. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#add}.
+     * <p>
+     * @param index the index  at wich a specified element to be inserted
+     * @param e the  element to be added
+     * @return <code>true</code> if an element is inserted to the list.
+     * <code>false</code> otherwise. If the list already contains 
+     *  an element to be inserted than the method does nothing.
+     * {@inheritDoc }
+     * @see java.util.List#add(int, java.lang.Object) 
+     */
     @Override
     public void add(int index, E element) {
+        
         ListChangeEvent event = this.createAdd(index, element);
         if ( ! validate(event) ) {
             return;
@@ -317,6 +426,19 @@ public class ObservableList<E> implements java.util.List<E> {
         return event;
     }
 
+    /**
+     * Removes the element at the specified position int the list.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of an element is removed. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#remove}.
+     * <p>
+     * @param index the index  at wich a specified element to be removed
+     * @return the removed element
+     * {@inheritDoc }
+     * @see java.util.List#remove(int) 
+     */
     @Override
     public E remove(int index) {
         ListChangeEvent event = this.createRemove(index,null);
@@ -395,12 +517,24 @@ public class ObservableList<E> implements java.util.List<E> {
     public List<ListChangeListener> getListChangeListener() {
         return this.listeners;
     }
-
+    /**
+     * 
+     * @return <code>true</code> if the list fires events 
+     *  when the list changes. <code>false</code>otherwise
+     * @see #setObservable(boolean) 
+     */
     public boolean isObservable() {
         return observable;
     }
-
-    void setObservable(boolean observable) {
+    /**
+     * Assigns a boolean value that indicates whether this list 
+     * fires events when operations that change the list are called.
+     * 
+     * @param observable <code>true</code> the list fires events, 
+     *    <code>false</code> otherwise
+     * @see #isObservable() 
+     */
+    public void setObservable(boolean observable) {
         this.observable = observable;
     }
 

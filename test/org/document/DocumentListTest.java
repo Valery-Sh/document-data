@@ -49,35 +49,16 @@ public class DocumentListTest {
     
     
     /**
-     * Test of getBindingManager method, of class DocumentList.
+     * Test of addSelect method, of class DocumentList.
      */
     @Test
-    public void testGetBindingManager() {
-        
-        System.out.println("getBindingManager");
-        DocumentList instance = new DocumentList();
-        
-        BindingManager result = instance.getBindingManager();
-        assertNull(result);
-        
-        BindingManager expResult = new BindingManager<>();        
-        DocumentList l = new DocumentList(list,expResult);
-        
-        result = l.getBindingManager();
-        assertTrue(result == expResult);
-        
-    }
-
-    /**
-     * Test of addAndSelect method, of class DocumentList.
-     */
-    @Test
+    @SuppressWarnings("empty-statement")
     public void testAddAndSelect() {
         System.out.println("addAndSelect");
         prepare();
         DocumentList instance = new DocumentList(list);
-        Document expResult = new DocumentImpl();;
-        Object result = instance.addAndSelect(expResult);
+        Document expResult = new DocumentImpl();
+        Object result = instance.addSelect(expResult);
         assertTrue(expResult == result);
     }
 
@@ -118,7 +99,11 @@ public class DocumentListTest {
         // if getResult == true then index mustbe size()-1
         // 
         assertEquals(instance.size()-1, e.getIndex());
-        
+        //
+        // if getResult == false then index mustbe -1
+        // 
+        e = instance.createAddAndSelect(doc,true);
+        assertEquals(-1, e.getIndex());
         
     }
 

@@ -10,7 +10,7 @@ import org.document.binding.BindingManager;
  * There are two main differences  between this class and it's superclass.
  * First, is that the methods that add a new element are not allowed to
  * complete there operation if an element is already in the list. Second is that 
- * that For each document to be added, this object registers itself as 
+ * that for each document to be added, the list registers itself as 
  * an event handler of  <code>DocumentChangeEvent</code>. Accordingly for 
  * each element to be removed  the list unregisters itself. In addition, 
  * each new document is marked as <code><i>attached</i></code>. And when a 
@@ -30,11 +30,11 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         validateHandler = new ValidateHandlerImpl();
     }
 
-    public DocumentList(List<E> baseList, BindingManager bindingManager) {
+/*    public DocumentList(List<E> baseList, BindingManager bindingManager) {
         this(baseList);
         this.bindingManager = bindingManager;
     }
-    
+*/    
     public DocumentList() {
         this(0);
     }
@@ -43,17 +43,23 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         super(capacity);
     }
 
-    public BindingManager getBindingManager() {
+/*    public BindingManager getBindingManager() {
         return bindingManager;
     }
+    */ 
     /**
      * Appends a given element to the end of the list.
      * Fires an event of type {@link ListChangeEvent } to notify
-     * listeners of a new element added.
+     * listeners of a new element added. The event <code>action<</code>
+     * property gets a value that equals to 
+     * {@link ListChangeEvent.Action#addAndSelect}.
+     * <p>
+     * In response the binding manager will set a new document as 
+     * <code><i>selected</i></code>.  
      * @param e the  element to be added
      * @return the added document or null if something wrong 
      */
-    public E addAndSelect(E e) {
+    public E addSelect(E e) {
 
         //e.propertyStore();
 
@@ -82,7 +88,7 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
      * Creates a new object of type <code>ListChangeEvent</code>.
      * Sets the event properties values:
      * <ul>
-     *   <li>action  to {@link ListChangeEvent.Action#addAndSelect}</li>
+     *   <li>action  to {@link ListChangeEvent.Action#addSelect}</li>
      *   <li>element to the value of the parameter <code>e</code></li>   
      *   <li>result to the same value as <code>e</code> or null if element
      *      cannot be added.
@@ -123,7 +129,7 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
      *  <li>set</li>
      * </ul>
      * and the modified list doesn't contain a document which is marked as "new"
-     * then the property <code>addAndSelect</code> set to null. 
+     * then the property <code>addSelect</code> set to null. 
      * @param event the object of type {@link org.document.ListChangeEvent } 
      */
 /*    @Override

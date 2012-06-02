@@ -61,8 +61,8 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
      *   <li>{@link DocumentList#remove(int) }</li> 
      *   <li>{@link DocumentList#removeAll(java.util.Collection) }</li> 
      *   <li>{@link DocumentList#retainAll(java.util.Collection) }</li> 
-     *   <li>{@link DocumentList#addAndSelect)}</li> 
-     *   <li>{@link DocumentList#addAndSelect(org.document.Document) }</li> 
+     *   <li>{@link DocumentList#addSelect)}</li> 
+     *   <li>{@link DocumentList#addSelect(org.document.Document) }</li> 
      *   <li>{@link DocumentList#clear()  }</li> 
      * 
      * </ul>
