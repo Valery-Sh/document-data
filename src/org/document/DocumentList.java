@@ -28,6 +28,8 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     public DocumentList(List<E> baseList) {
         super(baseList);
         validateHandler = new ValidateHandlerImpl();
+        this.addValidateHandler(validateHandler);
+        
     }
 
 /*    public DocumentList(List<E> baseList, BindingManager bindingManager) {
@@ -36,12 +38,12 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
     }
 */    
     public DocumentList() {
-        this(0);
+        super();
+        validateHandler = new ValidateHandlerImpl();
+        this.addValidateHandler(validateHandler);
+        
     }
 
-    public DocumentList(int capacity) {
-        super(capacity);
-    }
 
 /*    public BindingManager getBindingManager() {
         return bindingManager;

@@ -876,7 +876,7 @@ public class ObservableListTest {
             
         };
         instance.addListChangeListener(l);
-        assertEquals(1, instance.getListChangeListener().size());
+        assertEquals(1, instance.getListeners().size());
     }
 
     /**
@@ -894,16 +894,16 @@ public class ObservableListTest {
         };
         instance.addListChangeListener(l);
         instance.removeListChangeListener(l);
-        assertEquals(0, instance.getListChangeListener().size());
+        assertEquals(0, instance.getListeners().size());
     }
 
     /**
-     * Test of getListChangeListener method, of class ObservableList.
+     * Test of getListeners method, of class ObservableList.
      */
     @Test
-    public void testGetListChangeListener() {
-        System.out.println("getListChangeListener");
-        List result = instance.getListChangeListener();
+    public void testGetListeners() {
+        System.out.println("getListeners");
+        List result = instance.getListeners();
         assertNotNull(result);
     }
     

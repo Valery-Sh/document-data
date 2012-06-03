@@ -106,6 +106,13 @@ public class DocumentListTest {
         assertEquals(-1, e.getIndex());
         
     }
-
+    //
+    // Test ValidateHandlerImpl class
+    //
+    @Test
+    public void testValidate() {
+        
+    }
+    
 
 }

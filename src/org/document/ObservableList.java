@@ -5,73 +5,130 @@ import java.util.*;
 
 
 /**
- *
+ * Observable implementation of the <code>java.util.List</code>.
+ * Allows register and unregister event listeners in order to notify them of
+ * the list change.
+ * Every method that can change the content of the list fires an event of typr
+ * {@link ListChangeEvent } in order to notify all registers listeners of type
+ * {@link ListChangeListener}} of that list changed.
+ * <p>
+ * The class does not provide its own mechanism to perform operations
+ * or to allocate memory. Instead, it relies on the supplied object of 
+ * a class that implements <code>java.util.List</code> and use it's methods
+ * to access data.
+ * 
  * @author V. Shyshkin
  */
 public class ObservableList<E> implements java.util.List<E> {
     
     private List<E> baseList;
     private List<ValidateHandler> validators;
-    
+    /**
+     * Creates a new instance of the class for the specified list that 
+     * is used to access elements.
+     * 
+     * @param baseList any object of the class that implements {@link java.util.List}.
+     */
     public ObservableList(List baseList) {
+        this();
         this.baseList = baseList;
-        this.listeners = new ArrayList<ListChangeListener>();
-        this.validators = new ArrayList<ValidateHandler>();
-        this.observable = true;
+        
     }      
-    
+    /**
+     * Creates a new instance of the class.
+     * To be able to access elements creates internally a new instance of
+     * {@link java.util.ArrayList}.
+     */
     public ObservableList() {
-        this(10);
-    }      
-    public ObservableList(int capacity) {
-        this.baseList = new ArrayList(capacity);
+        
+        this.baseList = new ArrayList(10);
         this.listeners = new ArrayList<ListChangeListener>();
         this.validators = new ArrayList<ValidateHandler>();
         this.observable = true;
-    }
-
+    }      
+    /**
+     * @return internal list that is used to access elements of the 
+     *  specified list.
+     */
     protected List<E> getBaseList() {
         return baseList;
     }
-
+    /**
+    /**
+     * Sets the specified list that is to be used internally to access 
+     * elements of this list.
+     *
+     * @param baseList the list to be used to access elements of this list
+     */
     protected void setBaseList(List<E> baseList) {
         this.baseList = baseList;
     }
-
+    /**
+     * @return a collection of all registered listeners of the
+     * event of type {@link ListChangeEvent}.
+     */
     public List<ListChangeListener> getListeners() {
         return listeners;
     }
 
-    public void setListeners(List<ListChangeListener> listeners) {
+/*    public void setListeners(List<ListChangeListener> listeners) {
         this.listeners = listeners;
     }
-
+*/
+    /**
+     * @return the number of elements in the list.
+     * @see java.util.List#size() 
+     */
     @Override
     public int size() {
         return this.baseList.size();
     }
+    /**
+     * @return <code>false</code> if the list contains at least one element.
+     *  <code>true</code> otherwise
+     * @see java.util.List#isEmpty() 
+     */
 
     @Override
     public boolean isEmpty() {
         return this.baseList.isEmpty();
     }
-
+    /**
+     * Returns <code>true</code> if this list contains the specified element. 
+     * More formally, returns true if and only if this list contains 
+     * at least one element <code>e</code> such that 
+     * <code>(o==null ? e==null : o.equals(e))</code>.
+     * @see java.util.List#contains(java.lang.Object) 
+     */ 
     @Override
     public boolean contains(Object o) {
         boolean b = baseList.contains(o);
         return this.baseList.contains(o);
     }
-
+    /**
+     * @return an iterator over the elements in the list
+     * @see java.util.List#iterator() 
+     */ 
     @Override
     public Iterator<E> iterator() {
         return this.baseList.iterator();
     }
-
+    /**
+     * @return Returns an array containing all of the elements
+     * in this list in proper sequence (from first to last element).
+     * @see java.util.List#toArray() () 
+     */
     @Override
     public Object[] toArray() {
         return this.baseList.toArray();
     }
-
+    /**
+     * @param a  the array into which the elements of this list 
+     * are to be stored
+     * @return an array containing all of the elements in this list in 
+     * proper sequence (from first to last element)
+     * @see java.util.List#toArray(T[]) 
+     */
     @Override
     public <T> T[] toArray(T[] a) {
         if (a.length < size())
@@ -94,6 +151,7 @@ public class ObservableList<E> implements java.util.List<E> {
      * <code>false</code> otherwise. If the list already contains 
      *  an element to be added than the method does nothing and returns 
      * <code>false</code>.
+     * @see java.util.List#add(java.lang.Object) 
      */
     @Override
     public boolean add(E e) {
@@ -107,7 +165,20 @@ public class ObservableList<E> implements java.util.List<E> {
         }
         return b;
     }
-    
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * The created object is used by the method {@link #add(java.lang.Object) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#append}.</li>
+     *   <li><i><code>element</code></i> - a value of the parameter <b>e</b></li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param e the value that is passed by the add() method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createAppend(E e, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.append);
         event.setElement(e);
@@ -124,7 +195,7 @@ public class ObservableList<E> implements java.util.List<E> {
      * {@link ListChangeEvent.Action#removeObject}.
      * <p>
      * @param o the object to be removed
-     * @return the true if the object i actually removed
+     * @return  <code>true</code> if the object is actually removed
      * {@inheritDoc }
      * @see java.util.List#remove(java.lang.Object) 
      */
@@ -143,6 +214,20 @@ public class ObservableList<E> implements java.util.List<E> {
         return b;
 
     }
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * The created object is used by the method {@link #remove(java.lang.Object) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#removeObject}. }</li>
+     *   <li><i><code>object</code></i> - a value of the parameter <b>o</b></li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param e the value that is passed by the add() method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createRemove(Object o, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.removeObject);
         event.setObject(o);
@@ -195,6 +280,21 @@ public class ObservableList<E> implements java.util.List<E> {
         }
         return b;
     }
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * The created object is used by the method {@link #addAll(java.util.Collection) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#appendAll }. </li>
+     *   <li><code>collection</code> - a value of the parameter <code><b>c</b></code>. </li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param c the value of type <code>java.util.Collection</code> 
+     *  that is passed by the <code>addAll(Collection)</code> method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createAppendAll(Collection<? extends E> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.appendAll);
         event.setCollection(c);
@@ -233,6 +333,21 @@ public class ObservableList<E> implements java.util.List<E> {
         }
         return b;
     }
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * The created object is used by the method {@link #addAll(int, java.util.Collection) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#addAll}. }</li>
+     *   <li><i><code>Collection</code></i> - a value of the parameter <b>c</b></li>
+     *   <li><i><code>index</code></i> - a value of the parameter <b>index</b></li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param e the value that is passed by the add() method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createAddAll(int index,Collection<? extends E> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.addAll);
         event.setIndex(index);
@@ -268,13 +383,44 @@ public class ObservableList<E> implements java.util.List<E> {
         fireEvent(event, b);
         return b;
     }
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * 
+     * The created object is used by the method {@link #removeAll(java.util.Collection) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#beforeRemoveAll }. </li>
+     *   <li><code>collection</code> - a value of the parameter <code><b>c</b></code>. </li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param c the value of type <code>java.util.Collection</code> 
+     *  that is passed by the <code>addAll(Collection)</code> method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createBeforeRemoveAll(Collection<?> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.beforeRemoveAll);
         event.setCollection(c);
         event.setResult(result);
         return event;
     }
-    
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * 
+     * The created object is used by the method {@link #removeAll(java.util.Collection) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#removeAll }. </li>
+     *   <li><code>collection</code> - a value of the parameter <code><b>c</b></code>. </li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param c the value of type <code>java.util.Collection</code> 
+     *  that is passed by the <code>addAll(Collection)</code> method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createRemoveAll(Collection<?> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.removeAll);
         event.setCollection(c);
@@ -311,13 +457,44 @@ public class ObservableList<E> implements java.util.List<E> {
         
         return b;
     }
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * 
+     * The created object is used by the method {@link #retainAll(java.util.Collection) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#beforeRetainAll }. </li>
+     *   <li><code>collection</code> - a value of the parameter <code><b>c</b></code>. </li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param c the value of type <code>java.util.Collection</code> 
+     *  that is passed by the <code>addAll(Collection)</code> method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createBeforeRetainAll(Collection<?> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.beforeRetainAll);
         event.setCollection(c);
         event.setResult(result);
         return event;
     }
-    
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * 
+     * The created object is used by the method {@link #retainAll(java.util.Collection) }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#retainAll }. </li>
+     *   <li><code>collection</code> - a value of the parameter <code><b>c</b></code>. </li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param c the value of type <code>java.util.Collection</code> 
+     *  that is passed by the <code>addAll(Collection)</code> method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createRetainAll(Collection<?> c, boolean result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.retainAll);
         event.setCollection(c);
@@ -345,22 +522,62 @@ public class ObservableList<E> implements java.util.List<E> {
         event = this.createClear();
         fireEvent(event,null);
     }
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * 
+     * The created object is used by the method {@link #clear() }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#beforeRemoveAll }. </li>
+     *   <li><code>collection</code> - this list. </li>
+     * </ul>
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createBeforeClear() {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.beforeClear);
         event.setCollection(this);
         return event;
     }
-    
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * 
+     * The created object is used by the method {@link #clear() }
+     * to fire the event of type {@link ListChangeEvent }.
+     * Doesn't change event property.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createClear() {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.clear);
         return event;
     }
 
+    /**
+     * Return the element at the specified position in the list.
+     * @param index the position of the element to be returned
+     * @return the element at the specified position 
+     * @throws IndexOutOfBoundsException
+     * @see java.util.List
+     */
     @Override
     public E get(int index) {
         return this.baseList.get(index);
     }
-
+    /**
+     * Replaces the element at the specified position in the list
+     *  with a new specified element.
+     * 
+     * Fires an event of type {@link ListChangeEvent } to notify
+     * listeners of an element replaced. The <code>action<</code>
+     * property of the event gets a value that equals to 
+     * {@link ListChangeEvent.Action#set}.
+     * <p>
+     * @param index position of the element in the list
+     * @param element the  element to be replaced
+     * @return the element that resided at the specified position
+     * prior to replacing
+     * @see java.util.List#add(java.lang.Object) 
+     */
     @Override
     public E set(int index, E element) {
         
@@ -374,15 +591,20 @@ public class ObservableList<E> implements java.util.List<E> {
         return e;
     }
     /**
-     * Create a new object of type <code>ListChangeEvent</code> for a given
-     *  index, element and result. 
-     * The method is called from the method {@link #set(int, java.lang.Object) } 
-     *  in order to notify of element replace.
-     * @param index the index of the element which is to be replaced by <code>set</code>
-     * method.
-     * @param element a new element to be set
-     * @param result an old element 
-     * @return a new object of type <code>ListChangeEvent</code>
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * The created object is used by the method {@link #set(int, java.lang.Object)  }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#set. }</li>
+     *   <li><i><code>index</code></i> - a value of the parameter <b>index</b></li>
+     *   <li><i><code>element</code></i> - a value of the parameter <b>element</b></li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param index the value that is passed by the set() method.     
+     * @param element the value that is passed by the set() method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
      */
     protected ListChangeEvent createSet(int index,E element,E result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.set);
@@ -418,6 +640,21 @@ public class ObservableList<E> implements java.util.List<E> {
         this.baseList.add(index,element);
         fireEvent(event,element);
     }
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * The created object is used by the method {@link #add(int, java.lang.Object)  }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#add. }</li>
+     *   <li><i><code>index</code></i> - a value of the parameter <b>index</b></li>
+     *   <li><i><code>element</code></i> - a value of the parameter <b>element</b></li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param e the value that is passed by the add() method.
+     * @param result the value that is passed by the add() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createAdd(int index,E element) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.add);
         event.setIndex(index);
@@ -451,6 +688,22 @@ public class ObservableList<E> implements java.util.List<E> {
         fireEvent(event,e);
         return e;
     }
+    
+    /**
+     * Creates and returns an object of type <code>ListChangeEvent</code>.
+     * The created object is used by the method {@link #remove(int)  }
+     * to fire the event of type {@link ListChangeEvent }.
+     * The following properties of the event are set:
+     * <ul>
+     *   <li><code>action</code> - {@link ListChangeEvent.Action#remove. }</li>
+     *   <li><i><code>index</code></i> - a value of the parameter <b>index</b></li>
+     *   <li><i><code>element</code></i> - a value of the parameter <b>result</b></li>
+     *   <li><i><code>result</code></i> - a value of the parameter <code>result</code></li>
+     * </ul>
+     * @param index the value that is passed by the remove() method.
+     * @param result the value that is passed by the remove() method.
+     * @return the object of type <code>ListChangeEvent</code>
+     */
     protected ListChangeEvent createRemove(int index,E result) {
         ListChangeEvent event = new ListChangeEvent(this,ListChangeEvent.Action.remove);
         event.setIndex(index);
@@ -458,27 +711,49 @@ public class ObservableList<E> implements java.util.List<E> {
         event.setResult(result);
         return event;
     }
-
+    /**
+     * Returns the index of the first occurrence of the specified element
+     * in this list, or -1 if this list does not contain the element.
+     * 
+     * @param o an element to search for
+     * @return the position of the specified object in the list or -1 if the 
+     *      specified object doesn't exists 
+     * @see java.util.List#indexOf(java.lang.Object) 
+     */
     @Override
     public int indexOf(Object o) {
         return this.baseList.indexOf(o);
     }
-
+    /**
+     * Returns the index of the last occurrence of the specified element
+     * in this list, or -1 if this list does not contain the element.
+     * 
+     * @param o an element to search for
+     * @return the position of the specified object in the list or -1 if the 
+     *      specified object doesn't exists 
+     * @see java.util.List#lastIndexOf(java.lang.Object) 
+     */
     @Override
     public int lastIndexOf(Object o) {
         return this.baseList.lastIndexOf(o);
     }
-
+    /**
+     * @see java.util.List#listIterator()
+     */
     @Override
     public ListIterator<E> listIterator() {
         return this.baseList.listIterator();
     }
-
+    /**
+     * @see java.util.List#listIterator(int) 
+     */
     @Override
     public ListIterator<E> listIterator(int index) {
         return this.baseList.listIterator(index);
     }
-
+    /**
+     * @see java.util.List#subList(int, int) 
+     */
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
         return this.baseList.subList(fromIndex, toIndex);
@@ -495,11 +770,11 @@ public class ObservableList<E> implements java.util.List<E> {
     }    
 
     protected void fireEvent(ListChangeEvent event, Object result) {
-        
         event.setResult(result);
         beforeFireEvent(event);
         fireEvent(event);
     }    
+    
     protected void fireEvent(ListChangeEvent event) {
         if ( ! observable ) {
             return;
@@ -513,9 +788,6 @@ public class ObservableList<E> implements java.util.List<E> {
     }
     public void removeListChangeListener(ListChangeListener l) {
         this.listeners.remove(l);
-    }
-    public List<ListChangeListener> getListChangeListener() {
-        return this.listeners;
     }
     /**
      * 
@@ -548,12 +820,9 @@ public class ObservableList<E> implements java.util.List<E> {
             }
         }
         return true;
-        
     }
 
     public static interface ValidateHandler {
-        
         boolean validate(ListChangeEvent event);
-        
     }
 }
