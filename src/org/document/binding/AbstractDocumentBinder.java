@@ -78,11 +78,11 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return documentErrorBinder;
     }
 
-    @Override
+/*    @Override
     public Object getComponentValue() {
         return null;
     }
-
+*/
     @Override
     public abstract void addBinderListener(BinderListener l);
 

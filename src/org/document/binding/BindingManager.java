@@ -112,7 +112,8 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
                     this.updateAttachState((T)e.getElement(), true);
                 }
                 break;
-            case addAndSelect :      
+            case addAndSelect : 
+                break;
             case removeObject :
                 if ( (Boolean)e.getResult() ) {
                     this.updateAttachState((T)e.getElement(), false);

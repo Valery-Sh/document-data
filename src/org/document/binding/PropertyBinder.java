@@ -1,35 +1,32 @@
 package org.document.binding;
 
 import org.document.Document;
-import org.document.DocumentChangeListener;
-//import org.document.HasDocumentAlias;
 
 /**
- *
+ * Represents the objects that are used to bind a named property to 
+ * another object, which is considered  a component.
+ * The instance of the interface is aware of a currently selected
+ * document. The instance also knows the property to which it is bound.
+ * 
  * @author V. Shyshkin
  */
 public interface PropertyBinder extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
-    
+    /**
+     * Returns a document whose property is used for binding.
+     * @return returns an object of type {@link org.document.Document}
+     */
     Document getDocument();
     
     /**
-     * Returns a property name whose value is bound to a component.
+     * Returns a bound  property name.
      *
      * @return a property name as a <code>String</code>.
      */
     String getBoundProperty();
-    
+    /**
+     * Sets a specified property name as a bound property.
+     * @param propertyName a property name to be set
+     */
     void setBoundProperty(String propertyName);
 
-    /**
-     * It is assumed that this method should be called when you want to set the
-     * value of the component and do not want that in response a component
-     * generated an event.
-     *
-     * @param propertyValue a data value. Before assign it to a component it
-     * should be converted to a component value.
-     */
-    void propertyChanged(Object propertyValue);
-
-    void initComponentDefault();
 }

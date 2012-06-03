@@ -146,7 +146,7 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
 
 
     /**
-     * The method is called when a data value (for example a property value) is
+     * The method is called when a a property value is
      * changed, and in response, it is necessary to change the value in the
      * associated component. First the method converts data to a component
      * value by calling an abstract method
@@ -158,9 +158,9 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
      * might to override the method
      * <code>setComponentValue</code>.
      *
-     * @param newValue
+     * @param propertyValue the ne value of the bound property
      */
-    @Override
+    //@Override
     public void propertyChanged(Object propertyValue) {
         Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
@@ -170,9 +170,10 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
     }
 
     /**
-     * return current component value
+     * Returns a value of the object that the binder considers to be a 
+     *   component
+     * @return  value of a component
      */
-    @Override
     public abstract Object getComponentValue();
     
     protected abstract void setComponentValue(Object compValue);
@@ -180,6 +181,12 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
     protected abstract Object componentValueOf(Object dataValue);
 
     protected abstract Object propertyValueOf(Object compValue);
-    
+    /**
+     * May be useful when it is not possible to convert
+     * the bound property value to a component value. For example,
+     * when (@link #getDocument() } returns <code>null</code>.
+     */
+    protected abstract void initComponentDefault();
+
 
 }

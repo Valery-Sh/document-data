@@ -118,12 +118,12 @@ public class DocumentListTest {
         prepare();
         DocumentList instance = new DocumentList(list);
         //
-        // simulates set(1,list.get(0)) 
+        // simulates set(1,list.get(0)) - dublicate
         //
         ListChangeEvent e = instance.createSet(1, list.get(0), list.get(0));
         assertFalse(instance.validate(e));
         //
-        // simulates set(1,null) 
+        // simulates set(1,null) - null value
         //
         e = instance.createSet(1, null, null);
         assertFalse(instance.validate(e));
@@ -139,7 +139,7 @@ public class DocumentListTest {
         e = instance.createAppend(null, true);
         assertFalse(instance.validate(e));
         //
-        // simulates add(1,list.get(0)) 
+        // simulates add(1,list.get(0)) - duplicate
         //
         e = instance.createAdd(1,list.get(0));
         assertFalse(instance.validate(e));
@@ -150,33 +150,37 @@ public class DocumentListTest {
         assertFalse(instance.validate(e));
 
         //
-        // simulates addAll(int,Collection )) 
+        // simulates addAll(int,Collection )) when collection parameter 
+        // contains duplicate element
         //
-        List l = new ArrayList();
-        l.add(list.get(0));
-        l.add(new DocumentImpl());
-        e = instance.createAddAll(1,l,true);
+        List c = new ArrayList();
+        c.add(list.get(0));
+        c.add(new DocumentImpl());
+        e = instance.createAddAll(1,c,true);
         assertFalse(instance.validate(e));
         //
-        // simulates add(1,null) 
+        // simulates add(1,c) where c - collection that 
+        // contains null element 
         //
-        l.add(null);
-        e = instance.createAddAll(1,l,true);
+        c.add(null);
+        e = instance.createAddAll(1,c,true);
         assertFalse(instance.validate(e));
 
         //
-        // simulates addAll(list.get(0)) 
+        // simulates addAll(Collection c) where c - collection that 
+        // contains duplicate element 
         //
-        l = new ArrayList();
-        l.add(list.get(0));
-        l.add(new DocumentImpl());
-        e = instance.createAppendAll(l,true);
+        c = new ArrayList();
+        c.add(list.get(0));
+        c.add(new DocumentImpl());
+        e = instance.createAppendAll(c,true);
         assertFalse(instance.validate(e));
         //
-        // simulates add(1,null) 
+        // simulates add(Collection c) where c - collection that 
+        // contains null element 
         //
-        l.add(null);
-        e = instance.createAppendAll(l,true);
+        c.add(null);
+        e = instance.createAppendAll(c,true);
         assertFalse(instance.validate(e));
         
     }
