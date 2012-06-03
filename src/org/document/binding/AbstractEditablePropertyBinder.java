@@ -130,7 +130,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * be converted to a component value.
      */
     @Override
-    public void propertyChanged(Object propertyValue) {
+    protected void propertyChanged(Object propertyValue) {
         if (binderIsStillChangingProperty) {
             return;
         }

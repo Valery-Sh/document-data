@@ -1,6 +1,3 @@
-/*
- * 
- */
 package org.document.binding;
 
 import java.io.Serializable;
@@ -11,43 +8,131 @@ import org.document.DocumentChangeEvent;
 import org.document.DocumentChangeListener;
 
 /**
- *
+ * The class provides a skeletal implementation of the
+ * <code>PropertyBinder</code> interface.
+ * The class still does not know anything about the concrete component.
+ * But it defines some abstract methods that must be implemented 
+ * in subclasses. The class is useful in cases where there is no need 
+ * to handle events that are fired by the component. An example is a 
+ * <code>javax.swing.Label</code>. But what about 
+ * <code>javax.swing.TextField</code> ? We want not only change it's text 
+ * property but also handle changes in the component itself. It is more 
+ * convenient to use the class {@link AbstractEditablePropertyBinder }. 
+ * The last provides functionality that allows to avoid some pitfalls 
+ * related to the component's events. 
+ * <p>
+ * Below is an example of a class that extends the specified one.
+ * The example uses a swing component {@link javax.swing.JLabel}.
+ * 
+ * 
+ * <code>
+ * <pre>
+ * public class LabelStringBinder extends AbstractPropertyBinder {
+ *   protected JLabel boundComponent;
+ * 
+ *   public BdLabelBinder(String propertyName, JLabel textField) {
+ *       this.boundComponent = textField;
+ *       this.boundProperty = propertyName;
+ *   }   
+ *   // ==============================================================
+ *   //      AbstractPropertyBinder's Abstract methods Implementation
+ *   // ==============================================================
+ *   @Override
+ *   protected void setComponentValue(Object componentValue) {
+ *      boundComponent.setText(componentValue);
+ *   }
+ *   @Override
+ *   protected Object componentValueOf(Object propertyValue) {
+ *       return propertyValue == null ? "" : propertyValue.toString();
+ *   }
+ *   @Override
+ *   protected Object propertyValueOf(Object componentValue) {
+ *      return boundComponent.getText();
+ *   }
+ *   @Override
+ *   public Object getComponentValue() {
+ *       return boundComponent.getText();
+ *   }
+ *   @Override
+ *   public void initComponentDefault() {
+ *       this.boundComponent.setText("");
+ *   }
+ * }
+ * </pre>
+ * </code>
+ * 
+ * The class <code>AbstractPropertyBinder</code> provides methods that 
+ * make it possible temporary prohibit the instances both fire evens  and
+ * handle incoming events. When {@link #suspend()} method is called the component
+ * doesn't accept and fire any events. The method {@link #resume() } takes
+ * an instance in it's normal state.
+ * 
+ * @see PropertyBinder
+ * @see AbstractEditablePropertyBinder
+ * 
  * @author V. Shyshkin
  */
 public abstract class AbstractPropertyBinder implements Serializable,PropertyBinder, DocumentChangeListener {
     
-    private Object alias;
+    //private Object alias;
     protected String boundProperty;
     protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
     protected boolean suspended;
-
+    
+    /**
+     * Returns an instance of class <code>BinderConverter</code> that 
+     * should be used to convert the value of the property to the value of
+     * the component, and vice versa.
+     * @return the instance of converter or <code>null</code> if is not assigned.
+     */
     public BinderConverter getConverter() {
         return converter;
     }
-    
+    /**
+     * Sets the specified <code>BinderConverter</code> object. 
+     * The converted may be used to convert the value of the property to the value of
+     * the component, and vice versa.
+     */
     public void setConverter(BinderConverter converter) {
         this.converter = converter;
     }
-
+    /**
+     * Returns a currently selected <code>Document</code> instance.
+     * @return an object of class {@link org.document.Document).
+     */
     @Override
     public Document getDocument() {
         return document;
     }
-
+    /**
+     * Indicates whether the binder is in suspend state.
+     * @return <code>true</code> if a binder is in suspend state. 
+     * <code>false</code> otherwise.
+     * @see #suspend() 
+     * @see #resume() 
+     */
     public boolean isSuspended() {
         return suspended;
     }
+    /**
+     * Takes the binder in the suspend state. When the binder in this state
+     * then it doesn't fire events an doesn't accept incoming events.
+     */
     public void suspend() {
         this.suspended = true;
     }
-
+    /**
+     * Takes the binder in its normal (not suspend) state.
+     */
     public void resume() {
         this.suspended = false;
-            
     }
-
+    /**
+     * 
+     * @param l 
+     */
     @Override
     public void addBinderListener(BinderListener l) {
         if (this.binderListeners == null) {
@@ -109,7 +194,7 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
                 return;
             case propertyChange:
                 if ( ! isSuspended() )
-                    this.propertyChanged(event.getNewValue());
+                    propertyChanged(event.getNewValue());
                 return;
         }//switch
     }
@@ -160,8 +245,7 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
      *
      * @param propertyValue the ne value of the bound property
      */
-    //@Override
-    public void propertyChanged(Object propertyValue) {
+    protected void propertyChanged(Object propertyValue) {
         Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
             return;
@@ -171,22 +255,20 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
 
     /**
      * Returns a value of the object that the binder considers to be a 
-     *   component
+     * component.
      * @return  value of a component
      */
     public abstract Object getComponentValue();
     
-    protected abstract void setComponentValue(Object compValue);
+    protected abstract void setComponentValue(Object componentValue);
 
-    protected abstract Object componentValueOf(Object dataValue);
+    protected abstract Object componentValueOf(Object propertyValue);
 
-    protected abstract Object propertyValueOf(Object compValue);
+    protected abstract Object propertyValueOf(Object componentValue);
     /**
      * May be useful when it is not possible to convert
      * the bound property value to a component value. For example,
      * when (@link #getDocument() } returns <code>null</code>.
      */
     protected abstract void initComponentDefault();
-
-
 }
