@@ -132,7 +132,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * Instances created with this constructor may set
      * any document as <code>selected</code>.
      */
-    protected BindingManager() {
+    public BindingManager() {
         documentBinders = new DocumentBinderContainer(this);
     }
     
@@ -149,7 +149,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * 
      * @param sourceList the list of documents
      */
-    public BindingManager(List sourceList) {
+    public BindingManager(List<T> sourceList) {
         this();
         if ( sourceList == null ) {
             return;

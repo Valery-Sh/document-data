@@ -20,7 +20,6 @@ public class DocumentErrorBinder {
         binders = new HashMap<String,List<ErrorBinder>>();
     }
 
-
     public void notifyError(ValidationException e) {
         notifyError("*document", e);
     }
