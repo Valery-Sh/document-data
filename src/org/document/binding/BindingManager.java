@@ -176,7 +176,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     
     protected void updateAttachState(T doc, boolean attached) {
         
-        if ( doc instanceof HasDocumentState ) {
+        if ( doc.propertyStore() instanceof HasDocumentState ) {
             DocumentState st = ((HasDocumentState)doc.propertyStore()).getDocumentState();
             if ( st.isAttached() ) {
                 doc.propertyStore().removeDocumentChangeListener(getListState().documentChangeHandler());

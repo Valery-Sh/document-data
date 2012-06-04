@@ -19,33 +19,56 @@ import org.document.binding.PropertyBinder;
  *
  * @author V. Shyshkin
  */
-public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
+//public class BdComboBoxListBinder extends ListStateBinder{
+public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBinder<T> {
 
-    protected String[] properties;
+    protected String[] displayProperties;
 
-    public BdComboBoxListBinder(JComboBox component, String... properties) {
-        super(component);
-        this.properties = properties;
+    public BdComboBoxListBinder() {
+        super();
         initBinders();
     }
 
-    @Override
-    protected PropertyBinder createSelectedBinder() {
-        return new BdComboBoxListBinder.JComboSelectionBinder((JComboBox) getComponent());
+    public BdComboBoxListBinder(JComboBox component, String... properties) {
+        super(component);
+        this.displayProperties = properties;
+        initBinders();
+    }
+
+    public JComboBox getComboBox() {
+        return (JComboBox) getComponent();
+    }
+
+    public void setComboBox(JComboBox comboBox) {
+        setComponent(comboBox);
+        initBinders();
+    }
+
+    public String[] getDisplayProperties() {
+        return displayProperties;
+    }
+
+    public void setDisplayProperties(String... displayProperties) {
+        this.displayProperties = displayProperties;
     }
 
     @Override
-    protected PropertyBinder createListModelBinder() {
-        return new BdComboBoxListBinder.JComboModelBinder((JComboBox) getComponent(), properties);
+    protected T createSelectedBinder() {
+        return (T) new BdComboBoxListBinder.JComboSelectionBinder((JComboBox) getComponent());
     }
 
     @Override
-    protected PropertyBinder createDocumentChangeEventBinder() {
-        return new BdComboBoxListBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
+    protected T createListModelBinder() {
+        return (T) new BdComboBoxListBinder.JComboModelBinder((JComboBox) getComponent(), displayProperties);
     }
+
+    @Override
+    protected T createDocumentChangeEventBinder() {
+        return (T) new BdComboBoxListBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
+    }
+
     public static class JComboDocumentChangeBinder extends AbstractListDocumentChangeBinder {
 
-        
         public JComboDocumentChangeBinder(JComboBox component) {
             super(component);
         }
@@ -56,20 +79,18 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
 
         @Override
         protected void notifyComponentOf(DocumentChangeEvent event) {
-            if ( event == null ) {
+            if (event == null) {
                 return;
             }
-            ComboBoxModelImpl model = (ComboBoxModelImpl)getJComboBox().getModel();
+            ComboBoxModelImpl model = (ComboBoxModelImpl) getJComboBox().getModel();
             String[] props = model.getProperties();
-            if ( Arrays.asList(props).contains(event.getPropertyName()) ) {
+            if (Arrays.asList(props).contains(event.getPropertyName())) {
                 //Document d = (())
-                Object selItem = model.getElement((Document)event.getSource());
+                Object selItem = model.getElement((Document) event.getSource());
                 model.setSelectedItem(selItem);
                 getJComboBox().repaint();
             }
         }
-
-
     }
 
     public static class JComboSelectionBinder extends AbstractListSelectionBinder implements ActionListener {
@@ -88,6 +109,21 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
             super.propertyChanged(propertyValue);
             getJComboBox().repaint();// if omitted then doesn't change selected item
         }
+
+        /**
+         * Prepends cyclic component modifications.
+         *
+         * @param value a new value to be checked
+         * @return <code>true</code> if the component shouldn't be changed.          <code>false otherwise
+     */
+        @Override
+        protected boolean needChangeComponent(Object value) {
+            if ( "selected".equals(getBoundProperty()) ) {
+                return true;
+            }
+            return super.needChangeComponent(value);
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == getJComboBox()) {
@@ -168,7 +204,6 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
             this.properties = properties;
         }
 
-
         @Override
         protected void addComponentListeners() {
         }
@@ -208,12 +243,11 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
         public void initComponentDefault() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-
     }//class JListListModelBinder
 
     public static class ComboBoxModelImpl<E extends Document> implements ComboBoxModel {
-        protected Object selectedObject;
 
+        protected Object selectedObject;
         private List<E> documents;
         private String[] properties;
 
@@ -232,8 +266,9 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
             Document d = documents.get(index);
             return getElement(d);
         }
+
         public Object getElement(Document d) {
-            
+
             if (d == null) {
                 return null;
             }

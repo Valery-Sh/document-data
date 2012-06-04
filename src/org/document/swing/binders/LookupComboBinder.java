@@ -25,6 +25,7 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
         this.boundProperty = propName;
         initBinder();
     }
+    @Override
     public void setBoundProperty(String propertyName) {
         this.boundProperty = propertyName;
     }
@@ -82,15 +83,4 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
         componentChanged(component.getModel().getSelectedItem());
     }
     
-/*    protected static class DefaultLookupComboConverter extends DefaultBinderConvertor {
-        
-        public DefaultLookupComboConverter(PropertyBinder binder) {
-            super(binder);
-        }
-        
-        public Object componentValueOf(Object propertyValue) {
-            
-        }
-    }
-*/
 }

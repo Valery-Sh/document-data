@@ -13,19 +13,38 @@ import org.document.Document;
  */
 public abstract class ListStateBinder<T extends PropertyBinder>  extends DocumentBinder {
     protected Object component;
+
+    public ListStateBinder() {
+        super();
+    }
+    
     public ListStateBinder(Object component) {
         super();
         this.component = component;
     }
-    
+    /**
+     * The method creates objects of type <code>PropertyBinder</code> for such properties
+     * as <code>listModel,documentChangeEvent,selected</code> and adds them to
+     * internal binder collection.
+     * It is important that the binder for the property <code>listModel</code>
+     * should be added first. 
+     */
     protected final void initBinders() {
-        this.add(createSelectedBinder());
+        //
+        // create createListModelBinder() must be first
+        //
         this.add(createListModelBinder());
         this.add(createDocumentChangeEventBinder());
+        this.add(createSelectedBinder());
+        
     }
 
     public Object getComponent() {
         return component;
+    }
+    public void setComponent(Object component) {
+        this.component = component;
+        initBinders();
     }
     
     protected abstract T createSelectedBinder();
