@@ -48,11 +48,11 @@ public class ErrorAccumulatorBinder implements ErrorBinder{
      * @param e 
      */
     @Override
-    public void setError(ValidationException e) {
-        setError("*document", e);
+    public void errorFound(ValidationException e) {
+        errorFound("*document", e);
     }
     @Override
-    public void setError(String propertyName,ValidationException e) {
+    public void errorFound(String propertyName,ValidationException e) {
         String pName = propertyName;
         if ( propertyName == null ) {
             pName = "*document";
@@ -66,11 +66,11 @@ public class ErrorAccumulatorBinder implements ErrorBinder{
     }
 
     public void notifyFixed(Document document) {
-        setFixed("*document",document);
+        errorFixed("*document",document);
     }
     
     @Override
-    public void setFixed(String propertyName,Document document) {
+    public void errorFixed(String propertyName,Document document) {
         if ( document == null ) {
             return;
         }

@@ -186,7 +186,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             }
             st.setAttached(attached);
         }
-        
     }
 
     public List<T> getSourceList() {
@@ -264,7 +263,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         T old = this.selected;
 
         this.documentBinders.setDocument(selected);
-        Object o = listState.getSelected();
+        //Object o = listState.getSelected();
         this.listState.setSelected(selected);
         this.selected = selected;
 

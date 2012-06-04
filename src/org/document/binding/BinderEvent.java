@@ -4,7 +4,7 @@ import java.util.EventObject;
 import org.document.ValidationException;
 
 /**
- *
+ * 
  * @author V. Shyshkin
  */
 public class BinderEvent extends EventObject {
