@@ -18,7 +18,7 @@ import org.document.Validator;
  *
  * @author V. Shyskin
  */
-public class DocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderContainer<T> {//extends AbstractDocumentBinder {
+public class DocumentBinder<T extends PropertyBinder> implements Binder, BinderListener , DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
     private boolean suspended;
 
     protected List<DocumentChangeListener> documentListeners;
@@ -89,12 +89,10 @@ public class DocumentBinder<T extends PropertyBinder> implements Binder, BinderL
         }
     }
     
-    @Override
     public Document getDocument() {
         return document;
     }
     
-    @Override
     public void setDocument(Document object) {
         PropertyStore oldDocumentStore = null;
         if (document != null) {
@@ -251,7 +249,7 @@ public class DocumentBinder<T extends PropertyBinder> implements Binder, BinderL
         }
     }
 
-    @Override
+
     public void remove(T binder) {
         if ( binder == null ) {
             return;
@@ -263,7 +261,7 @@ public class DocumentBinder<T extends PropertyBinder> implements Binder, BinderL
         }
     }
     
-    @Override
+
     public void add(T binder) {
         if ( binder == null ) {
             return;

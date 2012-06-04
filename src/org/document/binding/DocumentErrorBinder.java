@@ -34,7 +34,7 @@ public class DocumentErrorBinder {
             return;
         }        
         for ( ErrorBinder b : ebinders) {
-            b.notifyError(propertyName, e);
+            b.setError(propertyName, e);
         }
     }
 
@@ -53,7 +53,7 @@ public class DocumentErrorBinder {
             return;
         }        
         for ( ErrorBinder b : ebinders) {
-            b.notifyFixed(propertyName,document);
+            b.setFixed(propertyName,document);
         }
         
     }
@@ -113,7 +113,7 @@ public class DocumentErrorBinder {
             return;
         }        
         for ( ErrorBinder b : ebinders) {
-            b.notifyFixed(propertyName,document);
+            b.setFixed(propertyName,document);
         }
     }    
     

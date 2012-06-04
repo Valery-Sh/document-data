@@ -3,7 +3,7 @@ package org.document.binding;
 
 
 /**
- *
+ *  
  * @author V. Shyshkin
  */
 public interface BinderConverter<P,C> {

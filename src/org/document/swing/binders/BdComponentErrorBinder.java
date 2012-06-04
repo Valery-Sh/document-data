@@ -21,8 +21,8 @@ public abstract class BdComponentErrorBinder implements ErrorBinder {
         this.component = component;
     }
     @Override
-    public void notifyError(ValidationException e) {
-        notifyError("*document", e);
+    public void setError(ValidationException e) {
+        setError("*document", e);
     }
     protected String getMessage(String propertyName,ValidationException e) {
         String msg = "";
@@ -49,7 +49,7 @@ public abstract class BdComponentErrorBinder implements ErrorBinder {
     protected abstract void setMessage(String message);
     
     @Override
-    public void notifyError(String propertyName,ValidationException e) {
+    public void setError(String propertyName,ValidationException e) {
         String pName = propertyName;
         if ( propertyName == null ) {
             pName = "*document";
@@ -60,10 +60,10 @@ public abstract class BdComponentErrorBinder implements ErrorBinder {
     }
 
     public void notifyFixed(Document document) {
-        notifyFixed("*document",document);
+        setFixed("*document",document);
     }
     @Override
-    public void notifyFixed(String propertyName,Document document) {
+    public void setFixed(String propertyName,Document document) {
         setMessage("");
         getComponent().setEnabled(false);
         getComponent().setVisible(false);

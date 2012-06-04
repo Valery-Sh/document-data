@@ -8,7 +8,7 @@ import org.document.ValidationException;
  * @author V. Shyshkin
  */
 public interface ErrorBinder {
-     void notifyError(ValidationException e); // TO BE REMOVED
-     void notifyError(String propertyName,ValidationException e);
-     void notifyFixed(String propertyName,Document document);
+     void setError(ValidationException e); // TO BE REMOVED
+     void setError(String propertyName,ValidationException e);
+     void setFixed(String propertyName,Document document);
 }
