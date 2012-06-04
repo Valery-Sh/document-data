@@ -13,7 +13,7 @@ import org.document.*;
 public abstract class AbstractDocumentBinder<T extends PropertyBinder> implements Binder, BinderListener, BinderContainer<T> {//, HasDocumentAlias {
     
     private boolean suspended;
-    //private Object alias;
+
     protected List<DocumentChangeListener> documentListeners;
     protected List<BinderListener> binderListeners;
     protected String childName;
@@ -78,11 +78,7 @@ public abstract class AbstractDocumentBinder<T extends PropertyBinder> implement
         return documentErrorBinder;
     }
 
-/*    @Override
-    public Object getComponentValue() {
-        return null;
-    }
-*/
+
     @Override
     public abstract void addBinderListener(BinderListener l);
 

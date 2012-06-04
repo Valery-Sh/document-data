@@ -1,7 +1,5 @@
 package org.document.swing.binders;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -10,11 +8,12 @@ import org.document.binding.DefaultBinderConvertor;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
-public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener, ActionListener {
+public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements DocumentListener {//, ActionListener {
     
-    public String _ID_;
+    public String _ID_; // for test ppurpose
+    
     protected JTextField textField;
 
     public BdTextFieldBinder(JTextField textField) {
@@ -31,8 +30,8 @@ public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements
     protected final void initBinder() {
         textField.getDocument().removeDocumentListener(this);
         textField.getDocument().addDocumentListener(this);
-        textField.removeActionListener(this);
-        textField.addActionListener(this);
+       // textField.removeActionListener(this);
+       // textField.addActionListener(this);
         converter = new DefaultBinderConvertor(this);
     }
     
@@ -56,7 +55,6 @@ public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements
     
     @Override
     protected Object componentValueOf(Object propertyValue) {
-//        return dataValue == null ? null : dataValue.toString();
         if ( converter == null ) {
             converter = new DefaultBinderConvertor(this);
         }
@@ -98,24 +96,16 @@ public class BdTextFieldBinder extends AbstractEditablePropertyBinder implements
     @Override
     public void insertUpdate(DocumentEvent e) {
         this.componentChanged(textField.getText());
-        //System.out.println("*** insertUpdate = " + textField.getText());        
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-        javax.swing.text.Document dd;
         this.componentChanged(textField.getText());
-        //System.out.println("*** removeUpdate = " + textField.getText());        
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        //System.out.println("*** changeUpdate = " + textField.getText());
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        propertyChanged(document.propertyStore().get(boundProperty));
-    }
-    
+
 }

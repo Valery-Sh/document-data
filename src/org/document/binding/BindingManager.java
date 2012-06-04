@@ -80,7 +80,7 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
         updateDocumentState(event);
         T newSel = selected;
         DocumentList<T> list = (DocumentList)event.getSource();
-        DocumentList<T> forListModel = new DocumentList<T>(list);
+        //DocumentList<T> forListModel = new DocumentList<T>(list);
         if ( event.getAction() == ListChangeEvent.Action.addAndSelect && (Boolean)event.getResult() ) {
             newSel = list.getLast();
         } else if ( ! list.contains(selected) ) {
@@ -100,7 +100,9 @@ public class BindingManager<T extends Document> extends AbstractBindingManager<T
                 }
             }
         }
-        getListState().setDocumentList(forListModel);
+        //getListState().setDocumentList(forListModel);
+        // We assign the same list
+        getListState().setDocumentList(list);
         
         setSelected(newSel);
     }

@@ -1,19 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.binding;
 
 /**
  *
- * @author Valery
+ * @author V. Shyskin
  */
 public class DocumentBinder<T extends PropertyBinder>  extends AbstractDocumentBinder {
 
-/*    protected DocumentBinder(Object alias) {
-        super(alias);
-    }
-*/ 
     protected DocumentBinder() {
         super();
     }
@@ -22,6 +14,7 @@ public class DocumentBinder<T extends PropertyBinder>  extends AbstractDocumentB
     protected DocumentBinder create() {
         return new DocumentBinder();
     }
+    
     @Override
     public void addBinderListener(BinderListener l) {
     }

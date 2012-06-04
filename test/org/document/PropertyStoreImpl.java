@@ -1,12 +1,9 @@
 package org.document;
 
-import org.document.binding.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.document.DocumentChangeListener;
-import org.document.PropertyStore;
 
 /**
  *

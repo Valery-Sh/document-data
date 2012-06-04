@@ -130,8 +130,10 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
         this.suspended = false;
     }
     /**
-     * 
-     * @param l 
+     * Appends the specified listener to the list of binder listeners.
+     * @param l the binder listener to be added
+     * @see BinderListener
+     * @see BinderEvent
      */
     @Override
     public void addBinderListener(BinderListener l) {
@@ -144,7 +146,12 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
         }
         
     }
-
+    /**
+     * Removes the specified listener from the list of binder listeners.
+     * @param l the binder listener to be removed
+     * @see BinderListener
+     * @see BinderEvent
+     */
     @Override
     public void removeBinderListener(BinderListener l) {
         if (binderListeners == null || binderListeners.isEmpty()) {
@@ -153,7 +160,31 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
         this.binderListeners.remove(l);
     }
 
-
+    /**
+     * Handles the specified event of type <code>DocumentChangeEvent</code>.
+     * This is the <code>DocumentChangeListener</code> implementation
+     * method. It accepts some actions that the event can provide:
+     * <ul>
+     *   <li>{@link org.document.DocumentChangeEvent.Action#documentChange}. 
+     *      This action notifies the binder of the current document change. Since the event
+     *      contains the reference to a new document  the binder retains 
+     *      this reference.
+     *    </li>
+     *    <li>
+     *      {@link org.document.DocumentChangeEvent.Action#propertyChange}
+     * 
+     *    </li>
+     *    <li>
+     *      {@link org.document.DocumentChangeEvent.Action#suspendBinding}
+     *    </li>
+     *    <li>
+     *      {@link org.document.DocumentChangeEvent.Action#resumeBinding}
+     *    </li>
+     * 
+     * </ul>
+     * 
+     * @param event the event to be handled 
+     */
     @Override
     public void react(DocumentChangeEvent event) {
         switch (event.getAction()) {
@@ -198,11 +229,17 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
                 return;
         }//switch
     }
-
+    /**
+     * @return the bound property name
+     */
     @Override
     public String getBoundProperty() {
         return this.boundProperty;
     }
+    /**
+     * Sets  the specified bound property name.
+     * @param propertyName the name of the bound property
+     */
     @Override
     public void setBoundProperty(String propertyName) {
         this.boundProperty = propertyName;
@@ -211,8 +248,9 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
     /**
      * Prepends cyclic component modifications.
      *
-     * @param value a new value to be assigned
-     * @return
+     * @param value a new value to be checked
+     * @return <code>true</code> if the component shouldn't be changed.
+     *   <code>false otherwise
      */
     protected boolean needChangeComponent(Object value) {
         boolean result = true;
@@ -255,15 +293,34 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
 
     /**
      * Returns a value of the object that the binder considers to be a 
-     * component.
+     * component. The method is declared as <code>abstract</code> and should be 
+     * overriden in subclasses.
      * @return  value of a component
      */
-    public abstract Object getComponentValue();
-    
+    protected abstract Object getComponentValue();
+    /**
+     * Sets the specified value to the object that the binder considers to be a 
+     * component. The method is declared as <code>abstract</code> and should be 
+     * overriden in subclasses.
+     * @return  value of a component
+     */
     protected abstract void setComponentValue(Object componentValue);
-
+    /**
+     * Converts the specified bound property value to the component
+     * value.
+     * The method is declared as <code>abstract</code> and should be 
+     * overriden in subclasses.
+     * @param propertyValue the property value to be converted
+     * @return 
+     */
     protected abstract Object componentValueOf(Object propertyValue);
-
+    /**
+     * Converts the specified component value to the bound property value.
+     * The method is declared as <code>abstract</code> and should be 
+     * overriden in subclasses.
+     * @param componentValue the component value to be converted
+     * @return 
+     */
     protected abstract Object propertyValueOf(Object componentValue);
     /**
      * May be useful when it is not possible to convert

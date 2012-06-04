@@ -12,7 +12,7 @@ import org.document.PropertyStore;
  *
  * @author V. Shyshkin
  */
-public class ListState<T> implements Document {
+public class ListState<T extends Document> implements Document {
 
     protected DocumentPropertyStore listStatePropertyStore;
     private DocumentChangeHandler documentChangeHandler;
@@ -41,14 +41,17 @@ public class ListState<T> implements Document {
     // ===================================================
     //
     private Document selected;
-    private List<T> documentList;
+    private DocumentList<T> documentList;
     private DocumentChangeEvent documentChangeEvent;
     
-    public List<T> getDocumentList() {
+    public DocumentList<T> getDocumentList() {
         return documentList;
     }
-
-    public void setDocumentList(List<T> list) {
+    /**
+     * Sets the  specified list 
+     * @param list 
+     */
+    public void setDocumentList(DocumentList<T> list) {
         this.documentList = list;
         listStatePropertyStore.bind("documentList", list);
     }

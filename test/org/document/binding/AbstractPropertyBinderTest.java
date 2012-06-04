@@ -219,6 +219,7 @@ public class AbstractPropertyBinderTest {
         assertEquals(expResult, result);        
     }
 
+    
     public class AbstractPropertyBinderImpl extends AbstractPropertyBinder {
         private Object componentValue; 
         private Object propertyValue;
