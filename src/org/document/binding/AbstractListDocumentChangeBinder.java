@@ -22,7 +22,7 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
         if (document == null) {
             return null;
         }
-        return ((ListState) document).getDocumentList();
+        return ((BindingState) document).getDocumentList();
     }
 
     protected abstract void notifyComponentOf(DocumentChangeEvent event);

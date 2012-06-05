@@ -21,7 +21,7 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
         if ( document == null ) {
             return null;
         }
-        return ((ListState)document).getDocumentList();
+        return ((BindingState)document).getDocumentList();
     }
     
 

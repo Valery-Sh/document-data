@@ -72,7 +72,7 @@ public class BdDataSourceBeanInfo extends SimpleBeanInfo {
         MethodDescriptor[] methods = new MethodDescriptor[6];
     
         try {
-            methods[METHOD_bind0] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("bind", new Class[] {org.document.binding.ListStateBinder.class})); // NOI18N
+            methods[METHOD_bind0] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("bind", new Class[] {org.document.binding.DocumentListBinder.class})); // NOI18N
             methods[METHOD_bind0].setDisplayName ( "" );
             methods[METHOD_bind1] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("bind", new Class[] {java.lang.String.class, java.lang.String.class, org.document.binding.HasBinder.class})); // NOI18N
             methods[METHOD_bind1].setDisplayName ( "" );
@@ -82,7 +82,7 @@ public class BdDataSourceBeanInfo extends SimpleBeanInfo {
             methods[METHOD_bind3].setDisplayName ( "" );
             methods[METHOD_bind4] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("bind", new Class[] {org.document.binding.HasBinder.class})); // NOI18N
             methods[METHOD_bind4].setDisplayName ( "" );
-            methods[METHOD_unbind5] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("unbind", new Class[] {org.document.binding.ListStateBinder.class})); // NOI18N
+            methods[METHOD_unbind5] = new MethodDescriptor(org.document.binding.BdDataSource.class.getMethod("unbind", new Class[] {org.document.binding.DocumentListBinder.class})); // NOI18N
             methods[METHOD_unbind5].setDisplayName ( "" );
         }
         catch( Exception e) {}//GEN-HEADEREND:Methods

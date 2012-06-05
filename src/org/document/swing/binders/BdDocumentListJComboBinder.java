@@ -12,24 +12,24 @@ import org.document.DocumentChangeEvent;
 import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
-import org.document.binding.ListStateBinder;
+import org.document.binding.DocumentListBinder;
 import org.document.binding.PropertyBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-//public class BdComboBoxListBinder extends ListStateBinder{
-public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBinder<T> {
+
+public class BdDocumentListJComboBinder<T extends PropertyBinder> extends DocumentListBinder<T> {
 
     protected String[] displayProperties;
 
-    public BdComboBoxListBinder() {
+    public BdDocumentListJComboBinder() {
         super();
         initBinders();
     }
 
-    public BdComboBoxListBinder(JComboBox component, String... properties) {
+    public BdDocumentListJComboBinder(JComboBox component, String... properties) {
         super(component);
         this.displayProperties = properties;
         initBinders();
@@ -54,17 +54,17 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
 
     @Override
     protected T createSelectedBinder() {
-        return (T) new BdComboBoxListBinder.JComboSelectionBinder((JComboBox) getComponent());
+        return (T) new BdDocumentListJComboBinder.JComboSelectionBinder((JComboBox) getComponent());
     }
 
     @Override
     protected T createListModelBinder() {
-        return (T) new BdComboBoxListBinder.JComboModelBinder((JComboBox) getComponent(), displayProperties);
+        return (T) new BdDocumentListJComboBinder.JComboModelBinder((JComboBox) getComponent(), displayProperties);
     }
 
     @Override
     protected T createDocumentChangeEventBinder() {
-        return (T) new BdComboBoxListBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
+        return (T) new BdDocumentListJComboBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
     }
 
     public static class JComboDocumentChangeBinder extends AbstractListDocumentChangeBinder {
@@ -215,7 +215,7 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
         @Override
         public void setComponentValue(Object value) {
             //component.clearSelection();
-            component.setModel(new BdComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments()));
+            component.setModel(new BdDocumentListJComboBinder.ComboBoxModelImpl(properties, getDocuments()));
         }
 
         @Override
@@ -228,7 +228,7 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
             if (getDocuments() == null) {
                 return null;
             }
-            return new BdComboBoxListBinder.ComboBoxModelImpl(properties, getDocuments());
+            return new BdDocumentListJComboBinder.ComboBoxModelImpl(properties, getDocuments());
         }
 
         @Override
@@ -236,7 +236,7 @@ public class BdComboBoxListBinder<T extends PropertyBinder> extends ListStateBin
             if (compValue == null) {
                 return null;
             }
-            return ((BdComboBoxListBinder.ComboBoxModelImpl) component.getModel()).documents;
+            return ((BdDocumentListJComboBinder.ComboBoxModelImpl) component.getModel()).documents;
         }
 
         @Override

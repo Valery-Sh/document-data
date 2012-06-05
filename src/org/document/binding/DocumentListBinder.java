@@ -11,14 +11,14 @@ import org.document.Document;
  *
  * @author V. Shyshkin
  */
-public abstract class ListStateBinder<T extends PropertyBinder>  extends DocumentBinder {
+public abstract class DocumentListBinder<T extends PropertyBinder>  extends DocumentBinder {
     protected Object component;
 
-    public ListStateBinder() {
+    public DocumentListBinder() {
         super();
     }
     
-    public ListStateBinder(Object component) {
+    public DocumentListBinder(Object component) {
         super();
         this.component = component;
     }
@@ -55,7 +55,7 @@ public abstract class ListStateBinder<T extends PropertyBinder>  extends Documen
         if ( getDocument() == null ) {
             return null;
         }
-        return ((ListState)getDocument()).getDocumentList();
+        return ((BindingState)getDocument()).getDocumentList();
     }
     
     @Override

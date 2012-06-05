@@ -124,8 +124,8 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * List of documents set by a constructor call.
      */
     private List<T> sourceList;
-    private ListState listState;
-    private Map<Object,ListStateBinder> documentListBinders;
+    private BindingState bindingState;
+    private Map<Object,DocumentListBinder> documentListBinders;
 
     /**
      * Create an instance of the class. 
@@ -158,20 +158,20 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     }
     private void initSourceList(List sourceList) {
         this.sourceList = sourceList;
-        this.listState = new ListState();
-        listState.setDocumentList(new DocumentList(sourceList));
-        if ( listState.getDocumentList() != null ) {
-            for ( T d : (DocumentList<T>)listState.getDocumentList()) {
+        this.bindingState = new BindingState();
+        bindingState.setDocumentList(new DocumentList(sourceList));
+        if ( bindingState.getDocumentList() != null ) {
+            for ( T d : (DocumentList<T>)bindingState.getDocumentList()) {
                 //d.propertyStore().addDocumentChangeListener(listState.documentChangeHandler());
                 updateAttachState(d, true);
             }
         }
-        documentListBinders = new HashMap<Object,ListStateBinder>(); 
+        documentListBinders = new HashMap<Object,DocumentListBinder>(); 
         getDocuments().addListChangeListener(this);
         
     }
     public DocumentList getDocuments() {
-        return (DocumentList)getListState().getDocumentList();
+        return (DocumentList)getBindingState().getDocumentList();
     }
     
     protected void updateAttachState(T doc, boolean attached) {
@@ -179,10 +179,10 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         if ( doc.propertyStore() instanceof HasDocumentState ) {
             DocumentState st = ((HasDocumentState)doc.propertyStore()).getDocumentState();
             if ( st.isAttached() ) {
-                doc.propertyStore().removeDocumentChangeListener(getListState().documentChangeHandler());
+                doc.propertyStore().removeDocumentChangeListener(getBindingState().documentChangeHandler());
             }
             if ( attached ) {
-                doc.propertyStore().addDocumentChangeListener(getListState().documentChangeHandler());                
+                doc.propertyStore().addDocumentChangeListener(getBindingState().documentChangeHandler());                
             }
             st.setAttached(attached);
         }
@@ -223,10 +223,10 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     
     /**
      * 
-     * @return an object of type {@link ListState} 
+     * @return an object of type {@link BindingState} 
      */
-    protected ListState getListState() {
-        return this.listState;
+    protected BindingState getBindingState() {
+        return this.bindingState;
     }
     /**
      * @return an object of type {@link org.document.Document)
@@ -264,7 +264,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
 
         this.documentBinders.setDocument(selected);
         //Object o = listState.getSelected();
-        this.listState.setSelected(selected);
+        this.bindingState.setSelected(selected);
         this.selected = selected;
 
         afterSetSelected(old);
@@ -302,25 +302,25 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * Registers a given binder.
      * 
      * @param binder a binder to be registered
-     * @see ListStateBinder
+     * @see DocumentListBinder
      * @throws an exception of type @{@link java.lang.IllegalArgumentException}
      * in case when the binding manager was created without a document list 
      * specified
      */
-    public void bind(ListStateBinder binder) {
+    public void bind(DocumentListBinder binder) {
           if (sourceList == null) {
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
             }
             binder.addBinderListener(this);
             documentListBinders.put(binder.getComponent(),binder);
-            ((ListStateBinder) binder).setDocument(getListState());
+            ((DocumentListBinder) binder).setDocument(getBindingState());
     }
 
     /**
      * Unregisters a given binder.
-     * @param binder the binder of type {@link ListStateBinder} to be unregistered
+     * @param binder the binder of type {@link DocumentListBinder} to be unregistered
      */
-    public void unbind(ListStateBinder binder) {
+    public void unbind(DocumentListBinder binder) {
             binder.removeBinderListener(this);
             documentListBinders.remove(binder);
     }
@@ -480,10 +480,10 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     }
     /**
      * 
-     * Invoked when the {@link ListState } object has changed its state.
+     * Invoked when the {@link BindingState } object has changed its state.
      * <code>BindingManages</code> is responsible for handling events
-     * that can be fired by {@link ListStateBinder}. When a new binder 
-     * of type <code>ListStateBinder</code> is added then the binding manager 
+     * that can be fired by {@link DocumentListBinder}. When a new binder 
+     * of type <code>DocumentListBinder</code> is added then the binding manager 
      * registers itself as a listener of events of type {@link BinderEvent}.
      * <p>
      * if  <code>event</code> represents an action
@@ -564,7 +564,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             }
         }
         // We assign the same list
-        getListState().setDocumentList(list);
+        getBindingState().setDocumentList(list);
         
         setSelected(newSel);
     }

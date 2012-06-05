@@ -12,12 +12,12 @@ import org.document.PropertyStore;
  *
  * @author V. Shyshkin
  */
-public class ListState<T extends Document> implements Document {
+public class BindingState<T extends Document> implements Document {
 
     protected DocumentPropertyStore listStatePropertyStore;
     private DocumentChangeHandler documentChangeHandler;
 
-    public ListState() {
+    public BindingState() {
         //
         // DocumentPropertyStore is a default PropertyStore
         //

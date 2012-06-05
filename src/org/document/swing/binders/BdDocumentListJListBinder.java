@@ -12,18 +12,18 @@ import org.document.DocumentChangeEvent;
 import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
-import org.document.binding.ListStateBinder;
+import org.document.binding.DocumentListBinder;
 import org.document.binding.PropertyBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class BdListBoxListBinder<T extends PropertyBinder> extends ListStateBinder {
+public class BdDocumentListJListBinder<T extends PropertyBinder> extends DocumentListBinder {
 
     protected String[] properties;
 
-    public BdListBoxListBinder(JList component, String... properties) {
+    public BdDocumentListJListBinder(JList component, String... properties) {
         super(component);
         this.properties = properties;
         initBinders();
@@ -60,7 +60,7 @@ public class BdListBoxListBinder<T extends PropertyBinder> extends ListStateBind
                 return;
             }
 
-            BdListBoxListBinder.ListBoxModelImpl model = (BdListBoxListBinder.ListBoxModelImpl)getJList().getModel();
+            BdDocumentListJListBinder.ListBoxModelImpl model = (BdDocumentListJListBinder.ListBoxModelImpl)getJList().getModel();
             String[] props = model.getProperties();
             if ( Arrays.asList(props).contains(event.getPropertyName()) ) {
                 getJList().repaint();

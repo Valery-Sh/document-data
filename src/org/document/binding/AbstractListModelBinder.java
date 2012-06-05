@@ -22,7 +22,7 @@ public abstract class AbstractListModelBinder  extends AbstractPropertyBinder {
         if ( document == null ) {
             return null;
         }
-        return ((ListState)document).getDocumentList();
+        return ((BindingState)document).getDocumentList();
     }
     
 
