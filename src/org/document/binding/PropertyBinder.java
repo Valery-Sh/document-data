@@ -10,12 +10,12 @@ import org.document.Document;
  * 
  * @author V. Shyshkin
  */
-public interface PropertyBinder extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
+public interface PropertyBinder<E extends Document> extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
     /**
      * Returns a document whose property is used for binding.
      * @return returns an object of type {@link org.document.Document}
      */
-    Document getDocument();
+    E getDocument();
     
     /**
      * Returns a bound  property name.

@@ -12,7 +12,7 @@ import org.document.DocumentChangeEvent;
 import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
-import org.document.binding.DocumentListBinder;
+import org.document.binding.BindingStateBinder;
 import org.document.binding.PropertyBinder;
 
 /**
@@ -20,7 +20,7 @@ import org.document.binding.PropertyBinder;
  * @author V. Shyshkin
  */
 
-public class BdDocumentListJComboBinder<T extends PropertyBinder> extends DocumentListBinder<T> {
+public class BdDocumentListJComboBinder<T extends PropertyBinder> extends BindingStateBinder<T> {
 
     protected String[] displayProperties;
 

@@ -52,20 +52,20 @@ public class BdDataSource<T extends Document> {//extends JComponent{
      * Registers a given binder.
      * 
      * @param binder a binder to be registered
-     * @see DocumentListBinder
+     * @see BindingStateBinder
      * @throws an exception of type @{@link java.lang.IllegalArgumentException}
      * in case when the binding manager was created without a document list 
      * specified
      */
-    public void bind(DocumentListBinder binder) {
+    public void bind(BindingStateBinder binder) {
         this.bindingManager.bind(binder);
     }
 
     /**
      * Unregisters a given binder.
-     * @param binder the binder of type {@link DocumentListBinder} to be unregistered
+     * @param binder the binder of type {@link BindingStateBinder} to be unregistered
      */
-    public void unbind(DocumentListBinder binder) {
+    public void unbind(BindingStateBinder binder) {
         this.bindingManager.unbind(binder);
     }
     

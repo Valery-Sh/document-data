@@ -125,7 +125,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      */
     private List<T> sourceList;
     private BindingState bindingState;
-    private Map<Object,DocumentListBinder> documentListBinders;
+    private Map<Object,BindingStateBinder> documentListBinders;
 
     /**
      * Create an instance of the class. 
@@ -166,7 +166,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 updateAttachState(d, true);
             }
         }
-        documentListBinders = new HashMap<Object,DocumentListBinder>(); 
+        documentListBinders = new HashMap<Object,BindingStateBinder>(); 
         getDocuments().addListChangeListener(this);
         
     }
@@ -302,25 +302,25 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * Registers a given binder.
      * 
      * @param binder a binder to be registered
-     * @see DocumentListBinder
+     * @see BindingStateBinder
      * @throws an exception of type @{@link java.lang.IllegalArgumentException}
      * in case when the binding manager was created without a document list 
      * specified
      */
-    public void bind(DocumentListBinder binder) {
+    public void bind(BindingStateBinder binder) {
           if (sourceList == null) {
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
             }
             binder.addBinderListener(this);
             documentListBinders.put(binder.getComponent(),binder);
-            ((DocumentListBinder) binder).setDocument(getBindingState());
+            ((BindingStateBinder) binder).setDocument(getBindingState());
     }
 
     /**
      * Unregisters a given binder.
-     * @param binder the binder of type {@link DocumentListBinder} to be unregistered
+     * @param binder the binder of type {@link BindingStateBinder} to be unregistered
      */
-    public void unbind(DocumentListBinder binder) {
+    public void unbind(BindingStateBinder binder) {
             binder.removeBinderListener(this);
             documentListBinders.remove(binder);
     }
@@ -482,8 +482,8 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * 
      * Invoked when the {@link BindingState } object has changed its state.
      * <code>BindingManages</code> is responsible for handling events
-     * that can be fired by {@link DocumentListBinder}. When a new binder 
-     * of type <code>DocumentListBinder</code> is added then the binding manager 
+     * that can be fired by {@link BindingStateBinder}. When a new binder 
+     * of type <code>BindingStateBinder</code> is added then the binding manager 
      * registers itself as a listener of events of type {@link BinderEvent}.
      * <p>
      * if  <code>event</code> represents an action
