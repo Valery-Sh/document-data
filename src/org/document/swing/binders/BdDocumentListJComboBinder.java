@@ -20,7 +20,7 @@ import org.document.binding.PropertyBinder;
  * @author V. Shyshkin
  */
 
-public class BdDocumentListJComboBinder<T extends PropertyBinder> extends BindingStateBinder<T> {
+public class BdDocumentListJComboBinder<E extends Document> extends BindingStateBinder {
 
     protected String[] displayProperties;
 
@@ -53,21 +53,21 @@ public class BdDocumentListJComboBinder<T extends PropertyBinder> extends Bindin
     }
 
     @Override
-    protected T createSelectedBinder() {
-        return (T) new BdDocumentListJComboBinder.JComboSelectionBinder((JComboBox) getComponent());
+    protected PropertyBinder createSelectedBinder() {
+        return  new BdDocumentListJComboBinder.JComboSelectionBinder((JComboBox) getComponent());
     }
 
     @Override
-    protected T createListModelBinder() {
-        return (T) new BdDocumentListJComboBinder.JComboModelBinder((JComboBox) getComponent(), displayProperties);
+    protected PropertyBinder createListModelBinder() {
+        return  new BdDocumentListJComboBinder.JComboModelBinder((JComboBox) getComponent(), displayProperties);
     }
 
     @Override
-    protected T createDocumentChangeEventBinder() {
-        return (T) new BdDocumentListJComboBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
+    protected PropertyBinder createDocumentChangeEventBinder() {
+        return  new BdDocumentListJComboBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
     }
 
-    public static class JComboDocumentChangeBinder extends AbstractListDocumentChangeBinder {
+    public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
 
         public JComboDocumentChangeBinder(JComboBox component) {
             super(component);
@@ -86,14 +86,14 @@ public class BdDocumentListJComboBinder<T extends PropertyBinder> extends Bindin
             String[] props = model.getProperties();
             if (Arrays.asList(props).contains(event.getPropertyName())) {
                 //Document d = (())
-                Object selItem = model.getElement((Document) event.getSource());
+                Object selItem = model.getElement((E) event.getSource());
                 model.setSelectedItem(selItem);
                 getJComboBox().repaint();
             }
         }
     }
 
-    public static class JComboSelectionBinder extends AbstractListSelectionBinder implements ActionListener {
+    public static class JComboSelectionBinder<E extends Document> extends AbstractListSelectionBinder implements ActionListener {
 
         //protected JList component;
         public JComboSelectionBinder(JComboBox component) {
@@ -170,7 +170,7 @@ public class BdDocumentListJComboBinder<T extends PropertyBinder> extends Bindin
 
         @Override
         protected Object componentValueOf(Object dataValue) {
-            Document doc = (Document) dataValue;
+            E doc = (E) dataValue;
             if (doc == null) {
                 return -1;
             }
@@ -263,11 +263,11 @@ public class BdDocumentListJComboBinder<T extends PropertyBinder> extends Bindin
 
         @Override
         public Object getElementAt(int index) {
-            Document d = documents.get(index);
+            E d = documents.get(index);
             return getElement(d);
         }
 
-        public Object getElement(Document d) {
+        public Object getElement(E d) {
 
             if (d == null) {
                 return null;

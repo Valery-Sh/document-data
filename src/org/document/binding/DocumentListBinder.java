@@ -1,22 +1,21 @@
 package org.document.binding;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.document.Document;
 import org.document.DocumentList;
-import org.document.samples.Department;
-import org.document.samples.Person;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class DocumentListBinder<E extends Document> extends BindingStateBinder<PropertyBinder> {
+public abstract class DocumentListBinder<E extends Document> extends BindingStateBinder {
     //protected BindingState bindi
     //private List<? extends Document> list;
     private List list;
     public DocumentListBinder() {
         super();
+
+        
 //        list = new ArrayList<Department>();
         
         

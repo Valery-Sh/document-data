@@ -11,11 +11,12 @@ import org.document.Document;
  *
  * @author V. Shyshkin
  */
-public abstract class BindingStateBinder<T extends PropertyBinder>  extends DocumentBinder {
+public abstract class BindingStateBinder  extends DocumentBinder<BindingState> {
     protected Object component;
 
     public BindingStateBinder() {
         super();
+        
     }
     
     public BindingStateBinder(Object component) {
@@ -24,7 +25,7 @@ public abstract class BindingStateBinder<T extends PropertyBinder>  extends Docu
     }
     /**
      * The method creates objects of type <code>PropertyBinder</code> for such properties
-     * as <code>listModel,documentChangeEvent,selected</code> and adds them to
+     * as <code>listModel,documentChangeEvent,document</code> and adds them to
      * internal binder collection.
      * It is important that the binder for the property <code>listModel</code>
      * should be added first. 
@@ -47,15 +48,15 @@ public abstract class BindingStateBinder<T extends PropertyBinder>  extends Docu
         initBinders();
     }
     
-    protected abstract T createSelectedBinder();
-    protected abstract T createListModelBinder();
-    protected abstract T createDocumentChangeEventBinder();
+    protected abstract PropertyBinder createSelectedBinder();
+    protected abstract PropertyBinder createListModelBinder();
+    protected abstract PropertyBinder createDocumentChangeEventBinder();
     
-    protected List<Document> getDocuments() {
+    protected List getDocuments() {
         if ( getDocument() == null ) {
             return null;
         }
-        return ((BindingState)getDocument()).getDocumentList();
+        return getDocument().getDocumentList();
     }
     
     @Override

@@ -7,9 +7,9 @@ import org.document.*;
  * This class allows to mark any object of type {@link org.document.Document }
  * as <code><i>selected</i></code> and start binding procedure for it.  
  *
- * The method {@link setSelected(Document) } announces the 
+ * The method {@link setDocument(Document) } announces the 
  * specified document as a <code><i>selected</i></code>. Method 
- * {@link getSelected() } returns a document that is declared as selected, 
+ * {@link getDocument() } returns a document that is declared as selected, 
  * and the method {@link isSelected(Document) } serves to determine whether
  * a given document is declared <code><i>selected</i></code>. <p> 
  * The class maintains a collection of objects of type 
@@ -263,7 +263,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         T old = this.selected;
 
         this.documentBinders.setDocument(selected);
-        //Object o = listState.getSelected();
+        //Object o = listState.getDocument();
         this.bindingState.setSelected(selected);
         this.selected = selected;
 
@@ -278,7 +278,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * Assigns a new document to all appropriate objects of
      * type {@link DocumentBinder}. 
      * <P>The method provides the same functionality as 
-     * {@link #setSelected(org.document.Document) and those two methods may be 
+     * {@link #setDocument(org.document.Document) and those two methods may be 
      * used interchangebly.
      * @param selected an object to be set <code>selected</code>
      */

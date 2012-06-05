@@ -18,7 +18,7 @@ import org.document.Validator;
  *
  * @author V. Shyskin
  */
-public class DocumentBinder<E extends Document> implements Binder, BinderListener , DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
+public class AbstractDocumentBinder<E extends Document> implements Binder, BinderListener , DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
     private boolean suspended;
 
     protected List<DocumentChangeListener> documentListeners;
@@ -33,7 +33,7 @@ public class DocumentBinder<E extends Document> implements Binder, BinderListene
     protected E document;
     protected DocumentErrorBinder documentErrorBinder;
 
-    protected DocumentBinder() {
+    protected AbstractDocumentBinder() {
         binderListeners = new ArrayList<BinderListener>();
         //documentErrorBinders = new ArrayList<T>();
         childs = new ArrayList<DocumentBinder>();
@@ -92,11 +92,11 @@ public class DocumentBinder<E extends Document> implements Binder, BinderListene
         }
     }
     
-    public E getDocument() {
+    protected E getDocument() {
         return document;
     }
     
-    public void setDocument(E object) {
+    protected void setDocument(E object) {
         PropertyStore oldDocumentStore = null;
         if (document != null) {
             oldDocumentStore = getDocumentStore();
@@ -147,17 +147,6 @@ public class DocumentBinder<E extends Document> implements Binder, BinderListene
         if (documentStore instanceof HasDocumentState) {
             DocumentState state = ((HasDocumentState) documentStore).getDocumentState();
             if (state.isEditing()) {
-/*                for (Map.Entry<String, List<T>> e : binders.entrySet()) {
-                    List<T> l = e.getValue();
-                    if (l == null) {
-                        continue;
-                    }
-                    for (T b : l) {
-                        //b.propertyChanged(state.getDirtyValues().get(b.getBoundProperty()));
-                        b.propertyChanged(documentStore.get(b.getBoundProperty()));
-                    }
-                }
-*/ 
                 documentErrorBinder.clear();
                 try {
                     if (document instanceof HasValidator) {

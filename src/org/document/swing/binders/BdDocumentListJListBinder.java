@@ -20,7 +20,7 @@ import org.document.binding.PropertyBinder;
  *
  * @author V. Shyshkin
  */
-public class BdDocumentListJListBinder<T extends PropertyBinder> extends DocumentListBinder{//BindingStateBinder {
+public class BdDocumentListJListBinder<E extends Document> extends DocumentListBinder{//BindingStateBinder {
 
     protected String[] properties;
 
@@ -72,7 +72,7 @@ public class BdDocumentListJListBinder<T extends PropertyBinder> extends Documen
 
     }
     
-    public static class JListSelectionBinder extends AbstractListSelectionBinder implements ListSelectionListener {
+    public static class JListSelectionBinder<E extends Document> extends AbstractListSelectionBinder implements ListSelectionListener {
 
         //protected JList component;
         public JListSelectionBinder(JList component) {
@@ -130,7 +130,8 @@ public class BdDocumentListJListBinder<T extends PropertyBinder> extends Documen
 
         @Override
         protected Object componentValueOf(Object dataValue) {
-            Document doc = (Document) dataValue;
+            
+            E doc = (E)dataValue;
             if (doc == null) {
                 return -1;
             }
