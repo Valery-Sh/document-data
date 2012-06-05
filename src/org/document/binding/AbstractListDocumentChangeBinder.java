@@ -55,7 +55,7 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
 
     @Override
     public void initComponentDefault() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

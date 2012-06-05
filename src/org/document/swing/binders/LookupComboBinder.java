@@ -75,7 +75,7 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
 
     @Override
     public void initComponentDefault() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

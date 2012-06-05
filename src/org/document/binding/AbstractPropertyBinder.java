@@ -80,6 +80,7 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
     protected boolean suspended;
+    protected boolean bound;
     
     /**
      * Returns an instance of class <code>BinderConverter</code> that 
@@ -223,6 +224,19 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
                 }
                 this.suspended = true;
                 return;
+            case unbind:
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
+                    return;
+                }
+                this.bound = false;
+                return;
+            case bind:
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
+                    return;
+                }
+                this.bound = true;
+                return;
+                
             case propertyChange:
                 if ( ! isSuspended() )
                     propertyChanged(event.getNewValue());
@@ -284,6 +298,9 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
      * @param propertyValue the ne value of the bound property
      */
     protected void propertyChanged(Object propertyValue) {
+        if ( ! bound ) {
+            return;
+        }
         Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
             return;

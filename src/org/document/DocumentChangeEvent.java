@@ -58,6 +58,8 @@ public class DocumentChangeEvent extends EventObject {
         documentChange,
         suspendBinding,
         resumeBinding,
+        unbind,
+        bind,
         documentChanging,
         propertyChange,
         completeChanges

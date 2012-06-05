@@ -313,7 +313,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             }
             binder.addBinderListener(this);
             documentListBinders.put(binder.getComponent(),binder);
-            ((BindingStateBinder) binder).setDocument(getBindingState());
+            ((BindingStateBinder) binder).setBindingState(getBindingState());
     }
 
     /**
@@ -323,6 +323,9 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     public void unbind(BindingStateBinder binder) {
             binder.removeBinderListener(this);
             documentListBinders.remove(binder);
+//            binder.unbind(binder);
+            binder.removeAll();
+            
     }
     
     public void bind(String propertyName,String alias,HasBinder object) {

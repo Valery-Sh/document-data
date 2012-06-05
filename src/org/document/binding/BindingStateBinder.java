@@ -5,13 +5,12 @@
 package org.document.binding;
 
 import java.util.List;
-import org.document.Document;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class BindingStateBinder  extends DocumentBinder<BindingState> {
+public abstract class BindingStateBinder  extends AbstractDocumentBinder<BindingState> {
     protected Object component;
 
     public BindingStateBinder() {
@@ -39,7 +38,13 @@ public abstract class BindingStateBinder  extends DocumentBinder<BindingState> {
         this.add(createSelectedBinder());
         
     }
-
+    public BindingState getBindingState() {
+        return super.getDocument();
+    }
+    public void setBindingState(BindingState state) {
+        super.setDocument(state);
+    }
+    
     public Object getComponent() {
         return component;
     }

@@ -279,6 +279,11 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (isSuspended()) {
             return;
         }
+        if ( ! bound ) {
+            removeComponentListeners();
+            return;
+        }
+
         Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
             return;

@@ -2,6 +2,7 @@ package org.document.swing.binders;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
@@ -12,7 +13,6 @@ import org.document.DocumentChangeEvent;
 import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
-import org.document.binding.BindingStateBinder;
 import org.document.binding.DocumentListBinder;
 import org.document.binding.PropertyBinder;
 
@@ -150,7 +150,7 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
         @Override
         public void initComponentDefault() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            //throw new UnsupportedOperationException("Not supported yet.");
         }
     }//class JListSelectionBinder
 
@@ -185,6 +185,15 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             component.clearSelection();
             component.setModel(new ListBoxModelImpl(properties, getDocuments()));
         }
+        @Override
+        protected void initComponentDefault() {
+            DefaultListModel m = new DefaultListModel();
+            m.clear();
+            if ( getDocument() == null ) {
+                component.setModel(m);
+                
+            }
+        }
 
         @Override
         public Object getComponentValue() {
@@ -207,10 +216,6 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             return ((ListBoxModelImpl) component.getModel()).documents;
         }
 
-        @Override
-        public void initComponentDefault() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }//class JListListModelBinder
 
     public static class ListBoxModelImpl<E extends Document> implements ListModel {

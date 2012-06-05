@@ -189,7 +189,7 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
 
         @Override
         public void initComponentDefault() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            //throw new UnsupportedOperationException("Not supported yet.");
         }
     }//class JListSelectionBinder
 
@@ -241,7 +241,7 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
 
         @Override
         public void initComponentDefault() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            //throw new UnsupportedOperationException("Not supported yet.");
         }
     }//class JListListModelBinder
 
