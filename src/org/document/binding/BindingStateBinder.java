@@ -5,6 +5,8 @@
 package org.document.binding;
 
 import java.util.List;
+import org.document.DocumentChangeEvent;
+import org.document.DocumentChangeListener;
 
 /**
  *
@@ -36,7 +38,20 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
         this.add(createListModelBinder());
         this.add(createDocumentChangeEventBinder());
         this.add(createSelectedBinder());
-        
+    }
+    
+    @Override
+    public void unbind() {
+        if (documentListeners == null || documentListeners.isEmpty()) {
+            return;
+        }
+        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.unbind);
+        event.setPropertyName(null);
+        int sz = documentListeners.size();
+        for ( int i = sz - 1; i >=0; i-- ) {
+            DocumentChangeListener l =  (DocumentChangeListener)documentListeners.get(i);
+            l.react(event);
+        }
     }
     public BindingState getBindingState() {
         return super.getDocument();

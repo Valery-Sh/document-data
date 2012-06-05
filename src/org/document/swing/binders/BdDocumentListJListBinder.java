@@ -20,7 +20,7 @@ import org.document.binding.PropertyBinder;
  *
  * @author V. Shyshkin
  */
-public class BdDocumentListJListBinder<E extends Document> extends DocumentListBinder{//BindingStateBinder {
+public class BdDocumentListJListBinder<E extends Document> extends DocumentListBinder {//BindingStateBinder {
 
     protected String[] properties;
 
@@ -44,9 +44,9 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
     protected PropertyBinder createDocumentChangeEventBinder() {
         return new JListDocumentChangeBinder((JList) getComponent());
     }
+
     public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder {
 
-        
         public JListDocumentChangeBinder(JList component) {
             super(component);
         }
@@ -54,35 +54,36 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         protected JList getJList() {
             return (JList) component;
         }
-
+        protected void unbind() {
+            component = null;
+        }
         @Override
         protected void notifyComponentOf(DocumentChangeEvent event) {
-            if ( event == null ) {
+            if (event == null) {
                 return;
             }
 
-            BdDocumentListJListBinder.ListBoxModelImpl model = (BdDocumentListJListBinder.ListBoxModelImpl)getJList().getModel();
+            BdDocumentListJListBinder.ListBoxModelImpl model = (BdDocumentListJListBinder.ListBoxModelImpl) getJList().getModel();
             String[] props = model.getProperties();
-            if ( Arrays.asList(props).contains(event.getPropertyName()) ) {
+            if (Arrays.asList(props).contains(event.getPropertyName())) {
                 getJList().repaint();
-                
+
             }
         }
-
-
     }
-    
+
     public static class JListSelectionBinder<E extends Document> extends AbstractListSelectionBinder implements ListSelectionListener {
 
         //protected JList component;
         public JListSelectionBinder(JList component) {
             super(component);
-
-
         }
 
         protected JList getJList() {
             return (JList) component;
+        }
+        protected void unbind() {
+            component = null;
         }
 
         @Override
@@ -110,6 +111,7 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             }
 
         }
+
         @Override
         public void setComponentValue(Object value) {
             setComponentSelectedIndex((Integer) value);
@@ -130,8 +132,8 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
         @Override
         protected Object componentValueOf(Object dataValue) {
-            
-            E doc = (E)dataValue;
+
+            E doc = (E) dataValue;
             if (doc == null) {
                 return -1;
             }
@@ -164,14 +166,19 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             this.component = component;
             this.properties = properties;
         }
-/*        @Override
-        public void propertyChanged(Object dataValue) {
-            removeComponentListeners();
-            //dataChanged(dataValue);
-            setComponentValue(dataValue);
-            addComponentListeners();
+        protected void unbind() {
+            component = null;
         }
-*/
+
+        /*        @Override
+         public void propertyChanged(Object dataValue) {
+         removeComponentListeners();
+         //dataChanged(dataValue);
+         setComponentValue(dataValue);
+         addComponentListeners();
+         }
+         */
+
         @Override
         protected void addComponentListeners() {
         }
@@ -185,13 +192,25 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             component.clearSelection();
             component.setModel(new ListBoxModelImpl(properties, getDocuments()));
         }
+
         @Override
         protected void initComponentDefault() {
-            DefaultListModel m = new DefaultListModel();
-            m.clear();
-            if ( getDocument() == null ) {
-                component.setModel(m);
-                
+        }
+
+        @Override
+        public void react(DocumentChangeEvent event) {
+            super.react(event);
+            switch (event.getAction()) {
+                case unbind:
+                    DefaultListModel m = new DefaultListModel();
+                    m.clear();
+                    component.setModel(m);
+                    break;
+                case bind:
+                    if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+                        break;
+                    }
+                    break;
             }
         }
 
@@ -215,7 +234,6 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             }
             return ((ListBoxModelImpl) component.getModel()).documents;
         }
-
     }//class JListListModelBinder
 
     public static class ListBoxModelImpl<E extends Document> implements ListModel {

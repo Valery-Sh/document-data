@@ -118,7 +118,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (isSuspended()) {
             return;
         }
-
+        if ( ! bound ) {
+            return;
+        }
         if (document == null) {
             return;
         }
@@ -214,8 +216,24 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (isSuspended()) {
             return;
         }
-        if (event.getAction() == DocumentChangeEvent.Action.completeChanges) {
-            componentChanged(false, getComponentValue());
+        switch(event.getAction()) {
+            case unbind:
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
+                    return;
+                }
+                
+                removeComponentListeners();
+                unbind();
+                break;
+            case bind:
+                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
+                    break;
+                }
+                bind();
+                break;
+            case completeChanges :
+                componentChanged(false, getComponentValue());
+                break;
         }
     }
 

@@ -124,6 +124,13 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
     public void suspend() {
         this.suspended = true;
     }
+    protected void unbind() {
+        this.bound = false;
+    }
+    protected void bind() {
+        this.bound = true;
+    }
+    
     /**
      * Takes the binder in its normal (not suspend) state.
      */

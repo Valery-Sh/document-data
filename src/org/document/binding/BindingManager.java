@@ -310,10 +310,17 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     public void bind(BindingStateBinder binder) {
           if (sourceList == null) {
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
-            }
+           }
+           if ( binder.binders.isEmpty() ){
+               binder.initBinders();
+           }
+            
             binder.addBinderListener(this);
             documentListBinders.put(binder.getComponent(),binder);
-            ((BindingStateBinder) binder).setBindingState(getBindingState());
+            //binder.bind((String)null);
+            //if ( binder.getBindingState() == null ) {
+            binder.setBindingState(getBindingState());
+            //}
     }
 
     /**
@@ -322,10 +329,10 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      */
     public void unbind(BindingStateBinder binder) {
             binder.removeBinderListener(this);
-            documentListBinders.remove(binder);
-//            binder.unbind(binder);
+            //documentListBinders.remove(binder);
+            documentListBinders.remove(binder.getComponent());
+            binder.unbind(); // no property name => unbind all
             binder.removeAll();
-            
     }
     
     public void bind(String propertyName,String alias,HasBinder object) {

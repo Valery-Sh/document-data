@@ -30,6 +30,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
     protected E document;
     protected DocumentErrorBinder documentErrorBinder;
 
+
     protected AbstractDocumentBinder() {
         binderListeners = new ArrayList<BinderListener>();
         //documentErrorBinders = new ArrayList<T>();
@@ -86,20 +87,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
 
     }
 
-    public void unbind(String propertyName) {
-
-        if (documentListeners == null || documentListeners.isEmpty()) {
-            return;
-        }
-
-        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.unbind);
-        event.setPropertyName(propertyName);
-
-        for (DocumentChangeListener l : documentListeners) {
-            l.react(event);
-        }
-
-    }
+    public abstract void unbind();
     
     public void resume(String propertyName) {
         if (this.documentListeners == null || documentListeners.isEmpty()) {
