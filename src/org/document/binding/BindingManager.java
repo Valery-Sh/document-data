@@ -311,6 +311,25 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
           if (sourceList == null) {
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
            }
+            
+            binder.addBinderListener(this);
+            documentListBinders.put(binder.getBoundObject(),binder);
+            binder.setBindingState(getBindingState());
+    }    
+    private void bind(BindingStateBinder binder, Object boundObject) {
+          if (sourceList == null) {
+                throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
+           }
+            
+            binder.addBinderListener(this);
+            documentListBinders.put(boundObject,binder);
+            binder.setBindingState(getBindingState());
+    }    
+    
+/*    public void bind(BindingStateBinder binder) {
+          if (sourceList == null) {
+                throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
+           }
            if ( binder.binders.isEmpty() ){
                binder.initBinders();
            }
@@ -322,17 +341,20 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             binder.setBindingState(getBindingState());
             //}
     }
-
+*/
     /**
      * Unregisters a given binder.
      * @param binder the binder of type {@link BindingStateBinder} to be unregistered
      */
     public void remove(BindingStateBinder binder) {
             binder.removeBinderListener(this);
-            //documentListBinders.remove(binder);
             documentListBinders.remove(binder.getBoundObject());
-//            binder.unbind(); // no property name => remove all
             binder.removeAll();
+    }
+    private void remove(BindingStateBinder binder,Object oldBoundObject,Object newBoundObject) {
+            binder.removeBinderListener(this);
+            documentListBinders.remove(oldBoundObject);
+            binder.updateBoundObject(oldBoundObject, newBoundObject);
     }
     
     public void bind(String propertyName,String alias,HasBinder object) {
@@ -512,6 +534,29 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 }
                 setSelected(newDoc);
                 break;
+            case boundObjectReplace:
+                if ( event.getSource() instanceof BindingStateBinder ) {
+                    BindingStateBinder b = null;
+                    if ( documentListBinders.containsKey(event.getOldBoundObject()) ) {
+                        b = documentListBinders.get(event.getOldBoundObject());
+                        //b = documentListBinders.remove(event.getOldBoundObject());
+                        remove(b,event.getOldBoundObject(),event.getNewBoundObject());
+                    } else {
+                        b = (BindingStateBinder)event.getSource();
+                    }
+                    
+                    if ( event.getNewBoundObject() != null ) {
+                        
+                        //documentListBinders.put(event.getNewBoundObject(), b);
+                        bind(b,event.getNewBoundObject());
+                        setSelected(getSelected());
+                    }
+                    
+                    
+                }
+                break;
+                
+                
         }
     }
     
@@ -533,7 +578,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      *   <li>{@link DocumentList#addAll(int, java.util.Collection) }</li> 
      *   <li>{@link DocumentList#remove(java.lang.Object) }</li> 
      *   <li>{@link DocumentList#remove(int) }</li> 
-     *   <li>{@link DocumentList#removeAll(java.util.Collection) }</li> 
+     *   <li>{@link DocumentList#updateBoundObject(java.util.Collection) }</li> 
      *   <li>{@link DocumentList#retainAll(java.util.Collection) }</li> 
      *   <li>{@link DocumentList#addSelect)}</li> 
      *   <li>{@link DocumentList#addSelect(org.document.Document) }</li> 

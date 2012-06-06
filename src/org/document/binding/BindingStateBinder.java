@@ -18,7 +18,6 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
 
     public BindingStateBinder() {
         super();
-        
     }
     
     public BindingStateBinder(Object component) {
@@ -42,34 +41,26 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
     }
     @Override
     public void removeAll() {
-        List list = binders.get("selected");
-        if ( list != null ) {
-            for ( Object o : list) {
-                PropertyBinder b = (PropertyBinder)o;
-                Object bo = b.getBoundObject();
-                b.setBoundObject(null);
-                b.setBoundObject(bo);
-            }
-        }
-        list = binders.get("documentChangeEvent");
-        if ( list != null ) {
-            for ( Object o : list) {
-                PropertyBinder b = (PropertyBinder)o;
-                Object bo = b.getBoundObject();
-                b.setBoundObject(null);
-                b.setBoundObject(bo);
-            }
-        }
-        list = binders.get("documentList");
-        if ( list != null ) {
-            for ( Object o : list) {
-                PropertyBinder b = (PropertyBinder)o;
-                Object bo = b.getBoundObject();
-                b.setBoundObject(null);
-                b.setBoundObject(bo);
-            }
-        }
-        super.removeAll();
+        updateBinder("selected",getBoundObject());
+        updateBinder("documentList",getBoundObject());
+        updateBinder("documentChangeEvent",getBoundObject());
+        //super.updateBoundObject();
+    }
+    public void updateBoundObject(Object oldBoundObject,Object newBoundObject ) {
+        //nullBoundObject("selected");
+        //nullBoundObject("documentList");
+        //nullBoundObject("documentChangeEvent");
+        //removeAll();
+        nullBoundObject("selected");
+        nullBoundObject("documentList");
+        nullBoundObject("documentChangeEvent");
+        
+        boundObject = newBoundObject;
+        updateBoundObject("selected",boundObject);
+        updateBoundObject("documentList",boundObject);
+        updateBoundObject("documentChangeEvent",boundObject);
+        
+        //super.updateBoundObject();
     }
     
     
@@ -84,8 +75,54 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
         return boundObject;
     }
     public void setBoundObject(Object component) {
-        this.boundObject = component;
-        initBinders();
+        //updateBinders(component);
+        
+        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
+        e.setNewBoundObject(component);
+        e.setOldBoundObject(boundObject);
+        //this.boundObject = component;        
+        for ( BinderListener l : binderListeners ) {
+            l.react(e);
+            break;
+        }
+        //this.boundObject = component;        
+        
+    }
+    protected void updateBinder(String propertyName,Object component) {
+        List list = binders.get(propertyName);
+        if ( list != null ) {
+            for ( Object o : list) {
+                PropertyBinder b = (PropertyBinder)o;
+                Object bo = b.getBoundObject();
+                b.setBoundObject(null);
+                b.setBoundObject(component);
+            }
+        }
+    }
+    
+    protected void nullBoundObject(String propertyName) {
+        List list = binders.get(propertyName);
+        if ( list != null ) {
+            for ( Object o : list) {
+                PropertyBinder b = (PropertyBinder)o;
+                b.setBoundObject(null);
+            }
+        }
+    }
+    protected void updateBoundObject(String propertyName, Object newBoundObject) {
+        List list = binders.get(propertyName);
+        if ( list != null ) {
+            for ( Object o : list) {
+                PropertyBinder b = (PropertyBinder)o;
+                b.setBoundObject(newBoundObject);
+            }
+        }
+    }
+    
+    protected void updateBinders(Object component) {
+        updateBinder("selected",component);
+        updateBinder("documentList",component);
+        updateBinder("documentChangeEvent",component);
     }
     
     protected abstract PropertyBinder createSelectedBinder();

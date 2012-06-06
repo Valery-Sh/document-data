@@ -30,6 +30,14 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         initBinders();
     }
 
+    public JList getJList() {
+        return (JList) boundObject;
+    }
+
+    public void setJList(JList jList) {
+        setBoundObject(jList);
+    }
+
     @Override
     protected PropertyBinder createSelectedBinder() {
         return new JListSelectionBinder((JList) getBoundObject());
@@ -51,8 +59,12 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             super(component);
         }
 
-        protected JList getJList() {
+        public JList getJList() {
             return (JList) boundObject;
+        }
+
+        public void setJList(JList jList) {
+            setBoundObject(jList);
         }
 
         @Override
@@ -79,7 +91,7 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
         @Override
         public JList getBoundObject() {
-            return (JList) component;
+            return (JList) boundObject;
         }
 
         @Override
@@ -99,6 +111,9 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
         @Override
         protected void removeComponentListeners() {
+            if ( getBoundObject() == null ) {
+                return;
+            }
             ListSelectionListener[] listeners = getBoundObject().getListSelectionListeners();
             if (listeners != null) {
                 for (ListSelectionListener l : listeners) {
@@ -187,13 +202,23 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
         @Override
         public void setBoundObject(Object bo) {
-            if ( getBoundObject() != null ) {
+            if ( getBoundObject() == bo ) {
+                return;
+            }
+            if (getBoundObject() != null) {
                 removeComponentListeners();
                 DefaultListModel m = new DefaultListModel();
                 m.clear();
                 getBoundObject().setModel(m);
                 
-            }
+            } 
+            boundObject = bo;
+            //if ( bo == null )
+            
+//            if ( bo != null ) {
+                //getBoundObject().clearSelection();
+//                getBoundObject().setModel(new ListBoxModelImpl(properties, getDocuments()));
+//            }
         }
         /*        @Override
          public void react(DocumentChangeEvent event) {
@@ -211,68 +236,69 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
          break;
          }
          }
-*/
-         @Override
-         public Object getComponentValue() {
-         return getBoundObject().getModel();
-         }
+         */
 
-         @Override
-         protected Object componentValueOf(Object dataValue) {
-         if (getDocuments() == null) {
-         return null;
-         }
-         return new ListBoxModelImpl(properties, getDocuments());
-         }
+        @Override
+        public Object getComponentValue() {
+            return getBoundObject().getModel();
+        }
 
-         @Override
-         protected Object propertyValueOf(Object compValue) {
-         if (compValue == null) {
-         return null;
-         }
-         return ((ListBoxModelImpl) getBoundObject().getModel()).documents;
-         }
-         }//class JListListModelBinder
+        @Override
+        protected Object componentValueOf(Object dataValue) {
+            if (getDocuments() == null) {
+                return null;
+            }
+            return new ListBoxModelImpl(properties, getDocuments());
+        }
 
-         public static class ListBoxModelImpl<E extends Document> implements ListModel {
+        @Override
+        protected Object propertyValueOf(Object compValue) {
+            if (compValue == null) {
+                return null;
+            }
+            return ((ListBoxModelImpl) getBoundObject().getModel()).documents;
+        }
+    }//class JListListModelBinder
 
-         private List<E> documents;
-         private String[] properties;
+    public static class ListBoxModelImpl<E extends Document> implements ListModel {
 
-         public ListBoxModelImpl(String[] properties, List<E> documents) {
-         this.documents = documents;
-         this.properties = properties;
-         }
+        private List<E> documents;
+        private String[] properties;
 
-         @Override
-         public int getSize() {
-         return documents.size();
-         }
+        public ListBoxModelImpl(String[] properties, List<E> documents) {
+            this.documents = documents;
+            this.properties = properties;
+        }
 
-         public String[] getProperties() {
-         return properties;
-         }
+        @Override
+        public int getSize() {
+            return documents.size();
+        }
 
-         @Override
-         public Object getElementAt(int index) {
-         Document d = documents.get(index);
-         if (d == null) {
-         return null;
-         }
-         String result = "";
-         for (String nm : this.properties) {
+        public String[] getProperties() {
+            return properties;
+        }
 
-         result = result += " " + d.propertyStore().get(nm);
-         }
-         return result;
-         }
+        @Override
+        public Object getElementAt(int index) {
+            Document d = documents.get(index);
+            if (d == null) {
+                return null;
+            }
+            String result = "";
+            for (String nm : this.properties) {
 
-         @Override
-         public void addListDataListener(ListDataListener l) {
-         }
+                result = result += " " + d.propertyStore().get(nm);
+            }
+            return result;
+        }
 
-         @Override
-         public void removeListDataListener(ListDataListener l) {
-         }
-         }
-              }
+        @Override
+        public void addListDataListener(ListDataListener l) {
+        }
+
+        @Override
+        public void removeListDataListener(ListDataListener l) {
+        }
+    }
+}

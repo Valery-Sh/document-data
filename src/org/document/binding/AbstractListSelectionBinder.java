@@ -9,11 +9,10 @@ import org.document.Document;
  */
 public abstract class AbstractListSelectionBinder extends AbstractEditablePropertyBinder {
     
-    protected Object component;
     
     public AbstractListSelectionBinder(Object component) {
         this.boundProperty = "selected";
-        this.component = component;
+        this.boundObject = component;
         initBinder();
     }
     

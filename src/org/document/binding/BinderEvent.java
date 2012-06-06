@@ -14,6 +14,8 @@ public class BinderEvent extends EventObject {
     private Object dataValue;    
     private ValidationException exception;
     private Binder binder;
+    private Object oldBoundObject;
+    private Object newBoundObject;
     
     public BinderEvent(Binder source) {
         super(source);
@@ -82,10 +84,27 @@ public class BinderEvent extends EventObject {
         this.binder = binder;
     }
 
+    public Object getOldBoundObject() {
+        return oldBoundObject;
+    }
+
+    public void setOldBoundObject(Object oldBoundObject) {
+        this.oldBoundObject = oldBoundObject;
+    }
+
+    public Object getNewBoundObject() {
+        return newBoundObject;
+    }
+
+    public void setNewBoundObject(Object newBoundObject) {
+        this.newBoundObject = newBoundObject;
+    }
+
     
     public enum Action {
         componentChangeError,
         componentChange,
+        boundObjectReplace,
         clearError,
         fixError,
         componentSelectChange

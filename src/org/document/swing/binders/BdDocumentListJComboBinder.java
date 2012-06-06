@@ -101,7 +101,7 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
         }
 
         protected JComboBox getJComboBox() {
-            return (JComboBox) component;
+            return (JComboBox) boundObject;
         }
 
         @Override
