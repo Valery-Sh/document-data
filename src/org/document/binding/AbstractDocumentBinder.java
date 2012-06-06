@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
 import org.document.DocumentChangeListener;
@@ -71,7 +70,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
             l.react(event);
         }
     }
-
+/*
     public void bind(String propertyName) {
 
         if (documentListeners == null || documentListeners.isEmpty()) {
@@ -86,8 +85,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         }
 
     }
-
-    public abstract void unbind();
+*/
     
     public void resume(String propertyName) {
         if (this.documentListeners == null || documentListeners.isEmpty()) {
@@ -262,15 +260,15 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
     }
 
     public void removeAll() {
-        // document = null;
         for (Map.Entry<String, List> e : binders.entrySet()) {
             List list = e.getValue();
             for (Object b : list) {
-                ((PropertyBinder) b).removeBinderListener(this);
+                PropertyBinder pb = (PropertyBinder) b;
+                pb.removeBinderListener(this);
                 if (b instanceof DocumentChangeListener) {
-                    removeDocumentChangeListener((DocumentChangeListener) b);
+                    removeDocumentChangeListener((DocumentChangeListener) pb);
                 }
-                //((PropertyBinder)b).setDocument(null);
+                
             }
         }
         binders.clear();
@@ -296,7 +294,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         } else {
             resume(propertyName);
         }
-        bind(propertyName);
+//        bind(propertyName);
 
     }
 

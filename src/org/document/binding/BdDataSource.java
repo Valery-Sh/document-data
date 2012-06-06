@@ -65,8 +65,8 @@ public class BdDataSource<T extends Document> {//extends JComponent{
      * Unregisters a given binder.
      * @param binder the binder of type {@link BindingStateBinder} to be unregistered
      */
-    public void unbind(BindingStateBinder binder) {
-        this.bindingManager.unbind(binder);
+    public void remove(BindingStateBinder binder) {
+        this.bindingManager.remove(binder);
     }
     
     public void bind(String propertyName,String alias,HasBinder object) {

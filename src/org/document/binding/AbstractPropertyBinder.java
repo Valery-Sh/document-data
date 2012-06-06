@@ -75,12 +75,13 @@ import org.document.DocumentChangeListener;
 public abstract class AbstractPropertyBinder implements Serializable,PropertyBinder, DocumentChangeListener {
     
     //private Object alias;
+    protected Object boundObject;
     protected String boundProperty;
     protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
     protected boolean suspended;
-    protected boolean bound;
+//    protected boolean bound;
     
     /**
      * Returns an instance of class <code>BinderConverter</code> that 
@@ -107,6 +108,22 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
     public Document getDocument() {
         return document;
     }
+
+    @Override
+    public Object getBoundObject() {
+        return boundObject;
+    }
+
+    @Override
+    public void setBoundObject(Object boundObject) {
+        if ( this.boundObject == boundObject ) {
+            return;
+        }
+        removeComponentListeners();
+        document = null;
+        this.boundObject = boundObject;
+    }
+    
     /**
      * Indicates whether the binder is in suspend state.
      * @return <code>true</code> if a binder is in suspend state. 
@@ -123,12 +140,6 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
      */
     public void suspend() {
         this.suspended = true;
-    }
-    protected void unbind() {
-        this.bound = false;
-    }
-    protected void bind() {
-        this.bound = true;
     }
     
     /**
@@ -231,19 +242,21 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
                 }
                 this.suspended = true;
                 return;
-            case unbind:
+/*            case unbind:
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
                     return;
                 }
-                this.bound = false;
+                //this.bound = false;
+                removeComponentListeners();
                 return;
-            case bind:
+*/ 
+/*            case bind:
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
                     return;
                 }
                 this.bound = true;
                 return;
-                
+*/                
             case propertyChange:
                 if ( ! isSuspended() )
                     propertyChanged(event.getNewValue());
@@ -305,9 +318,6 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
      * @param propertyValue the ne value of the bound property
      */
     protected void propertyChanged(Object propertyValue) {
-        if ( ! bound ) {
-            return;
-        }
         Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
             return;
@@ -352,4 +362,18 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
      * when (@link #getDocument() } returns <code>null</code>.
      */
     protected abstract void initComponentDefault();
+    
+    /**
+     * Should be implemented if the binder is a listener of the bound component
+     * event.
+     * The implementation is a component specific.
+     */
+    protected abstract void addComponentListeners();
+    /**
+     * Should be implemented if the binder is a listener of the bound component
+     * event.
+     * The implementation is a component specific.
+     */
+    protected abstract void removeComponentListeners();
+    
 }

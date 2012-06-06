@@ -10,11 +10,10 @@ import org.document.DocumentChangeEvent;
  */
 public abstract class AbstractListDocumentChangeBinder extends AbstractEditablePropertyBinder {
 
-    protected Object component;
 
     public AbstractListDocumentChangeBinder(Object component) {
         this.boundProperty = "documentChangeEvent";
-        this.component = component;
+        this.boundObject = component;
         initBinder();
     }
 

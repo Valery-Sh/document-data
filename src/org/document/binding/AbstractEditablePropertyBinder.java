@@ -118,9 +118,6 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (isSuspended()) {
             return;
         }
-        if ( ! bound ) {
-            return;
-        }
         if (document == null) {
             return;
         }
@@ -217,7 +214,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             return;
         }
         switch(event.getAction()) {
-            case unbind:
+/*            case unbind:
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
                     return;
                 }
@@ -231,6 +228,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                 }
                 bind();
                 break;
+*/ 
             case completeChanges :
                 componentChanged(false, getComponentValue());
                 break;
@@ -297,10 +295,6 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (isSuspended()) {
             return;
         }
-        if ( ! bound ) {
-            removeComponentListeners();
-            return;
-        }
 
         Object convertedValue = this.componentValueOf(propertyValue);
         if (!needChangeComponent(convertedValue)) {
@@ -310,16 +304,4 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         setComponentValue(convertedValue);
         addComponentListeners();
     }
-    /**
-     * Should be implemented if the binder is a listener of the bound component
-     * event.
-     * The implementation is a component specific.
-     */
-    protected abstract void addComponentListeners();
-    /**
-     * Should be implemented if the binder is a listener of the bound component
-     * event.
-     * The implementation is a component specific.
-     */
-    protected abstract void removeComponentListeners();
 }

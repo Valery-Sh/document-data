@@ -16,6 +16,11 @@ public interface PropertyBinder<E extends Document> extends Binder {//,DocumentC
      * @return returns an object of type {@link org.document.Document}
      */
     E getDocument();
+    
+    Object getBoundObject();
+    void setBoundObject(Object boundObject);
+    
+    
     //void setDocument(E document);
     
     /**

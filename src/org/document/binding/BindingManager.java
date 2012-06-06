@@ -316,7 +316,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
            }
             
             binder.addBinderListener(this);
-            documentListBinders.put(binder.getComponent(),binder);
+            documentListBinders.put(binder.getBoundObject(),binder);
             //binder.bind((String)null);
             //if ( binder.getBindingState() == null ) {
             binder.setBindingState(getBindingState());
@@ -327,11 +327,11 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * Unregisters a given binder.
      * @param binder the binder of type {@link BindingStateBinder} to be unregistered
      */
-    public void unbind(BindingStateBinder binder) {
+    public void remove(BindingStateBinder binder) {
             binder.removeBinderListener(this);
             //documentListBinders.remove(binder);
-            documentListBinders.remove(binder.getComponent());
-            binder.unbind(); // no property name => unbind all
+            documentListBinders.remove(binder.getBoundObject());
+//            binder.unbind(); // no property name => remove all
             binder.removeAll();
     }
     

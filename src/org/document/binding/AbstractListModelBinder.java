@@ -31,15 +31,8 @@ public abstract class AbstractListModelBinder  extends AbstractPropertyBinder {
         addComponentListeners();
     }
 
-    protected abstract void addComponentListeners();
-    protected abstract void removeComponentListeners();
-
-    
-    
     @Override
     public abstract void setComponentValue(Object value);
-
-
             
     @Override
     public abstract Object getComponentValue();

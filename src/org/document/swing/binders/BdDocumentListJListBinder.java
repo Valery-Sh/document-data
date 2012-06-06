@@ -32,17 +32,17 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
     @Override
     protected PropertyBinder createSelectedBinder() {
-        return new JListSelectionBinder((JList) getComponent());
+        return new JListSelectionBinder((JList) getBoundObject());
     }
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        return new JListModelBinder((JList) getComponent(), properties);
+        return new JListModelBinder((JList) getBoundObject(), properties);
     }
 
     @Override
     protected PropertyBinder createDocumentChangeEventBinder() {
-        return new JListDocumentChangeBinder((JList) getComponent());
+        return new JListDocumentChangeBinder((JList) getBoundObject());
     }
 
     public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder {
@@ -52,11 +52,9 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         }
 
         protected JList getJList() {
-            return (JList) component;
+            return (JList) boundObject;
         }
-        protected void unbind() {
-            component = null;
-        }
+
         @Override
         protected void notifyComponentOf(DocumentChangeEvent event) {
             if (event == null) {
@@ -74,16 +72,14 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
     public static class JListSelectionBinder<E extends Document> extends AbstractListSelectionBinder implements ListSelectionListener {
 
-        //protected JList component;
+        //protected JList boundObject;
         public JListSelectionBinder(JList component) {
             super(component);
         }
 
-        protected JList getJList() {
+        @Override
+        public JList getBoundObject() {
             return (JList) component;
-        }
-        protected void unbind() {
-            component = null;
         }
 
         @Override
@@ -91,22 +87,22 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             if (e.getValueIsAdjusting()) {
                 return;
             }
-            componentChanged(getJList().getSelectedIndex());
+            componentChanged(getBoundObject().getSelectedIndex());
 
         }
 
         @Override
         protected void addComponentListeners() {
-            getJList().addListSelectionListener(this);
+            getBoundObject().addListSelectionListener(this);
 
         }
 
         @Override
         protected void removeComponentListeners() {
-            ListSelectionListener[] listeners = getJList().getListSelectionListeners();
+            ListSelectionListener[] listeners = getBoundObject().getListSelectionListeners();
             if (listeners != null) {
                 for (ListSelectionListener l : listeners) {
-                    getJList().removeListSelectionListener(l);
+                    getBoundObject().removeListSelectionListener(l);
                 }
             }
 
@@ -118,11 +114,11 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         }
 
         protected int getComponentSelectedIndex() {
-            return getJList().getSelectedIndex();
+            return getBoundObject().getSelectedIndex();
         }
 
         protected void setComponentSelectedIndex(Integer selectedIndex) {
-            getJList().setSelectedIndex(selectedIndex);
+            getBoundObject().setSelectedIndex(selectedIndex);
         }
 
         @Override
@@ -158,26 +154,18 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
     public static class JListModelBinder extends AbstractListModelBinder {
 
-        protected JList component;
         protected String[] properties;
 
         public JListModelBinder(JList component, String... properties) {
             super();
-            this.component = component;
+            this.boundObject = component;
             this.properties = properties;
         }
-        protected void unbind() {
-            component = null;
-        }
 
-        /*        @Override
-         public void propertyChanged(Object dataValue) {
-         removeComponentListeners();
-         //dataChanged(dataValue);
-         setComponentValue(dataValue);
-         addComponentListeners();
-         }
-         */
+        @Override
+        public JList getBoundObject() {
+            return (JList) boundObject;
+        }
 
         @Override
         protected void addComponentListeners() {
@@ -189,8 +177,8 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
         @Override
         public void setComponentValue(Object value) {
-            component.clearSelection();
-            component.setModel(new ListBoxModelImpl(properties, getDocuments()));
+            getBoundObject().clearSelection();
+            getBoundObject().setModel(new ListBoxModelImpl(properties, getDocuments()));
         }
 
         @Override
@@ -198,83 +186,93 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         }
 
         @Override
-        public void react(DocumentChangeEvent event) {
-            super.react(event);
-            switch (event.getAction()) {
-                case unbind:
-                    DefaultListModel m = new DefaultListModel();
-                    m.clear();
-                    component.setModel(m);
-                    break;
-                case bind:
-                    if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
-                        break;
-                    }
-                    break;
+        public void setBoundObject(Object bo) {
+            if ( getBoundObject() != null ) {
+                removeComponentListeners();
+                DefaultListModel m = new DefaultListModel();
+                m.clear();
+                getBoundObject().setModel(m);
+                
             }
         }
+        /*        @Override
+         public void react(DocumentChangeEvent event) {
+         super.react(event);
+         switch (event.getAction()) {
+         case unbind:
+         DefaultListModel m = new DefaultListModel();
+         m.clear();
+         getBoundObject().setModel(m);
+         break;
+         case bind:
+         if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+         break;
+         }
+         break;
+         }
+         }
+*/
+         @Override
+         public Object getComponentValue() {
+         return getBoundObject().getModel();
+         }
 
-        @Override
-        public Object getComponentValue() {
-            return component.getModel();
-        }
+         @Override
+         protected Object componentValueOf(Object dataValue) {
+         if (getDocuments() == null) {
+         return null;
+         }
+         return new ListBoxModelImpl(properties, getDocuments());
+         }
 
-        @Override
-        protected Object componentValueOf(Object dataValue) {
-            if (getDocuments() == null) {
-                return null;
-            }
-            return new ListBoxModelImpl(properties, getDocuments());
-        }
+         @Override
+         protected Object propertyValueOf(Object compValue) {
+         if (compValue == null) {
+         return null;
+         }
+         return ((ListBoxModelImpl) getBoundObject().getModel()).documents;
+         }
+         }//class JListListModelBinder
 
-        @Override
-        protected Object propertyValueOf(Object compValue) {
-            if (compValue == null) {
-                return null;
-            }
-            return ((ListBoxModelImpl) component.getModel()).documents;
-        }
-    }//class JListListModelBinder
+         public static class ListBoxModelImpl<E extends Document> implements ListModel {
 
-    public static class ListBoxModelImpl<E extends Document> implements ListModel {
+         private List<E> documents;
+         private String[] properties;
 
-        private List<E> documents;
-        private String[] properties;
+         public ListBoxModelImpl(String[] properties, List<E> documents) {
+         this.documents = documents;
+         this.properties = properties;
+         }
 
-        public ListBoxModelImpl(String[] properties, List<E> documents) {
-            this.documents = documents;
-            this.properties = properties;
-        }
+         @Override
+         public int getSize() {
+         return documents.size();
+         }
 
-        @Override
-        public int getSize() {
-            return documents.size();
-        }
+         public String[] getProperties() {
+         return properties;
+         }
 
-        public String[] getProperties() {
-            return properties;
-        }
+         @Override
+         public Object getElementAt(int index) {
+         Document d = documents.get(index);
+         if (d == null) {
+         return null;
+         }
+         String result = "";
+         for (String nm : this.properties) {
 
-        @Override
-        public Object getElementAt(int index) {
-            Document d = documents.get(index);
-            if (d == null) {
-                return null;
-            }
-            String result = "";
-            for (String nm : this.properties) {
+         result = result += " " + d.propertyStore().get(nm);
+         }
+         return result;
+         }
 
-                result = result += " " + d.propertyStore().get(nm);
-            }
-            return result;
-        }
+         @Override
+         public void addListDataListener(ListDataListener l) {
+         }
 
-        @Override
-        public void addListDataListener(ListDataListener l) {
-        }
-
-        @Override
-        public void removeListDataListener(ListDataListener l) {
-        }
-    }
-}
+         @Override
+         public void removeListDataListener(ListDataListener l) {
+         }
+         }
+              }

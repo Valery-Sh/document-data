@@ -13,15 +13,14 @@ import org.document.binding.DefaultBinderConvertor;
  */
 public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implements ActionListener{
     
-    protected JComboBox component;
     
     public LookupComboBinder(JComboBox component) {
-        this.component = component;
+        this.boundObject = component;
         initBinder();
     }
     
     public LookupComboBinder(String propName, JComboBox component) {
-        this.component = component;
+        this.boundObject = component;
         this.boundProperty = propName;
         initBinder();
     }
@@ -31,29 +30,29 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     }
     
     protected final void initBinder() {
-        component.removeActionListener(this);
-        component.addActionListener(this);
+        ((JComboBox)boundObject).removeActionListener(this);
+        ((JComboBox)boundObject).addActionListener(this);
         converter = new DefaultBinderConvertor(this);
     }
     
     @Override
     protected void addComponentListeners() {
-        component.addActionListener(this);
+        ((JComboBox)boundObject).addActionListener(this);
     }
 
     @Override
     protected void removeComponentListeners() {
-        component.removeActionListener(this);
+        ((JComboBox)boundObject).removeActionListener(this);
     }
 
     @Override
     public Object getComponentValue() {
-        return component.getModel().getSelectedItem();
+        return ((JComboBox)boundObject).getModel().getSelectedItem();
     }
 
     @Override
     protected void setComponentValue(Object componentValue) {
-        component.getModel().setSelectedItem(componentValue);
+        ((JComboBox)boundObject).getModel().setSelectedItem(componentValue);
     }
 
     @Override
@@ -80,7 +79,9 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        componentChanged(component.getModel().getSelectedItem());
+        componentChanged(((JComboBox)boundObject).getModel().getSelectedItem());
     }
+
+    
     
 }

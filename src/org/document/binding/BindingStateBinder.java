@@ -13,7 +13,8 @@ import org.document.DocumentChangeListener;
  * @author V. Shyshkin
  */
 public abstract class BindingStateBinder  extends AbstractDocumentBinder<BindingState> {
-    protected Object component;
+    
+    protected Object boundObject;
 
     public BindingStateBinder() {
         super();
@@ -22,7 +23,7 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
     
     public BindingStateBinder(Object component) {
         super();
-        this.component = component;
+        this.boundObject = component;
     }
     /**
      * The method creates objects of type <code>PropertyBinder</code> for such properties
@@ -39,20 +40,39 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
         this.add(createDocumentChangeEventBinder());
         this.add(createSelectedBinder());
     }
-    
     @Override
-    public void unbind() {
-        if (documentListeners == null || documentListeners.isEmpty()) {
-            return;
+    public void removeAll() {
+        List list = binders.get("selected");
+        if ( list != null ) {
+            for ( Object o : list) {
+                PropertyBinder b = (PropertyBinder)o;
+                Object bo = b.getBoundObject();
+                b.setBoundObject(null);
+                b.setBoundObject(bo);
+            }
         }
-        DocumentChangeEvent event = new DocumentChangeEvent(this, DocumentChangeEvent.Action.unbind);
-        event.setPropertyName(null);
-        int sz = documentListeners.size();
-        for ( int i = sz - 1; i >=0; i-- ) {
-            DocumentChangeListener l =  (DocumentChangeListener)documentListeners.get(i);
-            l.react(event);
+        list = binders.get("documentChangeEvent");
+        if ( list != null ) {
+            for ( Object o : list) {
+                PropertyBinder b = (PropertyBinder)o;
+                Object bo = b.getBoundObject();
+                b.setBoundObject(null);
+                b.setBoundObject(bo);
+            }
         }
+        list = binders.get("documentList");
+        if ( list != null ) {
+            for ( Object o : list) {
+                PropertyBinder b = (PropertyBinder)o;
+                Object bo = b.getBoundObject();
+                b.setBoundObject(null);
+                b.setBoundObject(bo);
+            }
+        }
+        super.removeAll();
     }
+    
+    
     public BindingState getBindingState() {
         return super.getDocument();
     }
@@ -60,11 +80,11 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
         super.setDocument(state);
     }
     
-    public Object getComponent() {
-        return component;
+    public Object getBoundObject() {
+        return boundObject;
     }
-    public void setComponent(Object component) {
-        this.component = component;
+    public void setBoundObject(Object component) {
+        this.boundObject = component;
         initBinders();
     }
     

@@ -36,11 +36,11 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
     }
 
     public JComboBox getComboBox() {
-        return (JComboBox) getComponent();
+        return (JComboBox) getBoundObject();
     }
 
     public void setComboBox(JComboBox comboBox) {
-        setComponent(comboBox);
+        setBoundObject(comboBox);
         initBinders();
     }
 
@@ -54,17 +54,17 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
 
     @Override
     protected PropertyBinder createSelectedBinder() {
-        return  new BdDocumentListJComboBinder.JComboSelectionBinder((JComboBox) getComponent());
+        return  new BdDocumentListJComboBinder.JComboSelectionBinder((JComboBox) getBoundObject());
     }
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        return  new BdDocumentListJComboBinder.JComboModelBinder((JComboBox) getComponent(), displayProperties);
+        return  new BdDocumentListJComboBinder.JComboModelBinder((JComboBox) getBoundObject(), displayProperties);
     }
 
     @Override
     protected PropertyBinder createDocumentChangeEventBinder() {
-        return  new BdDocumentListJComboBinder.JComboDocumentChangeBinder((JComboBox) getComponent());
+        return  new BdDocumentListJComboBinder.JComboDocumentChangeBinder((JComboBox) getBoundObject());
     }
 
     public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
@@ -74,7 +74,7 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
         }
 
         protected JComboBox getJComboBox() {
-            return (JComboBox) component;
+            return (JComboBox) boundObject;
         }
 
         @Override
@@ -95,7 +95,7 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
 
     public static class JComboSelectionBinder<E extends Document> extends AbstractListSelectionBinder implements ActionListener {
 
-        //protected JList component;
+        //protected JList boundObject;
         public JComboSelectionBinder(JComboBox component) {
             super(component);
         }
@@ -111,10 +111,10 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
         }
 
         /**
-         * Prepends cyclic component modifications.
+         * Prepends cyclic boundObject modifications.
          *
          * @param value a new value to be checked
-         * @return <code>true</code> if the component shouldn't be changed.          <code>false otherwise
+         * @return <code>true</code> if the boundObject shouldn't be changed.          <code>false otherwise
      */
         @Override
         protected boolean needChangeComponent(Object value) {
