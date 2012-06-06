@@ -4,9 +4,8 @@
  */
 package org.document.binding;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.document.DocumentChangeEvent;
-import org.document.DocumentChangeListener;
 
 /**
  *
@@ -40,29 +39,11 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
         this.add(createSelectedBinder());
     }
     @Override
-    public void removeAll() {
+    public void adjustRemove() {
         updateBinder("selected",getBoundObject());
         updateBinder("documentList",getBoundObject());
         updateBinder("documentChangeEvent",getBoundObject());
-        //super.updateBoundObject();
     }
-    public void updateBoundObject(Object oldBoundObject,Object newBoundObject ) {
-        //nullBoundObject("selected");
-        //nullBoundObject("documentList");
-        //nullBoundObject("documentChangeEvent");
-        //removeAll();
-        nullBoundObject("selected");
-        nullBoundObject("documentList");
-        nullBoundObject("documentChangeEvent");
-        
-        boundObject = newBoundObject;
-        updateBoundObject("selected",boundObject);
-        updateBoundObject("documentList",boundObject);
-        updateBoundObject("documentChangeEvent",boundObject);
-        
-        //super.updateBoundObject();
-    }
-    
     
     public BindingState getBindingState() {
         return super.getDocument();
@@ -74,20 +55,38 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
     public Object getBoundObject() {
         return boundObject;
     }
-    public void setBoundObject(Object component) {
+    public void setBoundObject(Object newBoundObject) {
         //updateBinders(component);
         
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
-        e.setNewBoundObject(component);
+        e.setNewBoundObject(newBoundObject);
         e.setOldBoundObject(boundObject);
-        //this.boundObject = component;        
-        for ( BinderListener l : binderListeners ) {
-            l.react(e);
-            break;
-        }
-        //this.boundObject = component;        
         
+        adjustRemove(); // refreshes boundObjects with the same ones
+        boundObject = newBoundObject;
+        adjustRemove(); // refreshes bondObjects with the new ones
+        
+        //
+        // Now we notify a bindingManager in order to rebind with the 
+        // new boundObject
+        //
+        if ( binderListeners == null ) {
+            return;
+        }
+        //
+        // create a copy of binderListeners since some listeners may remove themself 
+        //
+        List<BinderListener> list = new ArrayList<BinderListener>();
+        list.addAll(binderListeners);
+        for ( BinderListener l : list ) {
+            l.react(e);
+        }
     }
+    /**
+     * 
+     * @param propertyName
+     * @param component 
+     */
     protected void updateBinder(String propertyName,Object component) {
         List list = binders.get(propertyName);
         if ( list != null ) {
@@ -99,7 +98,7 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
             }
         }
     }
-    
+/*    
     protected void nullBoundObject(String propertyName) {
         List list = binders.get(propertyName);
         if ( list != null ) {
@@ -118,7 +117,7 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
             }
         }
     }
-    
+*/    
     protected void updateBinders(Object component) {
         updateBinder("selected",component);
         updateBinder("documentList",component);

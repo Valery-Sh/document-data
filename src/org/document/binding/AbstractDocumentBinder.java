@@ -259,7 +259,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         remove(binder, binders);
     }
 
-    public void removeAll() {
+    public void adjustRemove() {
         for (Map.Entry<String, List> e : binders.entrySet()) {
             List list = e.getValue();
             for (Object b : list) {

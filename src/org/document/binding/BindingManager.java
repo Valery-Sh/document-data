@@ -316,32 +316,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             documentListBinders.put(binder.getBoundObject(),binder);
             binder.setBindingState(getBindingState());
     }    
-    private void bind(BindingStateBinder binder, Object boundObject) {
-          if (sourceList == null) {
-                throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
-           }
-            
-            binder.addBinderListener(this);
-            documentListBinders.put(boundObject,binder);
-            binder.setBindingState(getBindingState());
-    }    
-    
-/*    public void bind(BindingStateBinder binder) {
-          if (sourceList == null) {
-                throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
-           }
-           if ( binder.binders.isEmpty() ){
-               binder.initBinders();
-           }
-            
-            binder.addBinderListener(this);
-            documentListBinders.put(binder.getBoundObject(),binder);
-            //binder.bind((String)null);
-            //if ( binder.getBindingState() == null ) {
-            binder.setBindingState(getBindingState());
-            //}
-    }
-*/
     /**
      * Unregisters a given binder.
      * @param binder the binder of type {@link BindingStateBinder} to be unregistered
@@ -349,12 +323,11 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     public void remove(BindingStateBinder binder) {
             binder.removeBinderListener(this);
             documentListBinders.remove(binder.getBoundObject());
-            binder.removeAll();
+            binder.adjustRemove();
     }
     private void remove(BindingStateBinder binder,Object oldBoundObject,Object newBoundObject) {
             binder.removeBinderListener(this);
             documentListBinders.remove(oldBoundObject);
-            binder.updateBoundObject(oldBoundObject, newBoundObject);
     }
     
     public void bind(String propertyName,String alias,HasBinder object) {
@@ -539,17 +512,13 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                     BindingStateBinder b = null;
                     if ( documentListBinders.containsKey(event.getOldBoundObject()) ) {
                         b = documentListBinders.get(event.getOldBoundObject());
-                        //b = documentListBinders.remove(event.getOldBoundObject());
                         remove(b,event.getOldBoundObject(),event.getNewBoundObject());
                     } else {
                         b = (BindingStateBinder)event.getSource();
                     }
                     
                     if ( event.getNewBoundObject() != null ) {
-                        
-                        //documentListBinders.put(event.getNewBoundObject(), b);
-                        bind(b,event.getNewBoundObject());
-                        setSelected(getSelected());
+                        bind(b);
                     }
                     
                     

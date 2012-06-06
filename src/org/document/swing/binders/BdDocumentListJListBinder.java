@@ -111,7 +111,7 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
         @Override
         protected void removeComponentListeners() {
-            if ( getBoundObject() == null ) {
+            if (getBoundObject() == null) {
                 return;
             }
             ListSelectionListener[] listeners = getBoundObject().getListSelectionListeners();
@@ -201,43 +201,25 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         }
 
         @Override
+        protected void createDefaultComponentModel() {
+            DefaultListModel m = new DefaultListModel();
+            m.clear();
+            getBoundObject().setModel(m);
+        }
+/*
+        @Override
         public void setBoundObject(Object bo) {
-            if ( getBoundObject() == bo ) {
+            if (getBoundObject() == bo) {
                 return;
             }
             if (getBoundObject() != null) {
                 removeComponentListeners();
-                DefaultListModel m = new DefaultListModel();
-                m.clear();
-                getBoundObject().setModel(m);
-                
-            } 
+                createDefaultComponentModel();
+            }
             boundObject = bo;
-            //if ( bo == null )
-            
-//            if ( bo != null ) {
-                //getBoundObject().clearSelection();
-//                getBoundObject().setModel(new ListBoxModelImpl(properties, getDocuments()));
 //            }
         }
-        /*        @Override
-         public void react(DocumentChangeEvent event) {
-         super.react(event);
-         switch (event.getAction()) {
-         case unbind:
-         DefaultListModel m = new DefaultListModel();
-         m.clear();
-         getBoundObject().setModel(m);
-         break;
-         case bind:
-         if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
-         break;
-         }
-         break;
-         }
-         }
-         */
-
+*/
         @Override
         public Object getComponentValue() {
             return getBoundObject().getModel();

@@ -11,20 +11,19 @@ import org.document.Document;
  *
  * @author Valery
  */
-public abstract class AbstractListModelBinder  extends AbstractPropertyBinder {
+public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
 
     public AbstractListModelBinder() {
         this.boundProperty = "documentList";
         initBinder();
     }
-    
+
     protected List<Document> getDocuments() {
-        if ( document == null ) {
+        if (document == null) {
             return null;
         }
-        return ((BindingState)document).getDocumentList();
+        return ((BindingState) document).getDocumentList();
     }
-    
 
     protected final void initBinder() {
         removeComponentListeners();
@@ -33,14 +32,25 @@ public abstract class AbstractListModelBinder  extends AbstractPropertyBinder {
 
     @Override
     public abstract void setComponentValue(Object value);
-            
+
     @Override
     public abstract Object getComponentValue();
-    
-    
+
+    protected abstract void createDefaultComponentModel();
+
+    @Override
+    public void setBoundObject(Object bo) {
+        if (getBoundObject() == bo) {
+            return;
+        }
+        if (getBoundObject() != null) {
+            removeComponentListeners();
+            createDefaultComponentModel();
+        }
+        boundObject = bo;
+//            }
+    }
     //
     // ==============================================
     //
-    
 }
-
