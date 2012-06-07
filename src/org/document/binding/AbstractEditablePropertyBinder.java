@@ -1,7 +1,6 @@
 package org.document.binding;
 
 import org.document.*;
-import org.omg.CORBA.BAD_CONTEXT;
 
 /**
  * The class extends the functionality of the <code>AbstractPropertyBinder</code>
@@ -115,6 +114,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * @param componentValue the component specific new value
      */
     protected void componentChanged(boolean notifyOfErrors, Object componentValue) {
+        if ( getBoundProperty() == null) {
+            return;
+        }
         if (isSuspended()) {
             return;
         }
@@ -288,7 +290,17 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * @param propertyValue the ne value of the bound property
      */
     @Override
-    protected void propertyChanged(Object propertyValue) {
+    protected void propertyChanged(String property,Object propertyValue) {
+        if ( property == null ) {
+            return;
+        }
+        if ( ! property.equals(getBoundProperty()) ) {
+            return;
+        }
+//        if ( getBoundObject() == null ) {
+//            return;
+//        }
+        
         if (binderIsStillChangingProperty) {
             return;
         }

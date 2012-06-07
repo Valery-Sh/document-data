@@ -104,8 +104,8 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
         }
 
         @Override
-        public void propertyChanged(Object propertyValue) {
-            super.propertyChanged(propertyValue);
+        public void propertyChanged(String property,Object propertyValue) {
+            super.propertyChanged(property,propertyValue);
             getJComboBox().repaint();// if omitted then doesn't change selected item
         }
 

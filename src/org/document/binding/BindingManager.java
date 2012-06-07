@@ -330,7 +330,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         DocumentBinder db = documentBinders.findByBinder(binder);
         if ( db == null ) {
             db = getPropertyBinders(newAlias);
-            db.update(binder);
+            db.add(binder);
         } else {
             Object oldAlias = documentBinders.getAlias(db);
             if ( newAlias.equals(oldAlias)) {
@@ -338,7 +338,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             } else {
                 db.remove(binder);
                 db = getPropertyBinders(newAlias);
-                db.update(binder);
+                db.add(binder);
             }
         }
         
@@ -742,11 +742,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 return result;
             }
             for ( T documentBinder : c ) {
-                Map<String,List> pbinders = documentBinder.binders;
-                List list = pbinders.get(binder.getBoundProperty());
-                if ( list == null || list.isEmpty()) {
-                    continue;
-                }
+                List<PropertyBinder> list = documentBinder.binders;
                 if ( list.contains(binder)) {
                     result = documentBinder;
                 }
@@ -755,7 +751,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             return result;
             
         }        
-        public T findByBoundObject(Object boundObject) {
+/*        public T findByBoundObject(Object boundObject) {
             
             T result = null;
             Collection<T> c = binders.values();
@@ -773,6 +769,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             }
             return result;
         }
+*/ 
         public Object getAlias(DocumentBinder binder) {
             if ( binder == null ) {
                 return null;
