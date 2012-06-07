@@ -74,7 +74,7 @@ import org.document.DocumentChangeListener;
  */
 public abstract class AbstractPropertyBinder implements Serializable,PropertyBinder, DocumentChangeListener {
     
-    //private Object alias;
+    private String alias;
     protected Object boundObject;
     protected String boundProperty;
     protected Document document;
@@ -82,6 +82,23 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
     protected BinderConverter converter;
     protected boolean suspended;
 //    protected boolean bound;
+
+    @Override
+    public String getAlias() {
+        if ( this.alias == null ) {
+            this.alias = "default";
+        }
+        return alias;
+    }
+
+    @Override
+    public void setAlias(String alias) {
+        if ( alias == null ) {
+            this.alias = "default";
+        } else {
+            this.alias = alias;
+        }
+    }
     
     /**
      * Returns an instance of class <code>BinderConverter</code> that 

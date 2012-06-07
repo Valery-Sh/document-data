@@ -204,7 +204,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
                     removeDocumentChangeListener((DocumentChangeListener)b);
                 }
                 remove(b);
-                add(b);
+                update(b);
                 break;
             case boundPropertyReplace:
                 b = (PropertyBinder)event.getSource();
@@ -215,7 +215,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
                 
                 remove(b);
                 
-                add(b);
+                update(b);
                 break;
                 
 
@@ -300,23 +300,26 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         binders.clear();
     }
 
-    public void add(PropertyBinder binder) {
+    public void update(PropertyBinder binder) {
         if (binder == null) {
             return;
         }
-        String propertyName = ((PropertyBinder) binder).getBoundProperty();
-        if ( propertyName == null ) {
+        String propertyName = binder.getBoundProperty();
+        if ( propertyName == null || binder.getBoundObject() == null ) {
             return;
         }
+        //DocumentBinder db = documentErrorBinder.f
         List blist = binders.get(propertyName);
         if (blist == null) {
             blist = new ArrayList();
         }
-        binder.addBinderListener(this);
-        if (binder instanceof DocumentChangeListener) {
-            addDocumentChangeListener((DocumentChangeListener) binder);
+        if ( ! blist.contains(binder) ) {
+            blist.add(binder);
+            binder.addBinderListener(this);
+            if (binder instanceof DocumentChangeListener) {
+                addDocumentChangeListener((DocumentChangeListener) binder);
+            }
         }
-        blist.add(binder);
         binders.put(propertyName, blist);
         if (isSuspended()) {
             suspend(propertyName);
@@ -329,7 +332,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
 
     }
 
-    protected void add(PropertyBinder binder, Map<String, List> binderMap) {
+/*    protected void add(PropertyBinder binder, Map<String, List> binderMap) {
         String propertyName = ((PropertyBinder) binder).getBoundProperty();
 
         List blist = binderMap.get(propertyName);
@@ -351,7 +354,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
             addDocumentChangeListener((DocumentChangeListener) binder);
         }
     }
-
+*/
     /**
      * Tries to resolve all pending component changes. Is invoked for the old
      * document and only from the setDocument's method body just before a new
@@ -452,7 +455,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
             PropertyBinder pb = (PropertyBinder) b;
             String nm = pb.getBoundProperty();
             if (nm != null) {
-                add(pb);
+                update(pb);
             }
         }
     }

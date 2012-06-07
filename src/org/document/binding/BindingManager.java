@@ -2,7 +2,6 @@ package org.document.binding;
 
 import java.util.*;
 import org.document.*;
-
 /**
  * This class allows to mark any object of type {@link org.document.Document }
  * as <code><i>selected</i></code> and start binding procedure for it.  
@@ -107,6 +106,7 @@ import org.document.*;
  * 
  * @author V. Shishkin
  */
+
 public class BindingManager<T extends Document>  implements BinderListener,ListChangeListener {
 
     private DocumentBinderContainer documentBinders;
@@ -298,38 +298,10 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         this.documentBinders.setDocument(selected);
     }
     /**
-     * <ul>
-     *  <li>propertyName != null</li>
-     *  <li>boundObject != null</li>
-     *  <li>alias == null  || alias instanceof Class || ! alias.toString().isEmpty</li>      
-     * </ul>
-     * @param propertyName
-     * @param boundObject
+     * 
+     * @param binder
      * @param alias 
      */
-    public void bind(String propertyName,Object boundObject, Object alias ) {
-        if ( boundObject == null || propertyName == null || propertyName.trim().isEmpty() ) {
-            return;
-        }
-        DocumentBinder db = documentBinders.findByBoundObject(boundObject);
-        if ( db != null ) {
-            // Is duplicate
-            return;
-        }
-    }
-    private DocumentBinder findByBinder(PropertyBinder binder) {
-        DocumentBinder result = null;
-        if ( binder.getBoundObject() == null || 
-             binder.getBoundProperty() == null ||
-             binder.getBoundProperty().trim().isEmpty() ) {
-            return null;
-        }
-        DocumentBinder db = documentBinders.findByBoundObject(binder.getBoundObject());
-        if ( db != null ) {
-            result = db;
-        }
-        return result;
-    }
     private void put(PropertyBinder binder, Object alias) {
         String newAlias;
         
@@ -341,14 +313,18 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             newAlias = alias.toString();
         }
         
-        DocumentBinder db = findByBinder(binder);
+        DocumentBinder db = documentBinders.findByBinder(binder);
         if ( db == null ) {
             db = getPropertyBinders(newAlias);
-            db.add(binder);
+            db.update(binder);
         } else {
             Object oldAlias = documentBinders.getAlias(db);
             if ( newAlias.equals(oldAlias)) {
-            
+                db.update(binder);
+            } else {
+                db.remove(binder);
+                db = getPropertyBinders(newAlias);
+                db.update(binder);
             }
         }
         
@@ -596,8 +572,8 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * The method is called in response of applying of one of the following 
      * methods: 
      * <ul>
-     *   <li>{@link DocumentList#add(java.lang.Object) }</li> 
-     *   <li>{@link DocumentList#add(int, java.lang.Object) } </li> 
+     *   <li>{@link DocumentList#update(java.lang.Object) }</li> 
+     *   <li>{@link DocumentList#update(int, java.lang.Object) } </li> 
      *   <li>{@link DocumentList#addAll(java.util.Collection) }</li> 
      *   <li>{@link DocumentList#addAll(int, java.util.Collection) }</li> 
      *   <li>{@link DocumentList#remove(java.lang.Object) }</li> 
@@ -722,7 +698,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         }//switch
     }
     
-    
     /**
      * A container of objects of type <code>DocumentBinder</code>
      * 
@@ -746,7 +721,33 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         public void add(Object key,T binder) {
             binders.put(key, binder);
         }
+        public T findByBinder(PropertyBinder binder) {
+            if ( binder.getBoundObject() == null || 
+                binder.getBoundProperty() == null ||
+                binder.getBoundProperty().trim().isEmpty() ) {
+                return null;
+            }
+            T result = null;
+            Collection<T> c = binders.values();
+            if ( c.isEmpty() ) {
+                return result;
+            }
+            for ( T documentBinder : c ) {
+                Map<String,List> pbinders = documentBinder.binders;
+                List list = pbinders.get(binder.getBoundProperty());
+                if ( list == null || list.isEmpty()) {
+                    continue;
+                }
+                if ( list.contains(binder)) {
+                    result = documentBinder;
+                }
+                break;
+            }
+            return result;
+            
+        }        
         public T findByBoundObject(Object boundObject) {
+            
             T result = null;
             Collection<T> c = binders.values();
             if ( c.isEmpty() ) {
@@ -813,4 +814,5 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             }
         }
     }
+    
 }//class BindingManager

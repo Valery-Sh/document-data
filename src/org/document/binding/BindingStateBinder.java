@@ -34,9 +34,9 @@ public abstract class BindingStateBinder  extends AbstractDocumentBinder<Binding
         //
         // create createListModelBinder() must be first
         //
-        this.add(createListModelBinder());
-        this.add(createDocumentChangeEventBinder());
-        this.add(createSelectedBinder());
+        this.update(createListModelBinder());
+        this.update(createDocumentChangeEventBinder());
+        this.update(createSelectedBinder());
     }
     @Override
     public void adjustRemove() {

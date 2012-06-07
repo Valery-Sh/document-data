@@ -20,6 +20,8 @@ public interface PropertyBinder<E extends Document> extends Binder {//,DocumentC
     Object getBoundObject();
     void setBoundObject(Object boundObject);
     
+    String getAlias();
+    void setAlias(String alias);
     
     //void setDocument(E document);
     
