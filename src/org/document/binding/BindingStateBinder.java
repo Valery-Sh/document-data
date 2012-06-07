@@ -23,7 +23,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         super();
         this.boundObject = component;
     }
-
+    
     /**
      * The method creates objects of type
      * <code>PropertyBinder</code> for such properties as
@@ -42,7 +42,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
     }
 
     @Override
-    public void adjustRemove() {
+    protected void updateBinders() {
         updateBinder("selected", getBoundObject());
         updateBinder("documentList", getBoundObject());
         updateBinder("documentChangeEvent", getBoundObject());
@@ -65,12 +65,12 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
 
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
         e.setNewBoundObject(newBoundObject);
+     
         e.setOldBoundObject(boundObject);
 
-        adjustRemove(); // refreshes boundObjects with the same ones
+        updateBinders(); // refreshes boundObjects with the same ones
         boundObject = newBoundObject;
-        adjustRemove(); // refreshes bondObjects with the new ones
-
+        updateBinders(); // refreshes bondObjects with the new ones
         //
         // Now we notify a bindingManager in order to rebind with the 
         // new boundObject
@@ -93,7 +93,18 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
      * @param propertyName
      * @param component
      */
-    private void updateBinder(String propertyName, Object component) {
+    protected void updateBinder(String propertyName, Object component) {
+        for (PropertyBinder b : binders) {
+            
+            if ( ! propertyName.equals(b.getBoundProperty())) {
+                continue;
+            }
+            b.setBoundObject(null);
+            b.setBoundObject(component);
+        }
+    }
+    protected void updateBinder(String propertyName) {
+        Object component = getBoundObject();
         for (PropertyBinder b : binders) {
             
             if ( ! propertyName.equals(b.getBoundProperty())) {
@@ -104,12 +115,12 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         }
     }
 
-    private void updateBinders(Object component) {
+/*    private void updateBinders(Object component) {
         updateBinder("selected", component);
         updateBinder("documentList", component);
         updateBinder("documentChangeEvent", component);
     }
-
+*/
     protected abstract PropertyBinder createSelectedBinder();
 
     protected abstract PropertyBinder createListModelBinder();

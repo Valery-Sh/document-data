@@ -181,13 +181,17 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         public JList getBoundObject() {
             return (JList) boundObject;
         }
-
+/*
         @Override
         protected void addComponentListeners() {
         }
 
         @Override
         protected void removeComponentListeners() {
+        }
+       @Override
+        public Object getComponentValue() {
+            return getBoundObject().getModel();
         }
 
         @Override
@@ -199,32 +203,25 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         @Override
         protected void initComponentDefault() {
         }
-
+*/
         @Override
         protected void createDefaultComponentModel() {
             DefaultListModel m = new DefaultListModel();
             m.clear();
             getBoundObject().setModel(m);
         }
-/*
         @Override
-        public void setBoundObject(Object bo) {
-            if (getBoundObject() == bo) {
-                return;
-            }
-            if (getBoundObject() != null) {
-                removeComponentListeners();
-                createDefaultComponentModel();
-            }
-            boundObject = bo;
-//            }
-        }
-*/
-        @Override
-        public Object getComponentValue() {
+        protected Object getModel() {
             return getBoundObject().getModel();
         }
+        @Override
+        protected void setModel(Object model){
+            getBoundObject().clearSelection();
+            getBoundObject().setModel(new ListBoxModelImpl(properties, getDocuments()));
+        }
+        
 
+ 
         @Override
         protected Object componentValueOf(Object dataValue) {
             if (getDocuments() == null) {

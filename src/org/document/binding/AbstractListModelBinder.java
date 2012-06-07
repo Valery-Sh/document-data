@@ -30,13 +30,33 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
         addComponentListeners();
     }
 
-    @Override
-    public abstract void setComponentValue(Object value);
-
-    @Override
-    public abstract Object getComponentValue();
-
     protected abstract void createDefaultComponentModel();
+
+    @Override
+    protected void addComponentListeners() {
+    }
+
+    @Override
+    protected void removeComponentListeners() {
+    }
+
+    @Override
+    public void initComponentDefault() {
+    }
+
+    @Override
+    public void setComponentValue(Object value) {
+        setModel(value);
+    }
+
+    @Override
+    public Object getComponentValue() {
+        return getModel();
+    }
+
+    protected abstract Object getModel();
+
+    protected abstract void setModel(Object model);
 
     @Override
     public void setBoundObject(Object bo) {
@@ -48,7 +68,6 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
             createDefaultComponentModel();
         }
         boundObject = bo;
-//            }
     }
     //
     // ==============================================

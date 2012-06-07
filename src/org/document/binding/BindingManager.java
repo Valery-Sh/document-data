@@ -368,7 +368,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     public void remove(BindingStateBinder binder) {
             binder.removeBinderListener(this);
             documentListBinders.remove(binder.getBoundObject());
-            binder.adjustRemove();
+            binder.updateBinders();
     }
     private void remove(BindingStateBinder binder,Object oldBoundObject,Object newBoundObject) {
             binder.removeBinderListener(this);
@@ -731,11 +731,11 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             binders.put(key, binder);
         }
         public T findByBinder(PropertyBinder binder) {
-            if ( binder.getBoundObject() == null || 
-                binder.getBoundProperty() == null ||
-                binder.getBoundProperty().trim().isEmpty() ) {
-                return null;
-            }
+//111            if ( binder.getBoundObject() == null || 
+//                binder.getBoundProperty() == null ||
+//                binder.getBoundProperty().trim().isEmpty() ) {
+//                return null;
+//            }
             T result = null;
             Collection<T> c = binders.values();
             if ( c.isEmpty() ) {

@@ -1,6 +1,7 @@
 package org.document.binding;
 
 import java.util.List;
+import javax.swing.JComponent;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
 
@@ -10,11 +11,22 @@ import org.document.DocumentChangeEvent;
  */
 public abstract class AbstractListDocumentChangeBinder extends AbstractEditablePropertyBinder {
 
-
-    public AbstractListDocumentChangeBinder(Object component) {
+    private JComponent component;
+    
+    public AbstractListDocumentChangeBinder(JComponent component) {
         this.boundProperty = "documentChangeEvent";
-        this.boundObject = component;
+        //this.boundObject = component;
+        //this.boundObject = "";
+        this.component = component;
         initBinder();
+    }
+
+    public JComponent getComponent() {
+        return component;
+    }
+
+    public void setComponent(JComponent component) {
+        this.component = component;
     }
 
     protected List<Document> getDocuments() {
