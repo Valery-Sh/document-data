@@ -1,3 +1,4 @@
+
 package org.document.binding;
 
 import java.util.*;
@@ -106,6 +107,7 @@ import org.document.*;
  * 
  * @author V. Shishkin
  */
+
 
 public class BindingManager<T extends Document>  implements BinderListener,ListChangeListener {
 
@@ -297,6 +299,16 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         }
         this.documentBinders.setDocument(selected);
     }
+    public void bind(PropertyBinder binder) {
+        bind(binder,binder.getAlias());
+    }
+    public void bind(PropertyBinder binder, String alias) {
+        put(binder,alias);
+    }
+    public void bind(PropertyBinder binder, Class alias) {
+        put(binder,alias);
+    }
+    
     /**
      * 
      * @param binder
@@ -312,6 +324,8 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         } else {
             newAlias = alias.toString();
         }
+        
+        binder.setAlias(newAlias);
         
         DocumentBinder db = documentBinders.findByBinder(binder);
         if ( db == null ) {
@@ -491,30 +505,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     }
     
     /**
-     * Returns an existing or new instance of type <code>DocumentErrorBinder</code>
-     * for a given alias.
-     * If a document error binder doesn't exist 
-     * then a new one is created with an <code>alias</code> property 
-     * set to  <code>alias</code> parameter value.
-     * @return an existing or new instance of type <code>DocumentErrorBinder</code>
-     * @see org.document.binding.DocumentErrorBinder 
-     * @see #getErrorBinders() 
-     * @see #getErrorBinders(java.lang.Class) 
-     */
-    
-    public DocumentErrorBinder getErrorBinders(String alias) {
-        Object key  = alias;
-        if ( alias == null ) {
-            key = "default";
-        }
-        DocumentBinder db = (DocumentBinder) documentBinders.get(key);
-        if (db == null) {
-            db = new DocumentBinder();
-            documentBinders.add(key,db);
-        }
-        return db.getDocumentErrorBinder();
-    }
-    /**
      * 
      * Invoked when the {@link BindingState } object has changed its state.
      * <code>BindingManages</code> is responsible for handling events
@@ -540,7 +530,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 break;
             case boundObjectReplace:
                 if ( event.getSource() instanceof BindingStateBinder ) {
-                    BindingStateBinder b = null;
+                    BindingStateBinder b;
                     if ( documentListBinders.containsKey(event.getOldBoundObject()) ) {
                         b = documentListBinders.get(event.getOldBoundObject());
                         remove(b,event.getOldBoundObject(),event.getNewBoundObject());
@@ -551,13 +541,32 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                     if ( event.getNewBoundObject() != null ) {
                         bind(b);
                     }
-                    
-                    
                 }
                 break;
-                
-                
         }
+    }
+    /**
+     * Returns an existing or new instance of type <code>DocumentErrorBinder</code>
+     * for a given alias.
+     * If a document error binder doesn't exist 
+     * then a new one is created with an <code>alias</code> property 
+     * set to  <code>alias</code> parameter value.
+     * @return an existing or new instance of type <code>DocumentErrorBinder</code>
+     * @see org.document.binding.DocumentErrorBinder 
+     * @see #getErrorBinders() 
+     * @see #getErrorBinders(java.lang.Class) 
+     */
+    public DocumentErrorBinder getErrorBinders(String alias) {
+        Object key  = alias;
+        if ( alias == null ) {
+            key = "default";
+        }
+        DocumentBinder db = (DocumentBinder) documentBinders.get(key);
+        if (db == null) {
+            db = new DocumentBinder();
+            documentBinders.add(key,db);
+        }
+        return db.getDocumentErrorBinder();
     }
     
     protected boolean isEditing(T doc) {
@@ -572,13 +581,13 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * The method is called in response of applying of one of the following 
      * methods: 
      * <ul>
-     *   <li>{@link DocumentList#update(java.lang.Object) }</li> 
-     *   <li>{@link DocumentList#update(int, java.lang.Object) } </li> 
-     *   <li>{@link DocumentList#addAll(java.util.Collection) }</li> 
-     *   <li>{@link DocumentList#addAll(int, java.util.Collection) }</li> 
-     *   <li>{@link DocumentList#remove(java.lang.Object) }</li> 
+     *   <li>{@link DocumentList#update(java.lang.Object) }</li>
+     *   <li>{@link DocumentList#update(int, java.lang.Object) } </li>
+     *   <li>{@link DocumentList#addAll(java.util.Collection) }</li>
+     *   <li>{@link DocumentList#addAll(int, java.util.Collection) }</li>
+     *   <li>{@link DocumentList#remove(java.lang.Object) }</li>
      *   <li>{@link DocumentList#remove(int) }</li> 
-     *   <li>{@link DocumentList#updateBoundObject(java.util.Collection) }</li> 
+     *   <li>{@link DocumentList#updateBoundObject(java.util.Collection) }</li>
      *   <li>{@link DocumentList#retainAll(java.util.Collection) }</li> 
      *   <li>{@link DocumentList#addSelect)}</li> 
      *   <li>{@link DocumentList#addSelect(org.document.Document) }</li> 
@@ -589,11 +598,11 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * @see ListChangeEvent
      * @see ListChangeListener
      */
-    @Override
+   @Override
     public void listChanged(ListChangeEvent event) {
         if ( event.getAction() == ListChangeEvent.Action.beforeClear ||
              event.getAction() == ListChangeEvent.Action.beforeRemoveAll ||
-             event.getAction() == ListChangeEvent.Action.beforeRetainAll   ) {        
+             event.getAction() == ListChangeEvent.Action.beforeRetainAll   ) {
             return;
         }
         updateDocumentState(event);
@@ -697,12 +706,12 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 
         }//switch
     }
-    
     /**
      * A container of objects of type <code>DocumentBinder</code>
      * 
      * @param <T> a type that implements the {@link DocumentBinder } 
      */
+    
     public static class DocumentBinderContainer<T extends DocumentBinder> { //implements BinderContainer<T> {
 
         private BindingManager bindingManager;
@@ -814,5 +823,5 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             }
         }
     }
-    
 }//class BindingManager
+
