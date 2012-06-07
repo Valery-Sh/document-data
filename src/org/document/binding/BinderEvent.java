@@ -105,6 +105,8 @@ public class BinderEvent extends EventObject {
         componentChangeError,
         componentChange,
         boundObjectReplace,
+        boundPropertyReplace,
+        aliasReplace,
         clearError,
         fixError,
         componentSelectChange

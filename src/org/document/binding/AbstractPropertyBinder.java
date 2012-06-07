@@ -121,7 +121,30 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
         }
         removeComponentListeners();
         document = null;
+        
+        
+        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
+        e.setNewBoundObject(boundObject);
+        e.setOldBoundObject(this.boundObject);
+        
         this.boundObject = boundObject;
+        
+        //
+        // Now we notify a DocumentBinder in order to rebind with the 
+        // new boundObject
+        //
+        if ( binderListeners == null ) {
+            return;
+        }
+        //
+        // create a copy of binderListeners since some listeners may remove themself 
+        //
+        List<BinderListener> list = new ArrayList<BinderListener>();
+        list.addAll(binderListeners);
+        for ( BinderListener l : list ) {
+            l.react(e);
+        }
+        
     }
     
     /**
@@ -276,7 +299,34 @@ public abstract class AbstractPropertyBinder implements Serializable,PropertyBin
      */
     @Override
     public void setBoundProperty(String propertyName) {
+        
+        if ( this.boundProperty != null && this.boundProperty.equals(propertyName) ) {
+            return;
+        }
+        removeComponentListeners();
+        document = null;
+        
+        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundPropertyReplace);
+        e.setNewBoundObject(propertyName);
+        e.setOldBoundObject(this.boundProperty);
+        
         this.boundProperty = propertyName;
+        
+        //
+        // Now we notify a DocumentBinder in order to rebind with the 
+        // new boundObject
+        //
+        if ( binderListeners == null ) {
+            return;
+        }
+        //
+        // create a copy of binderListeners since some listeners may remove themself 
+        //
+        List<BinderListener> list = new ArrayList<BinderListener>();
+        list.addAll(binderListeners);
+        for ( BinderListener l : list ) {
+            l.react(e);
+        }
     }
 
     /**

@@ -197,6 +197,27 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
             case componentChangeError:
                 documentErrorBinder.notifyError(event.getPropertyName(), event.getException());
                 break;
+            case boundObjectReplace:
+                PropertyBinder b = (PropertyBinder)event.getSource();
+                b.removeBinderListener(this);
+                if ( b instanceof DocumentChangeListener ) {
+                    removeDocumentChangeListener((DocumentChangeListener)b);
+                }
+                remove(b);
+                add(b);
+                break;
+            case boundPropertyReplace:
+                b = (PropertyBinder)event.getSource();
+                b.removeBinderListener(this);
+                if ( b instanceof DocumentChangeListener ) {
+                    removeDocumentChangeListener((DocumentChangeListener)b);
+                }
+                
+                remove(b);
+                
+                add(b);
+                break;
+                
 
         }
     }
@@ -256,6 +277,11 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         if (binder == null) {
             return;
         }
+        String propertyName = ((PropertyBinder) binder).getBoundProperty();
+        if ( propertyName == null ) {
+            return;
+        }
+        
         remove(binder, binders);
     }
 
@@ -279,6 +305,9 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
             return;
         }
         String propertyName = ((PropertyBinder) binder).getBoundProperty();
+        if ( propertyName == null ) {
+            return;
+        }
         List blist = binders.get(propertyName);
         if (blist == null) {
             blist = new ArrayList();
@@ -294,6 +323,8 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         } else {
             resume(propertyName);
         }
+        
+        
 //        bind(propertyName);
 
     }
@@ -393,7 +424,28 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
             }
         }
     }
-
+    /**
+     * <ul>
+     *  <li>propertyName != null</li>
+     *  <li>boundObject != null</li>
+     *  <li>alias == null  || alias instanceof Class || ! alias.toString().isEmpty</li>      
+     * </ul>
+     * @param propertyName
+     * @param boundObject
+     * @param alias 
+     */
+    public void bind(String propertyName,Object boundObject, Object alias ) {
+        if ( boundObject == null || propertyName == null || propertyName.trim().isEmpty() ) {
+            return;
+        }
+        List<PropertyBinder> list = binders.get(propertyName);
+        if ( list == null ) {
+            list = new ArrayList<PropertyBinder>();
+        } else if ( list.contains(alias)) {
+            
+        }
+        
+    }
     public void bind(HasBinder component) {
         Binder b = component.getBinder();
         if (b instanceof PropertyBinder) {

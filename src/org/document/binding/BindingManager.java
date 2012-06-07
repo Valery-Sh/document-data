@@ -297,7 +297,62 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         }
         this.documentBinders.setDocument(selected);
     }
-
+    /**
+     * <ul>
+     *  <li>propertyName != null</li>
+     *  <li>boundObject != null</li>
+     *  <li>alias == null  || alias instanceof Class || ! alias.toString().isEmpty</li>      
+     * </ul>
+     * @param propertyName
+     * @param boundObject
+     * @param alias 
+     */
+    public void bind(String propertyName,Object boundObject, Object alias ) {
+        if ( boundObject == null || propertyName == null || propertyName.trim().isEmpty() ) {
+            return;
+        }
+        DocumentBinder db = documentBinders.findByBoundObject(boundObject);
+        if ( db != null ) {
+            // Is duplicate
+            return;
+        }
+    }
+    private DocumentBinder findByBinder(PropertyBinder binder) {
+        DocumentBinder result = null;
+        if ( binder.getBoundObject() == null || 
+             binder.getBoundProperty() == null ||
+             binder.getBoundProperty().trim().isEmpty() ) {
+            return null;
+        }
+        DocumentBinder db = documentBinders.findByBoundObject(binder.getBoundObject());
+        if ( db != null ) {
+            result = db;
+        }
+        return result;
+    }
+    private void put(PropertyBinder binder, Object alias) {
+        String newAlias;
+        
+        if ( alias == null || alias.toString().trim().isEmpty() ) {
+            newAlias = "default";
+        } else if ( alias instanceof Class) {
+            newAlias = ((Class)alias).getName();
+        } else {
+            newAlias = alias.toString();
+        }
+        
+        DocumentBinder db = findByBinder(binder);
+        if ( db == null ) {
+            db = getPropertyBinders(newAlias);
+            db.add(binder);
+        } else {
+            Object oldAlias = documentBinders.getAlias(db);
+            if ( newAlias.equals(oldAlias)) {
+            
+            }
+        }
+        
+    }
     /**
      * Registers a given binder.
      * 
@@ -690,6 +745,40 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
 
         public void add(Object key,T binder) {
             binders.put(key, binder);
+        }
+        public T findByBoundObject(Object boundObject) {
+            T result = null;
+            Collection<T> c = binders.values();
+            if ( c.isEmpty() ) {
+                return result;
+            }
+            for ( T db : c ) {
+                Map<String,List> m = db.binders;
+                Collection<List> cl = m.values();
+                for ( Object o : cl ) {
+                    if ( o == boundObject ) {
+                        return db;
+                    }
+                }
+            }
+            return result;
+        }
+        public Object getAlias(DocumentBinder binder) {
+            if ( binder == null ) {
+                return null;
+            }
+            T result = null;
+            Collection<T> c = binders.values();
+            if ( c.isEmpty() ) {
+                return result;
+            }
+            for ( T db : c ) {
+                if ( db == binder ) {
+                     result = db;
+                     break;
+                }
+            }
+            return result;
         }
         /**
          * 
