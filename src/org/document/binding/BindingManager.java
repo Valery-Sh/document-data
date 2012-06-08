@@ -2,6 +2,7 @@
 package org.document.binding;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.document.*;
 /**
  * This class allows to mark any object of type {@link org.document.Document }
@@ -267,6 +268,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         this.documentBinders.setDocument(selected);
         //Object o = listState.getDocument();
         this.bindingState.setSelected(selected);
+        this.bindingState.setAlias(aliasOf(selected));
         this.selected = selected;
 
         afterSetSelected(old);
@@ -431,6 +433,28 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             result = (DocumentBinder) documentBinders.get("default");        
         }
         return result;
+    }
+    protected Object aliasOf(Document doc) {
+        if ( doc == null && selected != null ) {
+            return aliasOf(selected);
+        } else if ( doc == null) {
+            return "default";                    
+        }
+        if ( recognizer != null ) {
+            return recognizer.getAlias(doc);
+        }
+        Object result = doc.propertyStore().getAlias();
+        
+        DocumentBinder db = (DocumentBinder) documentBinders.get(result);        
+        if ( db == null) {
+            result = "default";        
+        }
+        return result;
+            
+    }
+    protected Object OLDaliasOf(Document doc) {
+        DocumentBinder db = documentBinderOf(doc);
+        return documentBinders.getAlias(db);
     }
     /**
      * Returns an existing or new instance of type <code>DocumentBinder</code>
@@ -777,6 +801,24 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             if ( binder == null ) {
                 return null;
             }
+            Object result = null;
+            Set<Entry<Object,T>> entries = binders.entrySet();
+            if ( entries.isEmpty() ) {
+                return result;
+            }
+            for ( Entry<Object,T> e : entries ) {
+                if ( e.getValue() == binder ) {
+                     result = e.getKey();
+                     break;
+                }
+            }
+            return result;
+        }
+        
+        public Object getAliasOld(DocumentBinder binder) {
+            if ( binder == null ) {
+                return null;
+            }
             T result = null;
             Collection<T> c = binders.values();
             if ( c.isEmpty() ) {
@@ -790,6 +832,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             }
             return result;
         }
+        
         /**
          * 
          * @param binder

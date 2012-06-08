@@ -5,6 +5,7 @@
 package org.document.binding;
 
 import java.util.List;
+import org.document.BindingState;
 import org.document.Document;
 
 /**

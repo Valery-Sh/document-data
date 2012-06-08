@@ -1,6 +1,7 @@
 package org.document.binding;
 
 import java.util.List;
+import org.document.BindingState;
 import org.document.Document;
 import org.document.DocumentList;
 
@@ -14,11 +15,6 @@ public abstract class DocumentListBinder<E extends Document> extends BindingStat
     private List list;
     public DocumentListBinder() {
         super();
-
-        
-//        list = new ArrayList<Department>();
-        
-        
     }
 
     public DocumentListBinder(Object component) {
@@ -35,20 +31,6 @@ public abstract class DocumentListBinder<E extends Document> extends BindingStat
         this.list = null;
     }
 
-/*    @Override
-    public List<? extends Document> getList() {
-        return list;
-    }
-
-    @Override
-    public void setList(List<? extends Document> list) {
-        BindingState bs = new BindingState();
-        DocumentList dl = new DocumentList(list);
-        bs.setDocumentList(dl);
-        setDocument(bs);
-        this.list = list;
-    }
-*/
 
     public List<E> getList() {
         return list;

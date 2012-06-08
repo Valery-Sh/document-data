@@ -1,19 +1,12 @@
-package org.document.binding;
-
-import java.util.List;
-import org.document.Document;
-import org.document.DocumentChangeEvent;
-import org.document.DocumentChangeListener;
-import org.document.DocumentList;
-import org.document.DocumentPropertyStore;
-import org.document.PropertyStore;
+package org.document;
 
 /**
  *
  * @author V. Shyshkin
  */
 public class BindingState<T extends Document> implements Document {
-
+    private Object alias;
+    
     protected DocumentPropertyStore listStatePropertyStore;
     private DocumentChangeHandler documentChangeHandler;
 
@@ -24,7 +17,6 @@ public class BindingState<T extends Document> implements Document {
         this.listStatePropertyStore = new DocumentPropertyStore(this);
         this.documentChangeHandler = new DocumentChangeHandler();
     }
-
     //
     // Document interface implementation
     //
@@ -47,10 +39,8 @@ public class BindingState<T extends Document> implements Document {
     public DocumentList<T> getDocumentList() {
         return documentList;
     }
-
     /**
-     * Sets the specified list
-     *
+     * Sets the specified list.
      * @param list
      */
     public void setDocumentList(DocumentList<T> list) {
@@ -74,6 +64,16 @@ public class BindingState<T extends Document> implements Document {
     public void setDocumentChangeEvent(DocumentChangeEvent documentChangeEvent) {
         this.documentChangeEvent = documentChangeEvent;
         listStatePropertyStore.bind("documentChangeEvent", documentChangeEvent);
+    }
+    //
+    //
+    //
+    public Object getAlias() {
+       return alias;
+    }
+
+    public void setAlias(Object alias) {
+        this.alias = alias;
     }
 
     public class DocumentChangeHandler implements DocumentChangeListener {
@@ -101,5 +101,7 @@ public class BindingState<T extends Document> implements Document {
         public void react(DocumentChangeEvent event) {
             setDocumentChangeEvent(event);
         }
+        
+        
     }
 }

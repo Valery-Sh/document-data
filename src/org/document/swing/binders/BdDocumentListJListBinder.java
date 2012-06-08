@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,7 +32,6 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
     public BdDocumentListJListBinder(JList component, String... properties) {
         super(component);
         this.displayProperties = properties;
-        //component.addKeyListener(new KeySelectionManagerImpl());
         initBinders();
     }
 

@@ -8,4 +8,5 @@ import org.document.Document;
  */
 public interface BindingRecognizer {
     DocumentBinder getBinder(Document document);
+    Object getAlias(Document document);
 }

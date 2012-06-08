@@ -290,10 +290,7 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
             if ( sel == -1 ) {
                 sel = idx;
             }
-            
             return sel;
-            
-            //getComboBox().setSelectedIndex(idx);
         }
         public int selectionForKey(char c, int startPos, ComboBoxModelImpl model) {
             

@@ -1,7 +1,6 @@
 package org.document.binding;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.document.Document;
@@ -32,7 +31,6 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
 
     protected AbstractDocumentBinder() {
         binderListeners = new ArrayList<BinderListener>();
-        //documentErrorBinders = new ArrayList<T>();
         childs = new ArrayList<DocumentBinder>();
         documentErrorBinder = new DocumentErrorBinder();
         binders = new ArrayList<PropertyBinder>();
