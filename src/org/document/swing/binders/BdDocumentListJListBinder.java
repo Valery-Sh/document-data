@@ -251,12 +251,11 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
     public class KeySelectionManagerImpl implements KeyListener {
 
-        public int selectionForKey(char c, ListModel cbm) {
-            ListBoxModelImpl impl = (ListBoxModelImpl) cbm;
+        public void selectionForKey(char c) {
             int idx = getJList().getSelectedIndex();
             int sel = idx;
             if (locator == null) {
-                sel = selectionForKey(c, impl);
+                sel = selectionForKey(c, idx);
             }
             if (sel == -1) {
                 sel = idx;
@@ -264,10 +263,10 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
             getJList().setSelectedIndex(sel);
 
-            return sel;
         }
 
-        public int selectionForKey(char c, int startPos, ListBoxModelImpl model) {
+        public int selectionForKey(char c, int startPos) {
+            ListBoxModelImpl model = (ListBoxModelImpl) getJList().getModel();
 
             int idx = -1;
             if (Character.isWhitespace(c) || Character.isSpaceChar(idx)) {
@@ -293,7 +292,6 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             }
             return idx;
 
-            //getComboBox().setSelectedIndex(idx);
         }
 
         public void locatorSelection() {
@@ -332,30 +330,34 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         @Override
         public void keyTyped(KeyEvent ke) {
             char c = ke.getKeyChar();
-            int code = ke.getKeyCode();
             String tx = locator.getText();
-
+            int idx = getJList().getSelectedIndex();
             if (locator == null) {
-                this.selectionForKey(c, getJList().getModel());
+                selectionForKey(c);
             } else {
-                if (c == KeyEvent.VK_BACK_SPACE) {
-                    if (!tx.isEmpty()) {
-                       locator.setText(tx.substring(0, tx.length()-1));
-                    }
-                    //locator.setText(tx.substring(0, tx.length()));
-                } else {
-                    locator.setText(tx += Character.toString(c));
-                }
-                locatorSelection();
+                switch (c) {
+                    case KeyEvent.VK_BACK_SPACE:
+                        if (!tx.isEmpty()) {
+                            locator.setText(tx.substring(0, tx.length() - 1));
+                        }
+                        break;
+                    case KeyEvent.VK_HOME:
+                        locator.setText("");
+                        getJList().setSelectedIndex(idx >= 0 ? 0 : idx);
+                        break;
+                    case KeyEvent.VK_END:
+                        locator.setText("");
+                        getJList().setSelectedIndex(getJList().getModel().getSize() - 1);
+                        break;
+                    default:
+                        locator.setText(tx += Character.toString(c));
+                        locatorSelection();
+                }//switch
             }
-
         }
 
         @Override
         public void keyPressed(KeyEvent ke) {
-            if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                ke.setKeyCode(KeyEvent.VK_BACK_SPACE);
-            }
         }
 
         @Override
