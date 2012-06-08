@@ -380,7 +380,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         if (property == null) {
             return;
         }
-        if (!property.equals(getBoundProperty())) {
+        if ( (!property.equals(getBoundProperty())) && ! "*".equals(property)) {
             return;
         }
 

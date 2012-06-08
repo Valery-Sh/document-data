@@ -4,7 +4,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
@@ -25,12 +27,35 @@ import org.document.binding.PropertyBinder;
 public class BdDocumentListJListBinder<E extends Document> extends DocumentListBinder {//BindingStateBinder {
 
     protected String[] displayProperties;
+    protected KeyListener keyListener;
+    protected JLabel locator;
 
     public BdDocumentListJListBinder(JList component, String... properties) {
         super(component);
         this.displayProperties = properties;
-        component.addKeyListener(new KeySelectionManagerImpl());
+        //component.addKeyListener(new KeySelectionManagerImpl());
         initBinders();
+    }
+
+    @Override
+    protected void addComponentListeners() {
+        getJList().removeKeyListener(keyListener);
+        keyListener = new KeySelectionManagerImpl();
+        getJList().addKeyListener(keyListener);
+
+    }
+
+    @Override
+    protected void removeComponentListeners() {
+        getJList().removeKeyListener(keyListener);
+    }
+
+    public JLabel getLocator() {
+        return locator;
+    }
+
+    public void setLocator(JLabel locator) {
+        this.locator = locator;
     }
 
     public JList getJList() {
@@ -47,12 +72,12 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
     public void setDisplayProperties(String... displayProperties) {
         this.displayProperties = displayProperties;
-        if ( getJList().getModel() != null && (getJList().getModel() instanceof ListBoxModelImpl)) {
-            ((ListBoxModelImpl)getJList().getModel()).setProperties(displayProperties);
+        if (getJList().getModel() != null && (getJList().getModel() instanceof ListBoxModelImpl)) {
+            ((ListBoxModelImpl) getJList().getModel()).setProperties(displayProperties);
         }
         getJList().repaint();
     }
-    
+
     @Override
     protected PropertyBinder createSelectedBinder() {
         return new JListSelectionBinder((JList) getBoundObject());
@@ -128,7 +153,6 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             }
         }
 
-
         @Override
         protected int getComponentSelectedIndex() {
             return getBoundObject().getSelectedIndex();
@@ -197,9 +221,10 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         public String[] getProperties() {
             return properties;
         }
+
         public void setProperties(String[] properties) {
             this.properties = properties;
-            
+
         }
 
         @Override
@@ -222,70 +247,119 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         @Override
         public void removeListDataListener(ListDataListener l) {
         }
-        
-        public int selectionForKey(char c, int startPos) {
-            
+    }//class ListBoxModelImpl
+
+    public class KeySelectionManagerImpl implements KeyListener {
+
+        public int selectionForKey(char c, ListModel cbm) {
+            ListBoxModelImpl impl = (ListBoxModelImpl) cbm;
+            int idx = getJList().getSelectedIndex();
+            int sel = idx;
+            if (locator == null) {
+                sel = selectionForKey(c, impl);
+            }
+            if (sel == -1) {
+                sel = idx;
+            }
+
+            getJList().setSelectedIndex(sel);
+
+            return sel;
+        }
+
+        public int selectionForKey(char c, int startPos, ListBoxModelImpl model) {
+
             int idx = -1;
-            if ( Character.isWhitespace(c) || Character.isSpaceChar(idx)) {
+            if (Character.isWhitespace(c) || Character.isSpaceChar(idx)) {
                 return 0;
             }
-            if ( properties != null && properties.length > 0 ) {
-                for ( int i = startPos; i < getSize(); i++) {
-                    
-                    Object o = getElementAt(i);
-                    if ( o == null ) {
+            if (displayProperties != null && displayProperties.length > 0) {
+                for (int i = startPos; i < model.getSize(); i++) {
+
+                    Object o = model.getElementAt(i);
+                    if (o == null) {
                         continue;
                     }
                     String s = o.toString().trim();
-                    if ( s.length() == 0 ) {
+                    if (s.length() == 0) {
                         idx = 0;
                         break;
                     }
-                    if ( s.toUpperCase().startsWith(Character.toString(c).toUpperCase()) ) {
+                    if (s.toUpperCase().startsWith(Character.toString(c).toUpperCase())) {
                         idx = i;
                         break;
                     }
                 }
             }
             return idx;
-            
+
             //getComboBox().setSelectedIndex(idx);
         }
-        
-    }
-    
-    public class KeySelectionManagerImpl implements KeyListener {
-        public KeySelectionManagerImpl() {
-            //getJList().addKeyListener(this);
-        }
-        public int selectionForKey(char c, ListModel cbm) {
-            ListBoxModelImpl impl = (ListBoxModelImpl)cbm;
-            int idx = getJList().getSelectedIndex();
-            int sel = idx;
-            sel = impl.selectionForKey(c, idx);
-            if ( sel == -1 ) {
-                sel = idx;
+
+        public void locatorSelection() {
+            ListBoxModelImpl model = (ListBoxModelImpl) getJList().getModel();
+            String text = locator.getText();
+            int idx = -1;
+            if (text == null) {//Character.isWhitespace(c) || Character.isSpaceChar(idx)) {
+                return;
             }
-            
-            getJList().setSelectedIndex(sel);
-            return sel;
+            if (displayProperties != null && displayProperties.length > 0) {
+                for (int i = 0; i < model.getSize(); i++) {
+
+                    Object o = model.getElementAt(i);
+                    if (o == null) {
+                        continue;
+                    }
+                    String s = o.toString().trim();
+                    if (s.length() == 0) {
+                        idx = 0;
+                        break;
+                    }
+                    if (s.toUpperCase().startsWith(text.toUpperCase())) {
+                        idx = i;
+                        break;
+                    }
+                }
+            }
+            if (idx >= 0) {
+                getJList().setSelectedIndex(idx);
+            }
+
+
+            //getComboBox().setSelectedIndex(idx);
         }
 
         @Override
         public void keyTyped(KeyEvent ke) {
             char c = ke.getKeyChar();
-            this.selectionForKey(c, getJList().getModel());
+            int code = ke.getKeyCode();
+            String tx = locator.getText();
+
+            if (locator == null) {
+                this.selectionForKey(c, getJList().getModel());
+            } else {
+                if (c == KeyEvent.VK_BACK_SPACE) {
+                    if (!tx.isEmpty()) {
+                       locator.setText(tx.substring(0, tx.length()-1));
+                    }
+                    //locator.setText(tx.substring(0, tx.length()));
+                } else {
+                    locator.setText(tx += Character.toString(c));
+                }
+                locatorSelection();
+            }
+
         }
 
         @Override
         public void keyPressed(KeyEvent ke) {
+            if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                ke.setKeyCode(KeyEvent.VK_BACK_SPACE);
+            }
         }
 
         @Override
         public void keyReleased(KeyEvent ke) {
-
         }
-        
     }
-    
 }

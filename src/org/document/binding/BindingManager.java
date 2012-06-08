@@ -357,9 +357,10 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
            }
             
-            binder.addBinderListener(this);
-            documentListBinders.put(binder.getBoundObject(),binder);
-            binder.setBindingState(getBindingState());
+           binder.addBinderListener(this);
+           documentListBinders.put(binder.getBoundObject(),binder);
+           binder.setBindingState(getBindingState());
+           binder.addComponentListeners();
     }    
     /**
      * Unregisters a given binder.
@@ -369,8 +370,10 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             binder.removeBinderListener(this);
             documentListBinders.remove(binder.getBoundObject());
             binder.updateBinders();
+            //binder.removeComponentListeners();
     }
     private void remove(BindingStateBinder binder,Object oldBoundObject,Object newBoundObject) {
+//            oldBoundObject.removeComponentListeners();
             binder.removeBinderListener(this);
             documentListBinders.remove(oldBoundObject);
     }

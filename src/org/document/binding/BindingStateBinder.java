@@ -73,7 +73,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         e.setNewValue(newBoundObject);
      
         e.setOldValue(boundObject);
-
+        removeComponentListeners();
         updateBinders(null); // refreshes boundObjects with the same ones
         boundObject = newBoundObject;
         updateBinders(boundObject); // refreshes bondObjects with the new ones
@@ -171,6 +171,13 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
                 break;
         }
     }
+    protected void addComponentListeners() {
+        
+    }
+    protected void removeComponentListeners() {
+        
+    }
+    
     /*    protected <E extends Document> List<E> getList() {
      return null;
      }

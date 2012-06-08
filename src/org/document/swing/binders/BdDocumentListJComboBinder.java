@@ -32,8 +32,16 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
     public BdDocumentListJComboBinder(JComboBox component, String... properties) {
         super(component);
         this.displayProperties = properties;
-        component.setKeySelectionManager(new KeySelectionManagerImpl());
         initBinders();
+    }
+    @Override
+    protected void addComponentListeners() {
+        
+        getComboBox().setKeySelectionManager(new KeySelectionManagerImpl());
+    }
+    @Override
+    protected void removeComponentListeners() {
+        getComboBox().setKeySelectionManager(null);
     }
 
     public JComboBox getComboBox() {
@@ -268,16 +276,35 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
             return selectedObject;
         }
         
-        public int selectionForKey(char c, int startPos) {
+        
+    }
+    
+    public class KeySelectionManagerImpl implements JComboBox.KeySelectionManager {
+
+        @Override
+        public int selectionForKey(char c, ComboBoxModel cbm) {
+            ComboBoxModelImpl impl = (ComboBoxModelImpl)cbm;
+            int idx = getComboBox().getSelectedIndex();
+            int sel = idx;
+            sel = selectionForKey(c, idx,impl);
+            if ( sel == -1 ) {
+                sel = idx;
+            }
+            
+            return sel;
+            
+            //getComboBox().setSelectedIndex(idx);
+        }
+        public int selectionForKey(char c, int startPos, ComboBoxModelImpl model) {
             
             int idx = -1;
             if ( Character.isWhitespace(c) || Character.isSpaceChar(idx)) {
                 return 0;
             }
-            if ( properties != null && properties.length > 0 ) {
-                for ( int i = startPos; i < getSize(); i++) {
+            if ( displayProperties != null && displayProperties.length > 0 ) {
+                for ( int i = startPos; i < model.getSize(); i++) {
                     
-                    Object o = getElementAt(i);
+                    Object o = model.getElementAt(i);
                     if ( o == null ) {
                         continue;
                     }
@@ -293,28 +320,7 @@ public class BdDocumentListJComboBinder<E extends Document> extends BindingState
                 }
             }
             return idx;
-            
-            //getComboBox().setSelectedIndex(idx);
         }
         
-    }
-    
-    public class KeySelectionManagerImpl implements JComboBox.KeySelectionManager {
-
-        @Override
-        public int selectionForKey(char c, ComboBoxModel cbm) {
-            ComboBoxModelImpl impl = (ComboBoxModelImpl)cbm;
-            int idx = getComboBox().getSelectedIndex();
-            int sel = idx;
-            sel = impl.selectionForKey(c, idx);
-            if ( sel == -1 ) {
-                sel = idx;
-            }
-            
-            return sel;
-            
-            //getComboBox().setSelectedIndex(idx);
-        }
-        
-    }
+    }//class KeySelectionManagerImpl
 }
