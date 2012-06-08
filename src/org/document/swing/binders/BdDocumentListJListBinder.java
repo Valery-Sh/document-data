@@ -1,5 +1,7 @@
 package org.document.swing.binders;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -22,11 +24,12 @@ import org.document.binding.PropertyBinder;
  */
 public class BdDocumentListJListBinder<E extends Document> extends DocumentListBinder {//BindingStateBinder {
 
-    protected String[] properties;
+    protected String[] displayProperties;
 
     public BdDocumentListJListBinder(JList component, String... properties) {
         super(component);
-        this.properties = properties;
+        this.displayProperties = properties;
+        component.addKeyListener(new KeySelectionManagerImpl());
         initBinders();
     }
 
@@ -38,6 +41,18 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         setBoundObject(jList);
     }
 
+    public String[] getDisplayProperties() {
+        return displayProperties;
+    }
+
+    public void setDisplayProperties(String... displayProperties) {
+        this.displayProperties = displayProperties;
+        if ( getJList().getModel() != null && (getJList().getModel() instanceof ListBoxModelImpl)) {
+            ((ListBoxModelImpl)getJList().getModel()).setProperties(displayProperties);
+        }
+        getJList().repaint();
+    }
+    
     @Override
     protected PropertyBinder createSelectedBinder() {
         return new JListSelectionBinder((JList) getBoundObject());
@@ -45,7 +60,7 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
 
     @Override
     protected PropertyBinder createListModelBinder() {
-        return new JListModelBinder((JList) getBoundObject(), properties);
+        return new JListModelBinder((JList) getBoundObject(), displayProperties);
     }
 
     @Override
@@ -63,28 +78,21 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             return (JList) boundObject;
         }
 
-        public void setJList(JList jList) {
-            setBoundObject(jList);
-        }
-
         @Override
         protected void notifyComponentOf(DocumentChangeEvent event) {
             if (event == null) {
                 return;
             }
-
             BdDocumentListJListBinder.ListBoxModelImpl model = (BdDocumentListJListBinder.ListBoxModelImpl) getJList().getModel();
             String[] props = model.getProperties();
             if (Arrays.asList(props).contains(event.getPropertyName())) {
                 getJList().repaint();
-
             }
         }
     }
 
     public static class JListSelectionBinder<E extends Document> extends AbstractListSelectionBinder implements ListSelectionListener {
 
-        //protected JList boundObject;
         public JListSelectionBinder(JList component) {
             super(component);
         }
@@ -100,13 +108,11 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
                 return;
             }
             componentChanged(getBoundObject().getSelectedIndex());
-
         }
 
         @Override
         protected void addComponentListeners() {
             getBoundObject().addListSelectionListener(this);
-
         }
 
         @Override
@@ -120,50 +126,17 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
                     getBoundObject().removeListSelectionListener(l);
                 }
             }
-
         }
+
 
         @Override
-        public void setComponentValue(Object value) {
-            setComponentSelectedIndex((Integer) value);
-        }
-
         protected int getComponentSelectedIndex() {
             return getBoundObject().getSelectedIndex();
         }
 
-        protected void setComponentSelectedIndex(Integer selectedIndex) {
+        @Override
+        protected void setComponentSelectedIndex(int selectedIndex) {
             getBoundObject().setSelectedIndex(selectedIndex);
-        }
-
-        @Override
-        public Object getComponentValue() {
-            return getComponentSelectedIndex();
-        }
-
-        @Override
-        protected Object componentValueOf(Object dataValue) {
-
-            E doc = (E) dataValue;
-            if (doc == null) {
-                return -1;
-            }
-            return getDocuments().indexOf(doc);
-
-        }
-
-        @Override
-        protected Object propertyValueOf(Object compValue) {
-            int index = (Integer) compValue;
-            if (index < 0) {
-                return null;
-            }
-            return getDocuments().get(index);
-        }
-
-        @Override
-        public void initComponentDefault() {
-            //throw new UnsupportedOperationException("Not supported yet.");
         }
     }//class JListSelectionBinder
 
@@ -181,61 +154,28 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         public JList getBoundObject() {
             return (JList) boundObject;
         }
-/*
-        @Override
-        protected void addComponentListeners() {
-        }
 
         @Override
-        protected void removeComponentListeners() {
-        }
-       @Override
-        public Object getComponentValue() {
-            return getBoundObject().getModel();
-        }
-
-        @Override
-        public void setComponentValue(Object value) {
-            getBoundObject().clearSelection();
-            getBoundObject().setModel(new ListBoxModelImpl(properties, getDocuments()));
-        }
-
-        @Override
-        protected void initComponentDefault() {
-        }
-*/
-        @Override
-        protected void createDefaultComponentModel() {
+        protected void setDefaultComponentModel() {
             DefaultListModel m = new DefaultListModel();
             m.clear();
             getBoundObject().setModel(m);
         }
-        @Override
-        protected Object getModel() {
-            return getBoundObject().getModel();
-        }
-        @Override
-        protected void setModel(Object model){
-            getBoundObject().clearSelection();
-            getBoundObject().setModel(new ListBoxModelImpl(properties, getDocuments()));
-        }
-        
 
- 
         @Override
-        protected Object componentValueOf(Object dataValue) {
-            if (getDocuments() == null) {
-                return null;
-            }
+        protected Object createComponentModel() {
             return new ListBoxModelImpl(properties, getDocuments());
         }
 
         @Override
-        protected Object propertyValueOf(Object compValue) {
-            if (compValue == null) {
-                return null;
-            }
-            return ((ListBoxModelImpl) getBoundObject().getModel()).documents;
+        protected Object getModel() {
+            return getBoundObject().getModel();
+        }
+
+        @Override
+        protected void setModel(Object model) {
+            getBoundObject().clearSelection();
+            getBoundObject().setModel((ListModel) model);
         }
     }//class JListListModelBinder
 
@@ -257,6 +197,10 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         public String[] getProperties() {
             return properties;
         }
+        public void setProperties(String[] properties) {
+            this.properties = properties;
+            
+        }
 
         @Override
         public Object getElementAt(int index) {
@@ -266,7 +210,6 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
             }
             String result = "";
             for (String nm : this.properties) {
-
                 result = result += " " + d.propertyStore().get(nm);
             }
             return result;
@@ -279,5 +222,70 @@ public class BdDocumentListJListBinder<E extends Document> extends DocumentListB
         @Override
         public void removeListDataListener(ListDataListener l) {
         }
+        
+        public int selectionForKey(char c, int startPos) {
+            
+            int idx = -1;
+            if ( Character.isWhitespace(c) || Character.isSpaceChar(idx)) {
+                return 0;
+            }
+            if ( properties != null && properties.length > 0 ) {
+                for ( int i = startPos; i < getSize(); i++) {
+                    
+                    Object o = getElementAt(i);
+                    if ( o == null ) {
+                        continue;
+                    }
+                    String s = o.toString().trim();
+                    if ( s.length() == 0 ) {
+                        idx = 0;
+                        break;
+                    }
+                    if ( s.toUpperCase().startsWith(Character.toString(c).toUpperCase()) ) {
+                        idx = i;
+                        break;
+                    }
+                }
+            }
+            return idx;
+            
+            //getComboBox().setSelectedIndex(idx);
+        }
+        
     }
+    
+    public class KeySelectionManagerImpl implements KeyListener {
+        public KeySelectionManagerImpl() {
+            //getJList().addKeyListener(this);
+        }
+        public int selectionForKey(char c, ListModel cbm) {
+            ListBoxModelImpl impl = (ListBoxModelImpl)cbm;
+            int idx = getJList().getSelectedIndex();
+            int sel = idx;
+            sel = impl.selectionForKey(c, idx);
+            if ( sel == -1 ) {
+                sel = idx;
+            }
+            
+            getJList().setSelectedIndex(sel);
+            return sel;
+        }
+
+        @Override
+        public void keyTyped(KeyEvent ke) {
+            char c = ke.getKeyChar();
+            this.selectionForKey(c, getJList().getModel());
+        }
+
+        @Override
+        public void keyPressed(KeyEvent ke) {
+        }
+
+        @Override
+        public void keyReleased(KeyEvent ke) {
+
+        }
+        
+    }
+    
 }

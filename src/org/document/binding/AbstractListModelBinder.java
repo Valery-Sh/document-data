@@ -30,7 +30,6 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
         addComponentListeners();
     }
 
-    protected abstract void createDefaultComponentModel();
 
     @Override
     protected void addComponentListeners() {
@@ -57,6 +56,38 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
     protected abstract Object getModel();
 
     protected abstract void setModel(Object model);
+    
+    protected abstract Object createComponentModel();
+    
+    protected abstract void setDefaultComponentModel();
+
+    
+//    protected abstract void setModel(Object model);
+
+    /*    @Override
+     protected Object propertyValueOf(Object compValue) {
+     if (compValue == null) {
+     return null;
+     }
+     return ((BdDocumentListJComboBinder.ComboBoxModelImpl) getBoundObject().getModel()).documents;
+     }
+     */
+    @Override
+    protected Object propertyValueOf(Object compValue) {
+        if (compValue == null) {
+            return null;
+        }
+        return getDocuments();
+        //return ((BdDocumentListJComboBinder.ComboBoxModelImpl) getBoundObject().getModel()).documents;
+    }
+
+        @Override
+        protected Object componentValueOf(Object dataValue) {
+            if (getDocuments() == null) {
+                return null;
+            }
+            return createComponentModel();
+        }
 
     @Override
     public void setBoundObject(Object bo) {
@@ -65,7 +96,7 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
         }
         if (getBoundObject() != null) {
             removeComponentListeners();
-            createDefaultComponentModel();
+            setDefaultComponentModel();
         }
         boundObject = bo;
     }

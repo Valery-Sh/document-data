@@ -141,8 +141,8 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
 
 
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
-        e.setNewBoundObject(boundObject);
-        e.setOldBoundObject(this.boundObject);
+        e.setNewValue(boundObject);
+        e.setOldValue(this.boundObject);
 
         this.boundObject = boundObject;
 
@@ -313,8 +313,8 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         document = null;
 
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundPropertyReplace);
-        e.setNewBoundObject(propertyName);
-        e.setOldBoundObject(this.boundProperty);
+        e.setNewValue(propertyName);
+        e.setOldValue(this.boundProperty);
 
         this.boundProperty = propertyName;
 

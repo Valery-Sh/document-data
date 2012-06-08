@@ -213,7 +213,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
                     removeDocumentChangeListener((DocumentChangeListener) b);
                 }
 
-                remove(b);
+                //remove(b);
                 update(b);
                 break;
 

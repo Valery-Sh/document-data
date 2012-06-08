@@ -531,14 +531,14 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             case boundObjectReplace:
                 if ( event.getSource() instanceof BindingStateBinder ) {
                     BindingStateBinder b;
-                    if ( documentListBinders.containsKey(event.getOldBoundObject()) ) {
-                        b = documentListBinders.get(event.getOldBoundObject());
-                        remove(b,event.getOldBoundObject(),event.getNewBoundObject());
+                    if ( documentListBinders.containsKey(event.getOldValue()) ) {
+                        b = documentListBinders.get(event.getOldValue());
+                        remove(b,event.getOldValue(),event.getNewValue());
                     } else {
                         b = (BindingStateBinder)event.getSource();
                     }
                     
-                    if ( event.getNewBoundObject() != null ) {
+                    if ( event.getNewValue() != null ) {
                         bind(b);
                     }
                 }

@@ -41,13 +41,19 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         this.add(createSelectedBinder());
     }
 
+    protected void updateBinders(Object boundObject) {
+        updateBinder("selected", boundObject);
+        updateBinder("documentList", boundObject);
+        updateBinder("documentChangeEvent", boundObject);
+    }
+
     @Override
     protected void updateBinders() {
         updateBinder("selected", getBoundObject());
         updateBinder("documentList", getBoundObject());
         updateBinder("documentChangeEvent", getBoundObject());
     }
-
+    
     public BindingState getBindingState() {
         return super.getDocument();
     }
@@ -64,13 +70,13 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         //updateBinders(component);
 
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
-        e.setNewBoundObject(newBoundObject);
+        e.setNewValue(newBoundObject);
      
-        e.setOldBoundObject(boundObject);
+        e.setOldValue(boundObject);
 
-        updateBinders(); // refreshes boundObjects with the same ones
+        updateBinders(null); // refreshes boundObjects with the same ones
         boundObject = newBoundObject;
-        updateBinders(); // refreshes bondObjects with the new ones
+        updateBinders(boundObject); // refreshes bondObjects with the new ones
         //
         // Now we notify a bindingManager in order to rebind with the 
         // new boundObject

@@ -14,8 +14,8 @@ public class BinderEvent extends EventObject {
     private Object dataValue;    
     private ValidationException exception;
     private Binder binder;
-    private Object oldBoundObject;
-    private Object newBoundObject;
+    private Object oldValue;
+    private Object newValue;
     
     public BinderEvent(Binder source) {
         super(source);
@@ -84,20 +84,20 @@ public class BinderEvent extends EventObject {
         this.binder = binder;
     }
 
-    public Object getOldBoundObject() {
-        return oldBoundObject;
+    public Object getOldValue() {
+        return oldValue;
     }
 
-    public void setOldBoundObject(Object oldBoundObject) {
-        this.oldBoundObject = oldBoundObject;
+    public void setOldValue(Object oldValue) {
+        this.oldValue = oldValue;
     }
 
-    public Object getNewBoundObject() {
-        return newBoundObject;
+    public Object getNewValue() {
+        return newValue;
     }
 
-    public void setNewBoundObject(Object newBoundObject) {
-        this.newBoundObject = newBoundObject;
+    public void setNewValue(Object newValue) {
+        this.newValue = newValue;
     }
 
     
