@@ -1,4 +1,11 @@
-package org.document;
+package org.document.binding;
+
+import org.document.Document;
+import org.document.DocumentChangeEvent;
+import org.document.DocumentChangeListener;
+import org.document.DocumentList;
+import org.document.DocumentPropertyStore;
+import org.document.PropertyStore;
 
 /**
  *

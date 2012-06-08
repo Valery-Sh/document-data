@@ -2,7 +2,6 @@ package org.document.binding;
 
 import java.util.List;
 import javax.swing.JComponent;
-import org.document.BindingState;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
 

@@ -267,8 +267,9 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
 
         this.documentBinders.setDocument(selected);
         //Object o = listState.getDocument();
-        this.bindingState.setSelected(selected);
         this.bindingState.setAlias(aliasOf(selected));
+        this.bindingState.setSelected(selected);
+        
         this.selected = selected;
 
         afterSetSelected(old);

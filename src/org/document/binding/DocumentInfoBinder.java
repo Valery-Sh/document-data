@@ -1,6 +1,5 @@
 package org.document.binding;
 
-import org.document.BindingState;
 import org.document.Document;
 
 /**
