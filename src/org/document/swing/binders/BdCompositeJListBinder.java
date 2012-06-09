@@ -13,7 +13,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
-import org.document.binding.AbstractListDocumentChangeBinder1;
+import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
 import org.document.binding.DocumentListBinder;
@@ -135,31 +135,27 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         return documentChangeEventBinder;
     }
 
-    public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder1 {
+    public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder {
 
         public JListDocumentChangeBinder(BdCompositeJListBinder component) {
             super(component);
         }
 
-        @Override
+/*        @Override
         public BdCompositeJListBinder getBoundObject() {
             return (BdCompositeJListBinder) boundObject;
         }
-
-        public JList getJList() {
-            return (JList) this.getBoundObject().getBoundObject();
-        }
-
+*/
         @Override
         protected void notifyComponentOf(DocumentChangeEvent event) {
             if (event == null) {
                 return;
             }
-
-            BdCompositeJListBinder.ListBoxModelImpl model = (BdCompositeJListBinder.ListBoxModelImpl) getJList().getModel();
+            JList ls = (JList) ((BdCompositeJListBinder) boundObject).getBoundObject();
+            BdCompositeJListBinder.ListBoxModelImpl model = (BdCompositeJListBinder.ListBoxModelImpl) ls.getModel();
             String[] props = model.getProperties();
             if (Arrays.asList(props).contains(event.getPropertyName())) {
-                getJList().repaint();
+                ls.repaint();
             }
         }
     }
@@ -209,13 +205,13 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
             this.properties = properties;
         }
 
-        @Override
+/*        @Override
         public BdCompositeJListBinder getBoundObject() {
             return (BdCompositeJListBinder) boundObject;
         }
-
+*/
         protected JList getJList() {
-            return getBoundObject().getBoundObject();
+            return ((BdCompositeJListBinder) boundObject).getBoundObject();
         }
 
         @Override
@@ -305,7 +301,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         }
 
         public int selectionForKey(char c, int startPos) {
-            BdDocumentListJListBinder.ListBoxModelImpl model = (BdDocumentListJListBinder.ListBoxModelImpl) getJList().getModel();
+            BdCompositeJListBinder.ListBoxModelImpl model = (BdCompositeJListBinder.ListBoxModelImpl) getJList().getModel();
 
             int idx = -1;
             if (Character.isWhitespace(c) || Character.isSpaceChar(idx)) {

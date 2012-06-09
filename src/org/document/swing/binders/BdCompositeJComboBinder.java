@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.event.ListDataListener;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
-import org.document.binding.AbstractListDocumentChangeBinder1;
+import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
 import org.document.binding.BindingStateBinder;
@@ -114,7 +114,7 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
         return documentChangeEventBinder;
     }
 
-    public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder1 {
+    public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
 
         public JComboDocumentChangeBinder(BdCompositeJComboBinder component) {
             super(component);
