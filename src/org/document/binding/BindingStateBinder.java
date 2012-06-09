@@ -12,6 +12,9 @@ import java.util.List;
  * @author V. Shyshkin
  */
 public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingState> {
+    protected PropertyBinder selectedBinder;
+    protected PropertyBinder documentListBinder;
+    protected PropertyBinder documentChangeEventBinder;
 
     protected Object boundObject;
 
@@ -23,7 +26,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         super();
         this.boundObject = component;
     }
-    
+
     /**
      * The method creates objects of type
      * <code>PropertyBinder</code> for such properties as
@@ -41,11 +44,11 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         this.add(createSelectedBinder());
     }
 
-    protected void updateBinders(Object boundObject) {
+/*    protected void updateBinders(Object boundObject) {
         updateBinder("selected", boundObject);
         updateBinder("documentList", boundObject);
         updateBinder("documentChangeEvent", boundObject);
-        
+
     }
 
     @Override
@@ -54,7 +57,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         updateBinder("documentList", getBoundObject());
         updateBinder("documentChangeEvent", getBoundObject());
     }
-    
+*/
     public BindingState getBindingState() {
         return super.getDocument();
     }
@@ -67,22 +70,58 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         return boundObject;
     }
 
+    private PropertyBinder getBinderByName(String propertyName) {
+        Object component = getBoundObject();
+        for (PropertyBinder b : binders) {
+
+            if (!propertyName.equals(b.getBoundProperty())) {
+                continue;
+            }
+            return b;
+        }
+        return null;
+    }
+
     public void setBoundObject(Object newBoundObject) {
         //updateBinders(component);
 
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
         e.setNewValue(newBoundObject);
-     
+
         e.setOldValue(boundObject);
         removeComponentListeners();
-   //     updateBinders(null); // refreshes boundObjects with the same ones
-   //     boundObject = newBoundObject;
-   //     updateBinders(boundObject); // refreshes bondObjects with the new ones
+
+        
+
+        PropertyBinder sb = getBinderByName("selected");
+
+        sb.setBoundObject(null);
+        PropertyBinder dl = getBinderByName("documentList");
+        dl.setBoundObject(null);
+        PropertyBinder ce = getBinderByName("documentChangeEvent");
+        ce.setBoundObject(null);
+
+
+        //updateBoundObjectOf("documentList");
+        //updateBoundObjectOf("documentChangeEvent");
+
+        this.boundObject = newBoundObject;
+        sb.setBoundObject(this);
+        dl.setBoundObject(this);
+        ce.setBoundObject(this);
+
+        setDocument(document); // to refresh for changes
+        
+        addComponentListeners();                        
+        
+        //     updateBinders(null); // refreshes boundObjects with the same ones
+        //     boundObject = newBoundObject;
+        //     updateBinders(boundObject); // refreshes bondObjects with the new ones
         //
         // Now we notify a bindingManager in order to rebind with the 
         // new boundObject
         //
-        if (binderListeners == null) {
+        /*if (binderListeners == null) {
             return;
         }
         //
@@ -91,8 +130,10 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         List<BinderListener> list = new ArrayList<BinderListener>();
         list.addAll(binderListeners);
         for (BinderListener l : list) {
-            l.react(e);
+            //l.react(e);
         }
+        */
+        
     }
 
     /**
@@ -100,10 +141,10 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
      * @param propertyName
      * @param component
      */
-    protected void updateBinder(String propertyName, Object component) {
+/*    protected void updateBinder(String propertyName, Object component) {
         for (PropertyBinder b : binders) {
-            
-            if ( ! propertyName.equals(b.getBoundProperty())) {
+
+            if (!propertyName.equals(b.getBoundProperty())) {
                 continue;
             }
             //b.removeBoundObject();
@@ -111,22 +152,11 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
             //b.setBoundObject(component);
         }
     }
+
     protected void updateBinderOLD(String propertyName, Object component) {
         for (PropertyBinder b : binders) {
-            
-            if ( ! propertyName.equals(b.getBoundProperty())) {
-                continue;
-            }
-            b.setBoundObject(null);
-            b.setBoundObject(component);
-        }
-    }
-    
-    protected void updateBinder(String propertyName) {
-        Object component = getBoundObject();
-        for (PropertyBinder b : binders) {
-            
-            if ( ! propertyName.equals(b.getBoundProperty())) {
+
+            if (!propertyName.equals(b.getBoundProperty())) {
                 continue;
             }
             b.setBoundObject(null);
@@ -134,10 +164,16 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         }
     }
 
-/*    private void updateBinders(Object component) {
-        updateBinder("selected", component);
-        updateBinder("documentList", component);
-        updateBinder("documentChangeEvent", component);
+    protected void updateBinder(String propertyName) {
+        Object component = getBoundObject();
+        for (PropertyBinder b : binders) {
+
+            if (!propertyName.equals(b.getBoundProperty())) {
+                continue;
+            }
+            b.setBoundObject(null);
+            b.setBoundObject(component);
+        }
     }
 */
     protected abstract PropertyBinder createSelectedBinder();
@@ -184,13 +220,12 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
                 break;
         }
     }
+
     protected void addComponentListeners() {
-        
     }
+
     protected void removeComponentListeners() {
-        
     }
-    
     /*    protected <E extends Document> List<E> getList() {
      return null;
      }

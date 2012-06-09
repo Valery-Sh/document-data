@@ -560,13 +560,13 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                     BindingStateBinder b;
                     if ( documentListBinders.containsKey(event.getOldValue()) ) {
                         b = documentListBinders.get(event.getOldValue());
-                        remove(b,event.getOldValue(),event.getNewValue());
+                       // remove(b,event.getOldValue(),event.getNewValue());
                     } else {
                         b = (BindingStateBinder)event.getSource();
                     }
                     
                     if ( event.getNewValue() != null ) {
-                        bind(b);
+                       // bind(b);
                     }
                 }
                 break;

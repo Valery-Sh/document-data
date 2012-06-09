@@ -29,10 +29,12 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
     }
 
     @Override
-    protected abstract void addComponentListeners();
+    protected void addComponentListeners(){
+    }
 
     @Override
-    protected abstract void removeComponentListeners();
+    protected void removeComponentListeners() {
+    }
 
     protected abstract int getComponentSelectedIndex();
 
