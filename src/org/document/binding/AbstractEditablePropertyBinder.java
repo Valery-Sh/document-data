@@ -297,9 +297,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if ( ! property.equals(getBoundProperty()) ) {
             return;
         }
-//        if ( getBoundObject() == null ) {
-//            return;
-//        }
+        if ( getBoundObject() == null ) {
+            return;
+        }
         
         if (binderIsStillChangingProperty) {
             return;

@@ -45,6 +45,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         updateBinder("selected", boundObject);
         updateBinder("documentList", boundObject);
         updateBinder("documentChangeEvent", boundObject);
+        
     }
 
     @Override
@@ -74,9 +75,9 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
      
         e.setOldValue(boundObject);
         removeComponentListeners();
-        updateBinders(null); // refreshes boundObjects with the same ones
-        boundObject = newBoundObject;
-        updateBinders(boundObject); // refreshes bondObjects with the new ones
+   //     updateBinders(null); // refreshes boundObjects with the same ones
+   //     boundObject = newBoundObject;
+   //     updateBinders(boundObject); // refreshes bondObjects with the new ones
         //
         // Now we notify a bindingManager in order to rebind with the 
         // new boundObject
@@ -105,10 +106,22 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
             if ( ! propertyName.equals(b.getBoundProperty())) {
                 continue;
             }
+            //b.removeBoundObject();
+            b.setBoundObject(component);
+            //b.setBoundObject(component);
+        }
+    }
+    protected void updateBinderOLD(String propertyName, Object component) {
+        for (PropertyBinder b : binders) {
+            
+            if ( ! propertyName.equals(b.getBoundProperty())) {
+                continue;
+            }
             b.setBoundObject(null);
             b.setBoundObject(component);
         }
     }
+    
     protected void updateBinder(String propertyName) {
         Object component = getBoundObject();
         for (PropertyBinder b : binders) {

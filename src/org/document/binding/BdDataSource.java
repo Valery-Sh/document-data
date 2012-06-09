@@ -76,9 +76,6 @@ public class BdDataSource<T extends Document> {//extends JComponent{
     public void bind(String propertyName,Class alias,HasBinder object) {
         this.bindingManager.bind(propertyName, alias, object);
     }
-    public void bind(Class alias,HasBinder object) {
-        this.bindingManager.bind(alias, object);
-    }
     public void bind(HasBinder object) {
         this.bindingManager.bind(object);
     }

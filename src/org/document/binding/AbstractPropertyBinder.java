@@ -134,16 +134,12 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         if (this.boundObject == boundObject) {
             return;
         }
-
-        removeComponentListeners();
-
-        document = null;
-
-
-        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
-        e.setNewValue(boundObject);
-        e.setOldValue(this.boundObject);
-
+        Document current = document;
+        removeBoundObject();
+        if ( boundObject == null ) {
+           return;
+        }
+        document = current;
         this.boundObject = boundObject;
 
         //
@@ -153,6 +149,12 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         if (binderListeners == null) {
             return;
         }
+        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
+        e.setNewValue(boundObject);
+        e.setOldValue(this.boundObject);
+        
+        //initComponentDefault();
+        
         //
         // create a copy of binderListeners since some listeners may remove themself 
         //
@@ -161,8 +163,15 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         for (BinderListener l : list) {
             l.react(e);
         }
-    }
 
+        update(BinderEvent.Action.boundObjectReplace);
+    }
+    protected void removeBoundObject() {
+
+        removeComponentListeners();
+        boundObject = null;
+        document = null;
+    }
     /**
      * Indicates whether the binder is in suspend state.
      *
@@ -290,6 +299,29 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         }//switch
     }
 
+    protected void update(BinderEvent.Action action) {
+        switch (action) {
+            case boundPropertyReplace:
+                if (document != null && getBoundProperty() != null) {
+
+                    propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
+                } else if (document == null) {
+                    initComponentDefault();
+                }
+                break;
+            case boundObjectReplace:
+                
+                if (document != null && getBoundProperty() != null) {
+
+    //                propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
+                } else if (document == null) {
+                    initComponentDefault();
+                }
+                break;
+                
+        }
+    }
+
     /**
      * @return the bound property name
      */
@@ -310,7 +342,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
             return;
         }
         removeComponentListeners();
-        document = null;
+        //document = null;
 
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundPropertyReplace);
         e.setNewValue(propertyName);
@@ -333,6 +365,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         for (BinderListener l : list) {
             l.react(e);
         }
+        update(BinderEvent.Action.boundPropertyReplace);
     }
 
     /**
@@ -380,7 +413,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         if (property == null) {
             return;
         }
-        if ( (!property.equals(getBoundProperty())) && ! "*".equals(property)) {
+        if ((!property.equals(getBoundProperty())) && !"*".equals(property)) {
             return;
         }
 

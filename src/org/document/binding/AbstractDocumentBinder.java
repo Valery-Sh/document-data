@@ -243,33 +243,6 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
     public void removeBinderListener(BinderListener l) {
     }
 
-    protected void remove(PropertyBinder binder, Map<String, List> binderMap) {
-        String propPath = ((PropertyBinder) binder).getBoundProperty();
-        List blist = binderMap.get(propPath);
-        if (blist == null || blist.isEmpty()) {
-            return;
-        }
-        binder.removeBinderListener(this);
-        if (binder instanceof DocumentChangeListener) {
-            removeDocumentChangeListener((DocumentChangeListener) binder);
-        }
-
-        //removeDocumentChangeListener(binder);
-        blist.remove(binder);
-        if (blist.isEmpty()) {
-            binderMap.remove(((PropertyBinder) binder).getBoundProperty());
-        }
-
-    }
-
-    /*    protected void remove(PropertyBinder binder, List binderList) {
-     binderList.remove(binder);
-     binder.removeBinderListener(this);
-     if (binder instanceof DocumentChangeListener) {
-     removeDocumentChangeListener((DocumentChangeListener) binder);
-     }
-     }
-     */
     public void remove(PropertyBinder binder) {
         if (binder == null) {
             return;
@@ -279,6 +252,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         if (binder instanceof DocumentChangeListener) {
             removeDocumentChangeListener((DocumentChangeListener) binder);
         }
+        setDocument(document); // to refresh to reflect changes
 
         /*        String propertyName = ((PropertyBinder) binder).getBoundProperty();
          if (propertyName == null) {
@@ -322,7 +296,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
                 resume(propertyName);
             }
         }
-
+        setDocument(document); // to refresh the added binder
 
 //        bind(propertyName);
 

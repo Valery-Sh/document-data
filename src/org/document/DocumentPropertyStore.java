@@ -72,7 +72,8 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         }
         this.source = source;
         localSchema = SchemaUtils.createSchema(source.getClass());
-        alias = source.getClass().getName();
+        //alias = source.getClass().getName();
+        alias = null;
     }
 
     /**
