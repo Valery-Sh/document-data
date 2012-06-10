@@ -10,7 +10,7 @@ import org.document.Document;
  * 
  * @author V. Shyshkin
  */
-public interface PropertyBinder<E extends Document> extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
+public interface PropertyBinder<E extends Document> extends Binder,HasContext {//,DocumentChangeListener {//, HasDocumentAlias {
     
     void unbind();
     

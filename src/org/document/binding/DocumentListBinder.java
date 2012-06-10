@@ -39,8 +39,10 @@ public abstract class DocumentListBinder<E extends Document> extends BindingStat
         this.setBindingState(bs);
         DocumentList dl = new DocumentList(list);
         bs.setDocumentList(dl);
-        //setDocument(bs);
         this.list = list;
+        setSelected(0);
+        //setDocument(bs);
+        
     }
     
     public void setSelected(int index) {

@@ -61,7 +61,7 @@ import org.document.DocumentChangeListener;
  * @author V. Shyshkin
  */
 public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder, DocumentChangeListener {
-
+    private BindingContext context;
     private String alias;
    // protected Object boundObject;
     protected String boundProperty;
@@ -83,6 +83,16 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
     }
 
     @Override
+    public BindingContext getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext(BindingContext context) {
+        this.context = context;
+    }
+
+    @Override
     public void setAlias(String alias) {
         if (alias == null) {
             this.alias = "default";
@@ -96,6 +106,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         if ( binderListeners != null ) {
             binderListeners.clear();
         }
+        document = null;
     }
     /**
      * Returns an instance of class

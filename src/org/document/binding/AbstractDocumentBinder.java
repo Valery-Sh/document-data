@@ -39,6 +39,18 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         binders = new ArrayList<PropertyBinder>();
         
     }
+
+    public void unbind() {
+        removeBoundObjectListeners();
+        if ( binderListeners != null ) {
+            binderListeners.clear();
+        }
+        document = null;
+        for ( PropertyBinder b : binders ) {
+            b.unbind();
+        }
+    }
+    
     public PropertyStore getDocumentStore() {
         return document.propertyStore();
     }

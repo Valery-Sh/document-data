@@ -51,6 +51,9 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
 
     @Override
     public void setComponentValue(Object value) {
+        if ( value == null ) {
+            return;
+        }
         setModel(value);
     }
 

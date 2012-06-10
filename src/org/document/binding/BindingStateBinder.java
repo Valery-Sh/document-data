@@ -41,6 +41,23 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         this.add(createDocumentChangeEventBinder());
         this.add(createSelectedBinder());
     }
+    @Override
+    public void unbind() {
+        removeBoundObjectListeners();
+        if ( binderListeners != null ) {
+            binderListeners.clear();
+        }
+        document = null;
+        for ( PropertyBinder b : binders ) {
+            if ( "selected".equals(b.getBoundProperty()) ||
+                 "documentList".equals(b.getBoundProperty()) ||
+                 "documentChangeEvent".equals(b.getBoundProperty())   
+                    ) {
+                continue;
+            }
+            b.unbind();
+        }
+    }
 
 /*    protected void updateBinders(Object boundObject) {
         updateBinder("selected", boundObject);

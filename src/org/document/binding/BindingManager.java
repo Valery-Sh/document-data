@@ -157,23 +157,47 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         if ( sourceList == null ) {
             return;
         }
+        this.sourceList = sourceList;
+        this.bindingState = new BindingState();
+
         initSourceList(sourceList);
     }
     private void initSourceList(List sourceList) {
-        this.sourceList = sourceList;
-        this.bindingState = new BindingState();
-        bindingState.setDocumentList(new DocumentList(sourceList));
-        if ( bindingState.getDocumentList() != null ) {
-            for ( T d : (DocumentList<T>)bindingState.getDocumentList()) {
+        //this.sourceList = sourceList;
+        //this.bindingState = new BindingState();
+        //bindingState.setDocumentList(new DocumentList(sourceList));
+        DocumentList<T> dl = new DocumentList(sourceList);
+        //if ( bindingState.getDocumentList() != null ) {
+        
+            //for ( T d : (DocumentList<T>)bindingState.getDocumentList()) {
+            for( T d : dl ) {
                 //d.propertyStore().addDocumentChangeListener(listState.documentChangeHandler());
                 updateAttachState(d, true);
             }
+        //}
+        if ( documentListBinders == null ) {
+            documentListBinders = new HashMap<Object,BindingStateBinder>(); 
         }
-        documentListBinders = new HashMap<Object,BindingStateBinder>(); 
+        bindingState.setDocumentList(dl);
+        
+        for ( BindingStateBinder bs : documentListBinders.values()) {
+            //bs.setBindingState(bindingState);
+            bind_1(bs);
+            
+        }
         getDocuments().addListChangeListener(this);
+        
+    //    bindingState.setDocumentList(dl);
+        setSelected(dl.get(0));
+        if ( ! isActive() ) {
+            //setActive(true);
+        }
         
     }
     public DocumentList getDocuments() {
+        if ( getBindingState() == null ) {
+            return null;
+        }
         return (DocumentList)getBindingState().getDocumentList();
     }
     
@@ -196,6 +220,25 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     }
     
     public void setSourceList(List sourceList) {
+        
+        if ( documentListBinders != null ) {
+            for ( BindingStateBinder b : documentListBinders.values()) {
+                b.unbind();
+            }
+        }
+        if ( documentBinders != null ) {
+            for ( Object o : documentBinders.documentBinders ){
+                ((DocumentBinder)o).unbind();
+            }
+        }
+        
+        if ( getDocuments() != null ) {
+            getDocuments().removeListChangeListener(this);
+        }
+        
+        this.sourceList = sourceList;        
+        this.bindingState = new BindingState();
+
         initSourceList(sourceList);
     }
 
@@ -363,6 +406,17 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
            binder.setBindingState(getBindingState());
            binder.addBoundObjectListeners();
     }    
+    public void bind_1(BindingStateBinder binder) {
+          if (sourceList == null) {
+                throw new IllegalArgumentException("A List Binders are not supported wnen no source list is defined");
+           }
+            
+           binder.addBinderListener(this);
+           //documentListBinders.put(binder.getBoundObject(),binder);
+           binder.setBindingState(getBindingState());
+           binder.addBoundObjectListeners();
+    }    
+    
     /**
      * Unregisters a given binder.
      * @param binder the binder of type {@link BindingStateBinder} to be unregistered
