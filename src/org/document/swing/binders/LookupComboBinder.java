@@ -36,12 +36,12 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     }
     
     @Override
-    protected void addComponentListeners() {
+    protected void addBoundObjectListeners() {
         ((JComboBox)boundObject).addActionListener(this);
     }
 
     @Override
-    protected void removeComponentListeners() {
+    protected void removeBoundObjectListeners() {
         ((JComboBox)boundObject).removeActionListener(this);
     }
 

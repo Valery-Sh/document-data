@@ -195,7 +195,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
             case componentChangeError:
                 documentErrorBinder.notifyError(event.getPropertyName(), event.getException());
                 break;
-            case boundObjectReplace:
+ /*           case boundObjectReplace:
                 PropertyBinder b = (PropertyBinder) event.getSource();
                 b.removeBinderListener(this);
                 if (b instanceof DocumentChangeListener) {
@@ -214,7 +214,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
                 //remove(b);
                 update(b);
                 break;
-
+*/
 
         }
     }
@@ -265,6 +265,7 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
 
     protected void updateBinders() {
         for (PropertyBinder b : binders) {
+            
             b.removeBinderListener(this);
             if (b instanceof DocumentChangeListener) {
                 removeDocumentChangeListener((DocumentChangeListener) b);

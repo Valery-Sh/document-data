@@ -13,12 +13,12 @@ import org.document.binding.AbstractEditablePropertyBinder;
 public class DemoTextFieldBinder extends AbstractEditablePropertyBinder {
 
     @Override
-    protected void addComponentListeners() {
+    protected void addBoundObjectListeners() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    protected void removeComponentListeners() {
+    protected void removeBoundObjectListeners() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

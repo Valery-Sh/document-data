@@ -87,7 +87,13 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
             this.alias = alias;
         }
     }
-
+    @Override
+    public void unbind() {
+        removeBoundObjectListeners();
+        if ( binderListeners != null ) {
+            binderListeners.clear();
+        }
+    }
     /**
      * Returns an instance of class
      * <code>BinderConverter</code> that should be used to convert the value of
@@ -120,58 +126,14 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         return document;
     }
 
-    @Override
-    public Object getBoundObject() {
-        return boundObject;
-    }
 
-    /**
-     *
-     * @param boundObject the bound object to be set
+    /*    protected void removeBoundObject() {
+
+     removeBoundObjectListeners();
+     boundObject = null;
+     document = null;
+     }
      */
-    @Override
-    public void setBoundObject(Object boundObject) {
-        if (this.boundObject == boundObject) {
-            return;
-        }
-        Document current = document;
-        removeBoundObject();
-        if ( boundObject == null ) {
-           return;
-        }
-        document = current;
-        this.boundObject = boundObject;
-
-        //
-        // Now we notify a DocumentBinder in order to rebind with the 
-        // new boundObject
-        //
-        if (binderListeners == null) {
-            return;
-        }
-        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
-        e.setNewValue(boundObject);
-        e.setOldValue(this.boundObject);
-        
-        //initComponentDefault();
-        
-        //
-        // create a copy of binderListeners since some listeners may remove themself 
-        //
-        List<BinderListener> list = new ArrayList<BinderListener>();
-        list.addAll(binderListeners);
-        for (BinderListener l : list) {
-            l.react(e);
-        }
-
-        update(BinderEvent.Action.boundObjectReplace);
-    }
-    protected void removeBoundObject() {
-
-        removeComponentListeners();
-        boundObject = null;
-        document = null;
-    }
     /**
      * Indicates whether the binder is in suspend state.
      *
@@ -299,26 +261,56 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         }//switch
     }
 
-    protected void update(BinderEvent.Action action) {
-        switch (action) {
-            case boundPropertyReplace:
-                if (document != null && getBoundProperty() != null) {
+    /*    protected void update(BinderEvent.Action action) {
+     switch (action) {
+     case boundPropertyReplace:
+     if (document != null && getBoundProperty() != null) {
 
-                    propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
-                } else if (document == null) {
-                    initComponentDefault();
-                }
-                break;
-            case boundObjectReplace:
-                
-                if (document != null && getBoundProperty() != null) {
+     propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
+     } else if (document == null) {
+     initComponentDefault();
+     }
+     break;
+     case boundObjectReplace:
 
-    //                propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
-                } else if (document == null) {
-                    initComponentDefault();
-                }
-                break;
-                
+     if (document != null && getBoundProperty() != null) {
+
+     propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
+     } else if (document == null) {
+     initComponentDefault();
+     }
+     break;
+     }
+     }
+     */
+    public Object getBoundObject() {
+        return boundObject;
+    }
+
+    /**
+     *
+     * @param boundObject the bound object to be set
+     */
+    @Override
+    public void setBoundObject(Object boundObject) {
+        if (this.boundObject == boundObject) {
+            return;
+        }
+        removeBoundObjectListeners();
+
+        initComponentDefault();
+        if (boundObject == null) {
+            this.boundObject = null;
+            return;
+        }
+        this.boundObject = boundObject;
+
+        addBoundObjectListeners();
+
+        if (document != null && getBoundProperty() != null) {
+            propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
+        } else if (document == null) {
+            initComponentDefault();
         }
     }
 
@@ -341,31 +333,47 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         if (this.boundProperty != null && this.boundProperty.equals(propertyName)) {
             return;
         }
-        removeComponentListeners();
+        removeBoundObjectListeners();
         //document = null;
-
-        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundPropertyReplace);
-        e.setNewValue(propertyName);
-        e.setOldValue(this.boundProperty);
-
-        this.boundProperty = propertyName;
-
-        //
-        // Now we notify a DocumentBinder in order to rebind with the 
-        // new boundObject
-        //
-        if (binderListeners == null) {
+        initComponentDefault();
+        if (boundProperty == null) {
+            this.boundProperty = null;
             return;
         }
+        this.boundProperty = propertyName;
+        addBoundObjectListeners();
         //
-        // create a copy of binderListeners since some listeners may remove themself 
+        // refresh with the new property
         //
-        List<BinderListener> list = new ArrayList<BinderListener>();
-        list.addAll(binderListeners);
-        for (BinderListener l : list) {
-            l.react(e);
+        if (document != null && getBoundProperty() != null) {
+            propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
+        } else if (document == null) {
+            initComponentDefault();
         }
-        update(BinderEvent.Action.boundPropertyReplace);
+
+        /*        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundPropertyReplace);
+         e.setNewValue(propertyName);
+         e.setOldValue(this.boundProperty);
+
+         this.boundProperty = propertyName;
+
+         //
+         // Now we notify a DocumentBinder in order to rebind with the 
+         // new boundObject
+         //
+         if (binderListeners == null) {
+         return;
+         }
+         //
+         // create a copy of binderListeners since some listeners may remove themself 
+         //
+         List<BinderListener> list = new ArrayList<BinderListener>();
+         list.addAll(binderListeners);
+         for (BinderListener l : list) {
+         l.react(e);
+         }
+         update(BinderEvent.Action.boundPropertyReplace);
+         */
     }
 
     /**
@@ -476,11 +484,11 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
      * Should be implemented if the binder is a listener of the bound component
      * event. The implementation is a component specific.
      */
-    protected abstract void addComponentListeners();
+    protected abstract void addBoundObjectListeners();
 
     /**
      * Should be implemented if the binder is a listener of the bound component
      * event. The implementation is a component specific.
      */
-    protected abstract void removeComponentListeners();
+    protected abstract void removeBoundObjectListeners();
 }

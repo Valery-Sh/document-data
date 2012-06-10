@@ -124,11 +124,11 @@ public class AbstractEditablePropertyBinderTest {
             this.component = component;
         }
         @Override
-        public void addComponentListeners() {
+        public void addBoundObjectListeners() {
         }
 
         @Override
-        public void removeComponentListeners() {
+        public void removeBoundObjectListeners() {
         }
 
         @Override

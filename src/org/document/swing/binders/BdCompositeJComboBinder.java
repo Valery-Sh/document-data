@@ -64,6 +64,10 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
             }
         }
     }
+    @Override
+    protected void initComponentDefault() {
+        ((JComboModelBinder)documentListBinder).setDefaultComponentModel();
+    }
 
     @Override
     public JComboBox getBoundObject() {

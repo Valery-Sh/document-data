@@ -70,14 +70,18 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         }
 
     }
-
+    
+    @Override
+    protected void initComponentDefault() {
+        ((JListModelBinder)documentListBinder).setDefaultComponentModel();
+    }
 /*    @Override
-    protected void addComponentListeners() {
+    protected void addBoundObjectListeners() {
         getJList().addListSelectionListener(getBoundObject());
     }
 
     @Override
-    protected void removeComponentListeners() {
+    protected void removeBoundObjectListeners() {
         if (getJList() == null) {
             return;
         }

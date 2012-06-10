@@ -57,11 +57,11 @@ public class DocumentInfoBinder extends DocumentListBinder {
         }
         
         @Override
-        protected void addComponentListeners() {
+        protected void addBoundObjectListeners() {
         }
 
         @Override
-        protected void removeComponentListeners() {
+        protected void removeBoundObjectListeners() {
         }
 
         @Override
@@ -74,6 +74,11 @@ public class DocumentInfoBinder extends DocumentListBinder {
         @Override
         protected void setComponentSelectedIndex(int index) {
             
+        }
+
+        @Override
+        public void unbind() {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
     }

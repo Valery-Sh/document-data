@@ -11,6 +11,7 @@ import org.document.Document;
  * @author V. Shyshkin
  */
 public interface PropertyBinder<E extends Document> extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
+    void unbind();
     /**
      * Returns a document whose property is used for binding.
      * @return returns an object of type {@link org.document.Document}

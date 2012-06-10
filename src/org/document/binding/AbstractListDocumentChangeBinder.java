@@ -68,10 +68,10 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
     }
 
     @Override
-    protected void addComponentListeners() {
+    protected void addBoundObjectListeners() {
     }
 
     @Override
-    protected void removeComponentListeners() {
+    protected void removeBoundObjectListeners() {
     }
 }

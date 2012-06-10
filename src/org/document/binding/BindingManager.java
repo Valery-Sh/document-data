@@ -305,7 +305,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     public void bind(PropertyBinder binder) {
         documentBinders.addBinder(binder);
     }
-    public void mapAlias(String alias, Class documentClass) {
+    public void registerAlias(String alias, Class documentClass) {
         DocumentBinder b = documentBinderOf(alias);
         String s = documentClass == null ? "" : documentClass.getName();
         b.setDocumentClassName(s);
@@ -555,7 +555,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 }
                 setSelected(newDoc);
                 break;
-            case boundObjectReplace:
+/*            case boundObjectReplace:
                 if ( event.getSource() instanceof BindingStateBinder ) {
                     BindingStateBinder b;
                     if ( documentListBinders.containsKey(event.getOldValue()) ) {
@@ -570,6 +570,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                     }
                 }
                 break;
+                */ 
         }
     }
     /**

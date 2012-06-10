@@ -26,17 +26,17 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
     }
 
     protected final void initBinder() {
-        removeComponentListeners();
-        addComponentListeners();
+        removeBoundObjectListeners();
+        addBoundObjectListeners();
     }
 
 
     @Override
-    protected void addComponentListeners() {
+    protected void addBoundObjectListeners() {
     }
 
     @Override
-    protected void removeComponentListeners() {
+    protected void removeBoundObjectListeners() {
     }
 
     @Override
@@ -95,7 +95,7 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
             return;
         }
         if (getBoundObject() != null) {
-            removeComponentListeners();
+            removeBoundObjectListeners();
             setDefaultComponentModel();
         }
         boundObject = bo;

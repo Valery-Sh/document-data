@@ -24,16 +24,16 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
     }
 
     protected final void initBinder() {
-        removeComponentListeners();
-        addComponentListeners();
+        removeBoundObjectListeners();
+        addBoundObjectListeners();
     }
 
     @Override
-    protected void addComponentListeners(){
+    protected void addBoundObjectListeners(){
     }
 
     @Override
-    protected void removeComponentListeners() {
+    protected void removeBoundObjectListeners() {
     }
 
     protected abstract int getComponentSelectedIndex();

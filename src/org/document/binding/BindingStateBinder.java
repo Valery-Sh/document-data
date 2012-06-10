@@ -4,7 +4,6 @@
  */
 package org.document.binding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -90,10 +89,10 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
 
         e.setOldValue(boundObject);
         removeComponentListeners();
-
+        initComponentDefault();
         
 
-        PropertyBinder sb = getBinderByName("selected");
+/*        PropertyBinder sb = getBinderByName("selected");
 
         sb.setBoundObject(null);
         PropertyBinder dl = getBinderByName("documentList");
@@ -109,11 +108,11 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         sb.setBoundObject(this);
         dl.setBoundObject(this);
         ce.setBoundObject(this);
-
-        setDocument(document); // to refresh for changes
-        
+*/
+        //setDocument(document); // to refresh for changes
+        this.boundObject = newBoundObject;
         addComponentListeners();                        
-        
+        setDocument(document); // to refresh for changes
         //     updateBinders(null); // refreshes boundObjects with the same ones
         //     boundObject = newBoundObject;
         //     updateBinders(boundObject); // refreshes bondObjects with the new ones
@@ -135,7 +134,10 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         */
         
     }
-
+    
+    protected void initComponentDefault() {
+        
+    }
     /**
      *
      * @param propertyName

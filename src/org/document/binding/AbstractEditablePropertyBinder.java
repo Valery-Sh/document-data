@@ -7,8 +7,8 @@ import org.document.*;
  * in order  to ensure processing of events received from the component.
  * In order to subclass you should implement the following abstract methods:
  * <ol>
- *   <li>{@link #addComponentListeners()}</li>
- *   <li>{@link #removeComponentListeners()}</li>
+ *   <li>{@link #addBoundObjectListeners()}</li>
+ *   <li>{@link #removeBoundObjectListeners()}</li>
  *   <li>{@link #getComponentValue()}</li>
  *   <li>{@link #setComponentValue(java.lang.Object) }</li>
  *   <li>{@link #propertyValueOf(java.lang.Object)  }</li>
@@ -221,7 +221,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                     return;
                 }
                 
-                removeComponentListeners();
+                removeBoundObjectListeners();
                 unbind();
                 break;
             case bind:
@@ -312,8 +312,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (!needChangeComponent(convertedValue)) {
             return;
         }
-        removeComponentListeners();
+        removeBoundObjectListeners();
         setComponentValue(convertedValue);
-        addComponentListeners();
+        addBoundObjectListeners();
     }
 }
