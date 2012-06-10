@@ -14,6 +14,12 @@ import org.document.Document;
 public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
 
     public AbstractListModelBinder() {
+        this("documentList");
+        initBinder();
+    }
+
+    public AbstractListModelBinder(Object boundObject) {
+        super(boundObject);
         this.boundProperty = "documentList";
         initBinder();
     }
@@ -32,15 +38,15 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
 
 
     @Override
-    protected void addBoundObjectListeners() {
+    public void addBoundObjectListeners() {
     }
 
     @Override
-    protected void removeBoundObjectListeners() {
+    public void removeBoundObjectListeners() {
     }
 
     @Override
-    public void initComponentDefault() {
+    public void initBoundObjectDefaults() {
     }
 
     @Override
@@ -89,7 +95,7 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
             return createComponentModel();
         }
 
-    @Override
+/*    @Override
     public void setBoundObject(Object bo) {
         if (getBoundObject() == bo) {
             return;
@@ -100,6 +106,7 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
         }
         boundObject = bo;
     }
+*/ 
     //
     // ==============================================
     //

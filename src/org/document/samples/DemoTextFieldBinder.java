@@ -11,14 +11,16 @@ import org.document.binding.AbstractEditablePropertyBinder;
  * @author Valery
  */
 public class DemoTextFieldBinder extends AbstractEditablePropertyBinder {
-
+    public DemoTextFieldBinder() {
+        super(null);
+    }
     @Override
-    protected void addBoundObjectListeners() {
+    public void addBoundObjectListeners() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    protected void removeBoundObjectListeners() {
+    public void removeBoundObjectListeners() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -43,7 +45,7 @@ public class DemoTextFieldBinder extends AbstractEditablePropertyBinder {
     }
 
     @Override
-    protected void initComponentDefault() {
+    public void initBoundObjectDefaults() {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 

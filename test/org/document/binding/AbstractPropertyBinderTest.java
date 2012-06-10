@@ -249,7 +249,7 @@ public class AbstractPropertyBinderTest {
         }
 
         @Override
-        public void initComponentDefault() {
+        public void initBoundObjectDefaults() {
             
         }
     }

@@ -17,18 +17,18 @@ public class BinderEvent extends EventObject {
     private Object oldValue;
     private Object newValue;
     
-    public BinderEvent(BinderEventSubject source) {
+    public BinderEvent(Binder source) {
         super(source);
     }
-    public BinderEvent(BinderEventSubject source,Action action) {
+    public BinderEvent(Binder source,Action action) {
         this(source);
         this.action = action;
     }
-    public BinderEvent(BinderEventSubject source, Action action, ValidationException e ) {
+    public BinderEvent(Binder source, Action action, ValidationException e ) {
         this(source, action);
         this.exception = e;
     }
-    public BinderEvent(BinderEventSubject source,Action action,Object dataValue,Object componentValue ) {
+    public BinderEvent(Binder source,Action action,Object dataValue,Object componentValue ) {
         this(source,action);
         this.componentValue = componentValue;
         this.dataValue = dataValue;

@@ -13,7 +13,7 @@ import org.document.*;
  *   <li>{@link #setComponentValue(java.lang.Object) }</li>
  *   <li>{@link #propertyValueOf(java.lang.Object)  }</li>
  *   <li>{@link #componentValueOf(java.lang.Object) }</li>
- *   <li>{@link #initComponentDefault() </li>
+ *   <li>{@link #initBoundObjectDefaults() </li>
  * </ol>
  * 
  * Consider for example the component <code>javax.swing.JTextField</code>.
@@ -78,7 +78,10 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * 
      */
     protected boolean binderIsStillChangingProperty;  //propertyValueChangingInProgressByTheBinder
-
+    
+    public AbstractEditablePropertyBinder(Object boundObject) {
+        super(boundObject);
+    }
     /**
      * Converts the specified component value and assigns the converted value
      * to the bound property.

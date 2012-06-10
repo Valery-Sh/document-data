@@ -44,14 +44,14 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
     }
 
     @Override
-    protected void addComponentListeners() {
+    public void addBoundObjectListeners() {
         getJComboBox().setKeySelectionManager(new KeySelectionManagerImpl());
         getJComboBox().addActionListener(this);
 
     }
 
     @Override
-    protected void removeComponentListeners() {
+    public void removeBoundObjectListeners() {
         getJComboBox().setKeySelectionManager(null);
         if (getJComboBox() == null) {
             return;
@@ -65,7 +65,7 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
         }
     }
     @Override
-    protected void initComponentDefault() {
+    public void initBoundObjectDefaults() {
         ((JComboModelBinder)documentListBinder).setDefaultComponentModel();
     }
 
@@ -207,7 +207,7 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
         protected String[] properties;
 
         public JComboModelBinder(BdCompositeJComboBinder component, String... properties) {
-            this.boundObject = component;
+            super(component);
             this.properties = properties;
         }
 

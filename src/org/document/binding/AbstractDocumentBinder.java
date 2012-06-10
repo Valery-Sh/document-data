@@ -2,7 +2,6 @@ package org.document.binding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
 import org.document.DocumentChangeListener;
@@ -17,7 +16,7 @@ import org.document.Validator;
  *
  * @author V. Shyskin
  */
-public abstract class AbstractDocumentBinder<E extends Document> implements  BinderEventSubject, BinderListener, DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
+public abstract class AbstractDocumentBinder<E extends Document> extends AbstractBinder implements  BinderListener, DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
 
     private boolean suspended;
     protected List<DocumentChangeListener> documentListeners;
@@ -30,12 +29,16 @@ public abstract class AbstractDocumentBinder<E extends Document> implements  Bin
     protected DocumentErrorBinder documentErrorBinder;
 
     protected AbstractDocumentBinder() {
+        this(null);
+    }
+    protected AbstractDocumentBinder(Object boundObject) {
+        super(boundObject);
         binderListeners = new ArrayList<BinderListener>();
         childs = new ArrayList<DocumentBinder>();
         documentErrorBinder = new DocumentErrorBinder();
         binders = new ArrayList<PropertyBinder>();
+        
     }
-
     public PropertyStore getDocumentStore() {
         return document.propertyStore();
     }
@@ -450,4 +453,17 @@ public abstract class AbstractDocumentBinder<E extends Document> implements  Bin
     protected List<BinderListener> getBinderListeners() {
         return binderListeners;
     }
+       @Override
+    public void initBoundObjectDefaults() {
+    }
+
+    @Override
+    public void addBoundObjectListeners() {
+    }
+
+    @Override
+    public void removeBoundObjectListeners() {
+    }
+ 
+    
 }

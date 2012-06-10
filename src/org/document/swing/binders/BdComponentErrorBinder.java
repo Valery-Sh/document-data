@@ -8,13 +8,12 @@ import javax.swing.JComponent;
 import org.document.Document;
 import org.document.ValidationException;
 import org.document.binding.AbstractErrorBinder;
-import org.document.binding.ErrorBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class BdComponentErrorBinder extends AbstractErrorBinder {
+public  abstract class BdComponentErrorBinder extends AbstractErrorBinder {
     
     
     public BdComponentErrorBinder(JComponent component)  {

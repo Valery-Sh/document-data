@@ -44,7 +44,7 @@ import org.document.DocumentChangeListener;
  * boundComponent.getText(); }
  * @Override public Object getComponentValue() { return
  * boundComponent.getText(); }
- * @Override public void initComponentDefault() {
+ * @Override public void initBoundObjectDefaults() {
  * this.boundComponent.setText(""); } }
  * </pre>
  * </code>
@@ -60,17 +60,20 @@ import org.document.DocumentChangeListener;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractPropertyBinder implements Serializable, PropertyBinder, DocumentChangeListener {
+public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder, DocumentChangeListener {
 
     private String alias;
-    protected Object boundObject;
+   // protected Object boundObject;
     protected String boundProperty;
     protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
     protected boolean suspended;
 //    protected boolean bound;
-
+    
+    public AbstractPropertyBinder(Object boundObject) {
+        super(boundObject);
+    }
     @Override
     public String getAlias() {
         if (this.alias == null) {
@@ -226,7 +229,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
 
                     propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
                 } else if (document == null) {
-                    initComponentDefault();
+                    initBoundObjectDefaults();
                 }
                 return;
             case resumeBinding:
@@ -241,7 +244,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
                 if (document != null && getBoundProperty() != null) {
                     propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()));
                 } else if (document == null) {
-                    initComponentDefault();
+                    initBoundObjectDefaults();
                 }
                 return;
             case suspendBinding:
@@ -268,7 +271,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
 
      propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
      } else if (document == null) {
-     initComponentDefault();
+     initBoundObjectDefaults();
      }
      break;
      case boundObjectReplace:
@@ -277,12 +280,13 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
 
      propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
      } else if (document == null) {
-     initComponentDefault();
+     initBoundObjectDefaults();
      }
      break;
      }
      }
      */
+    @Override
     public Object getBoundObject() {
         return boundObject;
     }
@@ -296,9 +300,10 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         if (this.boundObject == boundObject) {
             return;
         }
-        removeBoundObjectListeners();
+        super.setBoundObject(boundObject);
+/*        removeBoundObjectListeners();
 
-        initComponentDefault();
+        initBoundObjectDefaults();
         if (boundObject == null) {
             this.boundObject = null;
             return;
@@ -306,11 +311,11 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         this.boundObject = boundObject;
 
         addBoundObjectListeners();
-
+*/
         if (document != null && getBoundProperty() != null) {
             propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
         } else if (document == null) {
-            initComponentDefault();
+            initBoundObjectDefaults();
         }
     }
 
@@ -335,7 +340,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         }
         removeBoundObjectListeners();
         //document = null;
-        initComponentDefault();
+        initBoundObjectDefaults();
         if (boundProperty == null) {
             this.boundProperty = null;
             return;
@@ -348,7 +353,7 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
         if (document != null && getBoundProperty() != null) {
             propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
         } else if (document == null) {
-            initComponentDefault();
+            initBoundObjectDefaults();
         }
 
         /*        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundPropertyReplace);
@@ -473,22 +478,4 @@ public abstract class AbstractPropertyBinder implements Serializable, PropertyBi
      */
     protected abstract Object propertyValueOf(Object componentValue);
 
-    /**
-     * May be useful when it is not possible to convert the bound property value
-     * to a component value. For example, when (@link #getDocument() } returns
-     * <code>null</code>.
-     */
-    protected abstract void initComponentDefault();
-
-    /**
-     * Should be implemented if the binder is a listener of the bound component
-     * event. The implementation is a component specific.
-     */
-    protected abstract void addBoundObjectListeners();
-
-    /**
-     * Should be implemented if the binder is a listener of the bound component
-     * event. The implementation is a component specific.
-     */
-    protected abstract void removeBoundObjectListeners();
 }

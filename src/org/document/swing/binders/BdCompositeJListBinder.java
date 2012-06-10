@@ -49,7 +49,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
     }
 
     @Override
-    protected void addComponentListeners() {
+    public void addBoundObjectListeners() {
         getJList().removeKeyListener(keyListener);
         keyListener = new BdCompositeJListBinder.KeySelectionManagerImpl();
         getJList().addKeyListener(keyListener);
@@ -57,7 +57,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
     }
 
     @Override
-    protected void removeComponentListeners() {
+    public void removeBoundObjectListeners() {
         getJList().removeKeyListener(keyListener);
         if (getJList() == null) {
             return;
@@ -72,7 +72,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
     }
     
     @Override
-    protected void initComponentDefault() {
+    public void initBoundObjectDefaults() {
         ((JListModelBinder)documentListBinder).setDefaultComponentModel();
     }
 /*    @Override
@@ -204,16 +204,9 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         protected String[] properties;
 
         public JListModelBinder(BdCompositeJListBinder component, String... properties) {
-            super();
-            this.boundObject = component;
+            super(component);
             this.properties = properties;
         }
-
-/*        @Override
-        public BdCompositeJListBinder getBoundObject() {
-            return (BdCompositeJListBinder) boundObject;
-        }
-*/
         protected JList getJList() {
             return ((BdCompositeJListBinder) boundObject).getBoundObject();
         }

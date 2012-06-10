@@ -9,9 +9,9 @@ import org.document.Document;
  */
 public abstract class AbstractListSelectionBinder extends AbstractEditablePropertyBinder {
 
-    public AbstractListSelectionBinder(Object component) {
+    public AbstractListSelectionBinder(Object boundObject) {
+        super(boundObject);
         this.boundProperty = "selected";
-        this.boundObject = component;
         initBinder();
     }
 
@@ -29,11 +29,11 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
     }
 
     @Override
-    protected void addBoundObjectListeners(){
+    public void addBoundObjectListeners(){
     }
 
     @Override
-    protected void removeBoundObjectListeners() {
+    public void removeBoundObjectListeners() {
     }
 
     protected abstract int getComponentSelectedIndex();
@@ -68,7 +68,7 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
         }
 
         @Override
-        public void initComponentDefault() {
+        public void initBoundObjectDefaults() {
         }
  
 /*        protected Object componentValueOf(Object dataValue) {

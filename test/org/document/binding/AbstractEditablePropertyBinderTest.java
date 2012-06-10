@@ -153,7 +153,7 @@ public class AbstractEditablePropertyBinderTest {
         }
 
         @Override
-        protected void initComponentDefault() {
+        protected void initBoundObjectDefaults() {
             component.setValue("999");
         }
     }

@@ -1,8 +1,5 @@
 package org.document.binding;
 
-import org.document.Document;
-import org.document.ValidationException;
-
 /**
  *
  * @author V. Shyshkin
@@ -22,6 +19,27 @@ public abstract class AbstractErrorBinder implements ErrorBinder{
     @Override
     public void setBoundObject(Object boundObject) {
         this.boundObject = boundObject;
+    }
+
+    @Override
+    public void initBoundObjectDefaults() {
+    }
+
+    @Override
+    public void addBoundObjectListeners() {
+    }
+
+    @Override
+    public void removeBoundObjectListeners() {
+    }
+
+
+    @Override
+    public void addBinderListener(BinderListener l) {
+    }
+
+    @Override
+    public void removeBinderListener(BinderListener l) {
     }
 
 }

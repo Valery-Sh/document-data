@@ -27,6 +27,21 @@ public class DocumentInfoBinder extends DocumentListBinder {
     protected PropertyBinder createDocumentChangeEventBinder() {
         return null;
     }
+
+    @Override
+    public void initBoundObjectDefaults() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void addBoundObjectListeners() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void removeBoundObjectListeners() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     public class SelectedBinder extends AbstractListSelectionBinder {
         
@@ -57,11 +72,11 @@ public class DocumentInfoBinder extends DocumentListBinder {
         }
         
         @Override
-        protected void addBoundObjectListeners() {
+        public void addBoundObjectListeners() {
         }
 
         @Override
-        protected void removeBoundObjectListeners() {
+        public void removeBoundObjectListeners() {
         }
 
         @Override

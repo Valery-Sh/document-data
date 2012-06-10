@@ -9,8 +9,7 @@ import org.document.DocumentList;
  * @author V. Shyshkin
  */
 public abstract class DocumentListBinder<E extends Document> extends BindingStateBinder {
-    //protected BindingState bindi
-    //private List<? extends Document> list;
+
     private List list;
     public DocumentListBinder() {
         super();

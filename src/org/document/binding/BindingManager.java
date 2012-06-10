@@ -361,7 +361,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
            binder.addBinderListener(this);
            documentListBinders.put(binder.getBoundObject(),binder);
            binder.setBindingState(getBindingState());
-           binder.addComponentListeners();
+           binder.addBoundObjectListeners();
     }    
     /**
      * Unregisters a given binder.
@@ -677,7 +677,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 } 
                 if (e.getElement() != null) {
                     //new document
-                    this.updateAttachState((T)e.getResult(), true);
+                    this.updateAttachState((T)e.getElement(), true);
                 } 
                 break;
             case beforeClear : 
@@ -737,7 +737,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         private BindingManager bindingManager;
         private Document selected;
         //private Map<Object, T> binders;
-        private List<BinderEventSubject> binders;
+        private List<Binder> binders;
         private List<DocumentBinder> documentBinders;
         private DocumentBinder defaultBinder; // allways exists
         /**
@@ -746,7 +746,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
          */
         public DocumentBinderContainer(BindingManager bindingManager) {
             //this.binders = new HashMap<Object, Binder>();
-            this.binders = new ArrayList<BinderEventSubject>();
+            this.binders = new ArrayList<Binder>();
             this.bindingManager = bindingManager;
             documentBinders = new ArrayList<DocumentBinder>();
             defaultBinder = new DocumentBinder();
@@ -842,9 +842,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             target = new DocumentBinder();
             target.setAlias(binder.getAlias());
             documentBinders.add(target);
-//            throw new IllegalArgumentException("The binder alias '" + binder.getAlias() + 
-//                        "' cannot be found. ( Binder for property ='" + binder.getBoundProperty() +
-//                          "' ).");
         }           
         target.add(binder);
     }
@@ -899,7 +896,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             Document oldSelected = this.selected;
             this.selected = newDocument;
             
-            for ( BinderEventSubject b : binders ) {
+            for ( Binder b : binders ) {
             if ( b != null && (b instanceof DocumentChangeListener)) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
                 e.setOldValue(oldSelected);

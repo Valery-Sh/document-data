@@ -11,21 +11,14 @@ import org.document.DocumentChangeEvent;
  */
 public abstract class AbstractListDocumentChangeBinder extends AbstractEditablePropertyBinder {
 
-    private Object component;
     
-    public AbstractListDocumentChangeBinder(Object component) {
+    public AbstractListDocumentChangeBinder(Object boundObject) {
+        super(boundObject);
         this.boundProperty = "documentChangeEvent";
-        this.boundObject = component;
+        //this.boundObject = component;
         initBinder();
     }
 
-    public Object getComponent() {
-        return component;
-    }
-
-    public void setComponent(Object component) {
-        this.component = component;
-    }
 
     protected List<Document> getDocuments() {
         if (document == null) {
@@ -63,15 +56,15 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
     }
 
     @Override
-    public void initComponentDefault() {
+    public void initBoundObjectDefaults() {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    protected void addBoundObjectListeners() {
+    public void addBoundObjectListeners() {
     }
 
     @Override
-    protected void removeBoundObjectListeners() {
+    public void removeBoundObjectListeners() {
     }
 }

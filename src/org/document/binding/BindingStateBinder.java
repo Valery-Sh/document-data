@@ -15,15 +15,14 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
     protected PropertyBinder documentListBinder;
     protected PropertyBinder documentChangeEventBinder;
 
-    protected Object boundObject;
 
     public BindingStateBinder() {
-        super();
+        this(null);
     }
 
     public BindingStateBinder(Object component) {
-        super();
-        this.boundObject = component;
+        super(component);
+        
     }
 
     /**
@@ -81,6 +80,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         return null;
     }
 
+    @Override
     public void setBoundObject(Object newBoundObject) {
         //updateBinders(component);
 
@@ -88,8 +88,8 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         e.setNewValue(newBoundObject);
 
         e.setOldValue(boundObject);
-        removeComponentListeners();
-        initComponentDefault();
+        removeBoundObjectListeners();
+        initBoundObjectDefaults();
         
 
 /*        PropertyBinder sb = getBinderByName("selected");
@@ -111,7 +111,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
 */
         //setDocument(document); // to refresh for changes
         this.boundObject = newBoundObject;
-        addComponentListeners();                        
+        addBoundObjectListeners();                        
         setDocument(document); // to refresh for changes
         //     updateBinders(null); // refreshes boundObjects with the same ones
         //     boundObject = newBoundObject;
@@ -135,9 +135,6 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         
     }
     
-    protected void initComponentDefault() {
-        
-    }
     /**
      *
      * @param propertyName
@@ -223,11 +220,6 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         }
     }
 
-    protected void addComponentListeners() {
-    }
-
-    protected void removeComponentListeners() {
-    }
     /*    protected <E extends Document> List<E> getList() {
      return null;
      }

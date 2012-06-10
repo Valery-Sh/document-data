@@ -15,12 +15,12 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     
     
     public LookupComboBinder(JComboBox component) {
-        this.boundObject = component;
+        super(component);
         initBinder();
     }
     
     public LookupComboBinder(String propName, JComboBox component) {
-        this.boundObject = component;
+        super(component);
         this.boundProperty = propName;
         initBinder();
     }
@@ -36,12 +36,12 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     }
     
     @Override
-    protected void addBoundObjectListeners() {
+    public void addBoundObjectListeners() {
         ((JComboBox)boundObject).addActionListener(this);
     }
 
     @Override
-    protected void removeBoundObjectListeners() {
+    public void removeBoundObjectListeners() {
         ((JComboBox)boundObject).removeActionListener(this);
     }
 
@@ -73,7 +73,7 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     }
 
     @Override
-    public void initComponentDefault() {
+    public void initBoundObjectDefaults() {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 

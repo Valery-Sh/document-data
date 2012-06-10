@@ -94,6 +94,7 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     public void setAlias(String alias) {
         this.alias = alias;
     }
+
     
     
 }
