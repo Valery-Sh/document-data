@@ -17,7 +17,7 @@ import org.document.Validator;
  *
  * @author V. Shyskin
  */
-public abstract class AbstractDocumentBinder<E extends Document> implements Binder, BinderListener, DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
+public abstract class AbstractDocumentBinder<E extends Document> implements  BinderEventSubject, BinderListener, DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
 
     private boolean suspended;
     protected List<DocumentChangeListener> documentListeners;
@@ -235,11 +235,11 @@ public abstract class AbstractDocumentBinder<E extends Document> implements Bind
         documentListeners.remove(l);
     }
 
-    @Override
+    //@Override
     public void addBinderListener(BinderListener l) {
     }
 
-    @Override
+    //@Override
     public void removeBinderListener(BinderListener l) {
     }
 

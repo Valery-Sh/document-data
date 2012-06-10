@@ -737,7 +737,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         private BindingManager bindingManager;
         private Document selected;
         //private Map<Object, T> binders;
-        private List<Binder> binders;
+        private List<BinderEventSubject> binders;
         private List<DocumentBinder> documentBinders;
         private DocumentBinder defaultBinder; // allways exists
         /**
@@ -746,7 +746,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
          */
         public DocumentBinderContainer(BindingManager bindingManager) {
             //this.binders = new HashMap<Object, Binder>();
-            this.binders = new ArrayList<Binder>();
+            this.binders = new ArrayList<BinderEventSubject>();
             this.bindingManager = bindingManager;
             documentBinders = new ArrayList<DocumentBinder>();
             defaultBinder = new DocumentBinder();
@@ -899,7 +899,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             Document oldSelected = this.selected;
             this.selected = newDocument;
             
-            for ( Binder b : binders ) {
+            for ( BinderEventSubject b : binders ) {
             if ( b != null && (b instanceof DocumentChangeListener)) {
                 DocumentChangeEvent e = new DocumentChangeEvent(this, DocumentChangeEvent.Action.documentChange);
                 e.setOldValue(oldSelected);

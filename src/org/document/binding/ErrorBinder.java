@@ -11,7 +11,7 @@ import org.document.ValidationException;
  * 
  * @author V. Shyshkin
  */
-public interface ErrorBinder {
+public interface ErrorBinder extends Binder{
      /**
       * The method should be called when a document level error
       * found.

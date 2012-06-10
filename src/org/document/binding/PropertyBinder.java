@@ -10,21 +10,9 @@ import org.document.Document;
  * 
  * @author V. Shyshkin
  */
-public interface PropertyBinder<E extends Document> extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
+public interface PropertyBinder<E extends Document> extends Binder, BinderEventSubject {//,DocumentChangeListener {//, HasDocumentAlias {
+    
     void unbind();
-    /**
-     * Returns a document whose property is used for binding.
-     * @return returns an object of type {@link org.document.Document}
-     */
-    E getDocument();
-    
-    Object getBoundObject();
-    void setBoundObject(Object boundObject);
-    
-    String getAlias();
-    void setAlias(String alias);
-    
-    //void setDocument(E document);
     
     /**
      * Returns a bound  property name.
@@ -37,5 +25,14 @@ public interface PropertyBinder<E extends Document> extends Binder {//,DocumentC
      * @param propertyName a property name to be set
      */
     void setBoundProperty(String propertyName);
-
+    
+    /**
+     * Returns a document whose property is used for binding.
+     * @return returns an object of type {@link org.document.Document}
+     */
+    E getDocument();
+    
+    String getAlias();
+    void setAlias(String alias);
+    
 }

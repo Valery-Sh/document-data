@@ -7,16 +7,9 @@ package org.document.binding;
  * 
  * @author V. Shyshkin
  */
-public interface Binder { //extends DocumentChangeListener {
+public interface Binder { 
+    
+    Object getBoundObject();
+    void setBoundObject(Object boundObject);
 
-    /**
-     * Adds an object that implements <code>BinderListener</code>.
-     * @param l 
-     */
-    void addBinderListener(BinderListener l);
-    /**
-     * Removes an object that implements <code>BinderListener</code>
-     * @param l 
-     */
-    void removeBinderListener(BinderListener l);
 }

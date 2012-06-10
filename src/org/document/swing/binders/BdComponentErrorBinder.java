@@ -7,18 +7,18 @@ package org.document.swing.binders;
 import javax.swing.JComponent;
 import org.document.Document;
 import org.document.ValidationException;
+import org.document.binding.AbstractErrorBinder;
 import org.document.binding.ErrorBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public abstract class BdComponentErrorBinder implements ErrorBinder {
+public abstract class BdComponentErrorBinder extends AbstractErrorBinder {
     
-    private JComponent component;
     
     public BdComponentErrorBinder(JComponent component)  {
-        this.component = component;
+        super(component);
     }
     @Override
     public void errorFound(ValidationException e) {
@@ -39,12 +39,9 @@ public abstract class BdComponentErrorBinder implements ErrorBinder {
     }
 
     public JComponent getComponent() {
-        return component;
+        return (JComponent) getBoundObject();
     }
 
-    public void setComponent(JComponent component) {
-        this.component = component;
-    }
     
     protected abstract void setMessage(String message);
     

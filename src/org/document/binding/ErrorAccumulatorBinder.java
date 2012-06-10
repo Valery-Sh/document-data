@@ -14,7 +14,7 @@ import org.document.ValidationException;
  *
  * @author V. Shyshkin
  */
-public class ErrorAccumulatorBinder implements ErrorBinder{
+public class ErrorAccumulatorBinder extends AbstractErrorBinder{
     
     private Set<String> propertySet;
     private Map<Document,ValidationException> documentExceptions;
@@ -28,7 +28,7 @@ public class ErrorAccumulatorBinder implements ErrorBinder{
 
     
     public ErrorAccumulatorBinder() {
-        
+        super(null);
         this.allProperties = true;
         propertySet = new HashSet<String>();
         exceptions = new HashMap<String,Map<Document,ValidationException>>();
