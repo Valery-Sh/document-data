@@ -1,6 +1,7 @@
 package org.document.binding;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
@@ -40,6 +41,17 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         documentErrorBinder = new DocumentErrorBinder();
         binders = new ArrayList<PropertyBinder>();
         
+    }
+    @Override
+    public void initDefaults() {
+        for ( PropertyBinder b : binders) {
+            b.initDefaults();
+        }
+    }
+    
+    @Override
+    public Iterator<PropertyBinder> iterator() {
+        return binders.iterator();
     }
     @Override
     public String getAlias() {
@@ -292,6 +304,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     }
 
     //@Override
+    @Override
     public void removeBinderListener(BinderListener l) {
     }
 
@@ -300,6 +313,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             return;
         }
         binders.remove(binder);
+        binder.setContext(null);
         binder.removeBinderListener(this);
         if (binder instanceof DocumentChangeListener) {
             removeDocumentChangeListener((DocumentChangeListener) binder);
@@ -333,6 +347,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         if (binder == null) {
             return;
         }
+        binder.setContext(this.getContext());
         String propertyName = binder.getBoundProperty();
         /*111        if (propertyName == null || binder.getBoundObject() == null) {
          return;

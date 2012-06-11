@@ -9,9 +9,9 @@ import org.document.Document;
  */
 public class BindingContext {
     
-   private BindingManager manager;
+   private DocumentDataSource manager;
    
-   BindingContext(BindingManager manager) {
+   BindingContext(DocumentDataSource manager) {
        this.manager = manager;
    }
 
@@ -29,7 +29,7 @@ public class BindingContext {
         return manager.getBindingState().getDocumentList();
     }
 
-    protected void setManager(BindingManager manager) {
+    protected void setManager(DocumentDataSource manager) {
         this.manager = manager;
     }
    

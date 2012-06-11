@@ -5,16 +5,16 @@ package org.document.binding;
  * 
  * @author V. Shyshkin
  */
-public interface ContainerBinder extends Binder {
+public interface ContainerBinder<E extends Binder,HasAlias> extends Binder, Iterable<E>  {
     String getAlias();
     void setAlias(String alias);
     
     String getClassName();
     void setClassName(String className);
     
-    boolean add(Binder binder);
-    boolean remove(Binder binder);
-    boolean contains(Binder binder);
+    boolean add(E binder);
+    boolean remove(E binder);
+    boolean contains(E binder);
     
     
 }

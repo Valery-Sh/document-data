@@ -111,7 +111,8 @@ import org.document.*;
 
 
 public class BindingManager<T extends Document>  implements BinderListener,ListChangeListener {
-
+    
+    
     private DocumentBinderContainer documentBinders;
     /**
      *  Stores a reference to a document that is declared as <code>selected</code>.

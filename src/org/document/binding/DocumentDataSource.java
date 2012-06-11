@@ -112,6 +112,8 @@ import org.document.*;
 
 public class DocumentDataSource<T extends Document>  implements BinderListener,ListChangeListener {
 
+    private BindingContext bindingContext;
+    
     private DocumentDataSource.Container documentBinders;
     /**
      *  Stores a reference to a document that is declared as <code>selected</code>.
@@ -137,6 +139,7 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
      */
     public DocumentDataSource() {
         documentBinders = new DocumentDataSource.Container();
+        bindingContext = new BindingContext(this);
     }
     
     /**
@@ -642,13 +645,22 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
     public class Registry {
         
         private Map<String,ContainerBinder> containerBinders;
+        private Map<String,DocumentBinder> documentBinders;        
+        
         private List<Binder> binders;
         
         public Registry() {
+            documentBinders = new HashMap<String,DocumentBinder>();
             containerBinders = new HashMap<String,ContainerBinder>();
             binders = new ArrayList<Binder>();
         }
         public void notify(DocumentChangeEvent e) {
+            for ( Binder b : documentBinders.values() ) {
+                if ( b instanceof DocumentChangeListener ) {
+                    ((DocumentChangeListener)b).react(e);
+                }
+            }
+            
             for ( Binder b : containerBinders.values() ) {
                 if ( b instanceof DocumentChangeListener ) {
                     ((DocumentChangeListener)b).react(e);
@@ -662,18 +674,35 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             
         }
         public void notify(ListChangeEvent e) {
+            
             for ( Binder b : containerBinders.values() ) {
                 if ( b instanceof ListChangeListener ) {
                     ((ListChangeListener)b).listChanged(e);
                 }
             }
+            for ( Binder b : documentBinders.values() ) {
+                if ( b instanceof ListChangeListener ) {
+                    ((ListChangeListener)b).listChanged(e);
+                }
+            }
+            
             for ( Binder b : binders ) {
                 if ( b instanceof ListChangeListener ) {
                     ((ListChangeListener)b).listChanged(e);
                 }
             }
         }
-        
+        /**
+         * Creates  an object of type <code>DocumentBinder</code>,
+         * with the specified alias name and document class name and
+         * and adds it to the collection of binders.
+         * If the collection already contains a binder with the specified
+         * <code>alias</code> then the method throws an exception.
+         * 
+         * @param alias
+         * @param documentClass
+         * @return 
+         */
         public DocumentBinder add(String alias,Class documentClass) {
             if ( containerBinders.containsKey(alias) ) {
                 // TODO THROW
@@ -681,13 +710,54 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             
             String name = documentClass == null ? null : documentClass.getName();
             DocumentBinder result =  new DocumentBinder();            
+            
             result.setAlias(alias);
             result.setClassName(name);
+            result.setContext(bindingContext);
             return result;
         }
-        public ContainerBinder remove(String alias) {
-            return containerBinders.remove(alias);
+        public void remove(String alias) {
+            remove(alias,documentBinders);
+            remove(alias,containerBinders);
         }
+        
+        private void remove(String alias, Map map) {
+            ContainerBinder cb = (ContainerBinder)map.get(alias);
+            if ( cb != null && (cb instanceof HasContext)) {
+                ((HasContext)cb).setContext(null);
+                cb.initDefaults();
+            }
+            for ( Object b : cb ) {
+              if ( b instanceof HasContext) {
+                 ((HasContext)b).setContext(null);
+              }
+                
+            }
+        }
+        public boolean add(String alias, PropertyBinder binder) {
+            boolean result = true;
+            // lookup for each collection
+            if ( exists(binder) ) {
+                // TODO THROW
+            }
+            alias = alias == null || alias.trim().isEmpty() ? "default" : alias;
+            if ( ! alias.equals(binder.getAlias())) {
+                // TODO THROW
+            }
+
+            DocumentBinder target = documentBinders.get(alias);
+            if ( target == null ) {
+                target = new DocumentBinder();
+                target.setAlias(alias);
+                documentBinders.put(alias, target);
+                target.setContext(bindingContext);
+            }
+            binder.setAlias(alias);
+            target.add(binder); // DocumentBinder will set context
+            return result;
+        }
+        
+        
         public boolean add(String alias, Binder binder) {
             boolean result = true;
             if ( exists(binder) ) {
@@ -696,68 +766,69 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             alias = alias == null || alias.trim().isEmpty() ? "default" : alias;
             ContainerBinder target = containerBinders.get(alias);
             if ( target == null ) {
-                target = new DocumentBinder();
-                target.setAlias(alias);
-                containerBinders.put(alias, target);
+                // TODO THROW
             }
             target.add(binder);
+            if (binder instanceof HasContext) {
+                ((HasContext)binder).setContext(bindingContext);
+            }
             return result;
         }
+        public DocumentBinder put(String alias,DocumentBinder binder) {
+            return documentBinders.put(alias,binder);
+        }
+        
         public ContainerBinder put(String alias,ContainerBinder binder) {
-            return put(alias,binder);
+            return containerBinders.put(alias,binder);
         }
         public boolean add(Binder binder) {
             boolean result = true;
             if ( exists(binder) ) {
                 // TODO
             }
-            if ( binder instanceof HasAlias ) {
-                addTypeAware(binder);
-            } else {
-                binders.add(binder);
+            binders.add(binder);
+            if ( result && (binder instanceof HasContext)) {
+                ((HasContext)binder).setContext(bindingContext);
             }
             return result;
         }
-        private boolean addTypeAware(Binder binder) {
-            boolean result = true;
-
-            ContainerBinder tab = null;
-            String alias = ((HasAlias)binder).getAlias();
-            if ( alias == null || alias.trim().isEmpty()) {
-                alias = "default";
-            }
-            ContainerBinder target = containerBinders.get(alias);
-            if ( target == null ) {
-                target = new DocumentBinder();
-                target.setAlias(alias);
-                containerBinders.put(alias, target);
-            }
-            target.add(binder);
-            return result;
-        }
+        
+        public boolean add(PropertyBinder binder) {
+            return add(binder.getAlias(),binder);
+        }        
+        
         private boolean exists(Binder binder) {
             boolean result = false;
-            for ( Binder b : containerBinders.values() ) {
+            for ( DocumentBinder b : documentBinders.values() ) {
                 if ( b == binder ) {
                     result = true;
                     break;
                 }
-                if ( ((ContainerBinder)binder).contains(binder) ) {
+                if ( b.contains(binder) ) {
+                    result = true;
+                    break;
+                }
+            }
+            
+            for ( ContainerBinder b : containerBinders.values() ) {
+                if ( b == binder ) {
+                    result = true;
+                    break;
+                }
+                if ( b.contains(binder) ) {
                     result = true;
                     break;
                 }
             }
             if ( ! result ) {
-                for ( Binder b : binders ) {
-                    if ( b == binder ) {
-                        result = true;
-                        break;
-                    }
+                if ( binders.contains(binder)){
+                   result = true;
                 }
             }
             return result;
 
         }
+        
         private String extractAlias(Binder binder) {
             String alias = null;
             if ( binder instanceof HasAlias ) {
@@ -781,6 +852,10 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
                 }
             } else {
                 result = binders.remove(binder);
+            }
+            if ( result && (binder instanceof HasContext)) {
+                ((HasContext)binder).setContext(null);
+                binder.initDefaults();
             }
             return result;
         }
