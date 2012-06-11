@@ -30,7 +30,7 @@ public interface PropertyBinder<E extends Document> extends Binder,HasContext {/
      * Returns a document whose property is used for binding.
      * @return returns an object of type {@link org.document.Document}
      */
-    E getDocument();
+    //E getDocument();
     
     String getAlias();
     void setAlias(String alias);

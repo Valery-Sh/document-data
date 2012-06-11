@@ -4,7 +4,7 @@ package org.document.binding;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractBinder implements Binder{
+public abstract class AbstractBinder implements Binder {
     
     protected Object boundObject;
     
@@ -33,6 +33,9 @@ public abstract class AbstractBinder implements Binder{
     public Object getBoundObject() {
         return boundObject;
     }
-
+    @Override
+    public void initDefaults() {
+        
+    }
     
 }

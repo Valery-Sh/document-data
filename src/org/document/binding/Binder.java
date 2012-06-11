@@ -17,6 +17,7 @@ public interface Binder {
      * <code>null</code>.
      */
     void initBoundObjectDefaults();
+    void initDefaults();
 
     /**
      * Should be implemented if the binder is a listener of the bound component

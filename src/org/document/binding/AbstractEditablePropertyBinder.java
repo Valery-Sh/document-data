@@ -123,34 +123,34 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (isSuspended()) {
             return;
         }
-        if (document == null) {
+        if (getDocument() == null) {
             return;
         }
         if (binderIsStillChangingProperty) {
             return;
         }
-        if (document.propertyStore() instanceof HasDocumentState) {
-            DocumentState state = ((HasDocumentState) document.propertyStore()).getDocumentState();
+        if (getDocument().propertyStore() instanceof HasDocumentState) {
+            DocumentState state = ((HasDocumentState) getDocument().propertyStore()).getDocumentState();
             state.getDirtyValues().put(boundProperty, componentValue);
         }
 
         fireClearPropertyError();
 
         Object convertedValue;
-        Object oldDataValue = document.propertyStore().get(boundProperty);
+        Object oldDataValue = getDocument().propertyStore().get(boundProperty);
         try {
             convertedValue = this.propertyValueOf(componentValue);
             if (DataUtils.equals(convertedValue, oldDataValue)) {
                 return;
             }
-            if (document instanceof HasValidator) {
-                Validator v = ((HasValidator) document).getValidator();
+            if (getDocument() instanceof HasValidator) {
+                Validator v = ((HasValidator) getDocument()).getValidator();
                 if (v != null) {
-                    v.validate(boundProperty, convertedValue, document);
+                    v.validate(boundProperty, convertedValue, getDocument());
                 }
             }
             binderIsStillChangingProperty = true;
-            document.propertyStore().put(boundProperty, convertedValue);
+            getDocument().propertyStore().put(boundProperty, convertedValue);
 
             fireComponentValueChange(convertedValue, componentValue);
             /*
@@ -166,7 +166,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             }
         } catch (Exception e) {
             if (notifyOfErrors) {
-                ValidationException ve = new ValidationException(boundProperty, "Property name= '" + boundProperty + "'. Invalid value: " + componentValue, document);
+                ValidationException ve = new ValidationException(boundProperty, "Property name= '" + boundProperty + "'. Invalid value: " + componentValue, getDocument());
                 firePropertyError(ve);
             }
         } finally {

@@ -1,7 +1,6 @@
 package org.document.binding;
 
 import java.util.List;
-import javax.swing.JComponent;
 import org.document.Document;
 import org.document.DocumentChangeEvent;
 
@@ -21,10 +20,10 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
 
 
     protected List<Document> getDocuments() {
-        if (document == null) {
+        if (getDocument() == null) {
             return null;
         }
-        return ((BindingState) document).getDocumentList();
+        return ((BindingState) getDocument()).getDocumentList();
     }
 
     protected abstract void notifyComponentOf(DocumentChangeEvent event);

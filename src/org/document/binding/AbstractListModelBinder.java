@@ -25,10 +25,10 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
     }
 
     protected List<Document> getDocuments() {
-        if (document == null) {
+        if (getDocument() == null) {
             return null;
         }
-        return ((BindingState) document).getDocumentList();
+        return ((BindingState) getDocument()).getDocumentList();
     }
 
     protected final void initBinder() {

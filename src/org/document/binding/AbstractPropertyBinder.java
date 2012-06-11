@@ -65,7 +65,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
     private String alias;
    // protected Object boundObject;
     protected String boundProperty;
-    protected Document document;
+    //protected Document document;
     protected List<BinderListener> binderListeners;
     protected BinderConverter converter;
     protected boolean suspended;
@@ -106,7 +106,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         if ( binderListeners != null ) {
             binderListeners.clear();
         }
-        document = null;
+        //document = null;
     }
     /**
      * Returns an instance of class
@@ -135,9 +135,8 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      *
      * @return an object of class {@link org.document.Document).
      */
-    @Override
     public Document getDocument() {
-        return document;
+        return getContext().getSelected();
     }
 
 
@@ -230,12 +229,13 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      */
     @Override
     public void react(DocumentChangeEvent event) {
+        Document document = getDocument();
         switch (event.getAction()) {
             case documentChange:
                 if (isSuspended()) {
                     return;
                 }
-                this.document = (Document) event.getNewValue();
+                document = (Document) event.getNewValue();
                 if (document != null && getBoundProperty() != null) {
 
                     propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
@@ -250,8 +250,8 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
                 if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
                     return;
                 }
-                this.suspended = false;
-                this.document = (Document) event.getNewValue();
+                suspended = false;
+                document = (Document) event.getNewValue();
                 if (document != null && getBoundProperty() != null) {
                     propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()));
                 } else if (document == null) {
@@ -323,9 +323,9 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
 
         addBoundObjectListeners();
 */
-        if (document != null && getBoundProperty() != null) {
-            propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
-        } else if (document == null) {
+        if (getDocument() != null && getBoundProperty() != null) {
+            propertyChanged(getBoundProperty(), getDocument().propertyStore().get(getBoundProperty()));
+        } else if (getDocument() == null) {
             initBoundObjectDefaults();
         }
     }
@@ -361,9 +361,9 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         //
         // refresh with the new property
         //
-        if (document != null && getBoundProperty() != null) {
-            propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()));
-        } else if (document == null) {
+        if (getDocument() != null && getBoundProperty() != null) {
+            propertyChanged(getBoundProperty(), getDocument().propertyStore().get(getBoundProperty()));
+        } else if (getDocument() == null) {
             initBoundObjectDefaults();
         }
 

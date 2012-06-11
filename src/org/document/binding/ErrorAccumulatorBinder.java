@@ -86,4 +86,9 @@ public class ErrorAccumulatorBinder extends AbstractErrorBinder{
         
     }
 
+    @Override
+    public void initDefaults() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

@@ -16,7 +16,9 @@ import org.document.Validator;
  *
  * @author V. Shyskin
  */
-public abstract class AbstractDocumentBinder<E extends Document> extends AbstractBinder implements  BinderListener, DocumentChangeListener {//BinderContainer<T> {//extends AbstractDocumentBinder {
+public abstract class AbstractDocumentBinder<E extends Document> extends AbstractBinder implements  BinderListener, DocumentChangeListener, ContainerBinder {//BinderContainer<T> {//extends AbstractDocumentBinder {
+    private String className;
+    private String alias;
 
     private boolean suspended;
     protected List<DocumentChangeListener> documentListeners;
@@ -39,7 +41,42 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         binders = new ArrayList<PropertyBinder>();
         
     }
+    @Override
+    public String getAlias() {
+        return alias;
+    }
 
+    @Override
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    @Override
+    public String getClassName() {
+        return className;
+    }
+
+    @Override
+    public void setClassName(String className) {
+        this.className = className;
+    }
+    
+    @Override
+    public boolean contains(Binder binder) {
+        if ( binder instanceof PropertyBinder) {
+            return binders.contains((PropertyBinder)binder);
+        }
+        return false;
+    }
+    @Override
+    public boolean remove(Binder binder) {
+        if ( binder instanceof PropertyBinder) {
+            return binders.remove((PropertyBinder)binder);
+        }
+        return false;
+    }
+
+    
     public void unbind() {
         removeBoundObjectListeners();
         if ( binderListeners != null ) {
@@ -288,7 +325,10 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         }
         binders.clear();
     }
-
+    @Override
+    public boolean add(Binder binder) {
+        return false;
+    }
     public void add(PropertyBinder binder) {
         if (binder == null) {
             return;

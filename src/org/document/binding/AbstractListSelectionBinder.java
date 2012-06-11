@@ -16,11 +16,11 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
     }
 
     protected List<Document> getDocuments() {
-        if (document == null) {
+        if (getDocument() == null) {
             return null;
         }
         
-        return ((BindingState) document).getDocumentList();
+        return ((BindingState) getDocument()).getDocumentList();
     }
 
     protected final void initBinder() {

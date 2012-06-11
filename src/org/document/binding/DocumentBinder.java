@@ -8,8 +8,7 @@ import org.document.Document;
  */
 public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<Document> {
     
-    private String documentClassName;
-    private String alias;
+
 
     protected DocumentBinder() {
         super();
@@ -21,13 +20,13 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     }
     protected boolean accept(E document) {
         boolean b;
-        if ( document == null || "default".equals(alias) ) {
+        if ( document == null || "default".equals(getAlias()) ) {
             b = true;
-        } else  if ( document.getClass().getName().equals(documentClassName)) {
+        } else  if ( document.getClass().getName().equals(getClassName())) {
             b = true;
             if ( document.propertyStore().getAlias() != null ) {
                 String psa = document.propertyStore().getAlias().toString();
-                if ( ! psa.equals(alias)) {
+                if ( ! psa.equals(getAlias())) {
                     b = false;
                 }
             }
@@ -50,13 +49,13 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
 
     public boolean canAccept(E document) {
         boolean b;
-        if ( document == null || "default".equals(alias) ) {
+        if ( document == null || "default".equals(getAlias()) ) {
             b = true;
-        } else  if ( document.getClass().getName().equals(documentClassName)) {
+        } else  if ( document.getClass().getName().equals(getClassName())) {
             b = true;
             if ( document.propertyStore().getAlias() != null ) {
                 String psa = document.propertyStore().getAlias().toString();
-                if ( ! psa.equals(alias)) {
+                if ( ! psa.equals(getAlias())) {
                     b = false;
                 }
             }
@@ -78,23 +77,5 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     public void setDocument(Document document) {
         accept((E)document);
     }
-
-    public String getDocumentClassName() {
-        return documentClassName;
-    }
-
-    public void setDocumentClassName(String documentClassName) {
-        this.documentClassName = documentClassName;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    
     
 }

@@ -42,6 +42,36 @@ public class DocumentInfoBinder extends DocumentListBinder {
     public void removeBoundObjectListeners() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public String getAlias() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setAlias(String alias) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getClassName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setClassName(String className) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean add(Binder binder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean remove(Binder binder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     public class SelectedBinder extends AbstractListSelectionBinder {
         

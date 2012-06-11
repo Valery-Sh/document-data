@@ -110,9 +110,9 @@ import org.document.*;
  */
 
 
-public class BindingManager<T extends Document>  implements BinderListener,ListChangeListener {
+public class DocumentDataSource<T extends Document>  implements BinderListener,ListChangeListener {
 
-    private DocumentBinderContainer documentBinders;
+    private DocumentDataSource.Container documentBinders;
     /**
      *  Stores a reference to a document that is declared as <code>selected</code>.
      */
@@ -135,8 +135,8 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * Instances created with this constructor may set
      * any document as <code>selected</code>.
      */
-    public BindingManager() {
-        documentBinders = new DocumentBinderContainer(this);
+    public DocumentDataSource() {
+        documentBinders = new DocumentDataSource.Container();
     }
     
     /**
@@ -152,7 +152,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * 
      * @param sourceList the list of documents
      */
-    public BindingManager(List<T> sourceList) {
+    public DocumentDataSource(List<T> sourceList) {
         this();
         if ( sourceList == null ) {
             return;
@@ -304,18 +304,12 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         }
         if ( ! isActive() ) {
             return;
-        }
-        
-        T old = this.selected;
-
-        this.documentBinders.setDocument(selected);
-        //Object o = listState.getDocument();
-        this.bindingState.setAlias(aliasOf(selected));
+        }    
         this.bindingState.setSelected(selected);
         
         this.selected = selected;
 
-        afterSetSelected(old);
+        //afterSetSelected(old);
     }
 
     protected void afterSetSelected(T oldSelected) {
@@ -354,39 +348,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         b.setClassName(s);
         b.setDocument(selected);
     }
-//    public void bind(PropertyBinder binder, Class alias) {
-//        put(binder,alias);
-//    }
-/*    protected void put(PropertyBinder binder, Object alias) {
-        String newAlias;
-        
-        if ( alias == null || alias.toString().trim().isEmpty() ) {
-            newAlias = "default";
-        } else if ( alias instanceof Class) {
-            newAlias = ((Class)alias).getName();
-        } else {
-            newAlias = alias.toString();
-        }
-        
-        binder.setAlias(newAlias);
-        
-        DocumentBinder db = documentBinders.findByBinder(binder);
-        if ( db == null ) {
-            db = documentBinderOf(newAlias);
-            db.add(binder);
-        } else {
-            Object oldAlias = documentBinders.getAlias(db);
-            if ( newAlias.equals(oldAlias)) {
-                db.update(binder);
-            } else {
-                db.remove(binder);
-                db = documentBinderOf(newAlias);
-                db.add(binder);
-            }
-        }
-        
-    }
-*/    
     /**
      * Registers a given binder.
      * 
@@ -465,49 +426,8 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
     // ===========================================================
     //
 
-    /**
-     * Tries to find a corresponding object of type 
-     * <code>DocumentBinder</code> for a given document.
-     * @param doc a document, for which the search
-     * @return an object of type <code>DocumentBinder</code> or 
-     * <code>null</code> if the search is not successful
-     */
-/*    public DocumentBinder documentBinderOf(Document doc) {
-        if ( doc == null && selected != null ) {
-            return documentBinderOf(selected);
-        } else if ( doc == null) {
-            return (DocumentBinder) documentBinders.get("default");                    
-        }
-        if ( recognizer != null ) {
-            return recognizer.getBinder(doc);
-        }
-        Object key = doc.propertyStore().getAlias();
-
-        DocumentBinder result = (DocumentBinder) documentBinders.get(key);        
-        if ( result == null) {
-            result = (DocumentBinder) documentBinders.get("default");        
-        }
-        return result;
-    }
-    */ 
     protected String aliasOf(Document doc) {
         return "default";
-/*        if ( doc == null && selected != null ) {
-            return aliasOf(selected);
-        } else if ( doc == null) {
-            return "default";                    
-        }
-        if ( recognizer != null ) {
-            return recognizer.getAlias(doc);
-        }
-        Object result = doc.propertyStore().getAlias();
-        
-        DocumentBinder db = (DocumentBinder) documentBinders.get(result);        
-        if ( db == null) {
-            result = "default";        
-        }
-        return result;
-  */          
     }
     
     /**
@@ -524,67 +444,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         return b;
     }
 
-    /**
-     * Returns an existing or new instance of type <code>DocumentBinder</code>
-     * for a given class.
-     * Delegates method call to the method {@link BindingManager#documentBinderOf(java.lang.Class, java.lang.String) 
-     * with the <code>clazz</code> as the first parameter and a string value 
-     * <code>"default"</code> as the second.
-     * If a document binder doesn't exist for a given parameter value
-     * then a new one is created with an <code>alias</code> property 
-     * set to  <code><pre>new Alias(clazz,"default")</pre></code>.
-     * @param clazz an object that a method uses to search or create an object
-     * of type <code>DocumentBinder</code>
-     * @return an existing or new instance of type <code>DocumentBinder</code>
-     */
-/*    public DocumentBinder documentBinderOf(Class clazz) {
-        String alias = clazz == null ? null : clazz.getName();
-        return documentBinderOf(alias);
-    }
-    */ 
-/*    public DocumentBinder documentBinderOf(String alias) {
-        String key  = alias;
-        if ( alias == null ) {
-            key = "default";
-        }
-        DocumentBinder result = documentBinders.documentBinderOf(alias);
-        return result;
-
-    }
-    */ 
-
-    /**
-     * Returns an existing or new instance of type <code>DocumentErrorBinder</code>
-     * for a "default" alias.
-     * If a document binder doesn't exist 
-     * then a new one is created with an <code>alias</code> property 
-     * set to  <code>"default"</code> string value.
-     * @return an existing or new instance of type <code>DocumentErrorBinder</code>
-     * @see org.document.binding.DocumentErrorBinder 
-     * @see org.document.binding.DocumentErrorBinder 
-     * @see #errorBinders(java.lang.String) 
-     * @see #errorBinders(java.lang.Class) 
-     */
-/*    public DocumentErrorBinder errorBinders() {
-        return documentBinderOf("default").getDocumentErrorBinder();
-    }
-*/
-    /**
-     * Returns an existing or new instance of type <code>DocumentErrorBinder</code>
-     * for a given class.
-     * Delegates method call to the method 
-     * {@link BindingManager#errorBinders(java.lang.String) 
-     * with a string value <code>clazz.getName()</code> as a parameter value.
-     * @return an existing or new instance of type <code>DocumentErrorBinder</code>
-     * @see org.document.binding.DocumentErrorBinder 
-     * @see #errorBinders() 
-     * @see #errorBinders(java.lang.String) 
-     */
-/*    public DocumentErrorBinder errorBinders(Class clazz) {
-        String alias = clazz == null ? null : clazz.getName();
-        return errorBinders(alias);
-    }
-*/    
     /**
      * 
      * Invoked when the {@link BindingState } object has changed its state.
@@ -780,15 +639,162 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
                 
         }//switch
     }
+    public class Registry {
+        
+        private Map<String,ContainerBinder> containerBinders;
+        private List<Binder> binders;
+        
+        public Registry() {
+            containerBinders = new HashMap<String,ContainerBinder>();
+            binders = new ArrayList<Binder>();
+        }
+        public void notify(DocumentChangeEvent e) {
+            for ( Binder b : containerBinders.values() ) {
+                if ( b instanceof DocumentChangeListener ) {
+                    ((DocumentChangeListener)b).react(e);
+                }
+            }
+            for ( Binder b : binders ) {
+                if ( b instanceof DocumentChangeListener ) {
+                    ((DocumentChangeListener)b).react(e);
+                }
+            }
+            
+        }
+        public void notify(ListChangeEvent e) {
+            for ( Binder b : containerBinders.values() ) {
+                if ( b instanceof ListChangeListener ) {
+                    ((ListChangeListener)b).listChanged(e);
+                }
+            }
+            for ( Binder b : binders ) {
+                if ( b instanceof ListChangeListener ) {
+                    ((ListChangeListener)b).listChanged(e);
+                }
+            }
+        }
+        
+        public DocumentBinder add(String alias,Class documentClass) {
+            if ( containerBinders.containsKey(alias) ) {
+                // TODO THROW
+            }
+            
+            String name = documentClass == null ? null : documentClass.getName();
+            DocumentBinder result =  new DocumentBinder();            
+            result.setAlias(alias);
+            result.setClassName(name);
+            return result;
+        }
+        public ContainerBinder remove(String alias) {
+            return containerBinders.remove(alias);
+        }
+        public boolean add(String alias, Binder binder) {
+            boolean result = true;
+            if ( exists(binder) ) {
+                // TODO THROW
+            }
+            alias = alias == null || alias.trim().isEmpty() ? "default" : alias;
+            ContainerBinder target = containerBinders.get(alias);
+            if ( target == null ) {
+                target = new DocumentBinder();
+                target.setAlias(alias);
+                containerBinders.put(alias, target);
+            }
+            target.add(binder);
+            return result;
+        }
+        public ContainerBinder put(String alias,ContainerBinder binder) {
+            return put(alias,binder);
+        }
+        public boolean add(Binder binder) {
+            boolean result = true;
+            if ( exists(binder) ) {
+                // TODO
+            }
+            if ( binder instanceof HasAlias ) {
+                addTypeAware(binder);
+            } else {
+                binders.add(binder);
+            }
+            return result;
+        }
+        private boolean addTypeAware(Binder binder) {
+            boolean result = true;
+
+            ContainerBinder tab = null;
+            String alias = ((HasAlias)binder).getAlias();
+            if ( alias == null || alias.trim().isEmpty()) {
+                alias = "default";
+            }
+            ContainerBinder target = containerBinders.get(alias);
+            if ( target == null ) {
+                target = new DocumentBinder();
+                target.setAlias(alias);
+                containerBinders.put(alias, target);
+            }
+            target.add(binder);
+            return result;
+        }
+        private boolean exists(Binder binder) {
+            boolean result = false;
+            for ( Binder b : containerBinders.values() ) {
+                if ( b == binder ) {
+                    result = true;
+                    break;
+                }
+                if ( ((ContainerBinder)binder).contains(binder) ) {
+                    result = true;
+                    break;
+                }
+            }
+            if ( ! result ) {
+                for ( Binder b : binders ) {
+                    if ( b == binder ) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            return result;
+
+        }
+        private String extractAlias(Binder binder) {
+            String alias = null;
+            if ( binder instanceof HasAlias ) {
+                alias = ((HasAlias)binder).getAlias();
+                if ( alias == null || alias.trim().isEmpty() ) {
+                    alias = "default";
+                }
+            }
+            return alias;
+            
+        }
+        public boolean remove(Binder binder) {
+            boolean result = false;
+            if ( binder instanceof HasAlias ) {
+                for ( Binder b : containerBinders.values() ) {
+                    if ( b == binder ) {
+                        result = true;
+                        containerBinders.remove(extractAlias(binder));
+                        break;
+                    }
+                }
+            } else {
+                result = binders.remove(binder);
+            }
+            return result;
+        }
+    }//Registry
+    
+    
     /**
      * A container of objects of type <code>DocumentBinder</code>
      * 
      * @param <T> a type that implements the {@link DocumentBinder } 
      */
     
-    public static class DocumentBinderContainer<T extends DocumentBinder> { //implements BinderContainer<T> {
+    public static class Container<T extends DocumentBinder> { //implements BinderContainer<T> {
 
-        private BindingManager bindingManager;
         private Document selected;
         //private Map<Object, T> binders;
         private List<Binder> binders;
@@ -798,10 +804,9 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
          * 
          * @param bindingManager
          */
-        public DocumentBinderContainer(BindingManager bindingManager) {
+        public Container() {
             //this.binders = new HashMap<Object, Binder>();
             this.binders = new ArrayList<Binder>();
-            this.bindingManager = bindingManager;
             documentBinders = new ArrayList<DocumentBinder>();
             defaultBinder = new DocumentBinder();
             defaultBinder.setAlias("default");
@@ -811,42 +816,6 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
             binders.add(binder);
         }
         
-/*        public Object getAlias(DocumentBinder binder) {
-            if ( binder == null ) {
-                return null;
-            }
-            Object result = null;
-            Set<Entry<Object,T>> entries = binders.entrySet();
-            if ( entries.isEmpty() ) {
-                return result;
-            }
-            for ( Entry<Object,T> e : entries ) {
-                if ( e.getValue() == binder ) {
-                     result = e.getKey();
-                     break;
-                }
-            }
-            return result;
-        }
-        
-        public Object getAliasOld(DocumentBinder binder) {
-            if ( binder == null ) {
-                return null;
-            }
-            T result = null;
-            Collection<T> c = binders.values();
-            if ( c.isEmpty() ) {
-                return result;
-            }
-            for ( T db : c ) {
-                if ( db == binder ) {
-                     result = db;
-                     break;
-                }
-            }
-            return result;
-        }
-*/        
         /**
          * 
          * @param binder
@@ -854,22 +823,12 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         public void remove(T binder) {
             binders.remove(binder);
         }
-        /**
-         * 
-         * @param key
-         * @return
-         */
-//        public T get(Object key) {
-//            return this.binders.get(key);
-//        }
     /**
      * 
      * @param binder
      * @param alias 
      */
     protected void addBinder(PropertyBinder binder) {
-        
-        
         if ( binder.getAlias() == null || binder.getAlias().toString().trim().isEmpty() ) {
             binder.setAlias("default");
             defaultBinder.add(binder);
@@ -895,9 +854,12 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         if ( target == null ) {
             target = new DocumentBinder();
             target.setAlias(binder.getAlias());
-            documentBinders.add(target);
+            addDocumentBinder(target);
         }           
         target.add(binder);
+    }
+    public void addDocumentBinder(DocumentBinder binder) {
+        documentBinders.add(binder);
     }
     public DocumentBinder register(String alias) {
         if ( alias == null || alias.isEmpty() || "default".equals(alias) ) {
@@ -907,7 +869,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         DocumentBinder b = documentBinderOf(alias);
         if ( b == null) {
             b = new DocumentBinder();
-            documentBinders.add(b);
+            addDocumentBinder(b);
         }
         b.setAlias(alias);
         return b;
@@ -971,5 +933,5 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         }
     }
     
-}//class BindingManager
+}//class DocumentDataSource
 

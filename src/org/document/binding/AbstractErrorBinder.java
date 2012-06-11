@@ -41,5 +41,8 @@ public abstract class AbstractErrorBinder implements ErrorBinder{
     @Override
     public void removeBinderListener(BinderListener l) {
     }
-
+    @Override
+    public void initDefaults() {
+        
+    }
 }
