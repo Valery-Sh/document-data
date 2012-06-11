@@ -52,7 +52,10 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
      */
     public DocumentDataSource() {
         registry = new DocumentDataSource.Registry();
-//11        bindingContext = new BindingContext(this);
+        binderEventHandler = new BinderEventHandler();
+        documentChangeHandler = new DocumentChangeHandler();
+        listChangeHandler =  new ListChangeHandler();        
+        bindingContext = new BindingContext(this);
     }
 
     /**
@@ -83,13 +86,29 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         for (T d : dl) {
             updateAttachState(d, true);
         }
-        getDocuments().addListChangeListener(this);
+        this.documentList = dl;
+        setSelected(dl.get(0));        
+        getDocuments().addListChangeListener(listChangeHandler);
 
-        setSelected(dl.get(0));
+        
         if (!isActive()) {
             //setActive(true);
         }
+    }
 
+    /**
+     * Looks for an existing or creates a new container for the
+     * <code>alias</code> extracted from the specified
+     * <code>binder</code> and adds the
+     * <code>binder</code> to it.
+     *
+     * @param binder the binder to be added.
+     * @return  <code>true</code> if success
+     * @throws IllegalArgumentException in case when the specified binder has
+     * already been registered
+     */
+    public boolean add(PropertyBinder binder) {
+        return registry.add(binder.getAlias(), binder);
     }
 
     public boolean isActive() {
@@ -97,9 +116,9 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     }
 
     public void setActive(boolean active) {
-        if (this.active == active) {
-            return;
-        }
+//TODO        if (this.active == active) {
+//            return;
+//        }
         if (!active) {
             setSelected(null);
             this.active = active;
@@ -118,7 +137,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     }
 
     public DocumentList getDocuments() {
-        return null;
+        return documentList;
     }
 
     /**
@@ -126,7 +145,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
      * or it's subtype that currently is set as <i><code>selected</code></i>.
      */
     public T getSelected() {
-        return selected;
+        return (T)selected;
     }
 
     /**
@@ -145,12 +164,19 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             return;
         }
 //        this.bindingState.setSelected(selected);
-
+        Document old = selected;
         this.selected = selected;
-
+        fireDocumentChange(old,selected);
+        
         //afterSetSelected(old);
     }
-
+    void fireDocumentChange(Document oldSelected, Document newSelected) {
+        DocumentChangeEvent e = new DocumentChangeEvent(this);
+        e.setAction(DocumentChangeEvent.Action.documentChange);
+        e.setNewValue(newSelected);
+        e.setOldValue(oldSelected);
+        registry.notify(e);
+    }
     protected void afterSetSelected(T oldSelected) {
     }
 
@@ -158,7 +184,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
      * Sets a given object
      * <code><i>selected</i></code>. Assigns a new document to all appropriate
      * objects of type {@link DocumentBinder}. <P>The method provides the same
-     * functionality as null null null null null null null null null     {@link #setDocument(org.document.Document) and those two methods may be 
+     * functionality as null null null null null null null null null null null     {@link #documentChange(org.document.Document) and those two methods may be 
      * used interchangebly.
      *
      * @param selected an object to be set <code>selected</code>
@@ -176,7 +202,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         if (selected != null && (selected.propertyStore() instanceof HasDocumentState)) {
             ((HasDocumentState) selected.propertyStore()).getDocumentState().setAttached(true);
         }
-        // TODO this.registry.setDocument(selected);
+        // TODO this.registry.documentChange(selected);
     }
 
     protected void updateAttachState(T doc, boolean attached) {
@@ -385,7 +411,8 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          */
         public DocumentBinder add(String alias, Class documentClass) {
             if (containerBinders.containsKey(alias)) {
-                // TODO THROW
+                throw new IllegalArgumentException("The the specified alias "
+                        + "  has already been registered");
             }
 
             String name = documentClass == null ? null : documentClass.getName();
@@ -394,6 +421,8 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             result.setAlias(alias);
             result.setClassName(name);
             result.setContext(bindingContext);
+            this.put(alias, result);
+
             return result;
         }
 
@@ -522,6 +551,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                 target.setContext(bindingContext);
             }
             binder.setAlias(alias);
+            binder.setContext(bindingContext);
             target.add(binder); // DocumentBinder will set context
             return result;
         }
@@ -563,10 +593,16 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         }
 
         public DocumentBinder put(String alias, DocumentBinder binder) {
+            binder.removeBinderListener(binderEventHandler);
+            binder.addBinderListener(binderEventHandler);
+            //binder.a
+            
             return documentBinders.put(alias, binder);
         }
 
         public ContainerBinder put(String alias, ContainerBinder binder) {
+            binder.removeBinderListener(binderEventHandler);
+            binder.addBinderListener(binderEventHandler);
             return containerBinders.put(alias, binder);
         }
 

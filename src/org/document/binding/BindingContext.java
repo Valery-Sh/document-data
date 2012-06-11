@@ -2,6 +2,7 @@ package org.document.binding;
 
 import java.util.List;
 import org.document.Document;
+import org.document.DocumentList;
 
 /**
  *
@@ -22,7 +23,7 @@ public class BindingContext {
         return manager.getSelected();
     }
 
-    public List<Document> getDocumentList() {
+    public DocumentList<Document> getDocumentList() {
         if ( manager == null ) {
             return null;
         }

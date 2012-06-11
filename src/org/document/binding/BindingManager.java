@@ -8,7 +8,7 @@ import org.document.*;
  * This class allows to mark any object of type {@link org.document.Document }
  * as <code><i>selected</i></code> and start binding procedure for it.  
  *
- * The method {@link setDocument(Document) } announces the 
+ * The method {@link documentChange(Document) } announces the 
  * specified document as a <code><i>selected</i></code>. Method 
  * {@link getDocument() } returns a document that is declared as selected, 
  * and the method {@link isSelected(Document) } serves to determine whether
@@ -19,11 +19,11 @@ import org.document.*;
  * objects. <p>
  * Class <code>DocumentBinder}</code>  has a <code>document</code> 
  * property and corresponding access methods 
- * {@link DocumentBinder#setDocument(Document)}
+ * {@link DocumentBinder#documentChange(Document)}
  * and {@link DocumentBinder#getDocument() } . When the binding 
  * manager declares the document <code><i>selected</i></code>, 
  * it looks for an appropriate <code>DocumentBinder</code> and 
- * applied to the found one the method <code>setDocument</code>.  
+ * applied to the found one the method <code>documentChange</code>.  
  *
  * The class <code>BindingManager</code> can be created using a 
  * constructor whose parameter is a list (<code>java.util.List</code>)
@@ -327,7 +327,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
      * Assigns a new document to all appropriate objects of
      * type {@link DocumentBinder}. 
      * <P>The method provides the same functionality as 
-     * {@link #setDocument(org.document.Document) and those two methods may be 
+     * {@link #documentChange(org.document.Document) and those two methods may be 
      * used interchangebly.
      * @param selected an object to be set <code>selected</code>
      */
@@ -353,7 +353,7 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         DocumentBinder b = documentBinderOf(alias);
         String s = documentClass == null ? "" : documentClass.getName();
         b.setClassName(s);
-        b.setDocument(selected);
+        b.documentChange(selected);
     }
 //    public void bind(PropertyBinder binder, Class alias) {
 //        put(binder,alias);

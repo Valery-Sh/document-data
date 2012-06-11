@@ -108,7 +108,8 @@ public class BinderEvent extends EventObject {
         aliasReplace,
         clearError,
         fixError,
-        componentSelectChange
+        componentSelectChange,
+        binderRemoved
     }
 }//class DocumentEvent
 

@@ -60,6 +60,7 @@ public class DocumentChangeEvent extends EventObject {
         resumeBinding,
         documentChanging,
         propertyChange,
+        propertyChangeNotSeected,
         completeChanges
     }
 }

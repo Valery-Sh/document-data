@@ -34,7 +34,7 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
             b = acceptSuper(document);
         }
         if ( b ) {
-           super.setDocument(document);
+           super.documentChange(document);
         }
         return b;
     }
@@ -74,7 +74,7 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     }
     
     @Override
-    public void setDocument(Document document) {
+    public void documentChange(Document document) {
         accept((E)document);
     }
     

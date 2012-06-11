@@ -78,7 +78,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
     }
 
     public void setBindingState(BindingState state) {
-        super.setDocument(state);
+        super.documentChange(state);
     }
 
     public Object getBoundObject() {
@@ -125,7 +125,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         //setDocument(document); // to refresh for changes
         this.boundObject = newBoundObject;
         addBoundObjectListeners();                        
-        setDocument(document); // to refresh for changes
+        //setDocument(document); // to refresh for changes
         //     updateBinders(null); // refreshes boundObjects with the same ones
         //     boundObject = newBoundObject;
         //     updateBinders(boundObject); // refreshes bondObjects with the new ones
