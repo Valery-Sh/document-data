@@ -121,10 +121,6 @@ public class DocumentInfoBinder extends DocumentListBinder {
             
         }
 
-        @Override
-        public void unbind() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
         
     }
 }

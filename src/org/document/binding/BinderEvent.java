@@ -102,10 +102,9 @@ public class BinderEvent extends EventObject {
 
     
     public enum Action {
+        propertyChangeRequest,
         componentChangeError,
         componentChange,
-        boundObjectReplace,
-        boundPropertyReplace,
         aliasReplace,
         clearError,
         fixError,

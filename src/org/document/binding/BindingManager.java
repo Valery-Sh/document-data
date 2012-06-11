@@ -224,12 +224,12 @@ public class BindingManager<T extends Document>  implements BinderListener,ListC
         
         if ( documentListBinders != null ) {
             for ( BindingStateBinder b : documentListBinders.values()) {
-                b.unbind();
+//                b.unbind();
             }
         }
         if ( documentBinders != null ) {
             for ( Object o : documentBinders.documentBinders ){
-                ((DocumentBinder)o).unbind();
+//                ((DocumentBinder)o).unbind();
             }
         }
         

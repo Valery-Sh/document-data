@@ -100,14 +100,6 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
             this.alias = alias;
         }
     }
-    @Override
-    public void unbind() {
-        removeBoundObjectListeners();
-        if ( binderListeners != null ) {
-            binderListeners.clear();
-        }
-        //document = null;
-    }
     /**
      * Returns an instance of class
      * <code>BinderConverter</code> that should be used to convert the value of

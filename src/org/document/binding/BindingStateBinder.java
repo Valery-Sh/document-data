@@ -41,7 +41,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         this.add(createDocumentChangeEventBinder());
         this.add(createSelectedBinder());
     }
-    @Override
+/*    @Override
     public void unbind() {
         removeBoundObjectListeners();
         if ( binderListeners != null ) {
@@ -55,10 +55,10 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
                     ) {
                 continue;
             }
-            b.unbind();
+//            b.setLocked();
         }
     }
-
+*/
 /*    protected void updateBinders(Object boundObject) {
         updateBinder("selected", boundObject);
         updateBinder("documentList", boundObject);
@@ -101,10 +101,6 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
     public void setBoundObject(Object newBoundObject) {
         //updateBinders(component);
 
-        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
-        e.setNewValue(newBoundObject);
-
-        e.setOldValue(boundObject);
         removeBoundObjectListeners();
         initBoundObjectDefaults();
         

@@ -219,13 +219,13 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             return;
         }
         switch(event.getAction()) {
-/*            case unbind:
+/*            case setLocked:
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
                     return;
                 }
                 
                 removeBoundObjectListeners();
-                unbind();
+                setLocked();
                 break;
             case bind:
                 if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {

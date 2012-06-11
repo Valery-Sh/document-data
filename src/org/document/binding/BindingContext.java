@@ -19,14 +19,14 @@ public class BindingContext {
         if ( manager == null ) {
             return null;
         }
-        return manager.getBindingState().getSelected();
+        return manager.getSelected();
     }
 
     public List<Document> getDocumentList() {
         if ( manager == null ) {
             return null;
         }
-        return manager.getBindingState().getDocumentList();
+        return manager.getDocuments();
     }
 
     protected void setManager(DocumentDataSource manager) {

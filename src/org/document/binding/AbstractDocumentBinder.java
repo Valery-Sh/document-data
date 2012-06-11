@@ -89,17 +89,17 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     }
 
     
-    public void unbind() {
+/*    public void unbind() {
         removeBoundObjectListeners();
         if ( binderListeners != null ) {
             binderListeners.clear();
         }
         document = null;
         for ( PropertyBinder b : binders ) {
-            b.unbind();
+//            b.setLocked();
         }
     }
-    
+*/    
     public PropertyStore getDocumentStore() {
         return document.propertyStore();
     }
