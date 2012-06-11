@@ -716,33 +716,113 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             result.setContext(bindingContext);
             return result;
         }
-        public void remove(String alias) {
-            remove(alias,documentBinders);
-            remove(alias,containerBinders);
+        /**
+         * Removes the container of of type 
+         * <code>DocumentBinder</code> for the specified <code>alias</code>.
+         * Sets the property with a name <code>context</code> to <code>null</code>
+         * for the <code>DocumentBinder</code> itself and all contained
+         * binders.
+         * 
+         * @param alias to search for.
+         */
+        public void removeDocumentBinder(String alias) {
+            DocumentBinder cb = documentBinders.remove(alias);
+            if ( cb != null ) {
+               cb.setContext(null);
+               cb.initDefaults();
+
+               for ( Object b : cb ) {
+                  ((HasContext)b).setContext(null);
+               }
+            }
+        }
+        /**
+         * Removes the container of of type 
+         * <code>ContainerBinder</code> for the specified <code>alias</code>.
+         * If the the <code>ContainerBinder</code> implements 
+         * {@link HasContext} then sets the property with a name <code>context</code> to <code>null</code>.
+         * 
+         * For all contained binders that implement <code>HasBinder</code>
+         * sets the property with a name <code>context</code> to <code>null</code>.
+         * 
+         * @param alias to search for.
+         */
+        public void removeContainerBinder(String alias) {
+            ContainerBinder cb = containerBinders.remove(alias);
+            if ( cb != null && (cb instanceof HasContext)) {
+               ((HasContext)cb).setContext(null);
+               cb.initDefaults();
+                for ( Object b : cb ) {
+                    if (b instanceof HasContext) {
+                        ((HasContext)b).setContext(null);
+                    }
+                    ((Binder)b).initDefaults();
+                }
+            }
+            
         }
         
-        private void remove(String alias, Map map) {
-            ContainerBinder cb = (ContainerBinder)map.get(alias);
-            if ( cb != null && (cb instanceof HasContext)) {
-                ((HasContext)cb).setContext(null);
-                cb.initDefaults();
+        /**
+         * Looks for the specified binder in all internal collections
+         * an removes it.
+         * @param binder the object to be removed
+         * @return <code>true</code> if the <code>binder</code> exists.
+         * <code>false</code>otherwise</code>
+         */
+        public boolean remove(Binder binder) {
+            boolean result = false;
+            for ( DocumentBinder cb : documentBinders.values() ) {
+                if ( cb.remove(binder)  ) {
+                    result = true;
+                    break;
+                }
             }
-            for ( Object b : cb ) {
-              if ( b instanceof HasContext) {
-                 ((HasContext)b).setContext(null);
-              }
-                
+            if ( ! result ) {
+                for ( ContainerBinder cb : containerBinders.values() ) {
+                    if ( cb.remove(binder)  ) {
+                        result = true;
+                        break;
+                    }
+                }
             }
+            if ( ! result ) {
+                if ( binders.remove(binder)){
+                   result = true;
+                }
+            }
+            if ( result ) {
+                if ( binder instanceof HasContext ) {
+                    ((HasContext)binder).setContext(null);
+                }
+            }
+            return result;
+
         }
+        /**
+         * Looks for an existing or creates a new container for the 
+         * specified <code>alias</code> and adds the specified 
+         * <code>binder</code> to it.
+         * 
+         * @param alias to search for
+         * @param binder the binder to be added.
+         * @return  <code>true</code> if success
+         * @throws IllegalArgumentException in case when the specified binder
+         *  has already been registered
+         * @throws IllegalArgumentException in case when the specified binder
+         *  has the alias name whose value differ from the specified
+         */
         public boolean add(String alias, PropertyBinder binder) {
             boolean result = true;
             // lookup for each collection
             if ( exists(binder) ) {
-                // TODO THROW
+                throw new IllegalArgumentException("The the specified property "
+                        + " binder has already been registered");
+
             }
             alias = alias == null || alias.trim().isEmpty() ? "default" : alias;
             if ( ! alias.equals(binder.getAlias())) {
-                // TODO THROW
+                throw new IllegalArgumentException("The binder has the alias name that differ from"
+                        + " the specified)" );
             }
 
             DocumentBinder target = documentBinders.get(alias);
@@ -757,16 +837,33 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             return result;
         }
         
-        
+        /**
+         * Looks for a container for the 
+         * specified <code>alias</code> and adds the specified 
+         * <code>binder</code> to it.
+         * Assigns the  <code>context</code> property value of the given 
+         * <code>binder</code>.
+         * @param alias to search for
+         * @param binder the binder to be added.
+         * @return  <code>true</code> if success
+         * @throws IllegalArgumentException in case when the specified binder
+         *  has already been registered
+         * @throws IllegalArgumentException in case when the container binder
+         *  cannot be found for the given <code>alias<code>
+         */
         public boolean add(String alias, Binder binder) {
             boolean result = true;
             if ( exists(binder) ) {
-                // TODO THROW
+                throw new IllegalArgumentException("The the specified property "
+                        + " binder has already been registered");
+
             }
             alias = alias == null || alias.trim().isEmpty() ? "default" : alias;
             ContainerBinder target = containerBinders.get(alias);
             if ( target == null ) {
-                // TODO THROW
+                throw new IllegalArgumentException("The container binder for  the specified " +
+                        " alias='" + alias + "' cannot be found");
+
             }
             target.add(binder);
             if (binder instanceof HasContext) {
@@ -774,6 +871,8 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             }
             return result;
         }
+        
+        
         public DocumentBinder put(String alias,DocumentBinder binder) {
             return documentBinders.put(alias,binder);
         }
@@ -781,6 +880,20 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
         public ContainerBinder put(String alias,ContainerBinder binder) {
             return containerBinders.put(alias,binder);
         }
+
+       /**
+         * Adds the specified <code>binder</code> to the 
+         * internal collection.
+         *  The collection contains objects of type {@link Binder}
+         *  and may contains the binders of any type.
+         * 
+         * Assigns the  <code>context</code> property value of the given 
+         * <code>binder</code>.
+         * @param binder the binder to be added.
+         * @return  <code>true</code> if success
+         * @throws IllegalArgumentException in case when the specified binder
+         *  has already been registered
+         */
         public boolean add(Binder binder) {
             boolean result = true;
             if ( exists(binder) ) {
@@ -792,7 +905,16 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             }
             return result;
         }
-        
+        /**
+         * Looks for an existing or creates a new container for the 
+         * <code>alias</code> extracted from the specified <code>binder</code>
+         * and adds the <code>binder</code> to it.
+         * 
+         * @param binder the binder to be added.
+         * @return  <code>true</code> if success
+         * @throws IllegalArgumentException in case when the specified binder
+         *  has already been registered
+         */
         public boolean add(PropertyBinder binder) {
             return add(binder.getAlias(),binder);
         }        
@@ -840,28 +962,15 @@ public class DocumentDataSource<T extends Document>  implements BinderListener,L
             return alias;
             
         }
-        public boolean remove(Binder binder) {
-            boolean result = false;
-            if ( binder instanceof HasAlias ) {
-                for ( Binder b : containerBinders.values() ) {
-                    if ( b == binder ) {
-                        result = true;
-                        containerBinders.remove(extractAlias(binder));
-                        break;
-                    }
-                }
-            } else {
-                result = binders.remove(binder);
-            }
-            if ( result && (binder instanceof HasContext)) {
-                ((HasContext)binder).setContext(null);
-                binder.initDefaults();
-            }
-            return result;
-        }
     }//Registry
     
-    
+    private boolean removeFromCollection(Binder binder, Map<String,ContainerBinder> c) {
+        boolean result = true;
+        for ( ContainerBinder cb : c.values() ) {
+            
+        }
+        return result;
+    }
     /**
      * A container of objects of type <code>DocumentBinder</code>
      * 
