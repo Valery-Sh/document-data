@@ -112,7 +112,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * </ol>
      * The method doesn't throw an exception in case of error. Instead it notifies
      * all registered listeners of the {@link BinderEvent} with an action property
-     * set to {@link BinderEvent.Action#componentChangeError }.
+     * set to {@link BinderEvent.Action#boundObjectError }.
      * 
      * @param componentValue the component specific new value
      */
@@ -251,7 +251,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
 
     private void fireComponentValueChange(Object dataValue, Object componentValue) {
         BinderEvent.Action action =
-                BinderEvent.Action.componentChange;
+                BinderEvent.Action.boundObjectChange;
         BinderEvent event = new BinderEvent(this, action, dataValue, componentValue);
         notifyListeners(event);
     }
@@ -266,13 +266,13 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * validation exception and notifies all registers listeners of type 
      * <code>BinderListener</code>.
      * The created event has an <code>action</code> property than is set to
-     * {@link BinderEvent.Action#componentChangeError )
+     * {@link BinderEvent.Action#boundObjectError )
      * @param e the exception for which the event object to be created
      * @see BinderEvent
      * @see BinderListener
      */
     protected void firePropertyError(ValidationException e) {
-        BinderEvent.Action action = BinderEvent.Action.componentChangeError;
+        BinderEvent.Action action = BinderEvent.Action.boundObjectError;
         BinderEvent event = new BinderEvent(this, action, e);
         notifyListeners(event);
     }

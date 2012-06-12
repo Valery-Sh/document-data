@@ -4,13 +4,13 @@
  */
 package org.document.binding;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.document.Document;
-import org.document.DocumentChangeEvent;
-import org.document.DocumentChangeListener;
 import org.document.DocumentList;
 import org.document.DocumentState;
 import org.document.HasDocumentState;
@@ -84,7 +84,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     private void initSourceList(List sourceList) {
         DocumentList<T> dl = new DocumentList(sourceList);
         for (T d : dl) {
-            d.propertyStore().addDocumentChangeListener(documentChangeHandler);
+            d.propertyStore().addPropertyChangeListener(documentChangeHandler);
             updateAttachState(d, true);
         }
 
@@ -194,18 +194,16 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     }
 */
     void fireDocumentChanging(Document oldSelected, Document newSelected) {
-        BinderEvent e = new BinderEvent(bindingContext);
-        e.setAction(BinderEvent.Action.documentChanging);
-        e.setNewValue(newSelected);
-        e.setOldValue(oldSelected);
+        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.documentChanging);
+        e.setNewSelected(newSelected);
+        e.setOldSelected(oldSelected);
         registry.notify(e);
     }
 
-    void fireDocumentChange(Document oldSelected, Document newSelected) {
-        BinderEvent e = new BinderEvent(bindingContext);
-        e.setAction(BinderEvent.Action.documentChange);
-        e.setNewValue(newSelected);
-        e.setOldValue(oldSelected);
+    void fireDocumentChange(Document oldSelected,Document newSelected) {
+        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.documentChange);
+        e.setNewSelected(newSelected);
+        e.setOldSelected(oldSelected);
         registry.notify(e);
     }
     
@@ -387,26 +385,45 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             binders = new ArrayList<Binder>();
         }
 
-/*        public void notify(DocumentChangeEvent e) {
+        public void notify(ContextEvent e) {
             for (Binder b : documentBinders.values()) {
-                if (b instanceof DocumentChangeListener) {
-                    ((DocumentChangeListener) b).react(e);
+                if (b instanceof ContextListener) {
+                    ((ContextListener) b).react(e);
                 }
             }
 
             for (Binder b : containerBinders.values()) {
-                if (b instanceof DocumentChangeListener) {
-                    ((DocumentChangeListener) b).react(e);
+                if (b instanceof ContextListener) {
+                    ((ContextListener) b).react(e);
                 }
             }
             for (Binder b : binders) {
-                if (b instanceof DocumentChangeListener) {
-                    ((DocumentChangeListener) b).react(e);
+                if (b instanceof ContextListener) {
+                    ((ContextListener) b).react(e);
                 }
             }
 
         }
-        */ 
+        public void notify(PropertyChangeEvent e) {
+            for (Binder b : documentBinders.values()) {
+                if (b instanceof PropertyChangeListener) {
+                    ((PropertyChangeListener) b).propertyChange(e);
+                }
+            }
+
+            for (Binder b : containerBinders.values()) {
+                if (b instanceof PropertyChangeListener) {
+                    ((PropertyChangeListener) b).propertyChange(e);
+                }
+            }
+            for (Binder b : binders) {
+                if (b instanceof PropertyChangeListener) {
+                    ((PropertyChangeListener) b).propertyChange(e);
+                }
+            }
+
+        }
+
         public void notify(BinderEvent e) {
             for (Binder b : documentBinders.values()) {
                 if (b instanceof BinderListener) {
@@ -742,9 +759,8 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         }
     }//Registry
 
-    public class DocumentChangeHandler implements DocumentChangeListener {
+    public class DocumentChangeHandler implements PropertyChangeListener {
 
-        DocumentChangeEvent.Action action; // for test only purpose
 
         public DocumentChangeHandler() {
         }
@@ -763,14 +779,29 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          * @param event the event to be handled
          * @see org.document.DocumentChangeEvent
          */
-        @Override
+/*        @Override
         public void react(DocumentChangeEvent event) {
 
             //
             // notifies registry only when in active state 
             //
-            if (isActive()) {
+            if (! isActive()) {
+                return;
             }
+            switch(event.getAction()) {
+                case propertyChange : 
+                    BinderEvent e = new BinderEvent(bindingContext,event.getPropertyName(),BinderEvent.Action.propertyChange);
+                    e.setOldValue(event.getOldValue());
+                    e.setNewValue(event.getNewValue());
+                    registry.notify(e);
+                    break;
+            }
+            
+        }
+*/
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            registry.notify(e);
         }
     }
 
@@ -798,7 +829,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         @Override
         public void react(BinderEvent event) {
             switch (event.getAction()) {
-                case componentSelectChange:
+                case boundObjectSelectChange:
                     T newDoc = (T) event.getDataValue();
 //TODO                    if (newDoc == this.selected) {
 //                        return;

@@ -1,5 +1,7 @@
 package org.document;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +30,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     /**
      * 
      */
-    protected List<DocumentChangeListener> documentChangeListeners;
+//    protected List<DocumentChangeListener> documentChangeListeners;
     /**
      * 
      */
@@ -59,7 +61,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      */
     public DocumentPropertyStore() {
         this.state = new DocumentStateImpl(this);
-        this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
+//        this.documentChangeListeners = new ArrayList<DocumentChangeListener>();
     }
     /**
      * 
@@ -168,6 +170,8 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     }
 
 //    @Override
+    
+    private PropertyChangeListener propertyChangeListener;
     /**
      * 
      * @param key
@@ -187,33 +191,39 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
                 state.setEditing(true);
             }
         //}
-        if (!documentChangeListeners.isEmpty()) {
+/*        if (!documentChangeListeners.isEmpty()) {
             DocumentChangeEvent event = new DocumentChangeEvent(this.source, DocumentChangeEvent.Action.propertyChange);
             event.setPropertyName(propertyName);
             event.setOldValue(oldValue);
             event.setNewValue(value);
             fireDocumentEvent(event);
         }
+*/ 
+        if (propertyChangeListener != null ) {
+            PropertyChangeEvent event = new PropertyChangeEvent(this.source,propertyName,oldValue, value);
+            propertyChangeListener.propertyChange(event);
+        }
+        
     }
 
     /**
      * 
      * @param listener
      */
-    @Override
+/*    @Override
     public void addDocumentChangeListener(DocumentChangeListener listener) {
         documentChangeListeners.add(listener);
     }
-
+*/
     /**
      * 
      * @param listener
      */
-    @Override
+/*    @Override
     public void removeDocumentChangeListener(DocumentChangeListener listener) {
         documentChangeListeners.remove(listener);
     }
-
+*/
     /**
      * 
      * @return
@@ -247,12 +257,12 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * @param event an event of type
      * <code>DocumentEvent</code>
      */
-    private void fireDocumentEvent(DocumentChangeEvent event) {
+/*    private void fireDocumentEvent(DocumentChangeEvent event) {
         for (DocumentChangeListener l : documentChangeListeners) {
             l.react(event);
         }
     }
-
+*/
     /**
      * 
      * @return
@@ -263,6 +273,16 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     }
     public void setAlias(Object alias) {
         this.alias = alias;
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.propertyChangeListener = listener;
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.propertyChangeListener = null;
     }
     /**
      *
@@ -279,7 +299,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         /**
          * 
          */
-        protected Map<String, DocumentChangeEvent> propertyErrors;
+//        protected Map<String, DocumentChangeEvent> propertyErrors;
 
         /**
          * 
@@ -289,7 +309,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             this.documentStore = documentStore;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
-            propertyErrors = new HashMap<String, DocumentChangeEvent>();
+//            propertyErrors = new HashMap<String, DocumentChangeEvent>();
         }
 
         @Override
@@ -369,7 +389,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
          */
         @Override
         public void react(BinderEvent event) {
-            if (event.getAction() == BinderEvent.Action.componentChange) {
+            if (event.getAction() == BinderEvent.Action.boundObjectChange) {
                 dirtyEditValues.put(event.getPropertyName(), event.getComponentValue());
             }
         }

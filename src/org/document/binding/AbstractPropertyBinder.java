@@ -1,12 +1,9 @@
 package org.document.binding;
 
+import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import org.document.DataUtils;
 import org.document.Document;
-import org.document.DocumentChangeEvent;
-import org.document.DocumentChangeListener;
 
 /**
  * The class provides a skeletal implementation of the
@@ -60,17 +57,19 @@ import org.document.DocumentChangeListener;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder,  BinderListener {
+public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder, BinderListener, ContextListener {
+
     private String alias;
     protected String boundProperty;
     //protected List<BinderListener> binderListener;
     protected BinderListener binderListener;
     protected BinderConverter converter;
     protected boolean suspended;
-    
+
     public AbstractPropertyBinder(Object boundObject) {
         super(boundObject);
     }
+
     @Override
     public String getAlias() {
         if (this.alias == null) {
@@ -79,14 +78,12 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         return alias;
     }
 
-    
     @Override
-    public BindingContext getContext() {
+    public BindingContext context() {
         BinderEvent event = new BinderEvent(this, BinderEvent.Action.contextRequest);
         binderListener.react(event);
         return event.getContext();
     }
-
 
     @Override
     public void setAlias(String alias) {
@@ -96,6 +93,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
             this.alias = alias;
         }
     }
+
     /**
      * Returns an instance of class
      * <code>BinderConverter</code> that should be used to convert the value of
@@ -124,8 +122,9 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @return an object of class {@link org.document.Document).
      */
     public Document getDocument() {
-        return getContext().getSelected();
+        return context().getSelected();
     }
+
     /**
      * Indicates whether the binder is in suspend state.
      *
@@ -163,14 +162,14 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
     @Override
     public void addBinderListener(BinderListener l) {
         binderListener = l;
-/*        if (this.binderListener == null) {
-            this.binderListener = new ArrayList<BinderListener>(1);
-        }
-        binderListener.add(l);
-        if (binderListener.size() > 1) {
-            throw new IndexOutOfBoundsException("Only one BinderListener can be registered");
-        }
-*/
+        /*        if (this.binderListener == null) {
+         this.binderListener = new ArrayList<BinderListener>(1);
+         }
+         binderListener.add(l);
+         if (binderListener.size() > 1) {
+         throw new IndexOutOfBoundsException("Only one BinderListener can be registered");
+         }
+         */
     }
 
     /**
@@ -183,11 +182,11 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
     @Override
     public void removeBinderListener(BinderListener l) {
         binderListener = null;
-/*        if (binderListener == null || binderListener.isEmpty()) {
-            return;
-        }
-        this.binderListener.remove(l);
-*/ 
+        /*        if (binderListener == null || binderListener.isEmpty()) {
+         return;
+         }
+         this.binderListener.remove(l);
+         */
     }
 
     /**
@@ -209,54 +208,54 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      *
      * @param event the event to be handled
      */
-/*    @Override
-    public void react(DocumentChangeEvent event) {
-        Document document = getDocument();
-        switch (event.getAction()) {
-            case documentChange:
-                if (isSuspended()) {
-                    return;
-                }
-                document = (Document) event.getNewValue();
-                if (document != null && getBoundProperty() != null) {
+    /*    @Override
+     public void react(DocumentChangeEvent event) {
+     Document document = getDocument();
+     switch (event.getAction()) {
+     case documentChange:
+     if (isSuspended()) {
+     return;
+     }
+     document = (Document) event.getNewValue();
+     if (document != null && getBoundProperty() != null) {
 
-                    propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
-                } else if (document == null) {
-                    initBoundObjectDefaults();
-                }
-                return;
-            case resumeBinding:
-                if (!isSuspended()) {
-                    return;
-                }
-                if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
-                    return;
-                }
-                suspended = false;
-                document = (Document) event.getNewValue();
-                if (document != null && getBoundProperty() != null) {
-                    propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()),false);
-                } else if (document == null) {
-                    initBoundObjectDefaults();
-                }
-                return;
-            case suspendBinding:
-                if (isSuspended()) {
-                    return;
-                }
-                if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
-                    return;
-                }
-                this.suspended = true;
-                return;
-            case propertyChange:
-                if (!isSuspended()) {
-                    propertyChanged(event.getPropertyName(), event.getNewValue(),false);
-                }
-                return;
-        }//switch
-    }
-    */ 
+     propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
+     } else if (document == null) {
+     initBoundObjectDefaults();
+     }
+     return;
+     case resumeBinding:
+     if (!isSuspended()) {
+     return;
+     }
+     if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+     return;
+     }
+     suspended = false;
+     document = (Document) event.getNewValue();
+     if (document != null && getBoundProperty() != null) {
+     propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()),false);
+     } else if (document == null) {
+     initBoundObjectDefaults();
+     }
+     return;
+     case suspendBinding:
+     if (isSuspended()) {
+     return;
+     }
+     if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+     return;
+     }
+     this.suspended = true;
+     return;
+     case propertyChange:
+     if (!isSuspended()) {
+     propertyChanged(event.getPropertyName(), event.getNewValue(),false);
+     }
+     return;
+     }//switch
+     }
+     */
     /**
      * Handles the specified event of type
      * <code>DocumentChangeEvent</code>. This is the
@@ -276,23 +275,10 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      *
      * @param event the event to be handled
      */
-
     @Override
     public void react(BinderEvent event) {
         Document document = getDocument();
         switch (event.getAction()) {
-            case documentChange:
-                if (isSuspended()) {
-                    return;
-                }
-                document = (Document) event.getNewValue();
-                if (document != null && getBoundProperty() != null) {
-
-                    propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
-                } else if (document == null) {
-                    initBoundObjectDefaults();
-                }
-                return;
             case refresh:
                 if (isSuspended()) {
                     return;
@@ -304,7 +290,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
                     initBoundObjectDefaults();
                 }
                 return;
-                
+
             case resumeBinding:
                 if (!isSuspended()) {
                     return;
@@ -315,7 +301,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
                 suspended = false;
                 document = (Document) event.getNewValue();
                 if (document != null && getBoundProperty() != null) {
-                    propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()),false);
+                    propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()), false);
                 } else if (document == null) {
                     initBoundObjectDefaults();
                 }
@@ -329,14 +315,31 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
                 }
                 this.suspended = true;
                 return;
-            case propertyChange:
-                if (!isSuspended()) {
-                    propertyChanged(event.getPropertyName(), event.getNewValue(),false);
-                }
-                return;
+            /*            case propertyChange:
+             if (!isSuspended()) {
+             propertyChanged(event.getPropertyName(), event.getNewValue(), false);
+             }
+             return;
+             */
         }//switch
     }
-    
+
+    @Override
+    public void react(ContextEvent event) {
+        switch (event.getAction()) {
+            case documentChange:
+                if (isSuspended()) {
+                    return;
+                }
+                Document document = event.getNewSelected();
+                if (document != null && getBoundProperty() != null) {
+                    propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
+                } else if (document == null) {
+                    initBoundObjectDefaults();
+                }
+                return;
+        }
+    }
     /*    protected void update(BinderEvent.Action action) {
      switch (action) {
      case boundPropertyReplace:
@@ -359,6 +362,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      }
      }
      */
+
     @Override
     public Object getBoundObject() {
         return boundObject;
@@ -375,18 +379,19 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         }
         super.setBoundObject(boundObject);
         fireRefreshBoundObject();
-/*        if (getDocument() != null && getBoundProperty() != null) {
-            propertyChanged(getBoundProperty(), getDocument().propertyStore().get(getBoundProperty()),false);
-        } else if (getDocument() == null) {
-            initBoundObjectDefaults();
-        }
-*/ 
+        /*        if (getDocument() != null && getBoundProperty() != null) {
+         propertyChanged(getBoundProperty(), getDocument().propertyStore().get(getBoundProperty()),false);
+         } else if (getDocument() == null) {
+         initBoundObjectDefaults();
+         }
+         */
     }
-    
+
     protected void fireRefreshBoundObject() {
-        BinderEvent e = new BinderEvent(this,BinderEvent.Action.boundObjectReplace);
+        BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
         binderListener.react(e);
     }
+
     /**
      * @return the bound property name
      */
@@ -418,13 +423,13 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         //
         // refresh with the new property
         //
-        fireRefreshBoundObject();        
-/*        if (getDocument() != null && getBoundProperty() != null) {
-            propertyChanged(getBoundProperty(), getDocument().propertyStore().get(getBoundProperty()),false);
-        } else if (getDocument() == null) {
-            initBoundObjectDefaults();
-        }
-*/
+        fireRefreshBoundObject();
+        /*        if (getDocument() != null && getBoundProperty() != null) {
+         propertyChanged(getBoundProperty(), getDocument().propertyStore().get(getBoundProperty()),false);
+         } else if (getDocument() == null) {
+         initBoundObjectDefaults();
+         }
+         */
     }
 
     /**
@@ -454,6 +459,13 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         return result;
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        if (!isSuspended()) {
+            propertyChanged(e.getPropertyName(), e.getNewValue(), false);
+        }
+    }
+
     /**
      * The method is called when a a property value is changed, and in response,
      * it is necessary to change the value in the associated component. First
@@ -480,33 +492,12 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
             return;
         }
         Object convertedValue = this.componentValueOf(propertyValue);
-        if ( ! forceRefresh && !needChangeComponent(convertedValue)) {
+        if (!forceRefresh && !needChangeComponent(convertedValue)) {
             return;
         }
         setBoundObjectValue(convertedValue);
     }
 
-    protected void propertyChanged(BinderEvent e, boolean forceRefresh) {
-        String property = e.getPropertyName();
-        Object propertyValue = e.getNewValue();
-        
-        if (property == null) {
-            return;
-        }
-        if ((!property.equals(getBoundProperty())) && !"*".equals(property)) {
-            return;
-        }
-
-        if (getBoundObject() == null) {
-            return;
-        }
-        Object convertedValue = this.componentValueOf(propertyValue);
-        if ( ! forceRefresh && !needChangeComponent(convertedValue)) {
-            return;
-        }
-        setBoundObjectValue(convertedValue);
-    }
-    
     /**
      * Returns a value of the object that the binder considers to be a
      * component. The method is declared as
@@ -544,5 +535,4 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @return
      */
     protected abstract Object propertyValueOf(Object componentValue);
-
 }

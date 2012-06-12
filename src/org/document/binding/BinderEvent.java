@@ -21,13 +21,6 @@ public class BinderEvent extends EventObject {
     public BinderEvent(Binder source) {
         super(source);
     }
-    public BinderEvent(BindingContext source) {
-        super(source);
-    }
-    public BinderEvent(BindingContext source,Action action) {
-        this(source);
-        this.action = action;
-    }
     
     public BinderEvent(Binder source,Action action) {
         this(source);
@@ -93,14 +86,14 @@ public class BinderEvent extends EventObject {
         this.exception = exception;
     }
 
-    public Binder getBinder() {
+/*    public Binder getBinder() {
         return binder;
     }
 
     public void setBinder(Binder binder) {
         this.binder = binder;
     }
-
+*/
     public Object getOldValue() {
         return oldValue;
     }
@@ -120,18 +113,17 @@ public class BinderEvent extends EventObject {
     
     public enum Action {
         propertyChangeRequest,
-        componentChangeError,
-        componentChange,
+        boundObjectError,
+        boundObjectChange,
         aliasReplace,
         clearError,
         fixError,
-        componentSelectChange,
+        boundObjectSelectChange,
         binderRemoved,
         // concern documents
-        documentChange,
+        
         suspendBinding,
         resumeBinding,
-        documentChanging,
         propertyChange,
         propertyChangeNotSeected,
         completeChanges,

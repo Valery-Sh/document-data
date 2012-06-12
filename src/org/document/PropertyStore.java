@@ -1,5 +1,6 @@
 package org.document;
 
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 /**
@@ -14,11 +15,15 @@ public interface PropertyStore extends Serializable {
 
     void put(Object key, Object value);
 
-    //void validate(Object key, Object value) throws ValidationException;
     
-    void addDocumentChangeListener(DocumentChangeListener listener);
+    void addPropertyChangeListener(PropertyChangeListener listener);
 
-    void removeDocumentChangeListener(DocumentChangeListener listener);
+    void removePropertyChangeListener(PropertyChangeListener listener);
+
+    
+    //void addDocumentChangeListener(DocumentChangeListener listener);
+
+    //void removeDocumentChangeListener(DocumentChangeListener listener);
     
     public static class Alias {
         protected Object clazz;

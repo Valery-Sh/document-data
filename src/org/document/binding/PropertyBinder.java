@@ -1,5 +1,6 @@
 package org.document.binding;
 
+import java.beans.PropertyChangeListener;
 import org.document.Document;
 
 /**
@@ -10,9 +11,9 @@ import org.document.Document;
  * 
  * @author V. Shyshkin
  */
-public interface PropertyBinder<E extends Document> extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
+public interface PropertyBinder<E extends Document> extends Binder, PropertyChangeListener {//,DocumentChangeListener {//, HasDocumentAlias {
     
-    BindingContext getContext();
+    BindingContext context();
     /**
      * Returns a bound  property name.
      *

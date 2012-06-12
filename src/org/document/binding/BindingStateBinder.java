@@ -213,10 +213,10 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
     public void react(BinderEvent event) {
 
         switch (event.getAction()) {
-            case componentChange:
+            case boundObjectChange:
                 BinderEvent.Action action = event.getAction();
                 if (((PropertyBinder) event.getSource()).getBoundProperty().equals("selected")) {
-                    action = BinderEvent.Action.componentSelectChange;
+                    action = BinderEvent.Action.boundObjectSelectChange;
                 }
                 BinderEvent e = new BinderEvent(this, action, event.getDataValue(), event.getComponentValue());
                 break;

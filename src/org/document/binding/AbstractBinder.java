@@ -31,14 +31,7 @@ public abstract class AbstractBinder implements Binder {
 
     }
 
-/*    public BindingContext getContext() {
-        return context;
-    }
 
-    public void setContext(BindingContext context) {
-        this.context = context;
-    }
-*/
     @Override
     public Object getBoundObject() {
         return boundObject;
