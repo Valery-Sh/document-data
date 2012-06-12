@@ -2,17 +2,15 @@ package org.document.swing.binders;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.beans.PropertyChangeEvent;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListDataListener;
 import org.document.Document;
-import org.document.binding.AbstractListModelBinder;
-import org.document.binding.Binder;
+
 import org.document.binding.DocumentListBinder;
-import org.document.binding.PropertyBinder;
 
 /**
  *
@@ -98,6 +96,41 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
         }
     }
 
+    @Override
+    protected void setDefaultComponentModel() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    protected Object createComponentModel() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    protected Object getModel() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    protected void setModel(Object model) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    protected int getComponentSelectedIndex() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    protected void setComponentSelectedIndex(int selectedIndex) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        getJComboBox().repaint();
+    }
+
   
   
 /*    public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
@@ -178,7 +211,7 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
         }
     }//class JListSelectionBinder
 */
-    public static class JComboModelBinder extends AbstractListModelBinder {
+/*    public static class JComboModelBinder extends AbstractListModelBinder {
 
         protected String[] properties;
 
@@ -216,7 +249,7 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
             getJComboBox().setModel(new DefaultComboBoxModel());
         }
     }//class JListListModelBinder
-
+*/
     public static class ComboBoxModelImpl<E extends Document> implements ComboBoxModel {
 
         protected Object selectedObject;

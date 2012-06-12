@@ -23,6 +23,12 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
     
     
     protected Document getDocument() {
+        if ( binder.getContext() == null ) {
+            return null;
+        }
+        if ( binder.getContext() == null ) {
+            return null;
+        }
         return binder.getContext().getSelected();
     }
 
@@ -62,7 +68,9 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
         Object result = null;
         String s = propertyValue == null ? "" : propertyValue.toString();
         Class propertyType = definePropertyType();        
-        
+        if ( propertyType == null  ) {
+            return null;
+        }
         if ( propertyType.isPrimitive() ) {
              propertyType = DataUtils.getWrapper(propertyType);
         }
@@ -86,6 +94,9 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
     }
     
     protected Class definePropertyType() {
+        if ( getDocument() == null ) {
+            return null;
+        }
         Class propertyType;
         if ( getDocument().propertyStore() instanceof HasSchema) {
             DocumentSchema sc = ((HasSchema)getDocument().propertyStore()).getSchema();

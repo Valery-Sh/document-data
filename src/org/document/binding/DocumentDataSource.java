@@ -113,6 +113,9 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         return registry.add(binder.getAlias(), binder);
     }
 
+    public boolean add(Binder binder) {
+        return registry.add(binder);
+    }
     public boolean isActive() {
         return active;
     }
@@ -122,9 +125,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 //            return;
 //        }
         this.active = active;
-        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.activeStateChange); 
-        registry.notify(e);
-        
+        Document oldDoc = selected;
         if (active) {
             this.active = active;
             if (sourceList != null) {
@@ -137,6 +138,11 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                 setSelected(selected);
             }
         }
+        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.activeStateChange); 
+        e.setNewSelected(selected);
+        e.setOldSelected(oldDoc);
+        registry.notify(e);
+        
     }
 
     public DocumentList getDocuments() {

@@ -120,6 +120,9 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @return an object of class {@link org.document.Document).
      */
     public Document getDocument() {
+        if ( getContext() == null ) {
+            return null;
+        }
         return getContext().getSelected();
     }
 
@@ -324,7 +327,12 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
 
     @Override
     public void react(ContextEvent event) {
+        if ( event.getSource() == null ) {
+            return;
+        }
+        context = (BindingContext)event.getSource();
         switch (event.getAction()) {
+            case activeStateChange : 
             case documentChange:
                 if (isSuspended()) {
                     return;
@@ -334,6 +342,9 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
                     propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
                 } else if (document == null) {
                     initBoundObjectDefaults();
+                }
+                if ( event.getAction() == ContextEvent.Action.activeStateChange ) {
+                    initDefaults();
                 }
                 return;
         }

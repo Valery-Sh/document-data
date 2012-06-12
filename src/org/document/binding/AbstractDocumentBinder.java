@@ -151,11 +151,15 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     public void resume(String propertyName) {
         BinderEvent event = new BinderEvent(this, BinderEvent.Action.resumeBinding);
         //event.setPropertyName(propertyName);
+        if ( getContext() == null ) { return; }
         event.setNewValue(getContext().getSelected());
         notifyAll(event);
     }
 
     protected E getDocument() {
+        if ( getContext() == null ) {
+            return null;
+        }
         return (E) getContext().getSelected();
     }
 
@@ -260,6 +264,9 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
      */
     @Override
     public void react(BinderEvent event) {
+        if ( getContext() == null ) {
+            return;
+        }
         switch (event.getAction()) {
             case refresh:
                 fireRefresh(event);
@@ -284,6 +291,9 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     @Override
     public void react(ContextEvent event) {
         context = (BindingContext)event.getSource();
+        if ( context == null ) {
+            return;
+        }
         switch (event.getAction()) {
             case documentChanging:
                 beforeDocumentChange(event);
@@ -292,11 +302,13 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
                 afterDocumentChange(event);
                 break;
             case activeStateChange:
-                if ( context.isActive()) {
+                notifyAll(event);
+/*                if ( context.isActive()) {
                    notifyAll(new BinderEvent(this,BinderEvent.Action.refresh)); 
                 } else {
                    initDefaults();
                 }
+*/ 
                 break;
                 
         }

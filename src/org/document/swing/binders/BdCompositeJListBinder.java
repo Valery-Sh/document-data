@@ -2,7 +2,9 @@ package org.document.swing.binders;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
 import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListModel;
@@ -25,7 +27,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
     public BdCompositeJListBinder(JList component, String... properties) {
         super(component);
         this.displayProperties = properties;
-        
+
     }
 
     @Override
@@ -63,39 +65,18 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         }
 
     }
-    
+
     @Override
     public void initBoundObjectDefaults() {
         //((JListModelBinder)documentListBinder).setDefaultComponentModel();
     }
-/*    @Override
-    protected void addBoundObjectListeners() {
-        getJList().addListSelectionListener(getBoundObject());
-    }
 
-    @Override
-    protected void removeBoundObjectListeners() {
-        if (getJList() == null) {
-            return;
-        }
-        ListSelectionListener[] listeners = getJList().getListSelectionListeners();
-        if (listeners != null) {
-            for (ListSelectionListener l : listeners) {
-                getJList().removeListSelectionListener(l);
-            }
-        }
-    }
-*/
     public JLabel getLocator() {
         return locator;
     }
 
     public void setLocator(JLabel locator) {
         this.locator = locator;
-    }
-
-    public JList getJList() {
-        return (JList) boundObject;
     }
 
     public void setJList(JList jList) {
@@ -114,120 +95,174 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         getJList().repaint();
     }
 
-/*    @Override
-    protected PropertyBinder createSelectedBinder() {
-        selectedBinder = new BdCompositeJListBinder.JListSelectionBinder(this);
-        return selectedBinder;
+    @Override
+    protected void setDefaultComponentModel() {
+        DefaultListModel m = new DefaultListModel();
+        m.clear();
+        getJList().setModel(m);
     }
 
     @Override
-    protected PropertyBinder createListModelBinder() {
-        documentListBinder = new BdCompositeJListBinder.JListModelBinder(this, displayProperties);
-        return documentListBinder;
+    protected Object createComponentModel() {
+        return new ListBoxModelImpl(getDisplayProperties(), getContext().getDocumentList());
     }
 
     @Override
-    protected PropertyBinder createDocumentChangeEventBinder() {
-        documentChangeEventBinder = new BdCompositeJListBinder.JListDocumentChangeBinder(this);
-        return documentChangeEventBinder;
+    protected Object getModel() {
+        return getJList().getModel();
     }
 
     @Override
-    public boolean add(Binder binder) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected void setModel(Object model) {
+        getJList().clearSelection();
+        getJList().setModel((ListModel) model);
     }
 
-    public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder {
-
-        public JListDocumentChangeBinder(BdCompositeJListBinder component) {
-            super(component);
-        }
-
-        @Override
-        protected void notifyComponentOf(DocumentChangeEvent event) {
-            if (event == null) {
-                return;
-            }
-            JList ls = (JList) ((BdCompositeJListBinder) boundObject).getBoundObject();
-            BdCompositeJListBinder.ListBoxModelImpl model = (BdCompositeJListBinder.ListBoxModelImpl) ls.getModel();
-            String[] props = model.getProperties();
-            if (Arrays.asList(props).contains(event.getPropertyName())) {
-                ls.repaint();
-            }
-        }
+    @Override
+    protected int getComponentSelectedIndex() {
+        return getJList().getSelectedIndex();
     }
 
-    public static class JListSelectionBinder<E extends Document> extends AbstractListSelectionBinder {//implements ListSelectionListener {
+    @Override
+    protected void setComponentSelectedIndex(int selectedIndex) {
+        getJList().setSelectedIndex(selectedIndex);
+    }
 
-        public JListSelectionBinder(BdCompositeJListBinder component) {
-            super(component);
+    protected JList getJList() {
+        if (getBoundObject() == null) {
+            return null;
         }
+        return getBoundObject();
+    }
+    @Override
+    public void initDefaults() {
+        setDefaultComponentModel();
+    }
 
-        @Override
-        public BdCompositeJListBinder getBoundObject() {
-            return (BdCompositeJListBinder) boundObject;
-        }
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        getJList().repaint();
+    }
+    /*    @Override
+     protected PropertyBinder createSelectedBinder() {
+     selectedBinder = new BdCompositeJListBinder.JListSelectionBinder(this);
+     return selectedBinder;
+     }
 
-        protected JList getJList() {
-            if (getBoundObject() == null) {
-                return null;
-            }
-            return getBoundObject().getBoundObject();
-        }
+     @Override
+     protected PropertyBinder createListModelBinder() {
+     documentListBinder = new BdCompositeJListBinder.JListModelBinder(this, displayProperties);
+     return documentListBinder;
+     }
 
-        @Override
-        public void boundObjectChanged(Object o) {
-            super.boundObjectChanged(o);
-        }
+     @Override
+     protected PropertyBinder createDocumentChangeEventBinder() {
+     documentChangeEventBinder = new BdCompositeJListBinder.JListDocumentChangeBinder(this);
+     return documentChangeEventBinder;
+     }
 
-        @Override
-        protected int getComponentSelectedIndex() {
-            return getJList().getSelectedIndex();
-        }
+     @Override
+     public boolean add(Binder binder) {
+     throw new UnsupportedOperationException("Not supported yet.");
+     }
 
-        @Override
-        protected void setComponentSelectedIndex(int selectedIndex) {
-            getJList().setSelectedIndex(selectedIndex);
-        }
+     public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder {
 
-    }//class JListSelectionBinder
+     public JListDocumentChangeBinder(BdCompositeJListBinder component) {
+     super(component);
+     }
 
-    public static class JListModelBinder extends AbstractListModelBinder {
+     @Override
+     protected void notifyComponentOf(DocumentChangeEvent event) {
+     if (event == null) {
+     return;
+     }
+     JList ls = (JList) ((BdCompositeJListBinder) boundObject).getBoundObject();
+     BdCompositeJListBinder.ListBoxModelImpl model = (BdCompositeJListBinder.ListBoxModelImpl) ls.getModel();
+     String[] props = model.getProperties();
+     if (Arrays.asList(props).contains(event.getPropertyName())) {
+     ls.repaint();
+     }
+     }
+     }
 
-        protected String[] properties;
+     public static class JListSelectionBinder<E extends Document> extends AbstractListSelectionBinder {//implements ListSelectionListener {
 
-        public JListModelBinder(BdCompositeJListBinder component, String... properties) {
-            super(component);
-            this.properties = properties;
-        }
-        protected JList getJList() {
-            return ((BdCompositeJListBinder) boundObject).getBoundObject();
-        }
+     public JListSelectionBinder(BdCompositeJListBinder component) {
+     super(component);
+     }
 
-        @Override
-        protected void setDefaultComponentModel() {
-            DefaultListModel m = new DefaultListModel();
-            m.clear();
-            getJList().setModel(m);
-        }
+     @Override
+     public BdCompositeJListBinder getBoundObject() {
+     return (BdCompositeJListBinder) boundObject;
+     }
 
-        @Override
-        protected Object createComponentModel() {
-            return new BdCompositeJListBinder.ListBoxModelImpl(properties, getDocuments());
-        }
+     protected JList getJList() {
+     if (getBoundObject() == null) {
+     return null;
+     }
+     return getBoundObject().getBoundObject();
+     }
 
-        @Override
-        protected Object getModel() {
-            return getJList().getModel();
-        }
+     @Override
+     public void boundObjectChanged(Object o) {
+     super.boundObjectChanged(o);
+     }
 
-        @Override
-        protected void setModel(Object model) {
-            getJList().clearSelection();
-            getJList().setModel((ListModel) model);
-        }
-    }//class JListListModelBinder
-*/
+     @Override
+     protected int getComponentSelectedIndex() {
+     return getJList().getSelectedIndex();
+     }
+
+     @Override
+     protected void setComponentSelectedIndex(int selectedIndex) {
+     getJList().setSelectedIndex(selectedIndex);
+     }
+     protected JList getJList() {
+     if (getBoundObject() == null) {
+     return null;
+     }
+     return getBoundObject().getBoundObject();
+     }
+
+     }//class JListSelectionBinder
+
+     public static class JListModelBinder extends AbstractListModelBinder {
+
+     protected String[] properties;
+
+     public JListModelBinder(BdCompositeJListBinder component, String... properties) {
+     super(component);
+     this.properties = properties;
+     }
+     protected JList getJList() {
+     return ((BdCompositeJListBinder) boundObject).getBoundObject();
+     }
+
+     @Override
+     protected void setDefaultComponentModel() {
+     DefaultListModel m = new DefaultListModel();
+     m.clear();
+     getJList().setModel(m);
+     }
+
+     @Override
+     protected Object createComponentModel() {
+     return new BdCompositeJListBinder.ListBoxModelImpl(properties, getDocuments());
+     }
+
+     @Override
+     protected Object getModel() {
+     return getJList().getModel();
+     }
+
+     @Override
+     protected void setModel(Object model) {
+     getJList().clearSelection();
+     getJList().setModel((ListModel) model);
+     }
+     }//class JListListModelBinder
+     */
     public static class ListBoxModelImpl<E extends Document> implements ListModel {
 
         private List<E> documents;
@@ -255,6 +290,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         @Override
         public Object getElementAt(int index) {
             Document d = documents.get(index);
+            
             if (d == null) {
                 return null;
             }
