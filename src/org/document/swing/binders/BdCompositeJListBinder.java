@@ -16,6 +16,7 @@ import org.document.DocumentChangeEvent;
 import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
+import org.document.binding.Binder;
 import org.document.binding.DocumentListBinder;
 import org.document.binding.PropertyBinder;
 
@@ -40,7 +41,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         if (e.getValueIsAdjusting()) {
             return;
         }
-        ((JListSelectionBinder) selectedBinder).componentChanged(getBoundObject().getSelectedIndex());
+        ((JListSelectionBinder) selectedBinder).boundObjectChanged(getBoundObject().getSelectedIndex());
     }
 
     @Override
@@ -139,6 +140,11 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         return documentChangeEventBinder;
     }
 
+    @Override
+    public boolean add(Binder binder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public static class JListDocumentChangeBinder extends AbstractListDocumentChangeBinder {
 
         public JListDocumentChangeBinder(BdCompositeJListBinder component) {
@@ -183,8 +189,8 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         }
 
         @Override
-        public void componentChanged(Object o) {
-            super.componentChanged(o);
+        public void boundObjectChanged(Object o) {
+            super.boundObjectChanged(o);
         }
 
         @Override

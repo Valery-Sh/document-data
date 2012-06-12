@@ -10,9 +10,9 @@ import org.document.Document;
  * 
  * @author V. Shyshkin
  */
-public interface PropertyBinder<E extends Document> extends Binder,HasContext {//,DocumentChangeListener {//, HasDocumentAlias {
+public interface PropertyBinder<E extends Document> extends Binder {//,DocumentChangeListener {//, HasDocumentAlias {
     
-    
+    BindingContext getContext();
     /**
      * Returns a bound  property name.
      *

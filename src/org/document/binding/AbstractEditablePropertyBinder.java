@@ -9,8 +9,8 @@ import org.document.*;
  * <ol>
  *   <li>{@link #addBoundObjectListeners()}</li>
  *   <li>{@link #removeBoundObjectListeners()}</li>
- *   <li>{@link #getComponentValue()}</li>
- *   <li>{@link #setComponentValue(java.lang.Object) }</li>
+ *   <li>{@link #getBoundObjectValue()}</li>
+ *   <li>{@link #setBoundObjectValue(java.lang.Object) }</li>
  *   <li>{@link #propertyValueOf(java.lang.Object)  }</li>
  *   <li>{@link #componentValueOf(java.lang.Object) }</li>
  *   <li>{@link #initBoundObjectDefaults() </li>
@@ -71,9 +71,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     /**
      * Indicates whether the binder accepts events.
      * If the value is <code>true</code> the methods {@link #propertyChanged(java.lang.Object)}  
-     * and {@link #componentChanged(java.lang.Object) do nothing.
+     * and {@link #boundObjectChanged(java.lang.Object) do nothing.
      * The default value is <code>false</code>. The field value is set
-     * by the method <code>componentChanged</code> just before changing the
+     * by the method <code>boundObjectChanged</code> just before changing the
      * property value.
      * 
      */
@@ -116,7 +116,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * 
      * @param componentValue the component specific new value
      */
-    protected void componentChanged(boolean notifyOfErrors, Object componentValue) {
+    protected void boundObjectChanged(boolean notifyOfErrors, Object componentValue) {
         if ( getBoundProperty() == null) {
             return;
         }
@@ -150,8 +150,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                 }
             }
             binderIsStillChangingProperty = true;
-            getDocument().propertyStore().put(boundProperty, convertedValue);
-
+            //getDocument().propertyStore().put(boundProperty, convertedValue);
+            firePropertyChangeRequest(oldDataValue, convertedValue);
+            
             fireComponentValueChange(convertedValue, componentValue);
             /*
              * Some error binders may accumulate property error info 
@@ -175,14 +176,14 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     }
 
     /**
-     * Just calls the method <code>componentChanged(boolean,Object)</code>
+     * Just calls the method <code>boundObjectChanged(boolean,Object)</code>
      * with the first parameter set to <code>true</code>.
      * 
      * @param componentValue the new component value
-     * @see #componentChanged(boolean, java.lang.Object) 
+     * @see #boundObjectChanged(boolean, java.lang.Object) 
      */
-    protected void componentChanged(Object componentValue) {
-        this.componentChanged(true, componentValue);
+    protected void boundObjectChanged(Object componentValue) {
+        this.boundObjectChanged(true, componentValue);
     }
     /**
      * Handles the specified event of type <code>DocumentChangeEvent</code>.
@@ -213,31 +214,39 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * @param event the event to be handled 
      */
     @Override
+    public void react(BinderEvent event) {
+        super.react(event);
+        if (isSuspended()) {
+            return;
+        }
+        switch(event.getAction()) {
+            case completeChanges :
+                boundObjectChanged(false, getBoundObjectValue());
+                break;
+        }
+    }
+    
+/*    @Override
     public void react(DocumentChangeEvent event) {
         super.react(event);
         if (isSuspended()) {
             return;
         }
         switch(event.getAction()) {
-/*            case setLocked:
-                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
-                    return;
-                }
-                
-                removeBoundObjectListeners();
-                setLocked();
-                break;
-            case bind:
-                if ( event.getPropertyName() != null && ! event.getPropertyName().equals(boundProperty)) {
-                    break;
-                }
-                bind();
-                break;
-*/ 
             case completeChanges :
-                componentChanged(false, getComponentValue());
+                boundObjectChanged(false, getBoundObjectValue());
                 break;
         }
+    }
+*/    
+    
+    private void firePropertyChangeRequest(Object oldValue, Object newValue) {
+        BinderEvent.Action action =
+                BinderEvent.Action.propertyChangeRequest;
+        BinderEvent event = new BinderEvent(this, action);
+        event.setOldValue(oldValue);
+        event.setNewValue(newValue);
+        notifyListeners(event);
     }
 
     private void fireComponentValueChange(Object dataValue, Object componentValue) {
@@ -269,12 +278,13 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     }
 
     private void notifyListeners(BinderEvent event) {
-        if (binderListeners == null) {
+        if (binderListener == null) {
             return;
         }
-        for (BinderListener l : binderListeners) {
-            l.react(event);
-        }
+        binderListener.react(event);
+//        for (BinderListener l : binderListener) {
+//            l.react(event);
+//        }
     }
 
     /**
@@ -285,15 +295,15 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * {@link #componentValueOf(java.lang.Object) }. The method checks whether
      * or not to actually change the value of the component (possibly a
      * component already has the same meaning) and, if so, then the new value
-     * assigned to the component by calling a protected method {@link #setComponentValue(java.lang.Object).
+     * assigned to the component by calling a protected method {@link #setBoundObjectValue(java.lang.Object).
      * Usually, the method is not overriden by subclasses. Instead, you
      * might to override the method
-     * <code>setComponentValue</code>.
+     * <code>setBoundObjectValue</code>.
      *
      * @param propertyValue the ne value of the bound property
      */
     @Override
-    protected void propertyChanged(String property,Object propertyValue) {
+    protected void propertyChanged(String property,Object propertyValue, boolean forceRefresh) {
         if ( property == null ) {
             return;
         }
@@ -312,11 +322,11 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         }
 
         Object convertedValue = this.componentValueOf(propertyValue);
-        if (!needChangeComponent(convertedValue)) {
+        if ( ! forceRefresh && !needChangeComponent(convertedValue)) {
             return;
         }
         removeBoundObjectListeners();
-        setComponentValue(convertedValue);
+        setBoundObjectValue(convertedValue);
         addBoundObjectListeners();
     }
 }

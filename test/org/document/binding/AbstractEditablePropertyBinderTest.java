@@ -39,7 +39,7 @@ public class AbstractEditablePropertyBinderTest {
     }
 
     /**
-     * Test of componentChanged method, of class AbstractEditablePropertyBinder.
+     * Test of boundObjectChanged method, of class AbstractEditablePropertyBinder.
      */
     @Test
     public void testComponentChanged_boolean_Object() {
@@ -53,21 +53,21 @@ public class AbstractEditablePropertyBinderTest {
         //
         AbstractEditablePropertyBinder instance = new PropertyBinderImpl("value",component);
         instance.document = doc;
-        instance.componentChanged(true, componentValue);
+        instance.boundObjectChanged(true, componentValue);
         assertEquals(0,doc.propertyStore().get("value"));
         componentValue = "123";
-        instance.componentChanged(true, componentValue);
+        instance.boundObjectChanged(true, componentValue);
         assertEquals(123,doc.propertyStore().get("value"));
         //
         // Test when propertyValueOf throws exception(Cannot convert a string 
         // value to an integer value).
-        // So componentChanged() encounters an error and the 'doc' document
+        // So boundObjectChanged() encounters an error and the 'doc' document
         // doesn't change
         //
         doc.propertyStore().put("value", 0);
         Object expResult = doc.propertyStore().get("value");
         componentValue ="A123";
-        instance.componentChanged(true, componentValue);
+        instance.boundObjectChanged(true, componentValue);
         assertEquals(expResult,doc.propertyStore().get("value"));
         
     }
@@ -132,12 +132,12 @@ public class AbstractEditablePropertyBinderTest {
         }
 
         @Override
-        protected Object getComponentValue() {
+        protected Object getBoundObjectValue() {
             return component.getValue();
         }
 
         @Override
-        protected void setComponentValue(Object componentValue) {
+        protected void setBoundObjectValue(Object componentValue) {
             component.setValue(componentValue);
         }
 

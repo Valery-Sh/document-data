@@ -13,6 +13,7 @@ import org.document.DocumentChangeEvent;
 import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
 import org.document.binding.AbstractListSelectionBinder;
+import org.document.binding.Binder;
 import org.document.binding.BindingStateBinder;
 import org.document.binding.PropertyBinder;
 
@@ -39,7 +40,7 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == boundObject) {
             JComboSelectionBinder s = (JComboSelectionBinder) selectedBinder;
-            s.componentChanged(getBoundObject().getSelectedIndex());
+            s.boundObjectChanged(getBoundObject().getSelectedIndex());
         }
     }
 
@@ -118,6 +119,11 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
         return documentChangeEventBinder;
     }
 
+    @Override
+    public boolean add(Binder binder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
 
         public JComboDocumentChangeBinder(BdCompositeJComboBinder component) {
@@ -167,13 +173,13 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
         }
 
         @Override
-        public void componentChanged(Object o) {
-            super.componentChanged(o);
+        public void boundObjectChanged(Object o) {
+            super.boundObjectChanged(o);
         }
 
         @Override
-        public void propertyChanged(String property, Object propertyValue) {
-            super.propertyChanged(property, propertyValue);
+        public void propertyChanged(String property, Object propertyValue,boolean forceRefresh) {
+            super.propertyChanged(property, propertyValue,false);
             getJComboBox().repaint();// if omitted then doesn't change selected item
         }
 

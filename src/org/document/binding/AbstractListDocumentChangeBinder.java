@@ -32,11 +32,11 @@ public abstract class AbstractListDocumentChangeBinder extends AbstractEditableP
     }
 
     @Override
-    public void setComponentValue(Object value) {
+    public void setBoundObjectValue(Object value) {
     }
 
     @Override
-    public Object getComponentValue() {
+    public Object getBoundObjectValue() {
         return null;
     }
 

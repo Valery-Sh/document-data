@@ -44,8 +44,8 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
 /*    @Override
     public void unbind() {
         removeBoundObjectListeners();
-        if ( binderListeners != null ) {
-            binderListeners.clear();
+        if ( binderListener != null ) {
+            binderListener.clear();
         }
         document = null;
         for ( PropertyBinder b : binders ) {
@@ -78,7 +78,7 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
     }
 
     public void setBindingState(BindingState state) {
-        super.documentChange(state);
+       // super.documentChange(state);
     }
 
     public Object getBoundObject() {
@@ -133,14 +133,14 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
         // Now we notify a bindingManager in order to rebind with the 
         // new boundObject
         //
-        /*if (binderListeners == null) {
+        /*if (binderListener == null) {
             return;
         }
         //
-        // create a copy of binderListeners since some listeners may remove themself 
+        // create a copy of binderListener since some listeners may remove themself 
         //
         List<BinderListener> list = new ArrayList<BinderListener>();
-        list.addAll(binderListeners);
+        list.addAll(binderListener);
         for (BinderListener l : list) {
             //l.react(e);
         }
@@ -203,16 +203,10 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
 
     @Override
     public void addBinderListener(BinderListener l) {
-        getBinderListeners().add(l);
-        if (getBinderListeners().size() > 1) {
-            throw new IndexOutOfBoundsException("AbstractDocumentBinder. Only one BinderListener can be registered");
-        }
-
     }
 
     @Override
     public void removeBinderListener(BinderListener l) {
-        binderListeners.remove(l);
     }
 
     @Override
@@ -225,10 +219,6 @@ public abstract class BindingStateBinder extends AbstractDocumentBinder<BindingS
                     action = BinderEvent.Action.componentSelectChange;
                 }
                 BinderEvent e = new BinderEvent(this, action, event.getDataValue(), event.getComponentValue());
-                for (Object l : binderListeners) {
-                    BinderListener bl = (BinderListener) l;
-                    bl.react(e);
-                }
                 break;
         }
     }

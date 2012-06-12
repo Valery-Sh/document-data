@@ -41,12 +41,12 @@ public abstract class AbstractListSelectionBinder extends AbstractEditableProper
     protected abstract void setComponentSelectedIndex(int index);
 
     @Override
-    public void setComponentValue(Object value) {
+    public void setBoundObjectValue(Object value) {
         setComponentSelectedIndex((Integer) value);
     }
 
     @Override
-    public Object getComponentValue() {
+    public Object getBoundObjectValue() {
         return getComponentSelectedIndex();
     }
     

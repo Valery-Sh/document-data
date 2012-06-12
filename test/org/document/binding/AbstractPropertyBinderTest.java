@@ -110,7 +110,7 @@ public class AbstractPropertyBinderTest {
         BinderListener l = null;
         AbstractPropertyBinder instance = new AbstractPropertyBinderImpl();
         instance.addBinderListener(l);
-        assertEquals(instance.binderListeners.size(), 1);
+        assertEquals(instance.binderListener.size(), 1);
     }
 
     /**
@@ -123,7 +123,7 @@ public class AbstractPropertyBinderTest {
         AbstractPropertyBinder instance = new AbstractPropertyBinderImpl();
         instance.addBinderListener(l);
         instance.removeBinderListener(l);
-        assertEquals(instance.binderListeners.size(), 0);
+        assertEquals(instance.binderListener.size(), 0);
     }
 
     /**
@@ -153,7 +153,7 @@ public class AbstractPropertyBinderTest {
         event.setNewValue("TEST_STRING");
         event.setOldValue(null);
         instance.react(event);
-        Object result = instance.getComponentValue();
+        Object result = instance.getBoundObjectValue();
         assertEquals("TEST_STRING", result);
         
         
@@ -181,31 +181,31 @@ public class AbstractPropertyBinderTest {
         System.out.println("propertyChanged");
         Object propertyValue = "TEST_STRING";
         AbstractPropertyBinder instance = new AbstractPropertyBinderImpl();
-        Object oldComponentValue = instance.getComponentValue();  
+        Object oldComponentValue = instance.getBoundObjectValue();  
         instance.propertyChanged(propertyValue);
-        assertFalse(instance.getComponentValue().equals(oldComponentValue));
+        assertFalse(instance.getBoundObjectValue().equals(oldComponentValue));
     }
 
     /**
-     * Test of getComponentValue method, of class AbstractPropertyBinder.
+     * Test of getBoundObjectValue method, of class AbstractPropertyBinder.
      */
     @Test
     public void testGetComponentValue() {
         System.out.println("getComponentValue");
         AbstractPropertyBinder instance = new AbstractPropertyBinderImpl();
         Object expResult = null;
-        Object result = instance.getComponentValue();
+        Object result = instance.getBoundObjectValue();
         assertEquals(expResult, result);
         
         
-        instance.setComponentValue("TEST_STRING");
+        instance.setBoundObjectValue("TEST_STRING");
         expResult = "TEST_STRING";
-        result = instance.getComponentValue();
+        result = instance.getBoundObjectValue();
         assertEquals(expResult, result);        
     }
 
     /**
-     * Test of setComponentValue method, of class AbstractPropertyBinder.
+     * Test of setBoundObjectValue method, of class AbstractPropertyBinder.
      */
     @Test
     public void testSetComponentValue() {
@@ -213,9 +213,9 @@ public class AbstractPropertyBinderTest {
         AbstractPropertyBinder instance = new AbstractPropertyBinderImpl();
         Object expResult;
         
-        instance.setComponentValue("TEST_STRING");
+        instance.setBoundObjectValue("TEST_STRING");
         expResult = "TEST_STRING";
-        Object result = instance.getComponentValue();
+        Object result = instance.getBoundObjectValue();
         assertEquals(expResult, result);        
     }
 
@@ -229,12 +229,12 @@ public class AbstractPropertyBinderTest {
             return "testName";
         }
         @Override
-        public Object getComponentValue() {
+        public Object getBoundObjectValue() {
             return this.componentValue;
         }
 
         @Override
-        public void setComponentValue(Object componentValue) {
+        public void setBoundObjectValue(Object componentValue) {
             this.componentValue = componentValue;
         }
 

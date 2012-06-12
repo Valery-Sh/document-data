@@ -46,12 +46,12 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     }
 
     @Override
-    public Object getComponentValue() {
+    public Object getBoundObjectValue() {
         return ((JComboBox)boundObject).getModel().getSelectedItem();
     }
 
     @Override
-    protected void setComponentValue(Object componentValue) {
+    protected void setBoundObjectValue(Object componentValue) {
         ((JComboBox)boundObject).getModel().setSelectedItem(componentValue);
     }
 
@@ -79,7 +79,7 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        componentChanged(((JComboBox)boundObject).getModel().getSelectedItem());
+        boundObjectChanged(((JComboBox)boundObject).getModel().getSelectedItem());
     }
 
     

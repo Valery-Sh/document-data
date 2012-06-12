@@ -34,7 +34,7 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
             b = acceptSuper(document);
         }
         if ( b ) {
-           super.documentChange(document);
+ //TODO          super.documentChange(document);
         }
         return b;
     }
@@ -73,9 +73,14 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
         return false;
     }
     
-    @Override
+
     public void documentChange(Document document) {
         accept((E)document);
+    }
+
+    @Override
+    public boolean add(Binder binder) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

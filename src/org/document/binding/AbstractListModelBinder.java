@@ -50,7 +50,7 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
     }
 
     @Override
-    public void setComponentValue(Object value) {
+    public void setBoundObjectValue(Object value) {
         if ( value == null ) {
             return;
         }
@@ -58,7 +58,7 @@ public abstract class AbstractListModelBinder extends AbstractPropertyBinder {
     }
 
     @Override
-    public Object getComponentValue() {
+    public Object getBoundObjectValue() {
         return getModel();
     }
 

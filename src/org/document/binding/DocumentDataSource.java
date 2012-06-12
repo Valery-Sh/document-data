@@ -54,7 +54,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         registry = new DocumentDataSource.Registry();
         binderEventHandler = new BinderEventHandler();
         documentChangeHandler = new DocumentChangeHandler();
-        listChangeHandler =  new ListChangeHandler();        
+        listChangeHandler = new ListChangeHandler();
         bindingContext = new BindingContext(this);
     }
 
@@ -84,13 +84,15 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     private void initSourceList(List sourceList) {
         DocumentList<T> dl = new DocumentList(sourceList);
         for (T d : dl) {
+            d.propertyStore().addDocumentChangeListener(documentChangeHandler);
             updateAttachState(d, true);
         }
+
         this.documentList = dl;
-        setSelected(dl.get(0));        
+        setSelected(dl.get(0));
         getDocuments().addListChangeListener(listChangeHandler);
 
-        
+
         if (!isActive()) {
             //setActive(true);
         }
@@ -145,7 +147,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
      * or it's subtype that currently is set as <i><code>selected</code></i>.
      */
     public T getSelected() {
-        return (T)selected;
+        return (T) selected;
     }
 
     /**
@@ -163,13 +165,26 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         if (!isActive()) {
             return;
         }
-//        this.bindingState.setSelected(selected);
         Document old = selected;
+        //
+        // Notify BEFORE new selected is set
+        //
+        fireDocumentChanging(old, selected);
         this.selected = selected;
-        fireDocumentChange(old,selected);
-        
-        //afterSetSelected(old);
+        //
+        // Notify AFTER new selected is set
+        //
+        fireDocumentChange(old, selected);
     }
+
+/*    void fireDocumentChanging(Document oldSelected, Document newSelected) {
+        DocumentChangeEvent e = new DocumentChangeEvent(this);
+        e.setAction(DocumentChangeEvent.Action.documentChanging);
+        e.setNewValue(newSelected);
+        e.setOldValue(oldSelected);
+        registry.notify(e);
+    }
+
     void fireDocumentChange(Document oldSelected, Document newSelected) {
         DocumentChangeEvent e = new DocumentChangeEvent(this);
         e.setAction(DocumentChangeEvent.Action.documentChange);
@@ -177,14 +192,28 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         e.setOldValue(oldSelected);
         registry.notify(e);
     }
-    protected void afterSetSelected(T oldSelected) {
+*/
+    void fireDocumentChanging(Document oldSelected, Document newSelected) {
+        BinderEvent e = new BinderEvent(bindingContext);
+        e.setAction(BinderEvent.Action.documentChanging);
+        e.setNewValue(newSelected);
+        e.setOldValue(oldSelected);
+        registry.notify(e);
     }
 
+    void fireDocumentChange(Document oldSelected, Document newSelected) {
+        BinderEvent e = new BinderEvent(bindingContext);
+        e.setAction(BinderEvent.Action.documentChange);
+        e.setNewValue(newSelected);
+        e.setOldValue(oldSelected);
+        registry.notify(e);
+    }
+    
     /**
      * Sets a given object
      * <code><i>selected</i></code>. Assigns a new document to all appropriate
      * objects of type {@link DocumentBinder}. <P>The method provides the same
-     * functionality as null null null null null null null null null null null     {@link #documentChange(org.document.Document) and those two methods may be 
+     * functionality as null null null null null null null null null null null null     {@link #beforeDocumentChange(org.document.Document) and those two methods may be 
      * used interchangebly.
      *
      * @param selected an object to be set <code>selected</code>
@@ -202,7 +231,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         if (selected != null && (selected.propertyStore() instanceof HasDocumentState)) {
             ((HasDocumentState) selected.propertyStore()).getDocumentState().setAttached(true);
         }
-        // TODO this.registry.documentChange(selected);
+        // TODO this.registry.beforeDocumentChange(selected);
     }
 
     protected void updateAttachState(T doc, boolean attached) {
@@ -358,7 +387,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             binders = new ArrayList<Binder>();
         }
 
-        public void notify(DocumentChangeEvent e) {
+/*        public void notify(DocumentChangeEvent e) {
             for (Binder b : documentBinders.values()) {
                 if (b instanceof DocumentChangeListener) {
                     ((DocumentChangeListener) b).react(e);
@@ -373,6 +402,26 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             for (Binder b : binders) {
                 if (b instanceof DocumentChangeListener) {
                     ((DocumentChangeListener) b).react(e);
+                }
+            }
+
+        }
+        */ 
+        public void notify(BinderEvent e) {
+            for (Binder b : documentBinders.values()) {
+                if (b instanceof BinderListener) {
+                    ((BinderListener) b).react(e);
+                }
+            }
+
+            for (Binder b : containerBinders.values()) {
+                if (b instanceof BinderListener) {
+                    ((BinderListener) b).react(e);
+                }
+            }
+            for (Binder b : binders) {
+                if (b instanceof BinderListener) {
+                    ((BinderListener) b).react(e);
                 }
             }
 
@@ -420,8 +469,8 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
             result.setAlias(alias);
             result.setClassName(name);
-            result.setContext(bindingContext);
-            this.put(alias, result);
+//            result.setContext(bindingContext);
+            put(alias, result);
 
             return result;
         }
@@ -439,7 +488,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         public void removeDocumentBinder(String alias) {
             DocumentBinder cb = documentBinders.remove(alias);
             if (cb != null) {
-                cb.setContext(null);
+//                cb.setContext(null);
                 cb.initDefaults();
 
                 for (Object b : cb) {
@@ -547,11 +596,11 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             if (target == null) {
                 target = new DocumentBinder();
                 target.setAlias(alias);
-                documentBinders.put(alias, target);
-                target.setContext(bindingContext);
+                put(alias, target);
+//                target.setContext(bindingContext);
             }
             binder.setAlias(alias);
-            binder.setContext(bindingContext);
+            //binder.setContext(bindingContext);
             target.add(binder); // DocumentBinder will set context
             return result;
         }
@@ -596,7 +645,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             binder.removeBinderListener(binderEventHandler);
             binder.addBinderListener(binderEventHandler);
             //binder.a
-            
+
             return documentBinders.put(alias, binder);
         }
 
@@ -756,6 +805,19 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 //                    }
 //TODO                    setSelected(newDoc);
                     break;
+                case propertyChangeRequest:
+                    try {
+                        if (getSelected() != null) {
+                            getSelected().propertyStore().put(event.getPropertyName(), event.getNewValue());
+                        }
+                    } catch (Exception e) {
+                        System.out.println("ERRRRRRRRRRRR");
+                    }
+                    break;
+                case contextRequest :
+                    event.setContext(bindingContext);
+                    break;
+                    
             }
         }
     }

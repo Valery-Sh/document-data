@@ -12,7 +12,8 @@ public class DocumentChangeEvent extends EventObject {
     private Action action;
     private String propertyName;
     private Object oldValue;
-    private Object newValue;    
+    private Object newValue;  
+    
     
     public DocumentChangeEvent(Object source) {
         super(source);

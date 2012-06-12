@@ -4,7 +4,7 @@ package org.document.binding;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractBinder implements Binder, HasContext {
+public abstract class AbstractBinder implements Binder {
 
     protected Object boundObject;
     private BindingContext context;
@@ -31,14 +31,14 @@ public abstract class AbstractBinder implements Binder, HasContext {
 
     }
 
-    public BindingContext getContext() {
+/*    public BindingContext getContext() {
         return context;
     }
 
     public void setContext(BindingContext context) {
         this.context = context;
     }
-
+*/
     @Override
     public Object getBoundObject() {
         return boundObject;

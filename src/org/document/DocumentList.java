@@ -2,7 +2,7 @@ package org.document;
 
 import java.util.Collection;
 import java.util.List;
-import org.document.binding.BindingManager;
+
 
 /**
  * The class gets any collection of objects of type
@@ -21,7 +21,7 @@ import org.document.binding.BindingManager;
  */
 public class DocumentList<E extends Document> extends ObservableList<E> {
 
-    private BindingManager bindingManager;
+//    private BindingManager bindingManager;
     ValidateHandler validateHandler;
 
     public DocumentList(List<E> baseList) {

@@ -16,10 +16,19 @@ public class BinderEvent extends EventObject {
     private Binder binder;
     private Object oldValue;
     private Object newValue;
+    private BindingContext context;
     
     public BinderEvent(Binder source) {
         super(source);
     }
+    public BinderEvent(BindingContext source) {
+        super(source);
+    }
+    public BinderEvent(BindingContext source,Action action) {
+        this(source);
+        this.action = action;
+    }
+    
     public BinderEvent(Binder source,Action action) {
         this(source);
         this.action = action;
@@ -46,6 +55,14 @@ public class BinderEvent extends EventObject {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public BindingContext getContext() {
+        return context;
+    }
+
+    public void setContext(BindingContext context) {
+        this.context = context;
     }
 
     public Object getComponentValue() {
@@ -109,7 +126,22 @@ public class BinderEvent extends EventObject {
         clearError,
         fixError,
         componentSelectChange,
-        binderRemoved
+        binderRemoved,
+        // concern documents
+        documentChange,
+        suspendBinding,
+        resumeBinding,
+        documentChanging,
+        propertyChange,
+        propertyChangeNotSeected,
+        completeChanges,
+        
+        boundObjectReplace,
+        boundPropertyReplace,
+        refresh,
+        contextRequest
+        
+        
     }
 }//class DocumentEvent
 
