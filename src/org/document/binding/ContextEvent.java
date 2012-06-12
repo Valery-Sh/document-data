@@ -78,7 +78,8 @@ public class ContextEvent extends EventObject{
     public enum Action {
         documentChange,
         documentChanging,
-        activeStateChange
+        activeStateChange,
+        documentListChange
     }
 }//class ContextEvent
 

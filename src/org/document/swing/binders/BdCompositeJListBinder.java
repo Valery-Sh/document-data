@@ -2,9 +2,7 @@ package org.document.swing.binders;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Arrays;
 import java.util.List;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListModel;
@@ -12,13 +10,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.document.Document;
-import org.document.DocumentChangeEvent;
-import org.document.binding.AbstractListDocumentChangeBinder;
-import org.document.binding.AbstractListModelBinder;
-import org.document.binding.AbstractListSelectionBinder;
-import org.document.binding.Binder;
 import org.document.binding.DocumentListBinder;
-import org.document.binding.PropertyBinder;
 
 /**
  *
@@ -33,7 +25,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
     public BdCompositeJListBinder(JList component, String... properties) {
         super(component);
         this.displayProperties = properties;
-        initBinders();
+        
     }
 
     @Override
@@ -41,7 +33,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         if (e.getValueIsAdjusting()) {
             return;
         }
-        ((JListSelectionBinder) selectedBinder).boundObjectChanged(getBoundObject().getSelectedIndex());
+        setSelected(getJList().getSelectedIndex());
     }
 
     @Override
@@ -74,7 +66,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
     
     @Override
     public void initBoundObjectDefaults() {
-        ((JListModelBinder)documentListBinder).setDefaultComponentModel();
+        //((JListModelBinder)documentListBinder).setDefaultComponentModel();
     }
 /*    @Override
     protected void addBoundObjectListeners() {
@@ -122,7 +114,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         getJList().repaint();
     }
 
-    @Override
+/*    @Override
     protected PropertyBinder createSelectedBinder() {
         selectedBinder = new BdCompositeJListBinder.JListSelectionBinder(this);
         return selectedBinder;
@@ -151,11 +143,6 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
             super(component);
         }
 
-/*        @Override
-        public BdCompositeJListBinder getBoundObject() {
-            return (BdCompositeJListBinder) boundObject;
-        }
-*/
         @Override
         protected void notifyComponentOf(DocumentChangeEvent event) {
             if (event == null) {
@@ -240,7 +227,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
             getJList().setModel((ListModel) model);
         }
     }//class JListListModelBinder
-
+*/
     public static class ListBoxModelImpl<E extends Document> implements ListModel {
 
         private List<E> documents;

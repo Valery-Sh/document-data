@@ -121,10 +121,11 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 //TODO        if (this.active == active) {
 //            return;
 //        }
-        if (!active) {
-            setSelected(null);
-            this.active = active;
-        } else {
+        this.active = active;
+        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.activeStateChange); 
+        registry.notify(e);
+        
+        if (active) {
             this.active = active;
             if (sourceList != null) {
                 if (sourceList.isEmpty()) {
@@ -251,7 +252,9 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     }
 
     public void setSourceList(List sourceList) {
-
+        boolean oldActive = active;
+        if ( active ) setActive(false);
+        
         if (getDocuments() != null) {
             getDocuments().removeListChangeListener(this);
         }
@@ -259,6 +262,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         this.sourceList = sourceList;
 
         initSourceList(sourceList);
+        setActive(oldActive);
     }
 
     @Override
@@ -572,6 +576,8 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             if (!result) {
                 if (binders.remove(binder)) {
                     result = true;
+                    binder.removeBinderListener(binderEventHandler);
+
                 }
             }
             if (result) {
@@ -696,6 +702,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             if (result && (binder instanceof HasContext)) {
                 ((HasContext) binder).setContext(bindingContext);
             }
+            binder.addBinderListener(binderEventHandler);
             return result;
         }
 
@@ -790,7 +797,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             }
             switch(event.getAction()) {
                 case propertyChange : 
-                    BinderEvent e = new BinderEvent(bindingContext,event.getPropertyName(),BinderEvent.Action.propertyChange);
+                    BinderEvent e = new BinderEvent(bindingContext,event.getBoundProperty(),BinderEvent.Action.propertyChange);
                     e.setOldValue(event.getOldValue());
                     e.setNewValue(event.getNewValue());
                     registry.notify(e);
@@ -837,18 +844,24 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 //TODO                    setSelected(newDoc);
                     break;
                 case propertyChangeRequest:
+                    if ( "*selected".equals(event.getPropertyName()) ) {
+                        if ( event.getNewValue() instanceof Document ) {
+                            setSelected((T)event.getNewValue());
+                        }
+                        break;
+                    } else if ( "*documentList".equals(event.getPropertyName()) ) {
+                        break;
+                    }
+                            
+                            
                     try {
                         if (getSelected() != null) {
-                            getSelected().propertyStore().put(event.getPropertyName(), event.getNewValue());
+                            getSelected().propertyStore().put(event.getBoundProperty(), event.getNewValue());
                         }
                     } catch (Exception e) {
                         System.out.println("ERRRRRRRRRRRR");
                     }
                     break;
-                case contextRequest :
-                    event.setContext(bindingContext);
-                    break;
-                    
             }
         }
     }

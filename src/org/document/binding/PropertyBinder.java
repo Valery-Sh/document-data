@@ -13,7 +13,7 @@ import org.document.Document;
  */
 public interface PropertyBinder<E extends Document> extends Binder, PropertyChangeListener {//,DocumentChangeListener {//, HasDocumentAlias {
     
-    BindingContext context();
+    BindingContext getContext();
     /**
      * Returns a bound  property name.
      *

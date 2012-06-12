@@ -9,6 +9,9 @@ public abstract class AbstractBinder implements Binder {
     protected Object boundObject;
     private BindingContext context;
 
+    public AbstractBinder() {
+    }
+    
     public AbstractBinder(Object boundObject) {
         this.boundObject = boundObject;
     }

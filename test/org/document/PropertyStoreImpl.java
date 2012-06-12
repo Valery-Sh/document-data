@@ -1,5 +1,6 @@
 package org.document;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,16 @@ public class PropertyStoreImpl implements PropertyStore{
 
     @Override
     public Object getAlias() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

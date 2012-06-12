@@ -9,38 +9,35 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListDataListener;
 import org.document.Document;
-import org.document.DocumentChangeEvent;
-import org.document.binding.AbstractListDocumentChangeBinder;
 import org.document.binding.AbstractListModelBinder;
-import org.document.binding.AbstractListSelectionBinder;
 import org.document.binding.Binder;
-import org.document.binding.BindingStateBinder;
+import org.document.binding.DocumentListBinder;
 import org.document.binding.PropertyBinder;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class BdCompositeJComboBinder<E extends Document> extends BindingStateBinder implements ActionListener {
+public class BdCompositeJComboBinder<E extends Document> extends DocumentListBinder implements ActionListener {
 
     protected String[] displayProperties;
 
     public BdCompositeJComboBinder() {
         super();
-        initBinders();
+        //initBinders();
     }
 
     public BdCompositeJComboBinder(JComboBox component, String... properties) {
         super(component);
         this.displayProperties = properties;
-        initBinders();
+        //initBinders();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == boundObject) {
-            JComboSelectionBinder s = (JComboSelectionBinder) selectedBinder;
-            s.boundObjectChanged(getBoundObject().getSelectedIndex());
+  //          JComboSelectionBinder s = (JComboSelectionBinder) selectedBinder;
+//            s.boundObjectChanged(getBoundObject().getSelectedIndex());
         }
     }
 
@@ -67,7 +64,7 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
     }
     @Override
     public void initBoundObjectDefaults() {
-        ((JComboModelBinder)documentListBinder).setDefaultComponentModel();
+  //      ((JComboModelBinder)documentListBinder).setDefaultComponentModel();
     }
 
     @Override
@@ -81,7 +78,7 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
 
     public void setJComboBox(JComboBox comboBox) {
         setBoundObject(comboBox);
-        initBinders();
+//        initBinders();
     }
 
     public String[] getDisplayProperties() {
@@ -101,30 +98,9 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
         }
     }
 
-    @Override
-    protected PropertyBinder createSelectedBinder() {
-        selectedBinder = new BdCompositeJComboBinder.JComboSelectionBinder(this);
-        return selectedBinder;
-    }
-
-    @Override
-    protected PropertyBinder createListModelBinder() {
-        documentListBinder = new BdCompositeJComboBinder.JComboModelBinder(this, displayProperties);
-        return documentListBinder;
-    }
-
-    @Override
-    protected PropertyBinder createDocumentChangeEventBinder() {
-        documentChangeEventBinder = new BdCompositeJComboBinder.JComboDocumentChangeBinder(this);
-        return documentChangeEventBinder;
-    }
-
-    @Override
-    public boolean add(Binder binder) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
+  
+  
+/*    public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
 
         public JComboDocumentChangeBinder(BdCompositeJComboBinder component) {
             super(component);
@@ -183,12 +159,6 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
             getJComboBox().repaint();// if omitted then doesn't change selected item
         }
 
-        /**
-         * Prepends cyclic boundObject modifications.
-         *
-         * @param value a new value to be checked
-         * @return <code>true</code> if the boundObject shouldn't be changed.          <code>false otherwise
-         */
         @Override
         protected boolean needChangeComponent(Object value) {
             if ("selected".equals(getBoundProperty())) {
@@ -207,7 +177,7 @@ public class BdCompositeJComboBinder<E extends Document> extends BindingStateBin
             getJComboBox().setSelectedIndex(selectedIndex);
         }
     }//class JListSelectionBinder
-
+*/
     public static class JComboModelBinder extends AbstractListModelBinder {
 
         protected String[] properties;

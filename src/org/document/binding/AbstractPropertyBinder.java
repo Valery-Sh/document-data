@@ -58,7 +58,7 @@ import org.document.Document;
  * @author V. Shyshkin
  */
 public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder, BinderListener, ContextListener {
-
+    private BindingContext context;
     private String alias;
     protected String boundProperty;
     //protected List<BinderListener> binderListener;
@@ -78,11 +78,9 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         return alias;
     }
 
-    @Override
-    public BindingContext context() {
-        BinderEvent event = new BinderEvent(this, BinderEvent.Action.contextRequest);
-        binderListener.react(event);
-        return event.getContext();
+    
+    public BindingContext getContext() {
+        return context;
     }
 
     @Override
@@ -122,7 +120,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @return an object of class {@link org.document.Document).
      */
     public Document getDocument() {
-        return context().getSelected();
+        return getContext().getSelected();
     }
 
     /**
@@ -228,13 +226,13 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      if (!isSuspended()) {
      return;
      }
-     if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+     if (event.getBoundProperty() != null && !event.getBoundProperty().equals(boundProperty)) {
      return;
      }
      suspended = false;
      document = (Document) event.getNewValue();
      if (document != null && getBoundProperty() != null) {
-     propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()),false);
+     propertyChanged(event.getBoundProperty(), document.propertyStore().get(getBoundProperty()),false);
      } else if (document == null) {
      initBoundObjectDefaults();
      }
@@ -243,14 +241,14 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      if (isSuspended()) {
      return;
      }
-     if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+     if (event.getBoundProperty() != null && !event.getBoundProperty().equals(boundProperty)) {
      return;
      }
      this.suspended = true;
      return;
      case propertyChange:
      if (!isSuspended()) {
-     propertyChanged(event.getPropertyName(), event.getNewValue(),false);
+     propertyChanged(event.getBoundProperty(), event.getNewValue(),false);
      }
      return;
      }//switch
@@ -295,13 +293,13 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
                 if (!isSuspended()) {
                     return;
                 }
-                if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+                if (event.getBoundProperty() != null && !event.getBoundProperty().equals(boundProperty)) {
                     return;
                 }
                 suspended = false;
                 document = (Document) event.getNewValue();
                 if (document != null && getBoundProperty() != null) {
-                    propertyChanged(event.getPropertyName(), document.propertyStore().get(getBoundProperty()), false);
+                    propertyChanged(event.getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
                 } else if (document == null) {
                     initBoundObjectDefaults();
                 }
@@ -310,14 +308,14 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
                 if (isSuspended()) {
                     return;
                 }
-                if (event.getPropertyName() != null && !event.getPropertyName().equals(boundProperty)) {
+                if (event.getBoundProperty() != null && !event.getBoundProperty().equals(boundProperty)) {
                     return;
                 }
                 this.suspended = true;
                 return;
             /*            case propertyChange:
              if (!isSuspended()) {
-             propertyChanged(event.getPropertyName(), event.getNewValue(), false);
+             propertyChanged(event.getBoundProperty(), event.getNewValue(), false);
              }
              return;
              */

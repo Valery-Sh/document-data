@@ -10,15 +10,15 @@ import org.document.ValidationException;
 public class BinderEvent extends EventObject {
     
     private Action action;
-    private Object componentValue;
-    private Object dataValue;    
+    private Object boundObjectValue;
+    private Object propertyValue;  
+    private String propertyName;
+    
     private ValidationException exception;
-    private Binder binder;
     private Object oldValue;
     private Object newValue;
-    private BindingContext context;
     
-    public BinderEvent(Binder source) {
+    protected BinderEvent(Binder source) {
         super(source);
     }
     
@@ -26,20 +26,20 @@ public class BinderEvent extends EventObject {
         this(source);
         this.action = action;
     }
+    public BinderEvent(Binder source,Action action,String propertyName) {
+        this(source);
+        this.action = action;
+        this.propertyName = propertyName;
+    }
+    
     public BinderEvent(Binder source, Action action, ValidationException e ) {
         this(source, action);
         this.exception = e;
     }
     public BinderEvent(Binder source,Action action,Object dataValue,Object componentValue ) {
         this(source,action);
-        this.componentValue = componentValue;
-        this.dataValue = dataValue;
-    }
-    public BinderEvent(BindingStateBinder source,Action action,Object dataValue,Object componentValue ) {
-        this(source);
-        this.action = action;
-        this.componentValue = componentValue;
-        this.dataValue = dataValue;
+        this.boundObjectValue = componentValue;
+        this.propertyValue = dataValue;
     }
 
     public Action getAction() {
@@ -50,32 +50,39 @@ public class BinderEvent extends EventObject {
         this.action = action;
     }
 
-    public BindingContext getContext() {
+/*    public BindingContext getContext() {
         return context;
     }
 
     public void setContext(BindingContext context) {
         this.context = context;
     }
-
+*/
     public Object getComponentValue() {
-        return componentValue;
+        return boundObjectValue;
     }
 
     public void setComponentValue(Object componentValue) {
-        this.componentValue = componentValue;
+        this.boundObjectValue = componentValue;
     }
 
     public Object getDataValue() {
-        return dataValue;
+        return propertyValue;
     }
 
     public void setDataValue(Object dataValue) {
-        this.dataValue = dataValue;
+        this.propertyValue = dataValue;
     }
 
+    public String getBoundProperty() {
+        if ( getSource() instanceof PropertyBinder ) {
+            return ((PropertyBinder)getSource()).getBoundProperty();
+        } else {
+            return null;
+        }
+    }
     public String getPropertyName() {
-        return ((PropertyBinder)getSource()).getBoundProperty();
+        return propertyName;
     }
 
     public ValidationException getException() {
@@ -86,14 +93,6 @@ public class BinderEvent extends EventObject {
         this.exception = exception;
     }
 
-/*    public Binder getBinder() {
-        return binder;
-    }
-
-    public void setBinder(Binder binder) {
-        this.binder = binder;
-    }
-*/
     public Object getOldValue() {
         return oldValue;
     }
@@ -130,8 +129,7 @@ public class BinderEvent extends EventObject {
         
         boundObjectReplace,
         boundPropertyReplace,
-        refresh,
-        contextRequest
+        refresh
         
         
     }

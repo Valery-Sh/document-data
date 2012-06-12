@@ -23,7 +23,7 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
     
     
     protected Document getDocument() {
-        return binder.context().getSelected();
+        return binder.getContext().getSelected();
     }
 
     @Override

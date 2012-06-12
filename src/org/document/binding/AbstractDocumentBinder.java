@@ -24,6 +24,8 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     private boolean suspended;
     //protected List<BinderListener> binderListener;
     protected BinderListener binderListener;
+    protected BindingContext context;
+    
     protected String childName;
     protected List<DocumentBinder> childs;
     protected List<PropertyBinder> binders;
@@ -158,9 +160,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     }
 
     protected BindingContext getContext() {
-        BinderEvent event = new BinderEvent(this, BinderEvent.Action.contextRequest);
-        binderListener.react(event);
-        return event.getContext();
+        return context;
     }
 
     protected void beforeDocumentChange(ContextEvent e) {
@@ -266,18 +266,13 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
                 break;
             case propertyChangeRequest:
                 firePropertyChangeRequest(event);
-                documentErrorBinder.clear(event.getPropertyName());
+                documentErrorBinder.clear(event.getBoundProperty());
                 break;
             case clearError:
-                documentErrorBinder.clear(event.getPropertyName());
+                documentErrorBinder.clear(event.getBoundProperty());
                 break;
             case boundObjectError:
-                documentErrorBinder.notifyError(event.getPropertyName(), event.getException());
-                break;
-            case contextRequest:
-                if (binderListener != null) {
-                    binderListener.react(event);
-                }
+                documentErrorBinder.notifyError(event.getBoundProperty(), event.getException());
                 break;
             case boundObjectReplace:
             case boundPropertyReplace:
@@ -288,6 +283,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
     @Override
     public void react(ContextEvent event) {
+        context = (BindingContext)event.getSource();
         switch (event.getAction()) {
             case documentChanging:
                 beforeDocumentChange(event);
@@ -295,6 +291,14 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             case documentChange:
                 afterDocumentChange(event);
                 break;
+            case activeStateChange:
+                if ( context.isActive()) {
+                   notifyAll(new BinderEvent(this,BinderEvent.Action.refresh)); 
+                } else {
+                   initDefaults();
+                }
+                break;
+                
         }
     }
 

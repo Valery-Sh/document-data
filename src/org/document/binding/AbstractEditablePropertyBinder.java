@@ -258,7 +258,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
 
     private void fireClearPropertyError() {
         BinderEvent.Action action = BinderEvent.Action.clearError;
-        BinderEvent event = new BinderEvent(this, action, null);
+        BinderEvent event = new BinderEvent(this, action);
         notifyListeners(event);
     }
     /**
@@ -282,9 +282,6 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             return;
         }
         binderListener.react(event);
-//        for (BinderListener l : binderListener) {
-//            l.react(event);
-//        }
     }
 
     /**
