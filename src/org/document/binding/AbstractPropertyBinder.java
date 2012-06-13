@@ -211,7 +211,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @param event the event to be handled
      */
     /*    @Override
-     public void react(DocumentChangeEvent event) {
+     public void binderChange(DocumentChangeEvent event) {
      Document document = getDocument();
      switch (event.getAction()) {
      case documentChange:
@@ -278,7 +278,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @param event the event to be handled
      */
     @Override
-    public void react(BinderEvent event) {
+    public void binderChange(BinderEvent event) {
         Document document = getDocument();
         switch (event.getAction()) {
             case refresh:
@@ -408,7 +408,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
 
     protected void fireRefreshBoundObject() {
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.boundObjectReplace);
-        binderListener.react(e);
+        binderListener.binderChange(e);
     }
 
     /**

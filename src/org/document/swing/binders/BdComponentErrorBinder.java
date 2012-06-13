@@ -15,6 +15,10 @@ public  abstract class BdComponentErrorBinder extends AbstractErrorBinder {
     public BdComponentErrorBinder(JComponent component)  {
         super(component);
     }
+    /**
+     * Handles <i>document level</i> errors.
+     * @param e 
+     */
     @Override
     public void errorFound(ValidationException e) {
         errorFound("*document", e);
@@ -39,7 +43,10 @@ public  abstract class BdComponentErrorBinder extends AbstractErrorBinder {
 
     
     protected abstract void setMessage(String message);
-    
+    /**
+     * Handles <i>property level</i> errors.
+     * @param e 
+     */
     @Override
     public void errorFound(String propertyName,ValidationException e) {
         String pName = propertyName;

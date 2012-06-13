@@ -58,7 +58,7 @@ public class DocumentErrorBinder {
         
     }
     
-    public void bind(String propertyName,ErrorBinder binder) {
+    public void add(String propertyName,ErrorBinder binder) {
         String pName = propertyName;
         if ( propertyName == null ) {
             pName = "*document";
@@ -74,7 +74,7 @@ public class DocumentErrorBinder {
         ebinders.add(binder);
     }
     public void bindDocument(ErrorBinder binder) {
-        this.bind("*document",binder);
+        this.add("*document",binder);
     }
     /**
      * 
@@ -82,20 +82,20 @@ public class DocumentErrorBinder {
      * @param binder 
      */
 /*    public void addErrorBinder(String propertyName,ErrorBinder binder) {
-        documentErrorBinder.bind(propertyName, binder);
+        documentErrorBinder.add(propertyName, binder);
     }
     public void addErrorBinder(ErrorBinder binder) {
-        documentErrorBinder.bind("*document", binder);
+        documentErrorBinder.add("*document", binder);
     }
   */  
-    public void bind(HasErrorBinder component) {
+    public void add(HasErrorBinder component) {
         ErrorBinder b = component.getErrorBinder();
         if ( b != null ) {
-            bind(component.getPropertyName(),b);
+            add(component.getPropertyName(),b);
         }
     }
-//    public void bind(String propertyName,HasErrorBinder component) {
-//        bind(propertyName,component.getErrorBinder());
+//    public void add(String propertyName,HasErrorBinder component) {
+//        add(propertyName,component.getErrorBinder());
 //    }
 
     public void clear() {

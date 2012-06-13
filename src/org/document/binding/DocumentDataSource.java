@@ -112,11 +112,22 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     public boolean add(PropertyBinder binder) {
         return registry.add(binder.getAlias(), binder);
     }
+    public DocumentBinder add(String alias,DocumentBinder binder) {
+        binder.setAlias(alias);
+        return registry.put(alias, binder);
+    }
+    
     public DocumentBinder add(DocumentBinder binder) {
+        binder.setAlias("default");
         return registry.put("default", binder);
     }
     public ContainerBinder add(ContainerBinder binder) {
+        binder.setAlias("default");
         return registry.put("default",binder);
+    }
+    public ContainerBinder add(String alias,ContainerBinder binder) {
+        binder.setAlias(alias);
+        return registry.put(alias,binder);
     }
 
     public boolean add(Binder binder) {
@@ -452,18 +463,18 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         /*        public void notifyAll(BinderEvent e) {
          for (Binder b : documentBinders.values()) {
          if (b instanceof BinderListener) {
-         ((BinderListener) b).react(e);
+         ((BinderListener) b).binderChange(e);
          }
          }
 
          for (Binder b : containerBinders.values()) {
          if (b instanceof BinderListener) {
-         ((BinderListener) b).react(e);
+         ((BinderListener) b).binderChange(e);
          }
          }
          for (Binder b : binders) {
          if (b instanceof BinderListener) {
-         ((BinderListener) b).react(e);
+         ((BinderListener) b).binderChange(e);
          }
          }
 
@@ -573,19 +584,10 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          */
         public void removeContainerBinder(String alias) {
             ContainerBinder cb = containerBinders.remove(alias);
-            if (cb != null && (cb instanceof HasContext)) {
-                ((HasContext) cb).setContext(null);
-                cb.initDefaults();
-                for (Object b : cb) {
-                    if (b instanceof HasContext) {
-                        ((HasContext) b).setContext(null);
-                    }
-                    ((Binder) b).initDefaults();
-                }
+            if (cb != null) {
                 ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.unregister);
                 e.setNewSelected(null);
                 registry.notify(cb,e);
-                
             }
 
         }
@@ -704,9 +706,10 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
             }
             target.add(binder);
-            if (binder instanceof HasContext) {
+/*            if (binder instanceof HasContext) {
                 ((HasContext) binder).setContext(bindingContext);
             }
+*/ 
             return result;
         }
 
@@ -755,9 +758,9 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                 // TODO
             }
             binders.add(binder);
-            if (result && (binder instanceof HasContext)) {
-                ((HasContext) binder).setContext(bindingContext);
-            }
+//            if (result && (binder instanceof HasContext)) {
+//                ((HasContext) binder).setContext(bindingContext);
+//            }
             ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.register);
             e.setNewSelected(bindingContext.getSelected());
             registry.notify(binder,e);
@@ -875,7 +878,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          * @see org.document.DocumentChangeEvent
          */
         @Override
-        public void react(BinderEvent event) {
+        public void binderChange(BinderEvent event) {
             switch (event.getAction()) {
                 case containerBinderContent:
 //                    if ( isActive() ) {

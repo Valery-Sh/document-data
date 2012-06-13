@@ -22,8 +22,8 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     private String className;
     private String alias;
     private boolean suspended;
-    //protected List<BinderListener> dataSource;
-    protected BinderListener dataSource;
+    //protected List<BinderListener> contextOwner;
+    protected BinderListener contextOwner;
     protected BindingContext context;
     protected String childName;
     protected List<DocumentBinder> childs;
@@ -31,14 +31,25 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     protected DocumentErrorBinder documentErrorBinder;
 
     protected AbstractDocumentBinder() {
-        this(null);
+        this(null,null);
     }
+    
 
-    protected AbstractDocumentBinder(Object boundObject) {
-        super(boundObject);
+    protected AbstractDocumentBinder(Class supportedClass) {
+        this(null,supportedClass);
+    }
+    protected AbstractDocumentBinder(String alias,Class supportedClass) {
+        super(null);
+        
         context = new DocumentBindingContext();
-        dataSource = new InternalBinderEventHandler();
-
+        contextOwner = new InternalBinderEventHandler();
+        if ( supportedClass != null ) {
+            className = supportedClass.getName();
+        }
+        this.alias = alias;
+        if ( alias == null || alias.trim().isEmpty() ) {
+            this.alias = "default";
+        }
         //binderListener = new ArrayList<BinderListener>();
         childs = new ArrayList<DocumentBinder>();
         documentErrorBinder = new DocumentErrorBinder();
@@ -57,6 +68,31 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     public void propertyChange(PropertyChangeEvent e) {
         notifyAll(e);
     }
+    public boolean canAccept(E document) {
+        boolean b;
+        if ( document == null || "default".equals(getAlias()) ) {
+            b = true;
+        } else  if ( document.getClass().getName().equals(getClassName())) {
+            b = true;
+            if ( document.propertyStore().getAlias() != null ) {
+                String psa = document.propertyStore().getAlias().toString();
+                if ( ! psa.equals(getAlias())) {
+                    b = false;
+                }
+            }
+        } else {
+            b = canAcceptSuper(document);
+        }
+        return b;
+    }
+    /**
+     * @TODO
+     * @param document
+     * @return 
+     */
+    protected boolean canAcceptSuper(E document) {
+        return false;
+    }
 
     @Override
     public Iterator<PropertyBinder> iterator() {
@@ -65,7 +101,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
     @Override
     public String getAlias() {
-        return alias;
+        return alias == null ? "default" : alias;
     }
 
     @Override
@@ -132,7 +168,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     private void notifyAll(BinderEvent e) {
         for (Binder b : binders) {
             if (b instanceof BinderListener) {
-                ((BinderListener) b).react(e);
+                ((BinderListener) b).binderChange(e);
             }
         }
     }
@@ -257,8 +293,8 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
      * @param event
      */
     @Override
-    public void react(BinderEvent event) {
-        if (getContext() == null) {
+    public void binderChange(BinderEvent event) {
+        if (getContext() == null || ! canAccept(getDocument())) {
             return;
         }
         switch (event.getAction()) {
@@ -297,7 +333,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
     @Override
     public void react(ContextEvent event) {
-
+        
         BindingContext c = (BindingContext) event.getSource();
         if (event.getAction() == ContextEvent.Action.register  ) {
             if ( getDocument() != null ) {
@@ -307,12 +343,15 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 //            event.setAction(ContextEvent.Action.updateContainerContext);
         } else if (event.getAction() == ContextEvent.Action.unregister  ) {
                 context = new DocumentBindingContext();
-                dataSource = new InternalBinderEventHandler();
+                contextOwner = new InternalBinderEventHandler();
 //                event.setAction(ContextEvent.Action.updateContext);
         } else {
             context = c;
         }
-
+        if ( ! canAccept(getDocument() ) ) {
+            return;
+        } 
+        
         switch (event.getAction()) {
             case documentChanging:
                 beforeDocumentChange(event);
@@ -324,12 +363,6 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
                 notifyAll(event);
             case activeStateChange:
                 notifyAll(event);
-                /*                if ( context.isActive()) {
-                 notifyAll(new BinderEvent(this,BinderEvent.Action.refresh)); 
-                 } else {
-                 initDefaults();
-                 }
-                 */
                 break;
 
         }
@@ -337,18 +370,18 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
     protected void fireRefreshBinder(PropertyBinder binder) {
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.refresh);
-        ((BinderListener) binder).react(e);
+        ((BinderListener) binder).binderChange(e);
 
     }
 
     @Override
     public void addBinderListener(BinderListener l) {
-        dataSource = l;
+        contextOwner = l;
     }
 
     @Override
     public void removeBinderListener(BinderListener l) {
-        dataSource = null;
+        contextOwner = null;
     }
 
     public void remove(PropertyBinder binder) {
@@ -380,7 +413,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             binder.addBinderListener(this);
         }
         BinderEvent e = new BinderEvent(this, BinderEvent.Action.containerBinderContent);
-        dataSource.react(e);
+        contextOwner.binderChange(e);
 
         if (propertyName != null) {
             if (isSuspended()) {
@@ -451,12 +484,15 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     }
 
     protected void firePropertyChangeRequest(BinderEvent event) {
-        if (dataSource != null) {
-            dataSource.react(event);
+        if (contextOwner != null) {
+            contextOwner.binderChange(event);
         }
     }
 
     public DocumentErrorBinder getDocumentErrorBinder() {
+        return documentErrorBinder;
+    }
+    public DocumentErrorBinder errorBinders() {
         return documentErrorBinder;
     }
 
@@ -494,7 +530,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
          * @see org.document.DocumentChangeEvent
          */
         @Override
-        public void react(BinderEvent event) {
+        public void binderChange(BinderEvent event) {
             switch (event.getAction()) {
                 case containerBinderContent:
                     /*                    if ( isActive() ) {

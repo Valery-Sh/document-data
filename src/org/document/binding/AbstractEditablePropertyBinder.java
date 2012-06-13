@@ -214,8 +214,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * @param event the event to be handled 
      */
     @Override
-    public void react(BinderEvent event) {
-        super.react(event);
+    public void binderChange(BinderEvent event) {
+        super.binderChange(event);
         if (isSuspended()) {
             return;
         }
@@ -227,8 +227,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     }
     
 /*    @Override
-    public void react(DocumentChangeEvent event) {
-        super.react(event);
+    public void binderChange(DocumentChangeEvent event) {
+        super.binderChange(event);
         if (isSuspended()) {
             return;
         }
@@ -281,7 +281,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (binderListener == null) {
             return;
         }
-        binderListener.react(event);
+        binderListener.binderChange(event);
     }
 
     /**

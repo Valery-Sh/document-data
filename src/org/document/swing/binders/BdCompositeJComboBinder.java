@@ -9,7 +9,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListDataListener;
 import org.document.Document;
-
 import org.document.binding.DocumentListBinder;
 
 /**
@@ -22,18 +21,17 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
 
     public BdCompositeJComboBinder() {
         super();
-        //initBinders();
     }
 
     public BdCompositeJComboBinder(JComboBox component, String... properties) {
         super(component);
         this.displayProperties = properties;
-        //initBinders();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == boundObject) {
+            setSelected(getJComboBox().getSelectedIndex());            
   //          JComboSelectionBinder s = (JComboSelectionBinder) selectedBinder;
 //            s.boundObjectChanged(getBoundObject().getSelectedIndex());
         }
@@ -96,139 +94,6 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
         }
     }
 
-    @Override
-    protected void setDefaultComponentModel() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected Object createComponentModel() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected Object getModel() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected void setModel(Object model) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected int getComponentSelectedIndex() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected void setComponentSelectedIndex(int selectedIndex) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent pce) {
-        getJComboBox().repaint();
-    }
-
-  
-  
-/*    public static class JComboDocumentChangeBinder<E extends Document> extends AbstractListDocumentChangeBinder {
-
-        public JComboDocumentChangeBinder(BdCompositeJComboBinder component) {
-            super(component);
-        }
-
-        @Override
-        public BdCompositeJComboBinder getBoundObject() {
-            return (BdCompositeJComboBinder) boundObject;
-        }
-
-        protected JComboBox getJComboBox() {
-            return (JComboBox) getBoundObject().getBoundObject();
-        }
-
-        @Override
-        protected void notifyComponentOf(DocumentChangeEvent event) {
-            if (event == null) {
-                return;
-            }
-            ComboBoxModelImpl model = (ComboBoxModelImpl) getJComboBox().getModel();
-            String[] props = model.getProperties();
-            if (Arrays.asList(props).contains(event.getPropertyName())) {
-                Object selItem = model.getElement((E) event.getSource());
-                model.setSelectedItem(selItem);
-                getJComboBox().repaint();
-            }
-        }
-    }
-
-    public static class JComboSelectionBinder<E extends Document> extends AbstractListSelectionBinder {
-
-        public JComboSelectionBinder(BdCompositeJComboBinder component) {
-            super(component);
-        }
-
-        @Override
-        public BdCompositeJComboBinder getBoundObject() {
-            return (BdCompositeJComboBinder) boundObject;
-        }
-
-        protected JComboBox getJComboBox() {
-            if (getBoundObject() == null) {
-                return null;
-            }
-            return getBoundObject().getBoundObject();
-        }
-
-        @Override
-        public void boundObjectChanged(Object o) {
-            super.boundObjectChanged(o);
-        }
-
-        @Override
-        public void propertyChanged(String property, Object propertyValue,boolean forceRefresh) {
-            super.propertyChanged(property, propertyValue,false);
-            getJComboBox().repaint();// if omitted then doesn't change selected item
-        }
-
-        @Override
-        protected boolean needChangeComponent(Object value) {
-            if ("selected".equals(getBoundProperty())) {
-                return true;
-            }
-            return super.needChangeComponent(value);
-        }
-        
-        @Override
-        protected int getComponentSelectedIndex() {
-            return getJComboBox().getSelectedIndex();
-        }
-
-        @Override
-        protected void setComponentSelectedIndex(int selectedIndex) {
-            getJComboBox().setSelectedIndex(selectedIndex);
-        }
-    }//class JListSelectionBinder
-*/
-/*    public static class JComboModelBinder extends AbstractListModelBinder {
-
-        protected String[] properties;
-
-        public JComboModelBinder(BdCompositeJComboBinder component, String... properties) {
-            super(component);
-            this.properties = properties;
-        }
-
-        @Override
-        public BdCompositeJComboBinder getBoundObject() {
-            return (BdCompositeJComboBinder) boundObject;
-        }
-
-        protected JComboBox getJComboBox() {
-            return getBoundObject().getBoundObject();
-        }
-
         @Override
         protected Object getModel() {
             return getJComboBox().getModel();
@@ -241,15 +106,40 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
 
         @Override
         protected Object createComponentModel() {
-            return new BdCompositeJComboBinder.ComboBoxModelImpl(properties, getDocuments());
+            return new BdCompositeJComboBinder.ComboBoxModelImpl(getDisplayProperties(), getContext().getDocumentList());
         }
 
         @Override
         protected void setDefaultComponentModel() {
             getJComboBox().setModel(new DefaultComboBoxModel());
         }
-    }//class JListListModelBinder
-*/
+
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        if ( getModel() == null || !(getModel() instanceof ComboBoxModelImpl)) {
+            return;
+        }
+        removeBoundObjectListeners();
+        Object d = ((ComboBoxModelImpl)getModel()).getElement(getSelected());
+        ((ComboBoxModelImpl)getModel()).selectedObject = d;
+        getJComboBox().repaint();
+        addBoundObjectListeners();
+    }
+
+    @Override
+    protected int getComponentSelectedIndex() {
+        return getJComboBox().getSelectedIndex();
+    }
+
+    @Override
+    protected void setComponentSelectedIndex(int selectedIndex) {
+        getJComboBox().setSelectedIndex(selectedIndex);
+        getJComboBox().repaint();
+    }
+
+  
+  
     public static class ComboBoxModelImpl<E extends Document> implements ComboBoxModel {
 
         protected Object selectedObject;
@@ -270,6 +160,7 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
         public Object getElementAt(int index) {
             E d = documents.get(index);
             return getElement(d);
+            
         }
 
         public Object getElement(E d) {
@@ -302,6 +193,7 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
 
         @Override
         public void setSelectedItem(Object anObject) {
+//            selectedObject = anObject;
 //        System.out.println("0) Combo setSelectedItem " + anObject);        
             if ((selectedObject != null && !selectedObject.equals(anObject))
                     || selectedObject == null && anObject != null) {
@@ -311,6 +203,7 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
                     selectedObject = anObject;
                 }
             }
+
         }
 
         @Override

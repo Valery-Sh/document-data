@@ -27,7 +27,6 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
     public BdCompositeJListBinder(JList component, String... properties) {
         super(component);
         this.displayProperties = properties;
-
     }
 
     @Override
@@ -142,7 +141,9 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
+        removeBoundObjectListeners();
         getJList().repaint();
+        addBoundObjectListeners();
     }
     /*    @Override
      protected PropertyBinder createSelectedBinder() {

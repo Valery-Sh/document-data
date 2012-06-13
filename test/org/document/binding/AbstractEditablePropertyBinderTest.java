@@ -73,7 +73,7 @@ public class AbstractEditablePropertyBinderTest {
     }
 
     /**
-     * Test of react method, of class AbstractEditablePropertyBinder.
+     * Test of binderChange method, of class AbstractEditablePropertyBinder.
      */
     @Test
     public void testReact() {
@@ -87,14 +87,14 @@ public class AbstractEditablePropertyBinderTest {
         DocumentImpl doc = new DocumentImpl();
         event.setAction(DocumentChangeEvent.Action.documentChange);
         event.setNewValue(doc);
-        binder.react(event);
+        binder.binderChange(event);
         assertTrue(binder.getDocument() == doc);
         //
         // Test that the binder sets defalt component value
         // when the new document is null
         //
         event.setNewValue(null);
-        binder.react(event);
+        binder.binderChange(event);
         assertEquals("999",component.getValue());
     }
 

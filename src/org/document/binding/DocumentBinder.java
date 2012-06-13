@@ -13,12 +13,15 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     public DocumentBinder() {
         super();
     }
+    public DocumentBinder(Class supportedClass) {
+        super(supportedClass);
+    }
     
     @Override
     public E getDocument() {
         return (E)super.getDocument();
     }
-    protected boolean accept(E document) {
+/*    protected boolean accept(E document) {
         boolean b;
         if ( document == null || "default".equals(getAlias()) ) {
             b = true;
@@ -38,11 +41,6 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
         }
         return b;
     }
-    /**
-     * @TODO
-     * @param document
-     * @return 
-     */
     protected boolean acceptSuper(E document) {
         return false;
     }
@@ -64,11 +62,6 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
         }
         return b;
     }
-    /**
-     * @TODO
-     * @param document
-     * @return 
-     */
     protected boolean canAcceptSuper(E document) {
         return false;
     }
@@ -82,5 +75,10 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     public boolean add(Binder binder) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+*/    
+
+    @Override
+    public boolean add(Binder binder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

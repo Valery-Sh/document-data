@@ -92,7 +92,7 @@ public class AbstractPropertyBinderTest {
         Document result = instance.getDocument();
         assertEquals(expResult, result);
         Document doc = new DocumentImpl();
-        instance.react(createDocumentEvent(doc));
+        instance.binderChange(createDocumentEvent(doc));
         result = instance.getDocument();
         assertEquals(doc,result);
     }
@@ -127,7 +127,7 @@ public class AbstractPropertyBinderTest {
     }
 
     /**
-     * Test of react method, of class AbstractPropertyBinder.
+     * Test of binderChange method, of class AbstractPropertyBinder.
      */
     @Test
     public void testReact() {
@@ -135,24 +135,24 @@ public class AbstractPropertyBinderTest {
         DocumentChangeEvent event = null;
         AbstractPropertyBinder instance = new AbstractPropertyBinderImpl();
         try {
-            instance.react(event);
+            instance.binderChange(event);
             fail(" 'event' parameter cannot be null");
         } catch(Exception e) {
             System.out.println("Passed when event is null");
         }
         
         event = this.createDocumentEvent(new DocumentImpl());
-        instance.react(event);
+        instance.binderChange(event);
         assertNotNull(instance.getDocument());
         event.setNewValue(null);
-        instance.react(event);
+        instance.binderChange(event);
         assertNull(instance.getDocument());
         Document doc = new DocumentImpl();
         doc.propertyStore().put("testName", "TEST_STRING");
         event.setAction(DocumentChangeEvent.Action.propertyChange);
         event.setNewValue("TEST_STRING");
         event.setOldValue(null);
-        instance.react(event);
+        instance.binderChange(event);
         Object result = instance.getBoundObjectValue();
         assertEquals("TEST_STRING", result);
         
