@@ -10,7 +10,7 @@ import org.document.Document;
  */
 public abstract class DocumentListBinder<E extends Document> extends AbstractBinder implements ContextListener, PropertyChangeListener {
 
-    private BindingContext context;
+    private DataSourceContext context;
     private List list;
     private BinderListener binderListener;
     private String propertyName;
@@ -65,7 +65,7 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
         return context.getDocumentList().indexOf(context.getSelected());
     }
 
-    public BindingContext getContext() {
+    public DataSourceContext getContext() {
         return context;
     }
 
@@ -75,7 +75,7 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
 
     public void requestSelect(E document) {
         BinderEvent.Action action =
-                BinderEvent.Action.propertyChangeRequest;
+                BinderEvent.Action.boundObjectChange;
         BinderEvent event = new BinderEvent(this, action, "*selected");
         event.setNewValue(document);
         if (binderListener == null) {
@@ -103,7 +103,7 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
      */
     @Override
     public void react(ContextEvent event) {
-        context = (BindingContext) event.getSource();
+        context = (DataSourceContext) event.getSource();
         switch (event.getAction()) {
             case documentChanging:
                 break;

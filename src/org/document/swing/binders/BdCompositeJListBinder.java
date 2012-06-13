@@ -134,6 +134,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         }
         return getBoundObject();
     }
+
     @Override
     public void initDefaults() {
         setDefaultComponentModel();
@@ -263,6 +264,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
      }
      }//class JListListModelBinder
      */
+
     public static class ListBoxModelImpl<E extends Document> implements ListModel {
 
         private List<E> documents;
@@ -290,7 +292,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
         @Override
         public Object getElementAt(int index) {
             Document d = documents.get(index);
-            
+
             if (d == null) {
                 return null;
             }
@@ -390,31 +392,39 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
 
         @Override
         public void keyTyped(KeyEvent ke) {
+
             char c = ke.getKeyChar();
-            String tx = locator.getText();
-            int idx = getJList().getSelectedIndex();
             if (locator == null) {
                 selectionForKey(c);
-            } else {
-                switch (c) {
-                    case KeyEvent.VK_BACK_SPACE:
-                        if (!tx.isEmpty()) {
-                            locator.setText(tx.substring(0, tx.length() - 1));
-                        }
-                        break;
-                    case KeyEvent.VK_HOME:
-                        locator.setText("");
-                        getJList().setSelectedIndex(idx >= 0 ? 0 : idx);
-                        break;
-                    case KeyEvent.VK_END:
-                        locator.setText("");
-                        getJList().setSelectedIndex(getJList().getModel().getSize() - 1);
-                        break;
-                    default:
-                        locator.setText(tx += Character.toString(c));
-                        locatorSelection();
-                }//switch
+                return;
             }
+            String tx = locator.getText();
+            int idx = getJList().getSelectedIndex();
+
+            if (locator == null) {
+                return;
+            }
+            switch (c) {
+                case KeyEvent.VK_BACK_SPACE:
+                    if (!tx.isEmpty()) {
+                        locator.setText(tx.substring(0, tx.length() - 1));
+                        locatorSelection();
+                    } else {
+                        getJList().setSelectedIndex(idx >= 0 ? 0 : idx);
+                    }
+                    break;
+                case KeyEvent.VK_HOME:
+                    locator.setText("");
+                    getJList().setSelectedIndex(idx >= 0 ? 0 : idx);
+                    break;
+                case KeyEvent.VK_END:
+                    locator.setText("");
+                    getJList().setSelectedIndex(getJList().getModel().getSize() - 1);
+                    break;
+                default:
+                    locator.setText(tx += Character.toString(c));
+                    locatorSelection();
+            }//switch
         }
 
         @Override

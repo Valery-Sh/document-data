@@ -11,7 +11,7 @@ import org.document.binding.BinderListener;
  *
  * @author Valery
  */
-public interface DocumentState extends BinderListener{
+public interface DocumentState {// extends BinderListener{
     boolean isEditing();
     void setEditing(boolean editing);
     boolean isAttached();

@@ -72,14 +72,15 @@ public class ContextEvent extends EventObject{
     public void setActive(boolean active) {
         this.active = active;
     }
-
-
     
     public enum Action {
         documentChange,
         documentChanging,
         activeStateChange,
-        documentListChange
+        documentListChange,
+        updateContext,
+        register,
+        unregister
     }
 }//class ContextEvent
 

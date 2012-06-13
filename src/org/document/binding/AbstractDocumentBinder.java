@@ -25,7 +25,6 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     //protected List<BinderListener> binderListener;
     protected BinderListener binderListener;
     protected BindingContext context;
-    
     protected String childName;
     protected List<DocumentBinder> childs;
     protected List<PropertyBinder> binders;
@@ -37,6 +36,9 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
     protected AbstractDocumentBinder(Object boundObject) {
         super(boundObject);
+        context = new DocumentBindingContext();
+        binderListener = new InternalBinderEventHandler();
+
         //binderListener = new ArrayList<BinderListener>();
         childs = new ArrayList<DocumentBinder>();
         documentErrorBinder = new DocumentErrorBinder();
@@ -97,9 +99,6 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         return false;
     }
 
-//    public PropertyStore getDocumentStore() {
-//        return context().getSelected().propertyStore();
-//    }
     public boolean isSuspended() {
         return suspended;
     }
@@ -118,7 +117,6 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     public void suspend(String propertyName) {
 
         BinderEvent event = new BinderEvent(this, BinderEvent.Action.suspendBinding);
-        //event.setPropertyName(propertyName);
         notifyAll(event);
 
     }
@@ -130,7 +128,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             }
         }
     }
-    
+
     private void notifyAll(BinderEvent e) {
         for (Binder b : binders) {
             if (b instanceof BinderListener) {
@@ -150,14 +148,15 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
     public void resume(String propertyName) {
         BinderEvent event = new BinderEvent(this, BinderEvent.Action.resumeBinding);
-        //event.setPropertyName(propertyName);
-        if ( getContext() == null ) { return; }
+        if (getContext() == null) {
+            return;
+        }
         event.setNewValue(getContext().getSelected());
         notifyAll(event);
     }
 
     protected E getDocument() {
-        if ( getContext() == null ) {
+        if (getContext() == null) {
             return null;
         }
         return (E) getContext().getSelected();
@@ -251,34 +250,29 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         }
     }
 
-
-    /*    @Override
-     public void react(DocumentChangeEvent event) {
-     if (event.getAction().equals(DocumentChangeEvent.Action.documentChanging)) {
-     // context contains old document
-     beforeDocumentChange(event);
-     } else if (event.getAction().equals(DocumentChangeEvent.Action.propertyChange)) {
-     firePropertyChange(event);
-     }
-     }
+    /**
+     * May be called from the contained binders of type
+     * <code>PropertyBinder</code>.
+     *
+     * @param event
      */
     @Override
     public void react(BinderEvent event) {
-        if ( getContext() == null ) {
+        if (getContext() == null) {
             return;
         }
         switch (event.getAction()) {
             case refresh:
                 fireRefresh(event);
                 break;
-            case propertyChangeRequest:
+            case boundObjectChange:
                 firePropertyChangeRequest(event);
                 documentErrorBinder.clear(event.getBoundProperty());
                 break;
             case clearError:
                 documentErrorBinder.clear(event.getBoundProperty());
                 break;
-            case boundObjectError:
+            case propertyError:
                 documentErrorBinder.notifyError(event.getBoundProperty(), event.getException());
                 break;
             case boundObjectReplace:
@@ -288,12 +282,37 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         }
     }
 
+    public void setDocument(E document) {
+        ContextEvent e = new ContextEvent(context,ContextEvent.Action.documentChanging);
+        e.setNewSelected(document);
+        e.setOldSelected(context.getSelected());
+        react(e);
+        ((DocumentBindingContext)context).setSelected(document);
+        if ( context.getSelected() != null ) {
+            context.getSelected().propertyStore().addPropertyChangeListener(this);
+        }
+        e.setAction(ContextEvent.Action.documentChange);
+        react(e);
+    }
+
     @Override
     public void react(ContextEvent event) {
-        context = (BindingContext)event.getSource();
-        if ( context == null ) {
-            return;
+
+        BindingContext c = (BindingContext) event.getSource();
+        if (event.getAction() == ContextEvent.Action.register  ) {
+            if ( getDocument() != null ) {
+                getDocument().propertyStore().removePropertyChangeListener(this);
+            }
+            context = c;
+            event.setAction(ContextEvent.Action.updateContext);
+        } else if (event.getAction() == ContextEvent.Action.unregister  ) {
+                context = new DocumentBindingContext();
+                binderListener = new InternalBinderEventHandler();
+                event.setAction(ContextEvent.Action.updateContext);
+        } else {
+            context = c;
         }
+
         switch (event.getAction()) {
             case documentChanging:
                 beforeDocumentChange(event);
@@ -301,16 +320,18 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             case documentChange:
                 afterDocumentChange(event);
                 break;
+            case updateContext:
+                notifyAll(event);
             case activeStateChange:
                 notifyAll(event);
-/*                if ( context.isActive()) {
-                   notifyAll(new BinderEvent(this,BinderEvent.Action.refresh)); 
-                } else {
-                   initDefaults();
-                }
-*/ 
+                /*                if ( context.isActive()) {
+                 notifyAll(new BinderEvent(this,BinderEvent.Action.refresh)); 
+                 } else {
+                 initDefaults();
+                 }
+                 */
                 break;
-                
+
         }
     }
 
@@ -358,6 +379,9 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             binders.add(binder);
             binder.addBinderListener(this);
         }
+        BinderEvent e = new BinderEvent(this, BinderEvent.Action.binderAdded);
+        binderListener.react(e);
+
         if (propertyName != null) {
             if (isSuspended()) {
                 suspend(propertyName);
@@ -376,7 +400,6 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
      *
      * @see #beforeDocumentChange(org.document.Document)
      */
-
     protected void completeChanges(ContextEvent e) {
         E oldDoc = (E) e.getOldSelected();
         if (oldDoc.propertyStore() == null) {
@@ -401,20 +424,20 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
      }
      */
 
-/*    private void fireDocumentChanging(Document oldDoc, Document newDoc) {
-        BinderEvent event = new BinderEvent(this, BinderEvent.Action.documentChanging);
-        event.setOldValue(oldDoc);
-        event.setNewValue(newDoc);
-        notifyAll(event);
-    }
+    /*    private void fireDocumentChanging(Document oldDoc, Document newDoc) {
+     BinderEvent event = new BinderEvent(this, BinderEvent.Action.documentChanging);
+     event.setOldValue(oldDoc);
+     event.setNewValue(newDoc);
+     notifyAll(event);
+     }
 
-    private void fireDocumentChanged(Document oldDoc, Document newDoc) {
-        BinderEvent event = new BinderEvent(this, BinderEvent.Action.documentChange);
-        event.setOldValue(oldDoc);
-        event.setNewValue(newDoc);
-        notifyAll(event);
-    }
-*/
+     private void fireDocumentChanged(Document oldDoc, Document newDoc) {
+     BinderEvent event = new BinderEvent(this, BinderEvent.Action.documentChange);
+     event.setOldValue(oldDoc);
+     event.setNewValue(newDoc);
+     notifyAll(event);
+     }
+     */
     private void fireRefresh(BinderEvent event) {
         notifyAll(event);
     }
@@ -448,4 +471,100 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     @Override
     public void removeBoundObjectListeners() {
     }
-}
+
+    public class InternalBinderEventHandler implements BinderListener {
+
+        BinderEvent.Action action; // for test only purpose
+
+        public InternalBinderEventHandler() {
+        }
+
+        /**
+         * Handles events of type
+         * <code>DocumentChangeEvent</code>. When any property value of a
+         * document changes the method is called as an implementation of the {@link org.document.DocumentChangeListener
+         * }. listener The special case is when an editing state changes. The
+         * event has it's property
+         * {@link org.document.DocumentChangeEvent#propertyName} equals to
+         * <code>"document.state.editing"</code>. In this case the method
+         * cancels <i>newMark<i> of a selected document if the last is marked as
+         * <i>new</i>..
+         *
+         * @param event the event to be handled
+         * @see org.document.DocumentChangeEvent
+         */
+        @Override
+        public void react(BinderEvent event) {
+            switch (event.getAction()) {
+                case binderAdded:
+                    /*                    if ( isActive() ) {
+                     registry.notify(new ContextEvent(bindingContext,ContextEvent.Action.updateContext));
+                     }
+                     */
+                    break;
+                case boundObjectChange:
+                    /*                    if ( "*selected".equals(event.getPropertyName()) ) {
+                     if ( event.getNewValue() instanceof Document ) {
+                     setSelected((T)event.getNewValue());
+                     }
+                     break;
+                     } else if ( "*documentList".equals(event.getPropertyName()) ) {
+                     break;
+                     }
+                            
+                            
+                     try {
+                     if (getSelected() != null) {
+                     getSelected().propertyStore().put(event.getBoundProperty(), event.getNewValue());
+                     }
+                     } catch (Exception e) {
+                     System.out.println("ERRRRRRRRRRRR");
+                     }
+                     */
+                    break;
+            }
+        }
+    }//class InternalBinderEventHandler
+
+    public class PropertyChangeHandler implements PropertyChangeListener {
+
+        public PropertyChangeHandler() {
+        }
+
+        /**
+         * Handles events of type
+         * <code>DocumentChangeEvent</code>. When any property value of a
+         * document changes the method is called as an implementation of the {@link org.document.DocumentChangeListener
+         * }. listener The special case is when an editing state changes. The
+         * event has it's property
+         * {@link org.document.DocumentChangeEvent#propertyName} equals to
+         * <code>"document.state.editing"</code>. In this case the method
+         * cancels <i>newMark<i> of a selected document if the last is marked as
+         * <i>new</i>..
+         *
+         * @param event the event to be handled
+         * @see org.document.DocumentChangeEvent
+         */
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            //registry.notify(e);
+        }
+    }//class PropertyChangeHandler
+
+    public class DocumentBindingContext implements BindingContext {
+
+        private Document selected;
+
+        DocumentBindingContext() {
+        }
+
+        @Override
+        public Document getSelected() {
+            return selected;
+        }
+
+        public void setSelected(Document document) {
+            selected = document;
+        }
+    }//class DocumentBindingContext
+}//class AbstractDocumentBinder

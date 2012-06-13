@@ -23,10 +23,10 @@ import org.document.ListChangeListener;
  */
 public class DocumentDataSource<T extends Document> implements ListChangeListener {
 
-    private BindingContext bindingContext;
+    private DataSourceContext bindingContext;
     private Registry registry;
     private BinderEventHandler binderEventHandler;
-    private DocumentChangeHandler documentChangeHandler;
+    private PropertyChangeHandler documentChangeHandler;
     private ListChangeHandler listChangeHandler;
     /**
      * Stores a reference to a document that is declared as
@@ -53,9 +53,9 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     public DocumentDataSource() {
         registry = new DocumentDataSource.Registry();
         binderEventHandler = new BinderEventHandler();
-        documentChangeHandler = new DocumentChangeHandler();
+        documentChangeHandler = new PropertyChangeHandler();
         listChangeHandler = new ListChangeHandler();
-        bindingContext = new BindingContext(this);
+        bindingContext = new DataSourceContext(this);
     }
 
     /**
@@ -112,10 +112,17 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
     public boolean add(PropertyBinder binder) {
         return registry.add(binder.getAlias(), binder);
     }
+    public DocumentBinder add(DocumentBinder binder) {
+        return registry.put("default", binder);
+    }
+    public ContainerBinder add(ContainerBinder binder) {
+        return registry.put("default",binder);
+    }
 
     public boolean add(Binder binder) {
         return registry.add(binder);
     }
+
     public boolean isActive() {
         return active;
     }
@@ -138,11 +145,11 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                 setSelected(selected);
             }
         }
-        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.activeStateChange); 
+        ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.activeStateChange);
         e.setNewSelected(selected);
         e.setOldSelected(oldDoc);
         registry.notify(e);
-        
+
     }
 
     public DocumentList getDocuments() {
@@ -184,41 +191,42 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         fireDocumentChange(old, selected);
     }
 
-/*    void fireDocumentChanging(Document oldSelected, Document newSelected) {
-        DocumentChangeEvent e = new DocumentChangeEvent(this);
-        e.setAction(DocumentChangeEvent.Action.documentChanging);
-        e.setNewValue(newSelected);
-        e.setOldValue(oldSelected);
+    /*    void fireDocumentChanging(Document oldSelected, Document newSelected) {
+     DocumentChangeEvent e = new DocumentChangeEvent(this);
+     e.setAction(DocumentChangeEvent.Action.documentChanging);
+     e.setNewValue(newSelected);
+     e.setOldValue(oldSelected);
+     registry.notify(e);
+     }
+
+     void fireDocumentChange(Document oldSelected, Document newSelected) {
+     DocumentChangeEvent e = new DocumentChangeEvent(this);
+     e.setAction(DocumentChangeEvent.Action.documentChange);
+     e.setNewValue(newSelected);
+     e.setOldValue(oldSelected);
+     registry.notify(e);
+     }
+     */
+    void fireDocumentChanging(Document oldSelected, Document newSelected) {
+        ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.documentChanging);
+        e.setNewSelected(newSelected);
+        e.setOldSelected(oldSelected);
         registry.notify(e);
     }
 
     void fireDocumentChange(Document oldSelected, Document newSelected) {
-        DocumentChangeEvent e = new DocumentChangeEvent(this);
-        e.setAction(DocumentChangeEvent.Action.documentChange);
-        e.setNewValue(newSelected);
-        e.setOldValue(oldSelected);
-        registry.notify(e);
-    }
-*/
-    void fireDocumentChanging(Document oldSelected, Document newSelected) {
-        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.documentChanging);
+        ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.documentChange);
         e.setNewSelected(newSelected);
         e.setOldSelected(oldSelected);
         registry.notify(e);
     }
 
-    void fireDocumentChange(Document oldSelected,Document newSelected) {
-        ContextEvent e = new ContextEvent(bindingContext,ContextEvent.Action.documentChange);
-        e.setNewSelected(newSelected);
-        e.setOldSelected(oldSelected);
-        registry.notify(e);
-    }
-    
     /**
      * Sets a given object
      * <code><i>selected</i></code>. Assigns a new document to all appropriate
      * objects of type {@link DocumentBinder}. <P>The method provides the same
-     * functionality as null null null null null null null null null null null null     {@link #beforeDocumentChange(org.document.Document) and those two methods may be 
+     * functionality as null null null null null null null null null null null
+     * null null null null     {@link #beforeDocumentChange(org.document.Document) and those two methods may be 
      * used interchangebly.
      *
      * @param selected an object to be set <code>selected</code>
@@ -259,8 +267,10 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
     public void setSourceList(List sourceList) {
         boolean oldActive = active;
-        if ( active ) setActive(false);
-        
+        if (active) {
+            setActive(false);
+        }
+
         if (getDocuments() != null) {
             getDocuments().removeListChangeListener(this);
         }
@@ -414,6 +424,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             }
 
         }
+
         public void notify(PropertyChangeEvent e) {
             for (Binder b : documentBinders.values()) {
                 if (b instanceof PropertyChangeListener) {
@@ -434,26 +445,26 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
         }
 
-        public void notify(BinderEvent e) {
-            for (Binder b : documentBinders.values()) {
-                if (b instanceof BinderListener) {
-                    ((BinderListener) b).react(e);
-                }
-            }
+        /*        public void notify(BinderEvent e) {
+         for (Binder b : documentBinders.values()) {
+         if (b instanceof BinderListener) {
+         ((BinderListener) b).react(e);
+         }
+         }
 
-            for (Binder b : containerBinders.values()) {
-                if (b instanceof BinderListener) {
-                    ((BinderListener) b).react(e);
-                }
-            }
-            for (Binder b : binders) {
-                if (b instanceof BinderListener) {
-                    ((BinderListener) b).react(e);
-                }
-            }
+         for (Binder b : containerBinders.values()) {
+         if (b instanceof BinderListener) {
+         ((BinderListener) b).react(e);
+         }
+         }
+         for (Binder b : binders) {
+         if (b instanceof BinderListener) {
+         ((BinderListener) b).react(e);
+         }
+         }
 
-        }
-
+         }
+         */
         public void notify(ListChangeEvent e) {
 
             for (Binder b : containerBinders.values()) {
@@ -513,14 +524,16 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          * @param alias to search for.
          */
         public void removeDocumentBinder(String alias) {
+            
             DocumentBinder cb = documentBinders.remove(alias);
             if (cb != null) {
-//                cb.setContext(null);
-                cb.initDefaults();
+                // We we must unregister before remove binderListener
+                ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.unregister);
+                e.setNewSelected(null);
+                registry.notify(e);
 
-                for (Object b : cb) {
-                    ((HasContext) b).setContext(null);
-                }
+                //cb.initDefaults();
+
             }
         }
 
@@ -551,6 +564,10 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                     }
                     ((Binder) b).initDefaults();
                 }
+                ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.unregister);
+                e.setNewSelected(null);
+                registry.notify(e);
+                
             }
 
         }
@@ -565,31 +582,33 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          */
         public boolean remove(Binder binder) {
             boolean result = false;
+            ContainerBinder toRemove = null;
             for (DocumentBinder cb : documentBinders.values()) {
-                if (cb.remove(binder)) {
-                    result = true;
+                if (cb.contains(binder)) {
+                    toRemove = cb;
                     break;
                 }
             }
-            if (!result) {
-                for (ContainerBinder cb : containerBinders.values()) {
-                    if (cb.remove(binder)) {
-                        result = true;
-                        break;
-                    }
-                }
+            if (toRemove != null) {
+                toRemove.remove(binder);
+                return true;
             }
-            if (!result) {
-                if (binders.remove(binder)) {
-                    result = true;
-                    binder.removeBinderListener(binderEventHandler);
 
+            for (ContainerBinder cb : containerBinders.values()) {
+                if (cb.contains(binder)) {
+                    toRemove = cb;
+                    break;
                 }
             }
-            if (result) {
-                if (binder instanceof HasContext) {
-                    ((HasContext) binder).setContext(null);
-                }
+            if (toRemove != null) {
+                toRemove.remove(binder);
+                return true;
+            }
+
+            if (binders.remove(binder)) {
+                result = true;
+                binder.removeBinderListener(binderEventHandler);
+
             }
             return result;
         }
@@ -671,16 +690,25 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         }
 
         public DocumentBinder put(String alias, DocumentBinder binder) {
+            // We musr register before add or remove binder listener
+            ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.register);
+            e.setNewSelected(bindingContext.getSelected());
+            registry.notify(e);
+            
             binder.removeBinderListener(binderEventHandler);
             binder.addBinderListener(binderEventHandler);
-            //binder.a
 
             return documentBinders.put(alias, binder);
         }
 
         public ContainerBinder put(String alias, ContainerBinder binder) {
+            ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.register);
+            e.setNewSelected(bindingContext.getSelected());
+            registry.notify(e);
+            
             binder.removeBinderListener(binderEventHandler);
             binder.addBinderListener(binderEventHandler);
+
             return containerBinders.put(alias, binder);
         }
 
@@ -759,23 +787,23 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
         }
 
-        private String extractAlias(Binder binder) {
-            String alias = null;
-            if (binder instanceof HasAlias) {
-                alias = ((HasAlias) binder).getAlias();
-                if (alias == null || alias.trim().isEmpty()) {
-                    alias = "default";
-                }
-            }
-            return alias;
+        /*        private String extractAlias(Binder binder) {
+         String alias = null;
+         if (binder instanceof HasAlias) {
+         alias = ((HasAlias) binder).getAlias();
+         if (alias == null || alias.trim().isEmpty()) {
+         alias = "default";
+         }
+         }
+         return alias;
 
-        }
+         }
+         */
     }//Registry
 
-    public class DocumentChangeHandler implements PropertyChangeListener {
+    public class PropertyChangeHandler implements PropertyChangeListener {
 
-
-        public DocumentChangeHandler() {
+        public PropertyChangeHandler() {
         }
 
         /**
@@ -792,26 +820,6 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          * @param event the event to be handled
          * @see org.document.DocumentChangeEvent
          */
-/*        @Override
-        public void react(DocumentChangeEvent event) {
-
-            //
-            // notifies registry only when in active state 
-            //
-            if (! isActive()) {
-                return;
-            }
-            switch(event.getAction()) {
-                case propertyChange : 
-                    BinderEvent e = new BinderEvent(bindingContext,event.getBoundProperty(),BinderEvent.Action.propertyChange);
-                    e.setOldValue(event.getOldValue());
-                    e.setNewValue(event.getNewValue());
-                    registry.notify(e);
-                    break;
-            }
-            
-        }
-*/
         @Override
         public void propertyChange(PropertyChangeEvent e) {
             registry.notify(e);
@@ -842,24 +850,22 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         @Override
         public void react(BinderEvent event) {
             switch (event.getAction()) {
-                case boundObjectSelectChange:
-                    T newDoc = (T) event.getDataValue();
-//TODO                    if (newDoc == this.selected) {
-//                        return;
+                case binderAdded:
+//                    if ( isActive() ) {
+                    registry.notify(new ContextEvent(bindingContext, ContextEvent.Action.updateContext));
 //                    }
-//TODO                    setSelected(newDoc);
                     break;
-                case propertyChangeRequest:
-                    if ( "*selected".equals(event.getPropertyName()) ) {
-                        if ( event.getNewValue() instanceof Document ) {
-                            setSelected((T)event.getNewValue());
+                case boundObjectChange:
+                    if ("*selected".equals(event.getPropertyName())) {
+                        if (event.getNewValue() instanceof Document) {
+                            setSelected((T) event.getNewValue());
                         }
                         break;
-                    } else if ( "*documentList".equals(event.getPropertyName()) ) {
+                    } else if ("*documentList".equals(event.getPropertyName())) {
                         break;
                     }
-                            
-                            
+
+
                     try {
                         if (getSelected() != null) {
                             getSelected().propertyStore().put(event.getBoundProperty(), event.getNewValue());

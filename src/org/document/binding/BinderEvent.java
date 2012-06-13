@@ -111,27 +111,23 @@ public class BinderEvent extends EventObject {
 
     
     public enum Action {
-        propertyChangeRequest,
-        boundObjectError,
         boundObjectChange,
-        aliasReplace,
-        clearError,
-        fixError,
-        boundObjectSelectChange,
-        binderRemoved,
-        // concern documents
-        
-        suspendBinding,
-        resumeBinding,
-        propertyChange,
-        propertyChangeNotSeected,
-        completeChanges,
-        
         boundObjectReplace,
         boundPropertyReplace,
-        refresh
         
+        aliasReplace,
         
+        propertyError,
+        clearError,
+        fixError,
+
+        suspendBinding,
+        resumeBinding,
+        completeChanges,
+        
+        refresh,
+        binderAdded,
+        binderRemoved
     }
 }//class DocumentEvent
 

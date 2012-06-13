@@ -58,6 +58,7 @@ import org.document.Document;
  * @author V. Shyshkin
  */
 public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder, BinderListener, ContextListener {
+
     private BindingContext context;
     private String alias;
     protected String boundProperty;
@@ -78,7 +79,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         return alias;
     }
 
-    
+    @Override
     public BindingContext getContext() {
         return context;
     }
@@ -120,7 +121,7 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @return an object of class {@link org.document.Document).
      */
     public Document getDocument() {
-        if ( getContext() == null ) {
+        if (getContext() == null) {
             return null;
         }
         return getContext().getSelected();
@@ -327,26 +328,33 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
 
     @Override
     public void react(ContextEvent event) {
-        if ( event.getSource() == null ) {
+        if (event.getSource() == null) {
             return;
         }
-        context = (BindingContext)event.getSource();
+        context = (BindingContext) event.getSource();
         switch (event.getAction()) {
-            case activeStateChange : 
+            case updateContext:
+                forceUpdate(event);
+                break;
+            case activeStateChange:
             case documentChange:
                 if (isSuspended()) {
                     return;
                 }
-                Document document = event.getNewSelected();
-                if (document != null && getBoundProperty() != null) {
-                    propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
-                } else if (document == null) {
-                    initBoundObjectDefaults();
-                }
-                if ( event.getAction() == ContextEvent.Action.activeStateChange ) {
-                    initDefaults();
-                }
+                forceUpdate(event);
                 return;
+        }
+    }
+
+    protected void forceUpdate(ContextEvent event) {
+        Document document = context.getSelected();
+        if (document != null && getBoundProperty() != null) {
+            propertyChanged(getBoundProperty(), document.propertyStore().get(getBoundProperty()), false);
+        } else if (document == null) {
+            initBoundObjectDefaults();
+        }
+        if (event.getAction() == ContextEvent.Action.activeStateChange) {
+            initDefaults();
         }
     }
     /*    protected void update(BinderEvent.Action action) {
