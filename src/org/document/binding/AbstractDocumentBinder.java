@@ -22,8 +22,8 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     private String className;
     private String alias;
     private boolean suspended;
-    //protected List<BinderListener> binderListener;
-    protected BinderListener binderListener;
+    //protected List<BinderListener> dataSource;
+    protected BinderListener dataSource;
     protected BindingContext context;
     protected String childName;
     protected List<DocumentBinder> childs;
@@ -37,7 +37,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     protected AbstractDocumentBinder(Object boundObject) {
         super(boundObject);
         context = new DocumentBindingContext();
-        binderListener = new InternalBinderEventHandler();
+        dataSource = new InternalBinderEventHandler();
 
         //binderListener = new ArrayList<BinderListener>();
         childs = new ArrayList<DocumentBinder>();
@@ -304,11 +304,11 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
                 getDocument().propertyStore().removePropertyChangeListener(this);
             }
             context = c;
-            event.setAction(ContextEvent.Action.updateContext);
+//            event.setAction(ContextEvent.Action.updateContainerContext);
         } else if (event.getAction() == ContextEvent.Action.unregister  ) {
                 context = new DocumentBindingContext();
-                binderListener = new InternalBinderEventHandler();
-                event.setAction(ContextEvent.Action.updateContext);
+                dataSource = new InternalBinderEventHandler();
+//                event.setAction(ContextEvent.Action.updateContext);
         } else {
             context = c;
         }
@@ -320,7 +320,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             case documentChange:
                 afterDocumentChange(event);
                 break;
-            case updateContext:
+            case updateContainerContext:
                 notifyAll(event);
             case activeStateChange:
                 notifyAll(event);
@@ -343,12 +343,12 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
     @Override
     public void addBinderListener(BinderListener l) {
-        binderListener = l;
+        dataSource = l;
     }
 
     @Override
     public void removeBinderListener(BinderListener l) {
-        binderListener = null;
+        dataSource = null;
     }
 
     public void remove(PropertyBinder binder) {
@@ -379,8 +379,8 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
             binders.add(binder);
             binder.addBinderListener(this);
         }
-        BinderEvent e = new BinderEvent(this, BinderEvent.Action.binderAdded);
-        binderListener.react(e);
+        BinderEvent e = new BinderEvent(this, BinderEvent.Action.containerBinderContent);
+        dataSource.react(e);
 
         if (propertyName != null) {
             if (isSuspended()) {
@@ -451,8 +451,8 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     }
 
     protected void firePropertyChangeRequest(BinderEvent event) {
-        if (binderListener != null) {
-            binderListener.react(event);
+        if (dataSource != null) {
+            dataSource.react(event);
         }
     }
 
@@ -496,7 +496,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         @Override
         public void react(BinderEvent event) {
             switch (event.getAction()) {
-                case binderAdded:
+                case containerBinderContent:
                     /*                    if ( isActive() ) {
                      registry.notify(new ContextEvent(bindingContext,ContextEvent.Action.updateContext));
                      }

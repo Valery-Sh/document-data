@@ -148,7 +148,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.activeStateChange);
         e.setNewSelected(selected);
         e.setOldSelected(oldDoc);
-        registry.notify(e);
+        registry.notifyAll(e);
 
     }
 
@@ -196,7 +196,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
      e.setAction(DocumentChangeEvent.Action.documentChanging);
      e.setNewValue(newSelected);
      e.setOldValue(oldSelected);
-     registry.notify(e);
+     registry.notifyAll(e);
      }
 
      void fireDocumentChange(Document oldSelected, Document newSelected) {
@@ -204,21 +204,21 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
      e.setAction(DocumentChangeEvent.Action.documentChange);
      e.setNewValue(newSelected);
      e.setOldValue(oldSelected);
-     registry.notify(e);
+     registry.notifyAll(e);
      }
      */
     void fireDocumentChanging(Document oldSelected, Document newSelected) {
         ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.documentChanging);
         e.setNewSelected(newSelected);
         e.setOldSelected(oldSelected);
-        registry.notify(e);
+        registry.notifyAll(e);
     }
 
     void fireDocumentChange(Document oldSelected, Document newSelected) {
         ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.documentChange);
         e.setNewSelected(newSelected);
         e.setOldSelected(oldSelected);
-        registry.notify(e);
+        registry.notifyAll(e);
     }
 
     /**
@@ -405,7 +405,11 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             binders = new ArrayList<Binder>();
         }
 
-        public void notify(ContextEvent e) {
+        public void notifyAll(ContextEvent e) {
+            if ( e.getAction() == ContextEvent.Action.register ||
+                 e.getAction() == ContextEvent.Action.unregister   ) {
+                return;
+            }
             for (Binder b : documentBinders.values()) {
                 if (b instanceof ContextListener) {
                     ((ContextListener) b).react(e);
@@ -425,7 +429,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
         }
 
-        public void notify(PropertyChangeEvent e) {
+        public void notifyAll(PropertyChangeEvent e) {
             for (Binder b : documentBinders.values()) {
                 if (b instanceof PropertyChangeListener) {
                     ((PropertyChangeListener) b).propertyChange(e);
@@ -445,7 +449,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
         }
 
-        /*        public void notify(BinderEvent e) {
+        /*        public void notifyAll(BinderEvent e) {
          for (Binder b : documentBinders.values()) {
          if (b instanceof BinderListener) {
          ((BinderListener) b).react(e);
@@ -465,7 +469,21 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
          }
          */
-        public void notify(ListChangeEvent e) {
+        public void notify(DocumentBinder binder, ContextEvent e) {
+            binder.react(e);
+        }
+        public void notify(Binder binder, ContextEvent e) {
+            if ( binder instanceof ContextListener ) {
+                ((ContextListener)binder).react(e);
+            }
+        }
+        public void notify(ContainerBinder binder, ContextEvent e) {
+            if ( binder instanceof ContextListener ) {
+                ((ContextListener)binder).react(e);
+            }
+        }
+        
+        public void notifyAll(ListChangeEvent e) {
 
             for (Binder b : containerBinders.values()) {
                 if (b instanceof ListChangeListener) {
@@ -530,7 +548,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                 // We we must unregister before remove binderListener
                 ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.unregister);
                 e.setNewSelected(null);
-                registry.notify(e);
+                registry.notify(cb,e);
 
                 //cb.initDefaults();
 
@@ -566,7 +584,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                 }
                 ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.unregister);
                 e.setNewSelected(null);
-                registry.notify(e);
+                registry.notify(cb,e);
                 
             }
 
@@ -607,6 +625,9 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
 
             if (binders.remove(binder)) {
                 result = true;
+                ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.unregister);
+                e.setNewSelected(bindingContext.getSelected());
+                registry.notify(binder,e);
                 binder.removeBinderListener(binderEventHandler);
 
             }
@@ -690,26 +711,27 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         }
 
         public DocumentBinder put(String alias, DocumentBinder binder) {
+            DocumentBinder result = documentBinders.put(alias, binder);
             // We musr register before add or remove binder listener
             ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.register);
             e.setNewSelected(bindingContext.getSelected());
-            registry.notify(e);
+            registry.notify(binder,e);
             
             binder.removeBinderListener(binderEventHandler);
             binder.addBinderListener(binderEventHandler);
 
-            return documentBinders.put(alias, binder);
+            return result;
         }
 
         public ContainerBinder put(String alias, ContainerBinder binder) {
+            ContainerBinder result =  containerBinders.put(alias, binder);
             ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.register);
             e.setNewSelected(bindingContext.getSelected());
-            registry.notify(e);
+            registry.notify(binder,e);
             
             binder.removeBinderListener(binderEventHandler);
-            binder.addBinderListener(binderEventHandler);
-
-            return containerBinders.put(alias, binder);
+            binder.addBinderListener(binderEventHandler);            
+            return result;
         }
 
         /**
@@ -736,7 +758,12 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
             if (result && (binder instanceof HasContext)) {
                 ((HasContext) binder).setContext(bindingContext);
             }
+            ContextEvent e = new ContextEvent(bindingContext, ContextEvent.Action.register);
+            e.setNewSelected(bindingContext.getSelected());
+            registry.notify(binder,e);
+
             binder.addBinderListener(binderEventHandler);
+            
             return result;
         }
 
@@ -822,7 +849,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          */
         @Override
         public void propertyChange(PropertyChangeEvent e) {
-            registry.notify(e);
+            registry.notifyAll(e);
         }
     }
 
@@ -850,9 +877,9 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         @Override
         public void react(BinderEvent event) {
             switch (event.getAction()) {
-                case binderAdded:
+                case containerBinderContent:
 //                    if ( isActive() ) {
-                    registry.notify(new ContextEvent(bindingContext, ContextEvent.Action.updateContext));
+                    registry.notify((ContainerBinder)event.getSource(),new ContextEvent(bindingContext, ContextEvent.Action.updateContainerContext));
 //                    }
                     break;
                 case boundObjectChange:

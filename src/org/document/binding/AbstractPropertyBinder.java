@@ -333,7 +333,9 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
         }
         context = (BindingContext) event.getSource();
         switch (event.getAction()) {
-            case updateContext:
+            case updateContainerContext:
+            case register :
+            case unregister :
                 forceUpdate(event);
                 break;
             case activeStateChange:

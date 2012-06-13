@@ -126,8 +126,7 @@ public class BinderEvent extends EventObject {
         completeChanges,
         
         refresh,
-        binderAdded,
-        binderRemoved
+        containerBinderContent
     }
 }//class DocumentEvent
 

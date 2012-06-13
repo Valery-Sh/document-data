@@ -78,7 +78,7 @@ public class ContextEvent extends EventObject{
         documentChanging,
         activeStateChange,
         documentListChange,
-        updateContext,
+        updateContainerContext,
         register,
         unregister
     }

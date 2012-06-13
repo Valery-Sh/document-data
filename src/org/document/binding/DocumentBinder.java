@@ -10,7 +10,7 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     
 
 
-    protected DocumentBinder() {
+    public DocumentBinder() {
         super();
     }
     

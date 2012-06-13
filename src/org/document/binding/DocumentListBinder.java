@@ -1,7 +1,6 @@
 package org.document.binding;
 
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import org.document.Document;
 
 /**
@@ -11,7 +10,6 @@ import org.document.Document;
 public abstract class DocumentListBinder<E extends Document> extends AbstractBinder implements ContextListener, PropertyChangeListener {
 
     private DataSourceContext context;
-    private List list;
     private BinderListener binderListener;
     private String propertyName;
 
@@ -27,18 +25,6 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
         return propertyName;
     }
 
-    /*    public List<E> getList() {
-     return list;
-     }
-
-     public void setList(List<E> list) {
-     DocumentList dl = new DocumentList(list);
-     this.list = list;
-     setSelected(0);
-     //setDocument(bs);
-        
-     }
-     */
     public void setSelected(int index) {
         if (index < 0 || context.getDocumentList() == null || index > context.getDocumentList().size() - 1) {
             return;
@@ -48,7 +34,6 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
                 requestSelect((E) context.getDocumentList().get(index));
             }
         }
-//        getBindingState().setSelected((E)list.get(index));
     }
 
     public E getSelected() {
@@ -94,13 +79,6 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
         binderListener = null;
     }
 
-    /*    public void setSelected(E document) {
-     if ( getList() == null ) {
-     return;
-     }
-     getBindingState().setSelected(document);
-     }
-     */
     @Override
     public void react(ContextEvent event) {
         context = (DataSourceContext) event.getSource();
@@ -113,6 +91,8 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
                 addBoundObjectListeners();
                 break;
             case activeStateChange:
+            case register :
+            case unregister :     
                 removeBoundObjectListeners();
                 if (context.isActive()) {
                     setModel(createComponentModel());
