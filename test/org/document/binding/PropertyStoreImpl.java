@@ -21,12 +21,12 @@ public class PropertyStoreImpl implements PropertyStore{
         documentListeners = new ArrayList<DocumentChangeListener>();
     }
     @Override
-    public Object get(Object key) {
+    public Object getValue(Object key) {
         return this.store.get(key);
     }
 
     @Override
-    public void put(Object key, Object value) {
+    public void putValue(Object key, Object value) {
         this.store.put(key, value);
     }
 

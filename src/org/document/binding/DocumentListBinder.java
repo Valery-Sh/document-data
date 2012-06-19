@@ -66,7 +66,7 @@ public abstract class DocumentListBinder<E extends Document> extends AbstractBin
         if (binderListener == null) {
             return;
         }
-        binderListener.binderChange(event);
+        binderListener.react(event);
     }
 
     @Override

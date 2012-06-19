@@ -54,26 +54,26 @@ public class AbstractEditablePropertyBinderTest {
         AbstractEditablePropertyBinder instance = new PropertyBinderImpl("value",component);
         instance.document = doc;
         instance.boundObjectChanged(true, componentValue);
-        assertEquals(0,doc.propertyStore().get("value"));
+        assertEquals(0,doc.propertyStore().getValue("value"));
         componentValue = "123";
         instance.boundObjectChanged(true, componentValue);
-        assertEquals(123,doc.propertyStore().get("value"));
+        assertEquals(123,doc.propertyStore().getValue("value"));
         //
         // Test when propertyValueOf throws exception(Cannot convert a string 
         // value to an integer value).
         // So boundObjectChanged() encounters an error and the 'doc' document
         // doesn't change
         //
-        doc.propertyStore().put("value", 0);
-        Object expResult = doc.propertyStore().get("value");
+        doc.propertyStore().putValue("value", 0);
+        Object expResult = doc.propertyStore().getValue("value");
         componentValue ="A123";
         instance.boundObjectChanged(true, componentValue);
-        assertEquals(expResult,doc.propertyStore().get("value"));
+        assertEquals(expResult,doc.propertyStore().getValue("value"));
         
     }
 
     /**
-     * Test of binderChange method, of class AbstractEditablePropertyBinder.
+     * Test of react method, of class AbstractEditablePropertyBinder.
      */
     @Test
     public void testReact() {
@@ -87,14 +87,14 @@ public class AbstractEditablePropertyBinderTest {
         DocumentImpl doc = new DocumentImpl();
         event.setAction(DocumentChangeEvent.Action.documentChange);
         event.setNewValue(doc);
-        binder.binderChange(event);
+        binder.react(event);
         assertTrue(binder.getDocument() == doc);
         //
         // Test that the binder sets defalt component value
         // when the new document is null
         //
         event.setNewValue(null);
-        binder.binderChange(event);
+        binder.react(event);
         assertEquals("999",component.getValue());
     }
 

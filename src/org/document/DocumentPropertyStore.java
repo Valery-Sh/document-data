@@ -16,8 +16,10 @@ import org.document.schema.SchemaUtils;
  * @param <T> 
  * @author V. Shyshkin
  */
-public class DocumentPropertyStore<T extends Document> implements PropertyStore, HasDocumentState, HasSchema {
+public class DocumentPropertyStore<T extends Document> implements PropertyStore<String,Object>, HasDocumentState, HasSchema {
 
+    private List<PropertyChangeListener> propertyChangeListeners;
+    
     /**
      * 
      */
@@ -25,7 +27,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     /**
      * 
      */
-    protected T source;
+    protected T owner;
     /**
      * 
      */
@@ -49,14 +51,14 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     }
     /**
      * 
-     * @param source
+     * @param owner
      */
     public DocumentPropertyStore(T source) {
         this();
         if ( source == null ) {
             throw new IllegalArgumentException("Constructor DocumentPropertyStore cannot accept null parameter value");
         }
-        this.source = source;
+        this.owner = source;
         localSchema = SchemaUtils.createSchema(source.getClass());
         alias = null;
     }
@@ -65,8 +67,9 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * 
      * @return
      */
-    public T getObject() {
-        return source;
+    @Override
+    public T getOwner() {
+        return owner;
     }
     
     /**
@@ -78,11 +81,11 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         DocumentSchema ds;
 
         if (group != null) {
-            ds = group.getSchema(source);
+            ds = group.getSchema(owner);
         } else if (localSchema != null) {
             ds = localSchema;
         } else {
-            localSchema = SchemaUtils.createSchema(source.getClass());
+            localSchema = SchemaUtils.createSchema(owner.getClass());
             ds = localSchema;
         }
 
@@ -95,15 +98,15 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * @return
      */
     @Override
-    public Object get(Object key) {
+    public Object getValue(String key) {
         Object result;
-        if ( source == null ) {
+        if ( owner == null ) {
             return null;
         }
-        if (source instanceof KeyValueMap) {
-            result = DataUtils.getValue(key.toString(), ((KeyValueMap) source).getMap());
+        if (owner instanceof KeyValueMap) {
+            result = DataUtils.getValue(key.toString(), ((KeyValueMap) owner).getMap());
         } else {
-            result = DataUtils.getValue(key.toString(), source);
+            result = DataUtils.getValue(key.toString(), owner);
         }
         return result;
     }
@@ -125,7 +128,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
      * @param value the value to be saved by a documentStore.
      */
     @Override
-    public void put(Object key, Object value) {
+    public Object putValue(String key, Object value) {
 
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
@@ -133,29 +136,29 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         String propertyName;
 
         propertyName = key.toString();
-        Object oldValue = get(propertyName);
+        Object oldValue = getValue(propertyName);
         /**
-         * To avoid cyclic 'put' method invocation we do nothing when an old
+         * To avoid cyclic 'putValue' method invocation we do nothing when an old
          * value equals to a new one
          */
         if (DataUtils.equals(oldValue, value)) {
-            return;
+            return oldValue;
         }
 
         if (!state.isEditing()) {
             state.setEditing(true);
         }
         /**
-         * Here just calls DataUtils.setValue(propertyName.toString(), source,
+         * Here just calls DataUtils.setValue(propertyName.toString(), owner,
          * value);
          */
         setPropertyValue(propertyName, value);
+        return oldValue;
 
     }
 
 //    @Override
     
-    private List<PropertyChangeListener> propertyChangeListeners;
     /**
      * 
      * @param key
@@ -169,12 +172,12 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         String propertyName;
         propertyName = key.toString();
         Object oldValue;
-        oldValue = get(propertyName);
+        oldValue = getValue(propertyName);
         if (!state.isEditing()) {
              state.setEditing(true);
         }
         for (PropertyChangeListener l  : propertyChangeListeners ) {
-            PropertyChangeEvent event = new PropertyChangeEvent(this.source,propertyName,oldValue, value);
+            PropertyChangeEvent event = new PropertyChangeEvent(this.owner,propertyName,oldValue, value);
             l.propertyChange(event);
         }
         
@@ -192,16 +195,16 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     /**
      * The method is defined in order to easy override in a subclass without a
      * need to override the
-     * <code>put</code> method.
+     * <code>putValue</code> method.
      *
      * @param name string property name
      * @param value a value to be bind
      */
     protected void setPropertyValue(String name, Object value) {
-        if ( source instanceof KeyValueMap ) {
-            ((KeyValueMap)source).put(name, value);
+        if ( owner instanceof KeyValueMap ) {
+            ((KeyValueMap)owner).put(name, value);
         } else {
-            DataUtils.setValue(name, source, value);
+            DataUtils.setValue(name, owner, value);
         }
     }
 
@@ -240,6 +243,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.propertyChangeListeners.remove(listener);
     }
+
     /**
      *
      */
@@ -265,7 +269,6 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             this.documentStore = documentStore;
             beforeEditValues = new HashMap();
             dirtyEditValues = new HashMap();
-//            propertyErrors = new HashMap<String, DocumentChangeEvent>();
         }
 
         @Override
@@ -299,29 +302,29 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
             if (this.editing == editing) {
                 return;
             }
-            DocumentPropertyStore ps = (DocumentPropertyStore) documentStore;
-            if ( ps.source == null ) {
+//            DocumentPropertyStore ps = (DocumentPropertyStore) documentStore;
+            if ( documentStore.getOwner() == null ) {
                 return;
             }
 
             if (this.editing && !editing) {
-                try {
-                    if (ps.source instanceof HasValidator) {
-                        Validator v = ((HasValidator) ps.source).getValidator();
+/*                try {
+                    if (ps.owner instanceof HasValidator) {
+                        Validator v = ((HasValidator) ps.owner).getValidator();
                         if (v != null) {
-                            v.validate((Document)ps.source);
+                            v.validate((Document)ps.owner);
                         }
                     }
                     this.editing = editing;
                 } catch (ValidationException e) {
                 }
+*/ 
             } else if (!this.editing) {
                 beforeEditValues.clear();
-                DataUtils.putAll(beforeEditValues, ps.source);
+                DataUtils.putAll(beforeEditValues, documentStore.getOwner());
                 dirtyEditValues.clear();
                 dirtyEditValues.putAll(beforeEditValues);
                 this.editing = editing;
-                //ps.bind("document.state.editing", editing);
             }
         }
 
@@ -346,7 +349,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore,
         /*@Override
         public void react(BinderEvent event) {
             if (event.getAction() == BinderEvent.Action.boundObjectChange) {
-                dirtyEditValues.put(event.getBoundProperty(), event.getComponentValue());
+                dirtyEditValues.putValue(event.getBoundProperty(), event.getComponentValue());
             }
         }
         */ 

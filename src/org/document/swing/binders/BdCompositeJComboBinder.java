@@ -170,7 +170,7 @@ public class BdCompositeJComboBinder<E extends Document> extends DocumentListBin
             }
             String result = "";
             for (String nm : this.properties) {
-                result = result += " " + d.propertyStore().get(nm);
+                result = result += " " + d.propertyStore().getValue(nm);
             }
             return result;
         }

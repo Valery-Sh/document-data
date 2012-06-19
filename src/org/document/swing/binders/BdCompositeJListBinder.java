@@ -299,7 +299,7 @@ public class BdCompositeJListBinder<E extends Document> extends DocumentListBind
             }
             String result = "";
             for (String nm : this.properties) {
-                result = result += " " + d.propertyStore().get(nm);
+                result = result += " " + d.propertyStore().getValue(nm);
             }
             return result;
         }

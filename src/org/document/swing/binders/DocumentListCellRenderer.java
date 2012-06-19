@@ -67,7 +67,7 @@ public class DocumentListCellRenderer extends JPanel implements ListCellRenderer
             Object o = " ";
             String s = " ";
             if ( ps != null ) {
-                o = ps.get(properties[i]);
+                o = ps.getValue(properties[i]);
                 s = o == null ? "" : o.toString();
             } else {
                 s = " ? ";

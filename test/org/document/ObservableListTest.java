@@ -607,7 +607,7 @@ public class ObservableListTest {
     }
 
     /**
-     * Test of get method, of class ObservableList.
+     * Test of getValue method, of class ObservableList.
      */
     @Test
     public void testGet() {
@@ -927,12 +927,12 @@ public class ObservableListTest {
     public static class PropertyDataStoreImpl implements PropertyStore{
 
         @Override
-        public Object get(Object key) {
+        public Object getValue(Object key) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public void put(Object key, Object value) {
+        public void putValue(Object key, Object value) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

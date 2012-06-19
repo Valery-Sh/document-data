@@ -137,7 +137,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         fireClearPropertyError();
 
         Object convertedValue;
-        Object oldDataValue = getDocument().propertyStore().get(boundProperty);
+        Object oldDataValue = getDocument().propertyStore().getValue(boundProperty);
         try {
             convertedValue = this.propertyValueOf(componentValue);
             if (DataUtils.equals(convertedValue, oldDataValue)) {
@@ -150,7 +150,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                 }
             }
             binderIsStillChangingProperty = true;
-            //getDocument().propertyStore().put(boundProperty, convertedValue);
+            //getDocument().propertyStore().putValue(boundProperty, convertedValue);
             firePropertyChangeRequest(oldDataValue, convertedValue);
             
             //fireComponentValueChange(convertedValue, componentValue);
@@ -214,8 +214,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
      * @param event the event to be handled 
      */
     @Override
-    public void binderChange(BinderEvent event) {
-        super.binderChange(event);
+    public void react(BinderEvent event) {
+        super.react(event);
         if (isSuspended()) {
             return;
         }
@@ -227,8 +227,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     }
     
 /*    @Override
-    public void binderChange(DocumentChangeEvent event) {
-        super.binderChange(event);
+    public void react(DocumentChangeEvent event) {
+        super.react(event);
         if (isSuspended()) {
             return;
         }
@@ -281,7 +281,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         if (binderListener == null) {
             return;
         }
-        binderListener.binderChange(event);
+        binderListener.react(event);
     }
 
     /**

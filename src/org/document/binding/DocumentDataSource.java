@@ -89,7 +89,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         }
 
         this.documentList = dl;
-        setSelected(dl.get(0));
+        setSelected(dl.isEmpty() ? null : dl.get(0));
         getDocuments().addListChangeListener(listChangeHandler);
 
 
@@ -463,18 +463,18 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         /*        public void notifyAll(BinderEvent e) {
          for (Binder b : documentBinders.values()) {
          if (b instanceof BinderListener) {
-         ((BinderListener) b).binderChange(e);
+         ((BinderListener) b).react(e);
          }
          }
 
          for (Binder b : containerBinders.values()) {
          if (b instanceof BinderListener) {
-         ((BinderListener) b).binderChange(e);
+         ((BinderListener) b).react(e);
          }
          }
          for (Binder b : binders) {
          if (b instanceof BinderListener) {
-         ((BinderListener) b).binderChange(e);
+         ((BinderListener) b).react(e);
          }
          }
 
@@ -878,7 +878,7 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
          * @see org.document.DocumentChangeEvent
          */
         @Override
-        public void binderChange(BinderEvent event) {
+        public void react(BinderEvent event) {
             switch (event.getAction()) {
                 case containerBinderContent:
 //                    if ( isActive() ) {
@@ -896,14 +896,15 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
                     }
 
 
-                    try {
+/*                    try {
                         if (getSelected() != null) {
-                            getSelected().propertyStore().put(event.getBoundProperty(), event.getNewValue());
+                            getSelected().propertyStore().putValue(event.getBoundProperty(), event.getNewValue());
                         }
                     } catch (Exception e) {
                         System.out.println("ERRRRRRRRRRRR");
                     }
                     break;
+*/ 
             }
         }
     }

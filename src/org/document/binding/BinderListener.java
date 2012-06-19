@@ -9,5 +9,5 @@ package org.document.binding;
  * @author Valery
  */
 public interface BinderListener {
-    void binderChange(BinderEvent event);
+    void react(BinderEvent event);
 }

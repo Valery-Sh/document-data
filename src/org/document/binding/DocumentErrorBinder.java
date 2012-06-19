@@ -72,6 +72,7 @@ public class DocumentErrorBinder {
             throw new IllegalArgumentException("The same ErrorBinder for propertyName='"+propertyName+"' already exists.");
         }
         ebinders.add(binder);
+        notifyFixed(propertyName);
     }
     public void bindDocument(ErrorBinder binder) {
         this.add("*document",binder);

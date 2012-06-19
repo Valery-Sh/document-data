@@ -14,6 +14,7 @@ public  abstract class BdComponentErrorBinder extends AbstractErrorBinder {
     
     public BdComponentErrorBinder(JComponent component)  {
         super(component);
+        component.setVisible(false);
     }
     /**
      * Handles <i>document level</i> errors.

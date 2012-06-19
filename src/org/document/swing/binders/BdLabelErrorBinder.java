@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 public class BdLabelErrorBinder extends BdComponentErrorBinder{
     public BdLabelErrorBinder(JLabel label) {
         super(label);
+        label.setVisible(false);
+        label.repaint();
     }
 
     @Override
