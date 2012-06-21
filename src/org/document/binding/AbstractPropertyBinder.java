@@ -57,7 +57,7 @@ import org.document.Document;
  *
  * @author V. Shyshkin
  */
-public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder, BinderListener, ContextListener {
+public abstract class AbstractPropertyBinder extends AbstractBinder implements Serializable, PropertyBinder, BinderListener, ContextListener, BinderConverter {
 
     private BindingContext context;
     private String alias;
@@ -543,7 +543,8 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @param propertyValue the property value to be converted
      * @return
      */
-    protected abstract Object componentValueOf(Object propertyValue);
+    @Override
+    public abstract Object componentValueOf(Object propertyValue);
 
     /**
      * Converts the specified component value to the bound property value. The
@@ -553,5 +554,5 @@ public abstract class AbstractPropertyBinder extends AbstractBinder implements S
      * @param componentValue the component value to be converted
      * @return
      */
-    protected abstract Object propertyValueOf(Object componentValue);
+    public abstract Object propertyValueOf(Object componentValue);
 }

@@ -81,7 +81,7 @@ public class DocumentBinder<E extends Document> extends AbstractDocumentBinder<D
     }
 
 
-    public void add(String propertyName, DocumentBinder binder) {
+    public void add(String propertyName, EmbeddedDocumentBinder binder) {
         PropertyBinder b = new PropertyBinderEmbedded(propertyName, binder);
         binder.setEmbedded(true);
         add(b);

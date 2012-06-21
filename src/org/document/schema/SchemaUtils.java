@@ -24,9 +24,11 @@ public class SchemaUtils {
         Map<String,Boolean> trfields = new HashMap<String,Boolean>();
         Class c = clazz;
         try {
+            
             while (  c != Object.class ) {
                java.lang.reflect.Field[] dfs = c.getDeclaredFields();
                for ( java.lang.reflect.Field f : dfs) {
+                   
                    String nm = f.getName();
                    if ( Modifier.isTransient(f.getModifiers())) {
                        trfields.put(f.getName(), Boolean.TRUE);

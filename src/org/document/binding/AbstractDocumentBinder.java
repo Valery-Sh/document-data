@@ -337,10 +337,11 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
                 if (getDocument() != null) {
                     getDocument().propertyStore().putValue(event.getBoundProperty(), event.getNewValue());
                 } else if ( isEmbedded() ) {
-                    if ( defaultDocument == null ) {
+/*                    if ( defaultDocument == null ) {
                         defaultDocument = getInstance();
                     }
                     defaultDocument.propertyStore().putValue(event.getBoundProperty(), event.getNewValue());
+*/ 
                 }
                 documentErrorBinder.clear(event.getBoundProperty());
                 break;
@@ -602,8 +603,18 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     public class DocumentBindingContext implements BindingContext {
 
         private Document selected;
+        private boolean embedded;
 
         DocumentBindingContext() {
+        }
+
+        @Override
+        public boolean isEmbedded() {
+            return embedded;
+        }
+
+        public void setEmbedded(boolean embedded) {
+            this.embedded = embedded;
         }
 
         @Override
@@ -614,5 +625,6 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         public void setSelected(Document document) {
             selected = document;
         }
+        
     }//class DocumentBindingContext
 }//class AbstractDocumentBinder

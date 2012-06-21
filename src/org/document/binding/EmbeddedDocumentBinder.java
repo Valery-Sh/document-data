@@ -1,5 +1,7 @@
 package org.document.binding;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.document.Document;
 
 /**
@@ -8,26 +10,46 @@ import org.document.Document;
  */
 public class EmbeddedDocumentBinder extends DocumentBinder {
 
-    private Document defaultDocument;
-
+    //private Document defaultDocument;
+    private List<BinderListener> boundObjectListeners;
+    private DocumentBinder parent;
+    
     public EmbeddedDocumentBinder(Class clazz) {
         super(clazz);
-        try {
+        boundObjectListeners = new ArrayList<BinderListener>();
+        getContext().setEmbedded(true);
+/*        try {
             defaultDocument = (Document) clazz.newInstance();
         } catch (Exception e) {
         }
+*/ 
+    }
+
+    public DocumentBinder getParent() {
+        return parent;
+    }
+
+    public void setParent(DocumentBinder parent) {
+        this.parent = parent;
     }
 
     @Override
     public void react(BinderEvent event) {
+        super.react(event);
+        
         switch (event.getAction()) {
             case boundObjectChange:
-                // try {
-                if (getDocument() != null) {
-                    getDocument().propertyStore().putValue(event.getBoundProperty(), event.getNewValue());
-                } else {
-                    
+                for ( BinderListener l : boundObjectListeners) {
+                    l.react(event);
                 }
         }
     }
+    
+    public void addBoundObjectListener(BinderListener l) {
+        boundObjectListeners.add(l);
+    }
+    public void removeBoundObjectListener(BinderListener l) {
+        boundObjectListeners.remove(l);
+    }
+    
 }//class

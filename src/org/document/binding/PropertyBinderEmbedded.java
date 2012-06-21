@@ -4,8 +4,6 @@
  */
 package org.document.binding;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import org.document.Document;
 
 /**
@@ -14,23 +12,30 @@ import org.document.Document;
  */
 public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
     
-    private PropertyChangeHandler embeddedPropertyHandler;
+    private BoundObjectEventHandler boundObjectHandler;
     
-    public PropertyBinderEmbedded(String propertyName, DocumentBinder boundObject) {
+    public PropertyBinderEmbedded(String propertyName, EmbeddedDocumentBinder boundObject) {
         super(boundObject);
         boundProperty = propertyName;
-        embeddedPropertyHandler = new PropertyChangeHandler();
-        boundObject.getDefaultDocument().propertyStore().addPropertyChangeListener(embeddedPropertyHandler);
+        boundObjectHandler = new BoundObjectEventHandler();
+        addBoundObjectListeners();
+        
+        //embeddedPropertyHandler = new PropertyChangeHandler();
+        //boundObject.getDefaultDocument().propertyStore().addPropertyChangeListener(embeddedPropertyHandler);
     }
     
+    protected EmbeddedDocumentBinder getEmbeddedDocumentBinder() {
+        return (EmbeddedDocumentBinder)boundObject;
+    }
     @Override
     protected Object getBoundObjectValue() {
-        return ((DocumentBinder)boundObject).getDocument(); 
+        //return ((DocumentBinder)boundObject).getDocument(); 
+        return getEmbeddedDocumentBinder().getDocument(); 
     }
 
     @Override
     protected void setBoundObjectValue(Object componentValue) {
-        ((DocumentBinder)boundObject).setDocument((Document)componentValue);
+        getEmbeddedDocumentBinder().setDocument((Document)componentValue); 
     }
     /**
      * 
@@ -38,18 +43,18 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
      * @return 
      */
     @Override
-    protected Object componentValueOf(Object propertyValue) {
-        ((DocumentBinder)boundObject).setDocument((Document)propertyValue);
-        return boundObject;
+    public Object componentValueOf(Object propertyValue) {
+       return (Document)propertyValue;
     }
 
     @Override
-    protected Object propertyValueOf(Object componentValue) {
-        Document d = getContext().getSelected();
+    public Object propertyValueOf(Object componentValue) {
+        Document d = getContext().getSelected(); // parent document
         if ( d == null ) {
             return null;
         }
-        Document ed = null;
+        return componentValue;
+/*        Document ed = null;
         if ( d.propertyStore().getValue(boundProperty) == null ) {
              ed = getInstance();
         }
@@ -62,10 +67,11 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
             
         }
         return ed;
+        */ 
     }
     
     private Document getInstance() {
-        DocumentBinder b = (DocumentBinder)boundObject;
+        DocumentBinder b = getEmbeddedDocumentBinder();
         Document result = null;
         if ( b.getClassName() != null ) {
             try {
@@ -93,36 +99,61 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
 
     @Override
     public void addBoundObjectListeners() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        getEmbeddedDocumentBinder().addBoundObjectListener(boundObjectHandler);
     }
 
     @Override
     public void removeBoundObjectListeners() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        getEmbeddedDocumentBinder().removeBoundObjectListener(boundObjectHandler);
     }
-    public class PropertyChangeHandler implements PropertyChangeListener {
+    public class BoundObjectEventHandler implements BinderListener {
 
-        public PropertyChangeHandler() {
+        public BoundObjectEventHandler() {
         }
 
-        /**
-         * Handles events of type
-         * <code>DocumentChangeEvent</code>. When any property value of a
-         * document changes the method is called as an implementation of the {@link org.document.DocumentChangeListener
-         * }. listener The special case is when an editing state changes. The
-         * event has it's property
-         * {@link org.document.DocumentChangeEvent#propertyName} equals to
-         * <code>"document.state.editing"</code>. In this case the method
-         * cancels <i>newMark<i> of a selected document if the last is marked as
-         * <i>new</i>..
-         *
-         * @param event the event to be handled
-         * @see org.document.DocumentChangeEvent
-         */
         @Override
-        public void propertyChange(PropertyChangeEvent e) {
-            //registry.notify(e);
+        public void react(BinderEvent event) {
+            if ( getDocument() == null ) {
+                return;
+            }
+            switch(event.getAction()) {
+                case boundObjectChange:
+                    Document d = (Document)getDocument().propertyStore().getValue(boundProperty);
+                    if ( d == null ) {
+                        d = getInstance();
+                    }
+                    boundObjectChanged(d);
+                    break;
+            }
         }
-    }//class PropertyChangeHandler
+    }//class BoundObjectEventHandler
     
+/*    public static class BoundObject {
+        
+        private EmbeddedDocumentBinder documentBinder;
+        
+        private Document document;
+        
+        public BoundObject(EmbeddedDocumentBinder ebinder) {
+            documentBinder = ebinder;
+        }
+
+        public Document getDocument() {
+            return document;
+        }
+
+        public void setDocument(Document document) {
+            this.document = document;
+            documentBinder.setDocument(document);
+        }
+
+        public EmbeddedDocumentBinder getDocumentBinder() {
+            return documentBinder;
+        }
+
+        public void setDocumentBinder(EmbeddedDocumentBinder documentBinder) {
+            this.documentBinder = documentBinder;
+        }
+    }
+    */ 
 }//class

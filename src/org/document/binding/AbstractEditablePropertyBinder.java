@@ -121,37 +121,43 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             return;
         }
         if (isSuspended()) {
-            return;
-        }
-        if (getDocument() == null) {
+            
             return;
         }
         if (binderIsStillChangingProperty) {
             return;
         }
-        if (getDocument().propertyStore() instanceof HasDocumentState) {
-            DocumentState state = ((HasDocumentState) getDocument().propertyStore()).getDocumentState();
-            state.getDirtyValues().put(boundProperty, componentValue);
-        }
-
-        fireClearPropertyError();
-
-        Object convertedValue;
-        Object oldDataValue = getDocument().propertyStore().getValue(boundProperty);
         try {
-            convertedValue = this.propertyValueOf(componentValue);
+        
+            if (getDocument() == null) {
+                Object value = propertyValueOf(componentValue);
+                fireBoundObjectChange(null, value);
+                return;
+            }
+        
+            if (getDocument().propertyStore() instanceof HasDocumentState) {
+                DocumentState state = ((HasDocumentState) getDocument().propertyStore()).getDocumentState();
+                state.getDirtyValues().put(boundProperty, componentValue);
+            }
+
+            fireClearPropertyError();
+
+            Object convertedValue;
+            Object oldDataValue = getDocument().propertyStore().getValue(boundProperty);
+            convertedValue = propertyValueOf(componentValue);
             if (DataUtils.equals(convertedValue, oldDataValue)) {
                 return;
             }
-            if (getDocument() instanceof HasValidator) {
+/*            if (getDocument() instanceof HasValidator) {
                 Validator v = ((HasValidator) getDocument()).getValidator();
                 if (v != null) {
                     v.validate(boundProperty, convertedValue, getDocument());
                 }
             }
+*/ 
             binderIsStillChangingProperty = true;
             //getDocument().propertyStore().putValue(boundProperty, convertedValue);
-            firePropertyChangeRequest(oldDataValue, convertedValue);
+            fireBoundObjectChange(oldDataValue, convertedValue);
             
             //fireComponentValueChange(convertedValue, componentValue);
             /*
@@ -240,7 +246,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
     }
 */    
     
-    private void firePropertyChangeRequest(Object oldValue, Object newValue) {
+    private void fireBoundObjectChange(Object oldValue, Object newValue) {
         BinderEvent.Action action =
                 BinderEvent.Action.boundObjectChange;
         BinderEvent event = new BinderEvent(this, action);

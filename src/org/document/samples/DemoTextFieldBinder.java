@@ -35,12 +35,12 @@ public class DemoTextFieldBinder extends AbstractEditablePropertyBinder {
     }
 
     @Override
-    protected Object componentValueOf(Object propertyValue) {
+    public Object componentValueOf(Object propertyValue) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    protected Object propertyValueOf(Object componentValue) {
+    public Object propertyValueOf(Object componentValue) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

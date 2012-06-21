@@ -10,7 +10,7 @@ import org.document.DocumentList;
 public class DataSourceContext implements BindingContext{
 
     private DocumentDataSource manager;
-
+    
     DataSourceContext(DocumentDataSource manager) {
         this.manager = manager;
     }
@@ -35,5 +35,15 @@ public class DataSourceContext implements BindingContext{
 
     protected void setManager(DocumentDataSource manager) {
         this.manager = manager;
+    }
+
+    @Override
+    public boolean isEmbedded() {
+        return false;
+    }
+
+    @Override
+    public void setEmbedded(boolean embedded) {
+
     }
 }

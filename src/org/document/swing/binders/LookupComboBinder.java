@@ -56,7 +56,7 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     }
 
     @Override
-    protected Object componentValueOf(Object propertyValue) {
+    public Object componentValueOf(Object propertyValue) {
         if (converter != null) {
             return converter.componentValueOf(propertyValue);
         }
@@ -64,7 +64,7 @@ public class LookupComboBinder<E> extends AbstractEditablePropertyBinder  implem
     }
 
     @Override
-    protected Object propertyValueOf(Object componentValue) {
+    public Object propertyValueOf(Object componentValue) {
         if (converter != null) {
             return converter.propertyValueOf(componentValue);
         }

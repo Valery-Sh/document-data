@@ -95,7 +95,7 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
     
     protected Class definePropertyType() {
         if ( getDocument() == null ) {
-            return null;
+            return Object.class;
         }
         Class propertyType;
         if ( getDocument().propertyStore() instanceof HasSchema) {
