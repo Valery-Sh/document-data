@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class DefaultSchema implements DocumentSchema{
     private Class mappingType;
-    private List<Field> fields;
+    private List<SchemaField> fields;
     
     public DefaultSchema() {
         fields = new ArrayList(10);
@@ -29,13 +29,13 @@ public class DefaultSchema implements DocumentSchema{
     }
 
     @Override
-    public List getFields() {
+    public List<SchemaField> getFields() {
         return this.fields;
     }
 
     @Override
-    public Field getField(Object fieldName) {
-        for ( Field f : fields) {
+    public SchemaField getField(Object fieldName) {
+        for ( SchemaField f : fields) {
             if ( f.getPropertyName().equals(fieldName)) {
                 return f;
             }
@@ -74,9 +74,9 @@ public class DefaultSchema implements DocumentSchema{
         String s = "";
         s += "================================================\n";  
         s += "mappingType: " + mappingType.getName() + "\n";      
-        List<Field> fl = getFields();
+        List<SchemaField> fl = getFields();
         int n = 0;
-        for( Field f : fl ) {
+        for( SchemaField f : fl ) {
             s += (n++) + "). propertyName = " + f.propertyName + "; \n";
             s += "      propertyType = " + f.propertyType + "; \n";
             s += "      calculated = " + f.calculated + "; \n";

@@ -59,10 +59,26 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
             throw new IllegalArgumentException("Constructor DocumentPropertyStore cannot accept null parameter value");
         }
         this.owner = source;
-        localSchema = SchemaUtils.createSchema(source.getClass());
+        localSchema = createSchema(source.getClass(),Object.class);
+//        localSchema = getSchema(source.getClass(),Object.class);
         alias = null;
     }
+    
+    protected DocumentSchema createSchema(Class sourceClass, Class restrictSuper) {
+        return SchemaUtils.createSchema(sourceClass,restrictSuper);        
+    }
+    
+    private List<PropertyChangeListener> saveListeners;
+    
+    protected void removePropertyListeners() {
+        saveListeners = propertyChangeListeners;
+        propertyChangeListeners = null;
 
+    }
+    protected void addPropertyListeners() {
+        propertyChangeListeners = saveListeners;
+    }
+    
     /**
      * 
      * @return
@@ -85,7 +101,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
         } else if (localSchema != null) {
             ds = localSchema;
         } else {
-            localSchema = SchemaUtils.createSchema(owner.getClass());
+            localSchema = createSchema(owner.getClass(), Object.class);
             ds = localSchema;
         }
 
@@ -110,7 +126,18 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
         }
         return result;
     }
-
+    protected Object putSilent(String key, Object value) {
+        Object result;
+        removePropertyListeners();
+        try {
+            result = putValue(key, value);
+        } catch(Exception e) {
+            throw e;
+        } finally {
+            addPropertyListeners();
+        }
+        return result;
+    }
     /**
      * The
      * <code>key</code> parameter may of type {@link PropertyBinder} or any type
@@ -165,7 +192,9 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
      * @param value
      */
     public void bind(Object key, Object value) {
-
+        if ( propertyChangeListeners == null ) {
+            return;
+        }
         if (key == null) {
             throw new NullPointerException("The 'key' parameter cannot be null");
         }
@@ -233,7 +262,9 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
     public void setAlias(Object alias) {
         this.alias = alias;
     }
-
+    protected List<PropertyChangeListener> getPropertyChangeListeners() {
+        return propertyChangeListeners;
+    }
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.propertyChangeListeners.add(listener);

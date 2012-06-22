@@ -121,14 +121,12 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             return;
         }
         if (isSuspended()) {
-            
             return;
         }
         if (binderIsStillChangingProperty) {
             return;
         }
         try {
-        
             if (getDocument() == null) {
                 Object value = propertyValueOf(componentValue);
                 fireBoundObjectChange(null, value);
@@ -145,9 +143,9 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
             Object convertedValue;
             Object oldDataValue = getDocument().propertyStore().getValue(boundProperty);
             convertedValue = propertyValueOf(componentValue);
-            if (DataUtils.equals(convertedValue, oldDataValue)) {
-                return;
-            }
+            //if (DataUtils.equals(convertedValue, oldDataValue)) {
+            //    return;
+            //}
 /*            if (getDocument() instanceof HasValidator) {
                 Validator v = ((HasValidator) getDocument()).getValidator();
                 if (v != null) {
@@ -250,6 +248,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         BinderEvent.Action action =
                 BinderEvent.Action.boundObjectChange;
         BinderEvent event = new BinderEvent(this, action);
+        
         event.setOldValue(oldValue);
         event.setNewValue(newValue);
         notifyListeners(event);
@@ -262,7 +261,7 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         notifyListeners(event);
     }
 */
-    private void fireClearPropertyError() {
+    protected void fireClearPropertyError() {
         BinderEvent.Action action = BinderEvent.Action.clearError;
         BinderEvent event = new BinderEvent(this, action);
         notifyListeners(event);

@@ -1,5 +1,6 @@
 package org.document.schema;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * 
  * @author V. Shyshkin
  */
-public class Field {
+public class SchemaField {
     protected Object propertyName;
     protected boolean required;
     protected boolean notNull;
@@ -26,17 +27,19 @@ public class Field {
     
     protected FieldCalculator calculator;
     
-    public Field(Object name) {
+    protected Field field;
+    
+    public SchemaField(Object name) {
         assert(name != null);
         this.propertyName = name;
         this.propertyType = Object.class;
     }
-    public Field(Object name,Class clazz){//,Class ... supported) {
+    public SchemaField(Object name,Class clazz){//,Class ... supported) {
         this(name);
         this.propertyType = clazz;
     }
     
-    public Field(Object name,Class clazz,boolean required,boolean notNull){//,Class ... supported) {
+    public SchemaField(Object name,Class clazz,boolean required,boolean notNull){//,Class ... supported) {
         this(name,clazz);
         this.required = required;
         this.notNull = notNull;
@@ -111,6 +114,14 @@ public class Field {
         this.required = required;
     }
 
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -119,7 +130,7 @@ public class Field {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Field other = (Field) obj;
+        final SchemaField other = (SchemaField) obj;
         if (this.propertyName != other.propertyName && (this.propertyName == null || !this.propertyName.equals(other.propertyName))) {
             return false;
         }
