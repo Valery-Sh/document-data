@@ -13,6 +13,9 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import org.document.schema.DocumentSchema;
+import org.document.schema.HasSchema;
+import org.document.schema.SchemaField;
 
 /**
  *
@@ -74,22 +77,35 @@ public class DataUtils {
 
     }
 
-    public static Object getValue(String key, Object obj) {
+    public static Object getValue(String key, Document document) {
         String error = "";
-        if (obj instanceof Map) {
-            return ((Map) obj).get(key);
-        } else if ( obj instanceof KeyValueMap ) {
-            return ((KeyValueMap)obj).getMap().get(key); 
+        //if (obj instanceof Map) {
+        //    return ((Map) obj).get(key);
+        //} else 
+//        if ( obj instanceof KeyValueMap ) {
+//            return ((KeyValueMap)obj).getMap().get(key); 
+//        } else 
+        if ( document.propertyStore() instanceof HasSchema) {
+            DocumentSchema sc = ((HasSchema)document.propertyStore()).getSchema();
+            SchemaField f = sc.getField(key); 
+            try {
+                if ( f.getAccessors() != null && f.getAccessors().hasGettter() ) {
+                    return f.getAccessors().get(document);
+                }
+            } catch(Exception e) {
+                throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key );                
+            }
         }
-        try {
-            BeanInfo binfo = Introspector.getBeanInfo(obj.getClass(), Object.class);
+        return null;
+/*        try {
+            BeanInfo binfo = Introspector.getBeanInfo(document.getClass(), Object.class);
             PropertyDescriptor[] props = binfo.getPropertyDescriptors();
 
             for (int i = 0; i < props.length; i++) {
                 String pname = props[i].getName();
                 if (key.equals(pname)) {
                     Method m = props[i].getReadMethod();
-                    Object v = m.invoke(obj, null);
+                    Object v = m.invoke(document, null);
                     return v;
                 }
             }//for
@@ -102,20 +118,34 @@ public class DataUtils {
             error = ex.getMessage();
         }
 
-        throw new NullPointerException("An object of type " + obj.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
+//        throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
+* */
     }
 
-    public static void setValue(String key, Object obj, Object newValue) {
+    public static void setValue(String key, Document document, Object newValue) {
         String error = "";
-        if (obj instanceof Map) {
+/*        if (obj instanceof Map) {
             ((Map) obj).put(key, newValue);
             return;
         } if ( obj instanceof KeyValueMap ) {
             ((KeyValueMap)obj).getMap().get(key); 
             return; 
         }
-        try {
-            BeanInfo binfo = Introspector.getBeanInfo(obj.getClass(), Object.class);
+        */ 
+        if ( document.propertyStore() instanceof HasSchema) {
+            DocumentSchema sc = ((HasSchema)document.propertyStore()).getSchema();
+            SchemaField f = sc.getField(key); 
+            try {
+                if ( f.getAccessors() != null && f.getAccessors().hasSetter() ) {
+                    f.getAccessors().set(document,newValue);
+                }
+            } catch(Exception e) {
+                throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key );                
+            }
+        }
+        
+/*        try {
+            BeanInfo binfo = Introspector.getBeanInfo(document.getClass(), Object.class);
             PropertyDescriptor[] props = binfo.getPropertyDescriptors();
 
             for (int i = 0; i < props.length; i++) {
@@ -134,9 +164,9 @@ public class DataUtils {
                     if ( newValue != null && newValue.equals(oldValue)) {
                         return;
                     }
-  */                  
-                    Method m = props[i].getWriteMethod();
-                    m.invoke(obj, newValue);
+  */
+/*                    Method m = props[i].getWriteMethod();
+                    m.invoke(document, newValue);
                 }
 
             }//for
@@ -148,7 +178,7 @@ public class DataUtils {
         } catch (java.lang.reflect.InvocationTargetException ex) {
             error = ex.getMessage();
         }
-
+*/
         //throw new NullPointerException("An object of type " + obj.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
     }
 

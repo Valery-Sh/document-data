@@ -81,7 +81,7 @@ public class DefaultSchema implements DocumentSchema{
             s += "      propertyType = " + f.propertyType + "; \n";
             s += "      calculated = " + f.calculated + "; \n";
             s += "      declaredFinal = " + f.declaredFinal + "; \n";            
-            s += "      hasNoWriteMethod = " + f.hasNoWriteMethod + "; \n";            
+            s += "      hasNoWriteMethod = " + ! f.getAccessors().hasSetter() + "; \n";            
             s += "      notNull = " + f.notNull + "; \n";            
             s += "      readOnly = " + f.readOnly + "; \n";                        
             s += "      required = " + f.required + "; \n";                        
@@ -90,5 +90,15 @@ public class DefaultSchema implements DocumentSchema{
         s += "================================================\n";          
         
         return s;
+    }
+
+    @Override
+    public boolean contains(Object fieldName) {
+        for ( SchemaField f : fields) {
+            if ( f.getPropertyName().equals(fieldName) ) {
+                return true;
+            }
+        }
+        return false;
     }
 }

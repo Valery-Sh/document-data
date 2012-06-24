@@ -10,4 +10,5 @@ public interface DocumentSchema {
     Class getMappingType();
     List<SchemaField> getFields();
     SchemaField getField(Object fieldName);
+    boolean contains(Object fieldName);
 }

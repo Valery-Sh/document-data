@@ -23,11 +23,13 @@ public class SchemaField {
     protected boolean readOnly;
     protected boolean calculated;
     protected boolean declaredFinal;
-    protected boolean hasNoWriteMethod;
+    
     
     protected FieldCalculator calculator;
     
     protected Field field;
+    
+    protected HasAccessors accessors;
     
     public SchemaField(Object name) {
         assert(name != null);
@@ -43,6 +45,14 @@ public class SchemaField {
         this(name,clazz);
         this.required = required;
         this.notNull = notNull;
+    }
+    
+    public HasAccessors getAccessors() {
+        return accessors;
+    }
+
+    public void setAccessors(HasAccessors accessors) {
+        this.accessors = accessors;
     }
 
     public boolean isCalculated() {
@@ -63,7 +73,7 @@ public class SchemaField {
     }
 
     public boolean isReadOnly() {
-        if ( calculated || declaredFinal || hasNoWriteMethod ) {
+        if ( calculated || declaredFinal || ! getAccessors().hasSetter() ) {
             return true;
         }
         return readOnly;
@@ -148,7 +158,7 @@ public class SchemaField {
         hash = 59 * hash + (this.readOnly ? 1 : 0);
         hash = 59 * hash + (this.calculated ? 1 : 0);
         hash = 59 * hash + (this.declaredFinal ? 1 : 0);
-        hash = 59 * hash + (this.hasNoWriteMethod ? 1 : 0);
+        hash = 59 * hash + ( !this.getAccessors().hasSetter()  ? 1 : 0);
         hash = 59 * hash + (this.calculator != null ? this.calculator.hashCode() : 0);
         return hash;
     }

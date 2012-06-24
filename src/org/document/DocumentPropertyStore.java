@@ -9,6 +9,7 @@ import java.util.Map;
 import org.document.schema.DocumentGroup;
 import org.document.schema.DocumentSchema;
 import org.document.schema.HasSchema;
+import org.document.schema.SchemaField;
 import org.document.schema.SchemaUtils;
 
 /**
@@ -59,7 +60,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
             throw new IllegalArgumentException("Constructor DocumentPropertyStore cannot accept null parameter value");
         }
         this.owner = source;
-        localSchema = createSchema(source.getClass(),Object.class);
+        //localSchema = createSchema(source.getClass(),Object.class);
 //        localSchema = getSchema(source.getClass(),Object.class);
         alias = null;
     }
@@ -120,8 +121,12 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
             return null;
         }
         if (owner instanceof KeyValueMap) {
-            result = DataUtils.getValue(key.toString(), ((KeyValueMap) owner).getMap());
+            //result = DataUtils.getValue(key.toString(), ((KeyValueMap) owner).getMap());
+            result = ((KeyValueMap) owner).getMap().get(key.toString());            
         } else {
+            if ( key.equals("country")) {
+                System.out.println("");
+            }
             result = DataUtils.getValue(key.toString(), owner);
         }
         return result;
