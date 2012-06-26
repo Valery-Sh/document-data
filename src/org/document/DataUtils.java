@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import org.document.schema.DocumentSchema;
-import org.document.schema.HasSchema;
 import org.document.schema.SchemaField;
 
 /**
@@ -22,18 +21,19 @@ import org.document.schema.SchemaField;
  * @author Valery
  */
 public class DataUtils {
-    
+
     public static boolean equals(Object o1, Object o2) {
         boolean b = false;
-        if ( o1 == o2 ) {
+        if (o1 == o2) {
             b = true;
-        } else if ( o1 != null && o1.equals(o2)) {
+        } else if (o1 != null && o1.equals(o2)) {
             b = true;
-        } else  if ( o2 != null && o2.equals(o1)) {
+        } else if (o2 != null && o2.equals(o1)) {
             b = true;
         }
         return b;
     }
+
     public static int getFieldCount(Class type) {
         int count = 0;
         try {
@@ -51,9 +51,10 @@ public class DataUtils {
         if (source instanceof Map) {
             dest.putAll((Map) source);
             return;
-        } if ( source instanceof KeyValueMap ) {
-            dest.putAll(((KeyValueMap)source).getMap()); 
-            return; 
+        }
+        if (source instanceof KeyValueMap) {
+            dest.putAll(((KeyValueMap) source).getMap());
+            return;
         }
 
         try {
@@ -77,109 +78,58 @@ public class DataUtils {
 
     }
 
-    public static Object getValue(String key, Document document) {
-        String error = "";
-        //if (obj instanceof Map) {
-        //    return ((Map) obj).get(key);
-        //} else 
-//        if ( obj instanceof KeyValueMap ) {
-//            return ((KeyValueMap)obj).getMap().get(key); 
-//        } else 
-        if ( document.propertyStore() instanceof HasSchema) {
-            DocumentSchema sc = ((HasSchema)document.propertyStore()).getSchema();
-            SchemaField f = sc.getField(key); 
+    public static Object getValue(String key, Object o) {
+        DocumentSchema sc = Registry.getSchema(o.getClass());
+        SchemaField f = sc.getField(key);
+        try {
+            if (f.getAccessors() != null && f.getAccessors().hasGettter()) {
+                return f.getAccessors().get(o);
+            }
+        } catch (Exception e) {
+            throw new NullPointerException("An object of type " + o.getClass() + " doesn't contain a field with a name " + key);
+        }
+        return null;
+    }
+
+/*    public static Object getValue(String key, Document document) {
+        if (document.propertyStore() instanceof HasSchema) {
+            DocumentSchema sc = ((HasSchema) document.propertyStore()).getSchema();
+            SchemaField f = sc.getField(key);
             try {
-                if ( f.getAccessors() != null && f.getAccessors().hasGettter() ) {
+                if (f.getAccessors() != null && f.getAccessors().hasGettter()) {
                     return f.getAccessors().get(document);
                 }
-            } catch(Exception e) {
-                throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key );                
+            } catch (Exception e) {
+                throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key);
             }
         }
         return null;
-/*        try {
-            BeanInfo binfo = Introspector.getBeanInfo(document.getClass(), Object.class);
-            PropertyDescriptor[] props = binfo.getPropertyDescriptors();
-
-            for (int i = 0; i < props.length; i++) {
-                String pname = props[i].getName();
-                if (key.equals(pname)) {
-                    Method m = props[i].getReadMethod();
-                    Object v = m.invoke(document, null);
-                    return v;
-                }
-            }//for
-
-        } catch (IntrospectionException ex) {
-            error = ex.getMessage();
-        } catch (IllegalAccessException ex) {
-            error = ex.getMessage();
-        } catch (java.lang.reflect.InvocationTargetException ex) {
-            error = ex.getMessage();
-        }
-
-//        throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
-* */
     }
-
-    public static void setValue(String key, Document document, Object newValue) {
-        String error = "";
-/*        if (obj instanceof Map) {
-            ((Map) obj).put(key, newValue);
-            return;
-        } if ( obj instanceof KeyValueMap ) {
-            ((KeyValueMap)obj).getMap().get(key); 
-            return; 
-        }
-        */ 
-        if ( document.propertyStore() instanceof HasSchema) {
-            DocumentSchema sc = ((HasSchema)document.propertyStore()).getSchema();
-            SchemaField f = sc.getField(key); 
+*/
+/*    public static void setValue(String key, Document document, Object newValue) {
+        if (document.propertyStore() instanceof HasSchema) {
+            DocumentSchema sc = ((HasSchema) document.propertyStore()).getSchema();
+            SchemaField f = sc.getField(key);
             try {
-                if ( f.getAccessors() != null && f.getAccessors().hasSetter() ) {
-                    f.getAccessors().set(document,newValue);
+                if (f.getAccessors() != null && f.getAccessors().hasSetter()) {
+                    f.getAccessors().set(document, newValue);
                 }
-            } catch(Exception e) {
-                throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key );                
+            } catch (Exception e) {
+                throw new NullPointerException("An object of type " + document.getClass() + " doesn't contain a field with a name " + key);
             }
         }
-        
-/*        try {
-            BeanInfo binfo = Introspector.getBeanInfo(document.getClass(), Object.class);
-            PropertyDescriptor[] props = binfo.getPropertyDescriptors();
-
-            for (int i = 0; i < props.length; i++) {
-                String pname = props[i].getName();
-                
-                if (key.equals(pname)) {
-/*                    Method rm = props[i].getReadMethod();
-                    
-                    Object oldValue = rm.invoke(obj, null);
-                    if ( oldValue == null && newValue == null ) {
-                        return;
-                    }
-                    if ( oldValue != null && oldValue.equals(newValue)) {
-                        return;
-                    }
-                    if ( newValue != null && newValue.equals(oldValue)) {
-                        return;
-                    }
-  */
-/*                    Method m = props[i].getWriteMethod();
-                    m.invoke(document, newValue);
-                }
-
-            }//for
-
-        } catch (IntrospectionException ex) {
-            error = ex.getMessage();
-        } catch (IllegalAccessException ex) {
-            error = ex.getMessage();
-        } catch (java.lang.reflect.InvocationTargetException ex) {
-            error = ex.getMessage();
-        }
+    }
 */
-        //throw new NullPointerException("An object of type " + obj.getClass() + " doesn't contain a field with a name " + key + "(" + error + ")");
+    public static void setValue(String key, Object o, Object newValue) {
+        DocumentSchema sc = Registry.getSchema(o.getClass());
+        SchemaField f = sc.getField(key);
+        try {
+            if (f.getAccessors() != null && f.getAccessors().hasSetter()) {
+                f.getAccessors().set(o, newValue);
+            }
+        } catch (Exception e) {
+            throw new NullPointerException("An object of type " + o.getClass() + " doesn't contain a field with a name " + key);
+        }
     }
 
     public static boolean isValueType(Class type) {
@@ -201,6 +151,7 @@ public class DataUtils {
                 || type.equals(BigInteger.class)
                 || type.equals(BigDecimal.class);
     }
+
     public static boolean isValueType(Object object) {
         Class type = object.getClass();
         return type.isPrimitive()

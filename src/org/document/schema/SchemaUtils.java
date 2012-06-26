@@ -17,12 +17,6 @@ public class SchemaUtils {
 
     public static DocumentSchema createSchema(Class clazz, Class superBoundary) {
         DocumentSchema schema;
-        /*        if ( DataUtils.isMapType(clazz)) {
-         return new MapSchema(clazz);
-         } else if ( isSetType(clazz)) {
-         return new NoFieldSchema(clazz);
-         }
-         */
         schema = new DefaultSchema(clazz);
         Map<String, Boolean> trfields = new HashMap<String, Boolean>();
         Map<String, Field> allfields = new HashMap<String, Field>();
@@ -49,8 +43,25 @@ System.out.println("---- before1: " + (new Date()).getTime());
 System.out.println("---- after0 : " + (new Date()).getTime());
         
         c = clazz;
+        Method addPropertyChangeListener = null;
+        Method addBoundPropertyChangeListener = null;
+        
         for (Method m : c.getMethods()) {
-
+            if ( m.getName().equals("addPropertyChangeListener")) {
+                if ( addPropertyChangeListener == null ) {
+                    //consider the upper sup class
+                    addPropertyChangeListener = m;
+                }
+                continue;
+            }
+            if ( m.getName().equals("addBoundPropertyChangeListener")) {
+                if ( addBoundPropertyChangeListener == null ) {
+                    //consider the upper sup class
+                    addBoundPropertyChangeListener = m;
+                }
+                continue;
+            }
+            
             if (!(m.getName().startsWith("is") || m.getName().startsWith("get") || m.getName().startsWith("set"))) {
                 continue;
             }
@@ -89,7 +100,11 @@ System.out.println("---- after0 : " + (new Date()).getTime());
                 ((ReflectAccessor)f.getAccessors()).setSetAccessor(m);
             }
         }
-
+        ((ReflectPropertyChangeAccessors)schema.getPropertyChangeAccessors())
+                .setAddPropertyChangeListener(addPropertyChangeListener);
+        ((ReflectPropertyChangeAccessors)schema.getPropertyChangeAccessors())
+                .setAddBoundPropertyChangeListener(addBoundPropertyChangeListener);
+        
 
         System.out.println("---- after1 : " + (new Date()).getTime());
 /*        try {

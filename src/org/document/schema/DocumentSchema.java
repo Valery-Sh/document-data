@@ -11,4 +11,5 @@ public interface DocumentSchema {
     List<SchemaField> getFields();
     SchemaField getField(Object fieldName);
     boolean contains(Object fieldName);
+    PropertyChangeAccessors getPropertyChangeAccessors();
 }

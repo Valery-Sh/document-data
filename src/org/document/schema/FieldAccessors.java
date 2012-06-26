@@ -8,9 +8,10 @@ package org.document.schema;
  *
  * @author Valery
  */
-public interface HasAccessors {
+public interface FieldAccessors {
     boolean hasGettter();
     boolean hasSetter();
+    
     Object get(Object target) throws Exception;
     void set(Object target,Object value) throws Exception;
 }

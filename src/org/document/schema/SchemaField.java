@@ -29,7 +29,7 @@ public class SchemaField {
     
     protected Field field;
     
-    protected HasAccessors accessors;
+    protected FieldAccessors accessors;
     
     public SchemaField(Object name) {
         assert(name != null);
@@ -47,11 +47,11 @@ public class SchemaField {
         this.notNull = notNull;
     }
     
-    public HasAccessors getAccessors() {
+    public FieldAccessors getAccessors() {
         return accessors;
     }
 
-    public void setAccessors(HasAccessors accessors) {
+    public void setAccessors(FieldAccessors accessors) {
         this.accessors = accessors;
     }
 

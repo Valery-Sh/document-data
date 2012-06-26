@@ -6,8 +6,8 @@ package org.document.binding;
 
 import org.document.DataUtils;
 import org.document.Document;
+import org.document.Registry;
 import org.document.schema.DocumentSchema;
-import org.document.schema.HasSchema;
 
 /**
  *
@@ -98,8 +98,8 @@ public class DefaultBinderConvertor<P,C> implements BinderConverter<P,C>  {
             return Object.class;
         }
         Class propertyType;
-        if ( getDocument().propertyStore() instanceof HasSchema) {
-            DocumentSchema sc = ((HasSchema)getDocument().propertyStore()).getSchema();
+        DocumentSchema sc = Registry.getSchema(getDocument().propertyStore().getOwner());
+        if ( sc != null ) {
             propertyType = sc.getField(binder.getBoundProperty()).getPropertyType();
         } else {
             Object o = getDocument().propertyStore().getValue(binder.getBoundProperty());

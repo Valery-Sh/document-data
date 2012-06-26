@@ -10,9 +10,10 @@ import java.lang.reflect.Method;
  *
  * @author Valery
  */
-public class ReflectAccessor implements HasAccessors{
+public class ReflectAccessor implements FieldAccessors{
     private Method getAccessor;
     private Method setAccessor;
+    
     public ReflectAccessor(Method getMethod, Method setMethod) {
         this.getAccessor = getMethod;
         this.setAccessor = setMethod;
@@ -52,5 +53,6 @@ public class ReflectAccessor implements HasAccessors{
     public void setSetAccessor(Method setAccessor) {
         this.setAccessor = setAccessor;
     }
+
     
 }

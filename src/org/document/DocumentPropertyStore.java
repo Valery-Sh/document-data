@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.document.schema.DocumentGroup;
 import org.document.schema.DocumentSchema;
-import org.document.schema.HasSchema;
-import org.document.schema.SchemaField;
 import org.document.schema.SchemaUtils;
 
 /**
@@ -17,7 +14,7 @@ import org.document.schema.SchemaUtils;
  * @param <T> 
  * @author V. Shyshkin
  */
-public class DocumentPropertyStore<T extends Document> implements PropertyStore<String,Object>, HasDocumentState, HasSchema {
+public class DocumentPropertyStore<T extends Document> implements PropertyStore<String,Object>, HasDocumentState, BoundPropertyChangeListener {
 
     private List<PropertyChangeListener> propertyChangeListeners;
     
@@ -28,7 +25,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
     /**
      * 
      */
-    protected T owner;
+    protected Object owner;
     /**
      * 
      */
@@ -36,11 +33,11 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
     /**
      * 
      */
-    protected DocumentSchema localSchema;
+    //protected DocumentSchema localSchema;
     /**
      * 
      */
-    protected DocumentGroup group;
+    //protected DocumentGroup group;
     /**
      * 
      */
@@ -54,7 +51,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
      * 
      * @param owner
      */
-    public DocumentPropertyStore(T source) {
+    public DocumentPropertyStore(Object source) {
         this();
         if ( source == null ) {
             throw new IllegalArgumentException("Constructor DocumentPropertyStore cannot accept null parameter value");
@@ -85,7 +82,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
      * @return
      */
     @Override
-    public T getOwner() {
+    public Object getOwner() {
         return owner;
     }
     
@@ -93,10 +90,10 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
      * 
      * @return
      */
-    @Override
+/*    @Override
     public DocumentSchema getSchema() {
-        DocumentSchema ds;
-
+        //DocumentSchema ds;
+        return Registry.getSchema(owner.getClass());
         if (group != null) {
             ds = group.getSchema(owner);
         } else if (localSchema != null) {
@@ -107,8 +104,9 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
         }
 
         return ds;
+  
     }
-
+*/
     /**
      * 
      * @param key
@@ -196,7 +194,8 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
      * @param key
      * @param value
      */
-    public void bind(Object key, Object value) {
+    @Override
+    public void bind(String key, Object value) {
         if ( propertyChangeListeners == null ) {
             return;
         }
@@ -279,6 +278,7 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.propertyChangeListeners.remove(listener);
     }
+
 
     /**
      *

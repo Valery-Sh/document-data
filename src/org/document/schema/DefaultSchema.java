@@ -4,8 +4,13 @@
  */
 package org.document.schema;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -14,6 +19,7 @@ import java.util.List;
 public class DefaultSchema implements DocumentSchema{
     private Class mappingType;
     private List<SchemaField> fields;
+    private PropertyChangeAccessors propertyChangeAccessors;
     
     public DefaultSchema() {
         fields = new ArrayList(10);
@@ -21,7 +27,18 @@ public class DefaultSchema implements DocumentSchema{
     public DefaultSchema(Class mappingType ) {
         this();
         this.mappingType = mappingType;
+        propertyChangeAccessors = new ReflectPropertyChangeAccessors();
+        create(mappingType, Object.class);
     }    
+
+    @Override
+    public PropertyChangeAccessors getPropertyChangeAccessors() {
+        return propertyChangeAccessors;
+    }
+
+    public void setPropertyChangeAccessors(PropertyChangeAccessors propertyChangeAccessors) {
+        this.propertyChangeAccessors = propertyChangeAccessors;
+    }
     
     @Override
     public Class getMappingType() {
@@ -101,4 +118,92 @@ public class DefaultSchema implements DocumentSchema{
         }
         return false;
     }
+    
+    protected void create(Class clazz, Class superBoundary) {
+        Map<String, Boolean> trfields = new HashMap<String, Boolean>();
+        Map<String, Field> allfields = new HashMap<String, Field>();
+        Class c = clazz;
+        try {
+
+            while (c != superBoundary) {
+                java.lang.reflect.Field[] dfs = c.getDeclaredFields();
+                for (java.lang.reflect.Field f : dfs) {
+
+                    String nm = f.getName();
+                    allfields.put(nm, f);
+                    if (Modifier.isTransient(f.getModifiers())) {
+                        trfields.put(f.getName(), Boolean.TRUE);
+                    }
+                }
+                c = c.getSuperclass();
+            }
+
+        } catch (Exception e) {
+        }
+        c = clazz;
+        Method addPropertyChangeListener = null;
+        Method addBoundPropertyChangeListener = null;
+        
+        for (Method m : c.getMethods()) {
+            if ( m.getName().equals("addPropertyChangeListener")) {
+                if ( addPropertyChangeListener == null ) {
+                    //consider the upper sup class
+                    addPropertyChangeListener = m;
+                }
+                continue;
+            }
+            if ( m.getName().equals("addBoundPropertyChangeListener")) {
+                if ( addBoundPropertyChangeListener == null ) {
+                    //consider the upper sup class
+                    addBoundPropertyChangeListener = m;
+                }
+                continue;
+            }
+            
+            if (!(m.getName().startsWith("is") || m.getName().startsWith("get") || m.getName().startsWith("set"))) {
+                continue;
+            }
+            int idx = 3;
+            boolean isGetter = false;
+            if (m.getName().startsWith("get")) {
+                isGetter = true;
+            } else if (m.getName().startsWith("is")) {
+                idx = 2;
+                isGetter = true;
+            }
+
+            String name = m.getName().substring(idx);
+            if (name.length() == 0) {
+                continue;
+            }
+            String pname = name.substring(0, 1).toLowerCase() + name.substring(1);
+
+            if (trfields.containsKey(pname) || !allfields.containsKey(pname)) {
+                continue;
+            }
+            SchemaField f = null;
+            if (!contains(pname)) {
+                Class ptype = isGetter ? m.getReturnType() : m.getParameterTypes()[0];
+                f = new SchemaField(pname, ptype);
+                getFields().add(f);
+                f.setField(allfields.get(pname));
+                f.accessors = new ReflectAccessor(null, null);
+            } else {
+                f = getField(pname);
+            }
+            
+            if ( isGetter ) {
+                ((ReflectAccessor)f.getAccessors()).setGetAccessor(m);
+            } else {
+                ((ReflectAccessor)f.getAccessors()).setSetAccessor(m);
+            }
+        }
+        ((ReflectPropertyChangeAccessors)getPropertyChangeAccessors())
+                .setAddPropertyChangeListener(addPropertyChangeListener);
+        ((ReflectPropertyChangeAccessors)getPropertyChangeAccessors())
+                .setAddBoundPropertyChangeListener(addBoundPropertyChangeListener);
+        
+
+    }
+    
 }
