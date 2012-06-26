@@ -30,24 +30,63 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         this.addValidateHandler(validateHandler);
 
     }
-
-    /*    public DocumentList(List<E> baseList, BindingManager bindingManager) {
-     this(baseList);
-     this.bindingManager = bindingManager;
-     }
-     */
     public DocumentList() {
         super();
         validateHandler = new ValidateHandlerImpl();
         this.addValidateHandler(validateHandler);
-
     }
-
-
-    /*    public BindingManager getBindingManager() {
-     return bindingManager;
-     }
-     */
+    public void addObjectsFrom(List list) {
+        if ( list == null ) {
+            return;
+        }
+        List l = new DocumentList<>();
+        for ( int i = 0; i < list.size(); i++) {
+            l.add(new DefaultDocument(list.get(i)));
+        }
+        addAll(l);
+        super.setBaseList(l);
+    }
+    public E getByObject(Object o) {
+        
+        E result = null;
+        
+        for ( E e : this) {
+            if ( e.propertyStore().getOwner() == e ) {
+                result = e;
+                break;
+            }
+        }
+        return result;
+    }
+    public void addByObject(Object o) {
+        add( (E)new DefaultDocument(o));
+    }
+    public void addByObject(int pos,Object o) {
+        add( pos,(E)new DefaultDocument(o));
+    }
+    public E setByObject(int pos,Object o) {
+        return set( pos,(E)new DefaultDocument(o));
+    }
+    public E removeByObject(Object o) {
+        E d = null;
+        int idx = indexByObject(o);
+        if ( idx >= 0 ) {
+            d = remove(idx);
+        }
+        return d;
+    }
+    public int indexByObject(Object o) {
+        E d = null;
+        
+        for ( E e : this) {
+            if ( e.propertyStore().getOwner() == e ) {
+                d = e;
+                break;
+            }
+        }
+        return  d == null ? -1 : indexOf(d);
+    }
+    
     /**
      * Appends a given element to the end of the list. Fires an event of type {@link ListChangeEvent
      * } to notify listeners of a new element added. The event

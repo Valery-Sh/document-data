@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document;
 
 import org.document.schema.PropertyChangeAccessors;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class DefaultDocument implements Document {
 
@@ -26,7 +22,6 @@ public class DefaultDocument implements Document {
         //
         // DocumentPropertyStore is a default PropertyStore
         //
-
         initDocument(o);
     }
 
@@ -41,12 +36,10 @@ public class DefaultDocument implements Document {
         } catch (Exception e) {
             throw new IllegalArgumentException("Cannnot create a document for the object " + o);
         }
-
     }
     //
     // Document interface implementation
     //
-
     @Override
     public PropertyStore propertyStore() {
         return this.propertyStore;
