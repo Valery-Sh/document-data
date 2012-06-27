@@ -486,21 +486,6 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     private void fireRefresh(BinderEvent event) {
         notifyAll(event);
     }
-
-/*    public String getChildName() {
-        return this.childName;
-    }
-
-    protected void setChildName(String childName) {
-        this.childName = childName;
-    }
-*/
-    /*    protected void firePropertyChangeRequest(BinderEvent event) {
-     if (contextOwner != null) {
-     contextOwner.react(event);
-     }
-     }
-     */
     public DocumentErrorBinder getDocumentErrorBinder() {
         return documentErrorBinder;
     }

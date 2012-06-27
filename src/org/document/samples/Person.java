@@ -2,35 +2,41 @@ package org.document.samples;
 
 import java.util.Date;
 import org.document.AbstractObjectDocument;
+import org.document.BoundPropertyChangeListener;
 import org.document.Validator;
 
 /**
  *
  * @author V. Shyshkin
  */
-public class Person extends AbstractObjectDocument {
+public class Person  {
     
     private int id;
     private String firstName;
     private String lastName;
     private Date birthDay;
     private int departmentId;
+    private BoundPropertyChangeListener boundPropertyListener;
 
     public Person() {
         super();
     }
 
-    public Person(Validator validator) {
-        super(validator);
-    }
 
-    public Person(Validator validator,Integer id, String firstName, String lastName) {
-        this(validator);
+    public Person(Integer id, String firstName, String lastName) {
+        this();
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
     }
-
+    public void addBoundPropertyChangeListener(BoundPropertyChangeListener l) {
+        boundPropertyListener = l;
+    }
+    private void bind(String name, Object value) {
+        if ( boundPropertyListener != null ) {
+            boundPropertyListener.bind(name, value);
+        }
+    }
     public Date getBirthDay() {
         return birthDay;
     }
@@ -75,6 +81,4 @@ public class Person extends AbstractObjectDocument {
         this.departmentId = departmentId;
         bind("departmentId",departmentId);
     }
-
-
 }

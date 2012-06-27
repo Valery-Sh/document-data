@@ -1,5 +1,6 @@
 package org.document;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,16 +36,27 @@ public class DocumentList<E extends Document> extends ObservableList<E> {
         validateHandler = new ValidateHandlerImpl();
         this.addValidateHandler(validateHandler);
     }
+    public static List<Document> createFromObjects(List list) {
+        if ( list == null ) {
+            return null;
+        }
+        List l = new ArrayList<>();
+        for ( int i = 0; i < list.size(); i++) {
+            l.add(new DefaultDocument(list.get(i)));
+        }
+        return l;
+        
+    }
+    
     public void addObjectsFrom(List list) {
         if ( list == null ) {
             return;
         }
-        List l = new DocumentList<>();
+        List l = new ArrayList<>();
         for ( int i = 0; i < list.size(); i++) {
             l.add(new DefaultDocument(list.get(i)));
         }
         addAll(l);
-        super.setBaseList(l);
     }
     public E getByObject(Object o) {
         
