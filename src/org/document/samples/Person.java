@@ -1,9 +1,7 @@
 package org.document.samples;
 
 import java.util.Date;
-import org.document.AbstractObjectDocument;
 import org.document.BoundPropertyChangeListener;
-import org.document.Validator;
 
 /**
  *

@@ -2,7 +2,6 @@ package org.document.binding;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.document.Document;
 
 /**
  *
@@ -18,11 +17,6 @@ public class EmbeddedDocumentBinder extends DocumentBinder {
         super(clazz);
         boundObjectListeners = new ArrayList<BinderListener>();
         getContext().setEmbedded(true);
-/*        try {
-            defaultDocument = (Document) clazz.newInstance();
-        } catch (Exception e) {
-        }
-*/ 
     }
 
     public DocumentBinder getParent() {

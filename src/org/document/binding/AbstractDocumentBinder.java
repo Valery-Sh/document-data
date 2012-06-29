@@ -304,7 +304,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 */ 
     }
     
-    private Document getInstance() {
+/*    private Document getInstance() {
         Document result = null;
         if ( getClassName() != null ) {
             try {
@@ -316,7 +316,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
         }
         return result;
     }
-
+*/
     /**
      * May be called from the contained binders of type
      * <code>PropertyBinder</code>.
