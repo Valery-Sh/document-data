@@ -6,7 +6,7 @@ package org.document.binding;
 
 import org.document.Document;
 import org.document.DocumentState;
-import org.document.HasDocumentState;
+import org.document.HasState;
 import org.document.ValidationException;
 
 /**
@@ -141,8 +141,8 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
         private void updateInstance(Document d, BinderEvent e) {
             try {
 
-                if (d.propertyStore() instanceof HasDocumentState) {
-                    DocumentState state = ((HasDocumentState) d.propertyStore()).getDocumentState();
+                if (d.propertyStore() instanceof HasState) {
+                    DocumentState state = ((HasState) d.propertyStore()).getDocumentState();
                     state.getDirtyValues().put(boundProperty, e.getComponentValue());
                 }
 

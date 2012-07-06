@@ -133,8 +133,8 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
                 return;
             }
         
-            if (getDocument().propertyStore() instanceof HasDocumentState) {
-                DocumentState state = ((HasDocumentState) getDocument().propertyStore()).getDocumentState();
+            if (getDocument().propertyStore() instanceof HasState) {
+                DocumentState state = ((HasState) getDocument().propertyStore()).getDocumentState();
                 state.getDirtyValues().put(boundProperty, componentValue);
             }
 

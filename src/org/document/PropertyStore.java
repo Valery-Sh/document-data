@@ -16,11 +16,8 @@ public interface PropertyStore<K,V> extends Serializable {
     V getValue(K key);
 
     V putValue(K key, V value);
-
     
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     void removePropertyChangeListener(PropertyChangeListener listener);
-
-    
 }

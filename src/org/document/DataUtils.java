@@ -34,7 +34,7 @@ public class DataUtils {
         return b;
     }
 
-    public static int getFieldCount(Class type) {
+/*    public static int getFieldCount(Class type) {
         int count = 0;
         try {
             BeanInfo binfo = Introspector.getBeanInfo(type, Object.class);
@@ -45,7 +45,7 @@ public class DataUtils {
 
         return count;
     }
-
+*/
     public static void putAll(Map dest, Object source) {
         String error = "";
         if (source instanceof Map) {
@@ -194,7 +194,7 @@ public class DataUtils {
 
     }
 
-    public static <T> T cloneValue(T value) {
+/*    public static <T> T cloneValue(T value) {
         if (value == null) {
             return null;
         }
@@ -215,8 +215,8 @@ public class DataUtils {
         }
         return target;
     }
-
-    public static Object newArrayTypeInstance(Class type) {
+*/
+/*    public static Object newArrayTypeInstance(Class type) {
 
         if (type == null || !type.isArray()) {
             return null;
@@ -230,7 +230,7 @@ public class DataUtils {
         result = Array.newInstance(aclass, d);
         return result;
     }
-
+*/
     public static Class getWrapper(Class primitive) {
         if (!primitive.isPrimitive()) {
             return primitive;
@@ -269,7 +269,7 @@ public class DataUtils {
         return result;
     }
 
-    public static Object newInstance(Class type) {
+/*    public static Object newInstance(Class type) {
 
         if (type == null) {
             return null;
@@ -310,8 +310,8 @@ public class DataUtils {
         }
         return r;
     }
-
-    public static Object newInstance(Object source) {
+*/
+/*    public static Object newInstance(Object source) {
         if (source == null) {
             return null;
         }
@@ -373,7 +373,7 @@ public class DataUtils {
         }
         return r;
     }
-
+*/
     public static String[] split(String key, char dlm) {
         String k = key.trim();
         if ((!k.isEmpty()) && key.charAt(0) == dlm) {

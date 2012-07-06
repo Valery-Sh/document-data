@@ -5,7 +5,6 @@
 package org.document;
 
 import java.util.Map;
-import org.document.binding.BinderListener;
 
 /**
  *
@@ -16,6 +15,5 @@ public interface DocumentState {// extends BinderListener{
     void setEditing(boolean editing);
     boolean isAttached();
     void setAttached(boolean attached);
-    
     Map<String,Object> getDirtyValues();
 }

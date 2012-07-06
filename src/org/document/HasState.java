@@ -8,6 +8,6 @@ package org.document;
  *
  * @author Valery
  */
-public interface HasDocumentState {
+public interface HasState {
     DocumentState getDocumentState();
 }

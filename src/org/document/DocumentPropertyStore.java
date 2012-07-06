@@ -6,15 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.document.schema.DocumentSchema;
-import org.document.schema.SchemaUtils;
 
 /**
  *
  * @param <T> 
  * @author V. Shyshkin
  */
-public class DocumentPropertyStore<T extends Document> implements PropertyStore<String,Object>, HasDocumentState, BoundPropertyChangeListener {
+public class DocumentPropertyStore<T extends Document> implements PropertyStore<String,Object>, HasState, BoundPropertyListener {
 
     private List<PropertyChangeListener> propertyChangeListeners;
     
@@ -62,10 +60,10 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
         alias = null;
     }
     
-    protected DocumentSchema createSchema(Class sourceClass, Class restrictSuper) {
+/*    protected DocumentSchema createSchema(Class sourceClass, Class restrictSuper) {
         return SchemaUtils.createSchema(sourceClass,restrictSuper);        
     }
-    
+*/    
     private List<PropertyChangeListener> saveListeners;
     
     protected void removePropertyListeners() {
@@ -338,23 +336,11 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
             if (this.editing == editing) {
                 return;
             }
-//            DocumentPropertyStore ps = (DocumentPropertyStore) documentStore;
             if ( documentStore.getOwner() == null ) {
                 return;
             }
 
             if (this.editing && !editing) {
-/*                try {
-                    if (ps.owner instanceof HasValidator) {
-                        Validator v = ((HasValidator) ps.owner).getValidator();
-                        if (v != null) {
-                            v.validate((Document)ps.owner);
-                        }
-                    }
-                    this.editing = editing;
-                } catch (ValidationException e) {
-                }
-*/ 
             } else if (!this.editing) {
                 beforeEditValues.clear();
                 DataUtils.putAll(beforeEditValues, documentStore.getOwner());

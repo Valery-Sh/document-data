@@ -1,7 +1,7 @@
 package org.document.samples;
 
 import java.util.Date;
-import org.document.BoundPropertyChangeListener;
+import org.document.BoundPropertyListener;
 
 /**
  *
@@ -14,7 +14,7 @@ public class Person  {
     private String lastName;
     private Date birthDay;
     private int departmentId;
-    private BoundPropertyChangeListener boundPropertyListener;
+    private BoundPropertyListener boundPropertyListener;
 
     public Person() {
         super();
@@ -27,7 +27,7 @@ public class Person  {
         this.firstName = firstName;
         this.lastName = lastName;
     }
-    public void addBoundPropertyChangeListener(BoundPropertyChangeListener l) {
+    public void addBoundPropertyChangeListener(BoundPropertyListener l) {
         boundPropertyListener = l;
     }
     private void bind(String name, Object value) {

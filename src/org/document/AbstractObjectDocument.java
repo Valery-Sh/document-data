@@ -40,10 +40,9 @@ package org.document;
  * @see org.document.samples.Person
  * @author V. Shyshkin
  */
-public class AbstractObjectDocument implements Document, HasValidator {
+public class AbstractObjectDocument implements Document {
 
     protected transient DocumentPropertyStore propertyStore;
-    private transient Validator validator;
 
     public AbstractObjectDocument() {
         //
@@ -52,10 +51,6 @@ public class AbstractObjectDocument implements Document, HasValidator {
         this.propertyStore = new DocumentPropertyStore(this);
     }
 
-    public AbstractObjectDocument(Validator validator) {
-        this();
-        this.validator = validator;
-    }
 
     //
     // Document interface implementation
@@ -73,18 +68,6 @@ public class AbstractObjectDocument implements Document, HasValidator {
      */
     protected void bind(String propertyName, Object value) {
         propertyStore.bind(propertyName, value);
-    }
-    //
-    // HasValidator implementation
-    //
-    @Override
-    public Validator getValidator() {
-        return validator;
-    }
-
-    @Override
-    public void setValidator(Validator validator) {
-        this.validator = validator;
     }
     //
     // =========== Here follows an implementation code ========================================

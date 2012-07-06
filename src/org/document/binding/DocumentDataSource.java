@@ -13,7 +13,7 @@ import java.util.Map;
 import org.document.Document;
 import org.document.DocumentList;
 import org.document.DocumentState;
-import org.document.HasDocumentState;
+import org.document.HasState;
 import org.document.ListChangeEvent;
 import org.document.ListChangeListener;
 
@@ -249,19 +249,19 @@ public class DocumentDataSource<T extends Document> implements ListChangeListene
         }
         this.active = true;
         T old = this.selected;
-        if (old != null && (old.propertyStore() instanceof HasDocumentState)) {
-            ((HasDocumentState) old.propertyStore()).getDocumentState().setAttached(false);
+        if (old != null && (old.propertyStore() instanceof HasState)) {
+            ((HasState) old.propertyStore()).getDocumentState().setAttached(false);
         }
-        if (selected != null && (selected.propertyStore() instanceof HasDocumentState)) {
-            ((HasDocumentState) selected.propertyStore()).getDocumentState().setAttached(true);
+        if (selected != null && (selected.propertyStore() instanceof HasState)) {
+            ((HasState) selected.propertyStore()).getDocumentState().setAttached(true);
         }
         // TODO this.registry.beforeDocumentChange(selected);
     }
 
     protected void updateAttachState(T doc, boolean attached) {
 
-        if (doc.propertyStore() instanceof HasDocumentState) {
-            DocumentState st = ((HasDocumentState) doc.propertyStore()).getDocumentState();
+        if (doc.propertyStore() instanceof HasState) {
+            DocumentState st = ((HasState) doc.propertyStore()).getDocumentState();
             if (st.isAttached()) {
 //TODO                 doc.propertyStore().removeDocumentChangeListener(documentChangeHandler());
             }

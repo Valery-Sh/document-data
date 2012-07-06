@@ -7,11 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import org.document.Document;
 import org.document.DocumentState;
-import org.document.HasDocumentState;
-import org.document.HasValidator;
+import org.document.HasState;
 import org.document.PropertyStore;
 import org.document.ValidationException;
-import org.document.Validator;
 
 /**
  *
@@ -23,15 +21,11 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
     private String className;
     private String alias;
     private boolean suspended;
-    //protected List<BinderListener> contextOwner;
     protected BinderListener contextOwner;
     protected BindingContext context;
-  //  protected String childName;
-  //  protected List<DocumentBinder> childs;
     protected List<PropertyBinder> binders;
     protected DocumentErrorBinder documentErrorBinder;
     private boolean embedded;
-//    private List<PropertyChangeListener> boundObjectListeners;
 
     protected AbstractDocumentBinder() {
         this(null, null);
@@ -228,8 +222,8 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
         if (oldDocumentStore != null) {
             completeChanges(e);
-            if (oldDocumentStore instanceof HasDocumentState) {
-                DocumentState state = ((HasDocumentState) oldDocumentStore).getDocumentState();
+            if (oldDocumentStore instanceof HasState) {
+                DocumentState state = ((HasState) oldDocumentStore).getDocumentState();
                 state.setEditing(false);
                 if (state.isEditing()) {
                     //
@@ -258,11 +252,11 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
 
         PropertyStore documentStore = oldDoc.propertyStore();
 
-        if (documentStore instanceof HasDocumentState) {
-            DocumentState state = ((HasDocumentState) documentStore).getDocumentState();
+        if (documentStore instanceof HasState) {
+            DocumentState state = ((HasState) documentStore).getDocumentState();
             if (state.isEditing()) {
                 documentErrorBinder.clear();
-                try {
+/*                try {
                     if (oldDoc instanceof HasValidator) {
                         Validator v = ((HasValidator) oldDoc).getValidator();
                         if (v != null) {
@@ -272,6 +266,7 @@ public abstract class AbstractDocumentBinder<E extends Document> extends Abstrac
                 } catch (ValidationException ex) {
                     documentErrorBinder.notifyError(ex);
                 }
+*/ 
             }
         }
 /*        for (DocumentBinder child : childs) {
