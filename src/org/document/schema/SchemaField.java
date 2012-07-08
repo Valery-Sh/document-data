@@ -1,7 +1,6 @@
 package org.document.schema;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * When create an instance of the class 
@@ -15,6 +14,7 @@ import java.util.List;
  */
 public class SchemaField {
     protected Object propertyName;
+    protected String displayName;
     protected boolean required;
     protected boolean notNull;
 
@@ -97,6 +97,17 @@ public class SchemaField {
 
     public void setPropertyName(Object propertyName) {
         this.propertyName = propertyName;
+    }
+
+    public String getDisplayName() {
+        if ( displayName == null ) {
+            return propertyName.toString();
+        }
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     

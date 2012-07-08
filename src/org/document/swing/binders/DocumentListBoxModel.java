@@ -52,22 +52,5 @@ public class DocumentListBoxModel<E extends Document> implements ListModel {
     public void removeListDataListener(ListDataListener l) {
     }
 
-/*    @Override
-    public void setSelectedItem(Object anObject) {
-        if ((selectedObject != null && !selectedObject.equals(anObject))
-                || selectedObject == null && anObject != null) {
-            selectedObject = anObject;
-        } else {
-            if (anObject == null) {
-                selectedObject = anObject;
-            }
-        }
-    }
-
-    @Override
-    public Object getSelectedItem() {
-        return selectedObject;
-    }
-*/    
 }
 
