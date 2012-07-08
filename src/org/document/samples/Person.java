@@ -27,6 +27,7 @@ public class Person  {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    
     public void addBoundPropertyChangeListener(BoundPropertyListener l) {
         boundPropertyListener = l;
     }
