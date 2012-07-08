@@ -1,17 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.document.binding;
 
 import org.document.Document;
 import org.document.DocumentState;
+import org.document.Documents;
 import org.document.HasState;
 import org.document.ValidationException;
 
 /**
  *
- * @author Valery
+ * @author V. Shyshkin
  */
 public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
 
@@ -34,12 +31,18 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
     @Override
     protected Object getBoundObjectValue() {
         //return ((DocumentBinder)boundObject).getDocument(); 
+        //return getEmbeddedDocumentBinder().getValue();
         return getEmbeddedDocumentBinder().getDocument();
     }
 
     @Override
     protected void setBoundObjectValue(Object componentValue) {
         getEmbeddedDocumentBinder().setDocument((Document) componentValue);
+        //getEmbeddedDocumentBinder().setValue((EmbeddedDocumentBinder.Value) componentValue);
+    }
+    @Override
+    protected void completeChanges(BinderEvent e) {
+        boundObjectChanged(false, getBoundObjectValue());
     }
 
     /**
@@ -49,16 +52,25 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
      */
     @Override
     public Object componentValueOf(Object propertyValue) {
-        return (Document) propertyValue;
+        Object result;
+        if ( propertyValue == null ) {
+            result = getInstance();
+        } else {
+            result = Documents.create(propertyValue);            
+        }
+        return result;
     }
-
+/*    protected void propertyChanged(String property, Object propertyValue, boolean forceRefresh) {
+        super.propertyChanged(property, propertyValue, forceRefresh);
+    }
+*/ 
     @Override
     public Object propertyValueOf(Object componentValue) {
         Document d = getContext().getSelected(); // parent document
-        if (d == null) {
+        if (d == null || componentValue == null) {
             return null;
         }
-        return componentValue;
+        return ((Document)componentValue).propertyStore().getOwner();
         /*        Document ed = null;
          if ( d.propertyStore().getValue(boundProperty) == null ) {
          ed = getInstance();
@@ -81,7 +93,7 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
         if (b.getClassName() != null) {
             try {
                 Class c = Class.forName(b.getClassName());
-                result = (Document) c.newInstance();
+                result = Documents.create(c.newInstance());
             } catch (Exception e) {
                 System.out.println("Cannot create default document instance. " + e.getMessage());
             }
@@ -125,7 +137,8 @@ public class PropertyBinderEmbedded extends AbstractEditablePropertyBinder {
             }
             switch (event.getAction()) {
                 case boundObjectChange:
-                    Document d = (Document) getDocument().propertyStore().getValue(boundProperty);
+                    //Document d = (Document) getDocument().propertyStore().getValue(boundProperty);
+                    Document d = (Document)getBoundObjectValue();
                     if (d == null) {
                         d = getInstance();
                         d.propertyStore().putValue(event.getBoundProperty(), event.getNewValue());

@@ -292,11 +292,6 @@ public class DocumentPropertyStore<T extends Document> implements PropertyStore<
         protected Map dirtyEditValues;
         /**
          * 
-         */
-//        protected Map<String, DocumentChangeEvent> propertyErrors;
-
-        /**
-         * 
          * @param documentStore
          */
         public DocumentStateImpl(PropertyStore documentStore) {

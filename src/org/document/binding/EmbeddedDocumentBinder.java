@@ -2,6 +2,7 @@ package org.document.binding;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.document.Document;
 
 /**
  *
@@ -12,13 +13,21 @@ public class EmbeddedDocumentBinder extends DocumentBinder {
     //private Document defaultDocument;
     private List<BinderListener> boundObjectListeners;
     private DocumentBinder parent;
-    
+//    private Value value;
     public EmbeddedDocumentBinder(Class clazz) {
         super(clazz);
         boundObjectListeners = new ArrayList<BinderListener>();
         getContext().setEmbedded(true);
     }
 
+  /*  public Value getValue() {
+        return value;
+    }
+
+    public void setValue(Value value) {
+        this.value = value;
+    }
+*/
     public DocumentBinder getParent() {
         return parent;
     }
@@ -45,5 +54,22 @@ public class EmbeddedDocumentBinder extends DocumentBinder {
     public void removeBoundObjectListener(BinderListener l) {
         boundObjectListeners.remove(l);
     }
-    
+/*    public static class Value {
+        private Document document;
+        private EmbeddedDocumentBinder binder;
+        public Value(EmbeddedDocumentBinder binder,Document document) {
+            this.binder = binder;
+            this.document = document;
+        }
+        public Document getDocument() {
+            return document;
+        }
+
+        public void setDocument(Document document) {
+            this.document = document;
+            binder.setDocument(document);
+        }
+        
+    }
+    */ 
 }//class

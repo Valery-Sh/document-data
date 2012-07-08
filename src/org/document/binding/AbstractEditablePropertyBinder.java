@@ -225,11 +225,18 @@ public abstract class AbstractEditablePropertyBinder extends AbstractPropertyBin
         }
         switch(event.getAction()) {
             case completeChanges :
-                boundObjectChanged(false, getBoundObjectValue());
+                completeChanges(event);
+//                boundObjectChanged(false, getBoundObjectValue());
                 break;
         }
     }
-    
+    /**
+     * The method is overriden in the {@link PropertyBinderEmbedded}.
+     * @param e 
+     */
+    protected void completeChanges(BinderEvent e) {
+        boundObjectChanged(false, getBoundObjectValue());
+    }
 /*    @Override
     public void react(DocumentChangeEvent event) {
         super.react(event);

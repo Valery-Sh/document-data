@@ -8,6 +8,7 @@ import org.document.BoundPropertyListener;
  * @author V. Shyshkin
  */
 public class Person  {
+    private Address address;
     
     private int id;
     private String firstName;
@@ -26,6 +27,15 @@ public class Person  {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+        bind("address", address);
     }
     
     public void addBoundPropertyChangeListener(BoundPropertyListener l) {
