@@ -11,6 +11,7 @@ import org.document.schema.DocumentSchema;
  * @author V.Shyshkin
  */
 public class Registry {
+
     
     private static final Map<Class,DocumentSchema> schemas = Collections.synchronizedMap( new HashMap<Class,DocumentSchema>() );    
     
